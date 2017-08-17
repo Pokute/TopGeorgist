@@ -1,0 +1,10 @@
+{
+    "name": "top_georgist",
+    "description": "Top Georgist",
+    "author": "Pokute",
+    "version": "0.0.1",
+    "main": "TopGeorgist.js",
+    "dependencies": {
+        "redux": "3.7.2"
+    }
+}
