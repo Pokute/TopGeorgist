@@ -1,5 +1,6 @@
 import store from './store.js';
 import playerActions from './reducers/player';
+import { movePlayerRight } from './playerControls';
 
 const drawLine = () => {
 	const c = document.getElementById("canvas");
@@ -17,8 +18,15 @@ const init = () => {
 			color: 'red',
 		}
 	});
+
 	drawLine();
 	drawWorld();
+	setInterval(drawWorld, 100);
+
+	const moveRight = document.createElement('button');
+	moveRight.textContent = 'moveRight';
+	moveRight.onclick = movePlayerRight;
+	document.getElementById('controls').appendChild(moveRight);
 };
 
 const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
