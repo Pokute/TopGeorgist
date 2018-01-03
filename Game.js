@@ -1,4 +1,5 @@
 import store from './store.js';
+import playerActions from './reducers/player';
 
 const drawLine = () => {
 	const c = document.getElementById("canvas");
@@ -9,8 +10,34 @@ const drawLine = () => {
 };
 
 const init = () => {
+	store.dispatch({
+		type: 'ADD_PLAYER',
+		player: {
+			position: {x: 5, y: 100},
+			color: 'red',
+		}
+	});
 	drawLine();
-}
+	drawWorld();
+};
+
+const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
+	const c = document.getElementById("canvas");
+	const ctx = c.getContext("2d");
+	ctx.strokeStyle = strokeStyle;
+	ctx.moveTo(pos.x - size.x, pos.y - size.y);
+	ctx.lineTo(pos.x + size.x, pos.y + size.y);
+	ctx.stroke();
+	ctx.moveTo(pos.x - size.x, pos.y + size.y);
+	ctx.lineTo(pos.x + size.x, pos.y - size.y);
+	ctx.stroke();
+};	
+
+const drawWorld = () => {
+	store.getState().players.forEach(p => {
+		drawCross(p.position, undefined, p.color);
+	})
+};
 
 window.onload = init;
 
