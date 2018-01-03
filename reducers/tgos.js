@@ -2,8 +2,8 @@ import playerReducer from './player';
 import tgoReducer from './tgo';
 const initialState = [];
 
-	export default (state = initialState, action) => {
-		// Handle single tgo changes here.
+export default (state = initialState, action) => {
+	// Handle single tgo changes here.
 	if ((action.tgoId) && 
 		(action.type != 'TGO_ADD')) {
 		return state.map(p => {

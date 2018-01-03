@@ -2,6 +2,7 @@
 
 ## ToDo milestone 1.
 
+* Autopack with webpack.
 * Open up in browser
 * Has a player
 	* Player can move around
@@ -39,6 +40,7 @@
 
 ## Milestone 2
 
+* Hot reload?
 * Player
 	* New "energy" stat.
 	* Doing different actions use "energy"
@@ -49,3 +51,8 @@
 		* Sleeping in a bed regenerates more energy.
 * Barracks
 	* Has beds that cost to use
+* Investigate
+	* redux-loop
+	* reducer-reducer?
+	* Need for redux-thunk?
+	* react?, react-native with -web?

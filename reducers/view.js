@@ -1,5 +1,6 @@
 const initialState = {
 	viewId: undefined,
+	followTogId: undefined,
 	position: {
 		x: 0,
 		y: 0,
@@ -22,6 +23,11 @@ export default (state = initialState, action) => {
 				...state,
 				view: action.view,
 			};
+		case 'VIEW_SET_FOLLOW_TARGET':
+			return {
+				...state,
+				followTogId: action.followTogId,
+			}
 		default:
 			return state;
 	}
