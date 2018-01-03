@@ -1,5 +1,5 @@
 module.exports = {
-	entry: './Game.js',
+	entry: './topGeorgist.js',
 	output: {
 		filename: 'static/topGeorgist.bundle.js'
 	},

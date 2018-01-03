@@ -3,7 +3,7 @@
   "description": "Top Georgist",
   "author": "Pokute",
   "version": "0.0.1",
-  "main": "TopGeorgist.js",
+  "main": "topGeorgist.js",
   "dependencies": {
     "redux": "3.7.2",
     "redux-saga": "0.16.0"
