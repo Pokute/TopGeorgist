@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux'
-import players from './players';
+import tgos from './tgos';
+import view from './view';
 
 const topGeorgist = combineReducers({
-	players,
+	tgos,
+	view,
 });
 
 export default topGeorgist

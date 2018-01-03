@@ -12,8 +12,9 @@ const drawLine = () => {
 
 const init = () => {
 	store.dispatch({
-		type: 'ADD_PLAYER',
-		player: {
+		type: 'TGO_ADD',
+		tgo: {
+			tgoId: 'jesh',
 			position: {x: 5, y: 100},
 			color: 'red',
 		}
@@ -42,7 +43,7 @@ const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 };	
 
 const drawWorld = () => {
-	store.getState().players.forEach(p => {
+	store.getState().tgos.forEach((p) => {
 		drawCross(p.position, undefined, p.color);
 	})
 };
