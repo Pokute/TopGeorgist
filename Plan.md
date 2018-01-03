@@ -3,6 +3,7 @@
 ## ToDo milestone 1.
 
 * Autopack with webpack.
+* Itch.io page with publish
 * Open up in browser
 * Has a player
 	* Player can move around
@@ -52,7 +53,7 @@
 * Barracks
 	* Has beds that cost to use
 * Investigate
-	* redux-loop
+	* redux-loop https://github.com/redux-loop/redux-loop
 	* reducer-reducer?
 	* Need for redux-thunk?
 	* react?, react-native with -web?

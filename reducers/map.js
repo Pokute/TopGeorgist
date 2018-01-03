@@ -15,7 +15,11 @@ const fillMapData = (usedSettings = initialSettings, fillWith = 0) => ({
 			.map(t => fillWith()),
 });
 
-export default (state = fillMapData(undefined, () => { return Math.trunc(2 * Math.random());}), action) => {
+const genRandomTiles = (maxTileNum) => (() => {
+	return Math.trunc(maxTileNum * Math.random());
+});
+
+export default (state = fillMapData(undefined, genRandomTiles(3)), action) => {
 	switch (action.type) {
 		default:
 			return state;
