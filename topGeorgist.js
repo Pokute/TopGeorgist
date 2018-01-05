@@ -2,20 +2,13 @@ import store from './store.js';
 import playerActions from './reducers/player';
 import { movePlayerRight } from './playerControls';
 
-const drawLine = () => {
-	const c = document.getElementById("canvas");
-	const ctx = c.getContext("2d");
-	ctx.moveTo(0,0);
-	ctx.lineTo(50,300);
-	ctx.stroke();
-};
-
 const init = () => {
 	store.dispatch({
 		type: 'TGO_ADD',
 		tgo: {
 			tgoId: 'jesh',
-			position: {x: 5, y: 100},
+			position: {x: 5, y: 5},
+			calories: 2000,
 			color: 'red',
 		}
 	});
@@ -31,25 +24,41 @@ const init = () => {
 		}
 	});
 
-	drawLine();
 	drawWorld();
 	setInterval(drawWorld, 100);
+	setInterval(tick, 250);
 
 	const moveRight = document.createElement('button');
 	moveRight.textContent = 'moveRight';
 	moveRight.onclick = movePlayerRight;
 	document.getElementById('controls').appendChild(moveRight);
+
+	const c = document.getElementById("canvas");
+	c.addEventListener('click', (click) => {
+		const { map } = store.getState();
+		const mappedCoords = {
+			x: Math.trunc((click.x - click.target.offsetLeft) / map.tileSize),
+			y: Math.trunc((click.y - click.target.offsetTop) / map.tileSize),
+		};
+		store.dispatch({ 
+			type: 'PLAYER_SET_MOVE_TARGET',
+			tgoId: 'jesh',
+			moveTarget: mappedCoords,
+		});
+		console.log('canvas clicked.', click)
+	});
+	
 };
 
 const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	const c = document.getElementById("canvas");
 	const ctx = c.getContext("2d");
 	ctx.strokeStyle = strokeStyle;
-	ctx.moveTo(pos.x - size.x, pos.y - size.y);
-	ctx.lineTo(pos.x + size.x, pos.y + size.y);
+	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
+	ctx.lineTo(pos.x + size.x/2, pos.y + size.y/2);
 	ctx.stroke();
-	ctx.moveTo(pos.x - size.x, pos.y + size.y);
-	ctx.lineTo(pos.x + size.x, pos.y - size.y);
+	ctx.moveTo(pos.x - size.x/2, pos.y + size.y/2);
+	ctx.lineTo(pos.x + size.x/2, pos.y - size.y/2);
 	ctx.stroke();
 };	
 
@@ -74,10 +83,53 @@ const drawMap = () => {
 
 const drawWorld = () => {
 	drawMap();
+	const { map } = store.getState();
 	store.getState().tgos.forEach((p) => {
-		drawCross(p.position, undefined, p.color);
+		drawCross(
+			{ x: (p.position.x + 0.5)*map.tileSize, y: (p.position.y + 0.5)*map.tileSize, },
+			undefined, p.color);
 	})
 };
+
+const tick = () => {
+	const oldState = store.getState();
+	const newActions = oldState.tgos.map(tgo => {
+		const actions = [];
+		if (tgo.moveTarget) {
+			if ((tgo.moveTarget.x === tgo.position.x) &&
+				(tgo.moveTarget.x === tgo.position.x)) {
+				actions.push({
+					type: 'PLAYER_SET_MOVE_TARGET',
+					tgoId: tgo.tgoId,
+					moveTarget: undefined,
+				});
+			} else {
+				if (tgo.calories && tgo.calories > 0)
+				actions.push({
+					type: 'TGO_SET_POSITION',
+					tgoId: tgo.tgoId,
+					position: {
+						x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
+						y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
+					},
+				});
+				actions.push({
+					type: 'PLAYER_ADD_CALORIES',
+					tgoId: tgo.tgoId,
+					dCalories: -10,
+				});
+			}
+			actions.push({
+				type: 'PLAYER_ADD_CALORIES',
+				tgoId: tgo.tgoId,
+				dCalories: -1,
+			});
+		}
+		return actions;
+	})
+		.reduce((acc, actions) => acc.concat(actions));
+	newActions.forEach(a => store.dispatch(a));
+}
 
 window.onload = init;
 

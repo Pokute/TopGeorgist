@@ -3,7 +3,8 @@
 ## ToDo milestone 1.
 
 * Autopack with webpack.
-* Itch.io page with publish
+* Itch.io page
+	* Butler push
 * Open up in browser
 * Has a player
 	* Player can move around

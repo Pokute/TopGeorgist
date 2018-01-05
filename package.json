@@ -1,20 +1,24 @@
 {
-  "name": "top_georgist",
+  "name": "top-georgist",
   "description": "Top Georgist",
   "author": "Pokute",
   "version": "0.0.1",
-  "main": "topGeorgist.js",
+  "main": "index.html",
   "dependencies": {
-    "redux": "3.7.2",
-    "redux-saga": "0.16.0"
+	"redux": "3.7.2",
+	"redux-saga": "0.16.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.36",
-    "@babel/preset-env": "^7.0.0-beta.36",
-    "babel-loader": "^8.0.0-beta.0",
-    "webpack": "^3.10.0"
+	"@babel/core": "^7.0.0-beta.36",
+	"@babel/preset-env": "^7.0.0-beta.36",
+	"babel-loader": "^8.0.0-beta.0",
+	"webpack": "^3.10.0"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js"
-  }
+	"build": "webpack --config webpack.config.js",
+	"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist"
+  },
+  "files": [
+	  "static/topGeorgist.bundle.js"
+  ]
 }

@@ -1,6 +1,6 @@
 const initialSettings = {
 	size: { x: 100, y: 100 },
-	tileSize: 10,
+	tileSize: 40,
 	tileSetId: 'basic',
 	data: []
 };
