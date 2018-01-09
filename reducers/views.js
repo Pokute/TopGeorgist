@@ -4,12 +4,13 @@ const initialState = [];
 export default (state = initialState, action) => {
 	// Handle single view changes here.
 	if ((action.viewId) && 
-		(action.type != 'TGO_ADD')) {
+		(action.type !== 'VIEW_ADD') &&
+		(action.type !== 'DEFAULT_SET_VIEW')) {
 		return state.map(v => {
-			if (p.viewId !== action.viewId)
-				return p;
+			if (v.viewId !== action.viewId)
+				return v;
 			if (action.type.indexOf('VIEW_') === 0)
-				return tgoReducer(p, action);
+				return tgoReducer(v, action);
 			return v;
 		});
 	}
@@ -17,7 +18,7 @@ export default (state = initialState, action) => {
 		case 'VIEW_ADD':
 			return [
 				...state,
-				action.tgo,
+				action.view,
 			];
 		default:
 			return state;

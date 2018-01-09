@@ -11,9 +11,11 @@ const createStatsRow = (id, reducer, toString) => {
 
 	store.subscribe(() => {
 		const val = reducer(store.getState());
-		data.textContent = typeof(toString) === 'function' ?
-			toString(val) :
-			val;
+		if (val) {
+			data.textContent = typeof(toString) === 'function' ?
+				toString(val) :
+				val;
+		} 
 	});
 }
 
