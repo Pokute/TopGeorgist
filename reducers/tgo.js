@@ -5,6 +5,7 @@ const initialState = {
 		y: 0,
 	},
 	color: 'red',
+	renderer: undefined,
 }
 
 export default (state = initialState, action) => {

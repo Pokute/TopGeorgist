@@ -4,14 +4,26 @@ import { movePlayerRight } from './playerControls';
 import { createStatsRow } from './playerStats';
 
 const init = () => {
+	// Player
 	store.dispatch({
 		type: 'TGO_ADD',
 		tgo: {
 			tgoId: 'jesh',
 			position: {x: 5, y: 5},
 			calories: 2000,
+			money: 100,
 			color: 'red',
 		}
+	});
+
+	// General store
+	store.dispatch({
+		type: 'TGO_ADD',
+		tgo: {
+			tgoId: 'genStore',
+			position: { x: 10, y: 7},
+			color: 'pink',
+		},
 	});
 
 	store.dispatch({
@@ -59,6 +71,7 @@ const init = () => {
 const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	const c = document.getElementById("canvas");
 	const ctx = c.getContext("2d");
+	ctx.beginPath();
 	ctx.strokeStyle = strokeStyle;
 	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
 	ctx.lineTo(pos.x + size.x/2, pos.y + size.y/2);
@@ -72,20 +85,28 @@ const drawTile = (pos, tile, tileSize) => {
 	const c = document.getElementById("canvas");
 	const ctx = c.getContext("2d");
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
+	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 	ctx.fillRect(pos.x - tileSize / 2, pos.y - tileSize / 2,
 		tileSize, tileSize);
 }
 
+const drawView = () => {
+
+};
+
 const drawMap = () => {
+	const s = store.getState();
 	const { map } = store.getState();
 	const tileSet = store.getState().tileSets.find(ts => ts.tileSetId === map.tileSetId);
-	for (let y = 0; y < map.size.y; y++)
-		for (let x = 0; x < map.size.x; x++) {
-			drawTile({ x: map.tileSize * (x + 0.5), y: map.tileSize * (y + 0.5) },
+	for (let y = 0; y < 10; y++)
+		for (let x = 0; x < 10; x++) {
+	// for (let y = 0; y < map.size.y; y++)
+		// for (let x = 0; x < map.size.x; x++) {
+				drawTile({ x: map.tileSize * (x + 0.5), y: map.tileSize * (y + 0.5) },
 				 tileSet.tiles.find(t => t.tileId === map.data[map.size.x * y + x]),
 				 map.tileSize);
 		}
-}
+};
 
 const drawWorld = () => {
 	drawMap();

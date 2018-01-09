@@ -58,3 +58,4 @@
 	* reducer-reducer?
 	* Need for redux-thunk?
 	* react?, react-native with -web?
+* Multiplayer
