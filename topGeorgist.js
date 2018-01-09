@@ -1,6 +1,7 @@
 import store from './store.js';
 import playerActions from './reducers/player';
 import { movePlayerRight } from './playerControls';
+import { createStatsRow } from './playerStats';
 
 const init = () => {
 	store.dispatch({
@@ -32,6 +33,11 @@ const init = () => {
 	moveRight.textContent = 'moveRight';
 	moveRight.onclick = movePlayerRight;
 	document.getElementById('controls').appendChild(moveRight);
+
+	createStatsRow('Calories', state => state.tgos[0].calories);
+	createStatsRow('Money', state => state.tgos[0].money);
+	createStatsRow('Pos', state => state.tgos[0].position, pos => `x:${pos.x} y:${pos.y}`);
+	createStatsRow('MovPos', state => state.tgos[0].moveTarget, pos => `x:${pos.x} y:${pos.y}`);
 
 	const c = document.getElementById("canvas");
 	c.addEventListener('click', (click) => {
@@ -119,12 +125,12 @@ const tick = () => {
 					dCalories: -10,
 				});
 			}
-			actions.push({
-				type: 'PLAYER_ADD_CALORIES',
-				tgoId: tgo.tgoId,
-				dCalories: -1,
-			});
 		}
+		actions.push({
+			type: 'PLAYER_ADD_CALORIES',
+			tgoId: tgo.tgoId,
+			dCalories: -1,
+		});
 		return actions;
 	})
 		.reduce((acc, actions) => acc.concat(actions));
