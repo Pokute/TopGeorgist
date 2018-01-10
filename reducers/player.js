@@ -16,6 +16,11 @@ export default (state = initialState, action) => {
 				...state,
 				calories: Math.max(0, state.calories + action.dCalories),
 			};
+		case 'PLAYER_ADD_MONEY':
+			return {
+				...state,
+				money: Math.max(0, state.money + action.dMoney),
+			};
 		default:
 			return state;
 	}

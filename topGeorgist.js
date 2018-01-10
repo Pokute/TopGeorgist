@@ -1,6 +1,6 @@
 import store from './store.js';
 import playerActions from './reducers/player';
-import { movePlayerRight } from './playerControls';
+import * as playerControls from './playerControls';
 import { createStatsRow } from './playerStats';
 
 const createView = (followTgoId) => {
@@ -71,8 +71,13 @@ const init = () => {
 
 	const moveRight = document.createElement('button');
 	moveRight.textContent = 'moveRight';
-	moveRight.onclick = movePlayerRight;
+	moveRight.onclick = playerControls.playerEatFood;
 	document.getElementById('controls').appendChild(moveRight);
+
+	const eatFood = document.createElement('button');
+	eatFood.textContent = 'Eat a Pineapple';
+	eatFood.onclick = playerControls.playerEatFood;
+	document.getElementById('controls').appendChild(eatFood);
 
 	createStatsRow('Calories', state => getPlayer(state).calories);
 	createStatsRow('Money', state => getPlayer(state).money);

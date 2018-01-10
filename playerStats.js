@@ -19,11 +19,4 @@ const createStatsRow = (id, reducer, toString) => {
 	});
 }
 
-const updateStats = () => {
-	const moveRight = document.createElement('button');
-	moveRight.textContent = 'moveRight';
-	moveRight.onclick = movePlayerRight;
-	document.getElementById('controls').appendChild(moveRight);
-}
-
 export { createStatsRow };
