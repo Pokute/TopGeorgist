@@ -2,6 +2,7 @@ import store from './store.js';
 import playerActions from './reducers/player';
 import * as playerControls from './playerControls';
 import { createStatsRow } from './playerStats';
+import createItemTypes from './types';
 
 const createView = (followTgoId) => {
 	const c = document.getElementById("canvas");
@@ -63,6 +64,9 @@ const init = () => {
 			]
 		}
 	});
+
+	createItemTypes();
+
 	createView('jesh');
 
 	drawView();

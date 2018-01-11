@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux'
+import itemTypes from './itemTypes';
 import map from './map';
 import tgos from './tgos';
-import views from './views';
 import tileSets from './tileSets';
-import tileSet from './tileSet';
+import views from './views';
 
 const topGeorgist = combineReducers({
+	itemTypes,
 	map,
 	tgos,
 	tileSets,
