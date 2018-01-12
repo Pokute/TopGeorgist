@@ -3,6 +3,7 @@ import playerActions from './reducers/player';
 import * as playerControls from './playerControls';
 import { createStatsRow } from './playerStats';
 import createItemTypes from './types';
+import { initInventory } from './playerInventory';
 
 const createView = (followTgoId) => {
 	const c = document.getElementById("canvas");
@@ -34,9 +35,21 @@ const init = () => {
 		tgo: {
 			tgoId: 'jesh',
 			position: {x: 5, y: 5},
-			calories: 2000,
-			money: 100,
 			color: 'red',
+			inventory: [
+				{
+					typeId: 'calories',
+					count: 2000,
+				},
+				{
+					typeId: 'money',
+					count: 500,
+				},
+				{
+					typeId: 'pineApple',
+					count: 10,
+				},
+			],
 		}
 	});
 	store.dispatch({
@@ -67,6 +80,8 @@ const init = () => {
 
 	createItemTypes();
 
+	initInventory('jesh');
+
 	createView('jesh');
 
 	drawView();
@@ -83,8 +98,7 @@ const init = () => {
 	eatFood.onclick = playerControls.playerEatFood;
 	document.getElementById('controls').appendChild(eatFood);
 
-	createStatsRow('Calories', state => getPlayer(state).calories);
-	createStatsRow('Money', state => getPlayer(state).money);
+	// createStatsRow('Calories', state => getPlayer(state).calories);
 	createStatsRow('Pos', state => getPlayer(state).position, pos => `x:${pos.x} y:${pos.y}`);
 	createStatsRow('MovPos', state => getPlayer(state).moveTarget, pos => `x:${pos.x} y:${pos.y}`);
 
@@ -213,27 +227,41 @@ const tick = () => {
 					moveTarget: undefined,
 				});
 			} else {
-				if (tgo.calories && tgo.calories > 0)
+				if  (tgo.inventory) {
+					const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
+					if (cals && cals.count > 0)
+					actions.push({
+						type: 'TGO_SET_POSITION',
+						tgoId: tgo.tgoId,
+						position: {
+							x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
+							y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
+						},
+					});
+					actions.push({
+						type: 'TGO_INVENTORY_ADD',
+						tgoId: tgo.tgoId,
+						item: {
+							typeId: 'calories',
+							count: -10,
+						},
+					});
+				}
+			}
+		}
+		if  (tgo.inventory) {
+			const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
+			if (cals && cals.count > 0) {
 				actions.push({
-					type: 'TGO_SET_POSITION',
+					type: 'TGO_INVENTORY_ADD',
 					tgoId: tgo.tgoId,
-					position: {
-						x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
-						y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
+					item: {
+						typeId: 'calories',
+						count: -1,
 					},
-				});
-				actions.push({
-					type: 'PLAYER_ADD_CALORIES',
-					tgoId: tgo.tgoId,
-					dCalories: -10,
 				});
 			}
 		}
-		actions.push({
-			type: 'PLAYER_ADD_CALORIES',
-			tgoId: tgo.tgoId,
-			dCalories: -1,
-		});
 		return actions;
 	})
 		.reduce((acc, actions) => acc.concat(actions));

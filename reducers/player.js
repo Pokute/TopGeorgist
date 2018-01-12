@@ -1,7 +1,5 @@
 const initialState = {
 	moveTarget: undefined,
-	money: 10,
-	calories: 1000,
 }
 
 export default (state = initialState, action) => {
@@ -10,16 +8,6 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				moveTarget: action.moveTarget,
-			};
-		case 'PLAYER_ADD_CALORIES':
-			return {
-				...state,
-				calories: Math.max(0, state.calories + action.dCalories),
-			};
-		case 'PLAYER_ADD_MONEY':
-			return {
-				...state,
-				money: Math.max(0, state.money + action.dMoney),
 			};
 		default:
 			return state;

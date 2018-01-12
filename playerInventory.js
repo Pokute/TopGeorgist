@@ -1,17 +1,19 @@
 import store from './store';
 
 const initInventory = (ownerTgoId) => {
-	const createInventoryRow = (invItem) => {
+	const createInventoryRow = (invItemType) => {
 		const row = document.createElement('tr');
+		row.id = `inventory_${invItemType.typeId}`;
 		document.getElementById('statsBody').appendChild(row);;
 		const label = document.createElement('th');
-		label.textContent = id;
+		label.textContent = invItemType.label;
 		row.appendChild(label);
 		const count = document.createElement('td');
+		count.className = 'count';
 		count.textContent = 0;
 		row.appendChild(count);
-		if (invItem.actions) {
-			const actionButtons = invItem.actions.map(iia => {
+		if (invItemType.actions) {
+			const actionButtons = invItemType.actions.map(iia => {
 				const b = document.createElement('button');
 				b.textContent = iia.label;
 				b.onclick = iia.onClick;
@@ -23,32 +25,26 @@ const initInventory = (ownerTgoId) => {
 				row.appendChild(actions);
 			}
 		}
+		document.getElementById('inventoryBody').appendChild(row);
+		return row;
+	};
+
+	const updateInventoryRow = (row, invItem) => {
+		const countElement = row.getElementsByClassName('count')[0];
+		if (!countElement) return;
+		countElement.textContent = invItem.count;
 	};
 
 	store.subscribe(() => {
 		const s = store.getState();
-		const owner = s.tgos.find(tgo => tgoId === ownerTgoId);
-		if (!owner) return;
+		const owner = s.tgos.find(tgo => tgo.tgoId === ownerTgoId);
+		if (!owner || !owner.inventory) return;
+		owner.inventory.forEach(ii => {
+			let row = document.getElementById(`inventory_${ii.typeId}`);
+			if (!row) row = createInventoryRow(s.itemTypes.find(it => it.typeId === ii.typeId));
+			updateInventoryRow(row, ii);
+		});
 	});
 }
 
-const createStatsRow = (id, reducer, toString) => {
-	const row = document.createElement('tr');
-	document.getElementById('statsBody').appendChild(row);;
-	const label = document.createElement('th');
-	label.textContent = id;
-	row.appendChild(label);
-	const data = document.createElement('td');
-	row.appendChild(data);
-
-	store.subscribe(() => {
-		const val = reducer(store.getState());
-		if (val) {
-			data.textContent = typeof(toString) === 'function' ?
-				toString(val) :
-				val;
-		} 
-	});
-}
-
-export { createStatsRow };
+export { initInventory };

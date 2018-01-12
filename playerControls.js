@@ -18,16 +18,21 @@ const playerEatFood = () => {
 //	if (p.inventory.find())
 	const p = getPlayer();
 	store.dispatch({
-		type: 'PLAYER_ADD_CALORIES',
+		type: 'TGO_INVENTORY_ADD',
 		tgoId: p.tgoId,
-		dCalories: +500,
+		item: {
+			typeId: 'calories',
+			count: +500,
+		},
 	});
 	store.dispatch({
-		type: 'MODIFY_INVENTORY',
+		type: 'TGO_INVENTORY_ADD',
 		tgoId: p.tgoId,
-		foodId: 'pineApple',
-		dAmount: -1,
-	})
+		item: {
+			typeId: 'pineApple',
+			count: -1,
+		},
+	});
 };
 
 export { movePlayerRight, playerEatFood };

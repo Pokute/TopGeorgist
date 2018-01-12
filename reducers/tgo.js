@@ -1,3 +1,5 @@
+import inventoryReducer from './inventory';
+
 const initialState = {
 	tgoId: undefined,
 	position: {
@@ -19,6 +21,11 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				color: action.color,
+			};
+		case 'TGO_INVENTORY_ADD':
+			return {
+				...state,
+				inventory: inventoryReducer(state.inventory, action),
 			};
 		default:
 			return state;
