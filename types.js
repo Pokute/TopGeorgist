@@ -5,6 +5,12 @@ const defaultType = {
 	isInteger: true,
 }
 
+
+const getPlayer = (state) => {
+	const s = state ? state : store.getState();
+	return s.tgos.find(tgo => tgo.tgoId === s.playerId);
+}
+ 
 const items = {
 	'calories': {
 		label: 'Calories',
@@ -19,6 +25,30 @@ const items = {
 		label: 'Pineapple',
 		stackable: true,
 		isInteger: false,
+		actions: [
+			{
+				label: 'Eat a pineapple',
+				onClick: (actorTgoId, target) => {
+					const p = getPlayer();
+					store.dispatch({
+						type: 'TGO_INVENTORY_ADD',
+						tgoId: actorTgoId,
+						item: {
+							typeId: 'calories',
+							count: +500,
+						},
+					});
+					store.dispatch({
+						type: 'TGO_INVENTORY_ADD',
+						tgoId: actorTgoId,
+						item: {
+							typeId: 'pineApple',
+							count: -1,
+						},
+					});
+				}
+			},
+		]
 	},
 };
 

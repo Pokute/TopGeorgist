@@ -90,13 +90,8 @@ const init = () => {
 
 	const moveRight = document.createElement('button');
 	moveRight.textContent = 'moveRight';
-	moveRight.onclick = playerControls.playerEatFood;
+	moveRight.onclick = playerControls.movePlayerRight;
 	document.getElementById('controls').appendChild(moveRight);
-
-	const eatFood = document.createElement('button');
-	eatFood.textContent = 'Eat a Pineapple';
-	eatFood.onclick = playerControls.playerEatFood;
-	document.getElementById('controls').appendChild(eatFood);
 
 	// createStatsRow('Calories', state => getPlayer(state).calories);
 	createStatsRow('Pos', state => getPlayer(state).position, pos => `x:${pos.x} y:${pos.y}`);

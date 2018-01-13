@@ -16,10 +16,10 @@ const initInventory = (ownerTgoId) => {
 			const actionButtons = invItemType.actions.map(iia => {
 				const b = document.createElement('button');
 				b.textContent = iia.label;
-				b.onclick = iia.onClick;
+				b.onclick = () => iia.onClick(ownerTgoId);
 				return b;
 			});
-			if (actionButtons.count > 0) {
+			if (actionButtons.length > 0) {
 				const actions = document.createElement('td');
 				actionButtons.forEach(b => actions.appendChild(b));
 				row.appendChild(actions);
