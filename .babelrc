@@ -1,9 +1,11 @@
 {
 	"presets": [
-		"@babel/preset-env"
+		"@babel/preset-env",
+		"@babel/stage-0"
 	],
 	"plugins": [
 		["@babel/plugin-proposal-object-rest-spread"],
-		["@babel/transform-modules-commonjs", {}]
+		["@babel/transform-modules-commonjs", {}],
+		["@babel/transform-regenerator"]
 	]
 }

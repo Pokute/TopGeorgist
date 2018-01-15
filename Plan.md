@@ -20,14 +20,6 @@
 		* Sells seeds
 		* Has property "money"
 		* Has limited inventory
-	* Rent office
-		* Used to reserve land
-		* Used to pay rent
-	* Government building
-		* Player spawns here
-		* Has an account for each player
-		* Player can collect money in account.
-		* Accounts gets equal % of all rent collected from rent office.
 	* Plots
 		* Player can plant seeds
 		* Seeds grow into food after some time.
@@ -51,8 +43,17 @@
 		* Can be done anywhere.
 		* Regenerates energy
 		* Sleeping in a bed regenerates more energy.
-* Barracks
-	* Has beds that cost to use
+* Buildings
+	* Rent office
+		* Used to reserve land
+		* Used to pay rent
+	* Government building
+		* Player spawns here
+		* Has an account for each player
+		* Player can collect money in account.
+		* Accounts gets equal % of all rent collected from rent office.
+	* Barracks
+		* Has beds that cost to use
 * Investigate
 	* redux-loop https://github.com/redux-loop/redux-loop
 	* reducer-reducer?

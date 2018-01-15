@@ -1,5 +1,8 @@
 module.exports = {
-	entry: './topGeorgist.js',
+	entry: [
+		'@babel/polyfill',
+		'./topGeorgist.js'
+	],
 	output: {
 		filename: 'static/topGeorgist.bundle.js'
 	},
@@ -14,14 +17,13 @@ module.exports = {
 						presets: [
 							['@babel/env', {
 							  targets: {
-									browsers: [
-										'last 3 versions',
-										'not IE <= 10',
-									],
+								  node: '6',
 							  },
 							}],
+							'@babel/stage-0',
 						],
-						plugins: ['@babel/plugin-proposal-object-rest-spread']
+						plugins: ['@babel/plugin-proposal-object-rest-spread'],
+						plugins: ['@babel/transform-regenerator']
 					}
 				}
 			}
