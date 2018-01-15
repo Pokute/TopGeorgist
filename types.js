@@ -3,6 +3,7 @@ import store from './store';
 const defaultType = {
 	stackable: true,
 	isInteger: true,
+	positiveOnly: true,
 }
 
 

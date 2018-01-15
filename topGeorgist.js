@@ -5,6 +5,7 @@ import { createStatsRow } from './playerStats';
 import createItemTypes from './types';
 import { initInventory } from './playerInventory';
 import { initVisiting } from './visitableControls';
+import transaction from './actions/transaction';
 
 const createView = (followTgoId) => {
 	const c = document.getElementById("canvas");
@@ -90,6 +91,39 @@ const init = () => {
 							});
 						}
 					},
+					{
+						label: 'sellPineapple',
+						onClick: (buyerTgoId, sellerTgoId) => {
+							store.dispatch(transaction(
+								{
+									tgoId: buyerTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: +1,
+										},
+										{
+											typeId: 'money',
+											count: -10,
+										},
+									],
+								},
+								{
+									tgoId: sellerTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: -1,
+										},
+										{
+											typeId: 'money',
+											count: +10,
+										},
+									],
+								},
+							));
+						}
+					}
 				],
 			}
 		},

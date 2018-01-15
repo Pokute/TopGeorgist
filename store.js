@@ -1,5 +1,15 @@
-import { createStore } from 'redux'
-import topGeorgist from './reducers/index.js'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga';
 
-const store = createStore(topGeorgist);
+import topGeorgist from './reducers/index.js'
+import rootSaga from './sagas/root';
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(
+	topGeorgist,
+	applyMiddleware(sagaMiddleware)
+);
+sagaMiddleware.run(rootSaga);
+
 export default store;
