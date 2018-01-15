@@ -4,6 +4,7 @@ import * as playerControls from './playerControls';
 import { createStatsRow } from './playerStats';
 import createItemTypes from './types';
 import { initInventory } from './playerInventory';
+import { initVisiting } from './visitableControls';
 
 const createView = (followTgoId) => {
 	const c = document.getElementById("canvas");
@@ -64,6 +65,33 @@ const init = () => {
 			tgoId: 'genStore',
 			position: { x: 10, y: 7},
 			color: 'pink',
+			visitable: {
+				lable: 'First Store',
+				actions: [
+					{
+						label: 'buyPineapple',
+						onClick: (sellerTgoId, buyerTgoId) => {
+//							const buyer = store.getState().tgos.find(tgo => tgo.tgoId === buyerTgoId);
+							store.dispatch({
+								type: 'TGO_INVENTORY_ADD',
+								tgoId: buyerTgoId,
+								item: {
+									typeId: 'money',
+									count: -20,
+								},
+							});
+							store.dispatch({
+								type: 'TGO_INVENTORY_ADD',
+								tgoId: buyerTgoId,
+								item: {
+									typeId: 'pineApple',
+									count: +1,
+								},
+							});
+						}
+					},
+				],
+			}
 		},
 	});
 
@@ -81,8 +109,9 @@ const init = () => {
 	createItemTypes();
 
 	initInventory('jesh');
-
+	
 	createView('jesh');
+	initVisiting('main');
 
 	drawView();
 	setInterval(drawView, 100);
