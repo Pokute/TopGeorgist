@@ -1,10 +1,9 @@
 import store from './../store.js';
 
-const transaction = (a, b) => {
+const transaction = (...participants) => {
 	return {
 		type: 'TRANSACTION',
-		a,
-		b,
+		participants,
 	};
 };
 

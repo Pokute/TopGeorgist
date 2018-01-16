@@ -6,6 +6,7 @@ import createItemTypes from './types';
 import { initInventory } from './playerInventory';
 import { initVisiting } from './visitableControls';
 import transaction from './actions/transaction';
+import * as inventoryActions from './actions/inventory';
 
 const createView = (followTgoId) => {
 	const c = document.getElementById("canvas");
@@ -66,29 +67,50 @@ const init = () => {
 			tgoId: 'genStore',
 			position: { x: 10, y: 7},
 			color: 'pink',
+			inventory: [
+				{
+					typeId: 'money',
+					count: 5000,
+				},
+				{
+					typeId: 'pineApple',
+					count: 100,
+				},
+			],
 			visitable: {
 				lable: 'First Store',
 				actions: [
 					{
 						label: 'buyPineapple',
-						onClick: (sellerTgoId, buyerTgoId) => {
-//							const buyer = store.getState().tgos.find(tgo => tgo.tgoId === buyerTgoId);
-							store.dispatch({
-								type: 'TGO_INVENTORY_ADD',
-								tgoId: buyerTgoId,
-								item: {
-									typeId: 'money',
-									count: -20,
+						onClick: (buyerTgoId, sellerTgoId) => {
+							store.dispatch(transaction(
+								{
+									tgoId: buyerTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: -1,
+										},
+										{
+											typeId: 'money',
+											count: +20,
+										},
+									],
 								},
-							});
-							store.dispatch({
-								type: 'TGO_INVENTORY_ADD',
-								tgoId: buyerTgoId,
-								item: {
-									typeId: 'pineApple',
-									count: +1,
+								{
+									tgoId: sellerTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: +1,
+										},
+										{
+											typeId: 'money',
+											count: -20,
+										},
+									],
 								},
-							});
+							));
 						}
 					},
 					{
@@ -296,28 +318,14 @@ const tick = () => {
 							y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
 						},
 					});
-					actions.push({
-						type: 'TGO_INVENTORY_ADD',
-						tgoId: tgo.tgoId,
-						item: {
-							typeId: 'calories',
-							count: -10,
-						},
-					});
+					actions.push(inventoryActions.add(tgo.tgoId, 'calories', -10));
 				}
 			}
 		}
 		if  (tgo.inventory) {
 			const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
 			if (cals && cals.count > 0) {
-				actions.push({
-					type: 'TGO_INVENTORY_ADD',
-					tgoId: tgo.tgoId,
-					item: {
-						typeId: 'calories',
-						count: -1,
-					},
-				});
+				actions.push(inventoryActions.add(tgo.tgoId, 'calories', -1));
 			}
 		}
 		return actions;

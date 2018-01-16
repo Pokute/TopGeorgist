@@ -1,4 +1,5 @@
 import store from './store';
+import transaction from './actions/transaction';
 
 const defaultType = {
 	stackable: true,
@@ -6,12 +7,11 @@ const defaultType = {
 	positiveOnly: true,
 }
 
-
 const getPlayer = (state) => {
 	const s = state ? state : store.getState();
 	return s.tgos.find(tgo => tgo.tgoId === s.playerId);
 }
- 
+
 const items = {
 	'calories': {
 		label: 'Calories',
@@ -29,24 +29,22 @@ const items = {
 		actions: [
 			{
 				label: 'Eat a pineapple',
-				onClick: (actorTgoId, target) => {
-					const p = getPlayer();
-					store.dispatch({
-						type: 'TGO_INVENTORY_ADD',
-						tgoId: actorTgoId,
-						item: {
-							typeId: 'calories',
-							count: +500,
-						},
-					});
-					store.dispatch({
-						type: 'TGO_INVENTORY_ADD',
-						tgoId: actorTgoId,
-						item: {
-							typeId: 'pineApple',
-							count: -1,
-						},
-					});
+				onClick: (actorTgoId) => {
+					store.dispatch(transaction(
+						{
+							tgoId: actorTgoId,
+							items: [
+								{
+									typeId: 'calories',
+									count: +500,
+								},
+								{
+									typeId: 'pineApple',
+									count: -1,
+								},
+							],
+						}
+					));
 				}
 			},
 		]
