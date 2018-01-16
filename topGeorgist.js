@@ -37,6 +37,7 @@ const init = () => {
 		type: 'TGO_ADD',
 		tgo: {
 			tgoId: 'jesh',
+			typeId: 'player',
 			position: {x: 5, y: 5},
 			color: 'red',
 			inventory: [
@@ -65,6 +66,7 @@ const init = () => {
 		type: 'TGO_ADD',
 		tgo: {
 			tgoId: 'genStore',
+			typeId: 'building',
 			position: { x: 10, y: 7},
 			color: 'pink',
 			inventory: [
@@ -82,23 +84,10 @@ const init = () => {
 				actions: [
 					{
 						label: 'buyPineapple',
-						onClick: (buyerTgoId, sellerTgoId) => {
+						onClick: (actorTgoId, targetTgoId) => {
 							store.dispatch(transaction(
 								{
-									tgoId: buyerTgoId,
-									items: [
-										{
-											typeId: 'pineApple',
-											count: -1,
-										},
-										{
-											typeId: 'money',
-											count: +20,
-										},
-									],
-								},
-								{
-									tgoId: sellerTgoId,
+									tgoId: actorTgoId,
 									items: [
 										{
 											typeId: 'pineApple',
@@ -110,28 +99,28 @@ const init = () => {
 										},
 									],
 								},
+								{
+									tgoId: targetTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: -1,
+										},
+										{
+											typeId: 'money',
+											count: +20,
+										},
+									],
+								},
 							));
 						}
 					},
 					{
 						label: 'sellPineapple',
-						onClick: (buyerTgoId, sellerTgoId) => {
+						onClick: (actorTgoId, targetTgoId) => {
 							store.dispatch(transaction(
 								{
-									tgoId: buyerTgoId,
-									items: [
-										{
-											typeId: 'pineApple',
-											count: +1,
-										},
-										{
-											typeId: 'money',
-											count: -10,
-										},
-									],
-								},
-								{
-									tgoId: sellerTgoId,
+									tgoId: actorTgoId,
 									items: [
 										{
 											typeId: 'pineApple',
@@ -140,6 +129,19 @@ const init = () => {
 										{
 											typeId: 'money',
 											count: +10,
+										},
+									],
+								},
+								{
+									tgoId: targetTgoId,
+									items: [
+										{
+											typeId: 'pineApple',
+											count: +1,
+										},
+										{
+											typeId: 'money',
+											count: -10,
 										},
 									],
 								},

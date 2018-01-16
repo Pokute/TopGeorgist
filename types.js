@@ -1,10 +1,12 @@
 import store from './store';
 import transaction from './actions/transaction';
+import { plant } from './actions/plantable';
 
 const defaultType = {
 	stackable: true,
 	isInteger: true,
 	positiveOnly: true,
+	building: false,
 }
 
 const getPlayer = (state) => {
@@ -47,7 +49,53 @@ const items = {
 					));
 				}
 			},
+			{
+				label: 'Make into shoots',
+				onClick: (actorTgoId) => {
+					store.dispatch(transaction(
+						{
+							tgoId: actorTgoId,
+							items: [
+								{
+									typeId: 'pineAppleShoot',
+									count: +2,
+								},
+								{
+									typeId: 'pineApple',
+									count: -1,
+								},
+							],
+						}
+					));
+				}
+			},
 		]
+	},
+	'pineAppleShoot': {
+		label: 'Pineapple shoot',
+		stackable: true,
+		isInteger: true,
+		building: true,
+		growsIntoTypeId: 'pineApple',
+		actions: [{
+			label: 'Plant',
+			onClick: (actorTgoId) => store.dispatch(plant(actorTgoId, 'pineAppleShoot')),
+		}],
+	},
+	'player': {
+		label: 'Player',
+		stackable: false,
+	},
+	'building': {
+		label: 'Building',
+		stackable: false,
+		building: true,
+	},
+	'plant': {
+		label: 'Plant',
+		stackable: false,
+		isInteger: true,
+		building: true
 	},
 };
 

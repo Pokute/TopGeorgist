@@ -1,11 +1,15 @@
 import playerReducer from './player';
 import tgoReducer from './tgo';
 const initialState = [];
+const listActions = [
+	'TGO_ADD',
+	'TGO_REMOVE',
+]
 
 export default (state = initialState, action) => {
 	// Handle single tgo changes here.
 	if ((action.tgoId) && 
-		(action.type != 'TGO_ADD')) {
+		(listActions.indexOf(action.type) === -1)) {
 		return state.map(p => {
 			if (p.tgoId !== action.tgoId)
 				return p;
@@ -22,6 +26,8 @@ export default (state = initialState, action) => {
 				...state,
 				action.tgo,
 			];
+		case 'TGO_REMOVE':
+			return state.filter(tgo => tgo.tgoId !== action.tgoId);
 		default:
 			return state;
 	}

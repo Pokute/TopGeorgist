@@ -34,7 +34,7 @@ const initVisiting = (viewId) => {
 				row.appendChild(col);
 				const b = document.createElement('button');
 				b.textContent = a.label;
-				b.onclick = () => a.onClick(visitable.tgoId, visitor.tgoId);
+				b.onclick = () => a.onClick(visitor.tgoId, visitable.tgoId);
 				col.appendChild(b);
 				tb.appendChild(row);
 			});

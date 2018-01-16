@@ -17,20 +17,19 @@
 	* Store
 		* Buys food
 		* Sells food
-		* Sells seeds
 		* Has property "money"
 		* Has limited inventory
 	* Plots
-		* Player can plant seeds
-		* Seeds grow into food after some time.
+		* Player can plant shoots
+		* Shoots grow into food after some time.
 		* Food can be collected by players, removing the seed.
 * Items
 	* Money
-	* Seeds
+	* Shoots
 		* Can be planted
 	* Food
 		* Can be eaten to increase calories
-		* Can be turned into 2 seeds.
+		* Can be turned into 2 shoots.
 
 ## Milestone 2
 
@@ -59,4 +58,5 @@
 	* reducer-reducer?
 	* Need for redux-thunk?
 	* react?, react-native with -web?
+* Refactor view.
 * Multiplayer
