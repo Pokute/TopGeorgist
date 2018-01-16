@@ -49,6 +49,7 @@ const plant = function* (action) {
 					},
 				],
 			},
+			tick: (tgo) => inventoryActions.add(tgo.tgoId, tgo.plantTypeId, +(1 / 256)),
 		}
 	});
 };
@@ -68,7 +69,7 @@ const harvest = function* (action) {
 		items: [
 			{
 				typeId: targetTgo.plantTypeId,
-				count: 1,
+				count: targetTgo.inventory.find(i => i.typeId === targetTgo.plantTypeId).count,
 			},
 		],
 	}));

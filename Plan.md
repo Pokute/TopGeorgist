@@ -21,7 +21,8 @@
 		* Has limited inventory
 	* Plots
 		* Player can plant shoots
-		* Shoots grow into food after some time.
+		* Shoots grow into food
+		* It takes time for shoots to grow into food.
 		* Food can be collected by players, removing the seed.
 * Items
 	* Money
@@ -34,14 +35,6 @@
 ## Milestone 2
 
 * Hot reload?
-* Player
-	* New "energy" stat.
-	* Doing different actions use "energy"
-	* Calorie burn regenerates energy.
-	* Can sleep
-		* Can be done anywhere.
-		* Regenerates energy
-		* Sleeping in a bed regenerates more energy.
 * Buildings
 	* Rent office
 		* Used to reserve land
@@ -51,12 +44,28 @@
 		* Has an account for each player
 		* Player can collect money in account.
 		* Accounts gets equal % of all rent collected from rent office.
-	* Barracks
-		* Has beds that cost to use
 * Investigate
 	* redux-loop https://github.com/redux-loop/redux-loop
 	* reducer-reducer?
 	* Need for redux-thunk?
-	* react?, react-native with -web?
 * Refactor view.
+* Tick into redux.
+* Reduxise all callbacks.
 * Multiplayer
+	* Server
+* Publishing
+
+## Milestone 3
+* Player
+	* New "energy" stat.
+	* Doing different actions use "energy"
+	* Calorie burn regenerates energy.
+	* Can sleep
+		* Can be done anywhere.
+		* Regenerates energy
+		* Sleeping in a bed regenerates more energy.
+* Buildings
+	* Barracks
+		* Has beds that cost to use
+* Investigate
+	* react?, react-native with -web?
