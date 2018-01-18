@@ -15,9 +15,9 @@ const createTable = (className, caption) => {
 	table.className = className;
 	table.border = '1';
 	if (caption) {
-		const caption = document.createElement('caption');
-		caption.textContent = caption;
-		table.appendChild(caption);
+		const captionElement = document.createElement('caption');
+		captionElement.textContent = caption;
+		table.appendChild(captionElement);
 	}
 	const tBody = document.createElement('tbody');
 	table.appendChild(tBody);

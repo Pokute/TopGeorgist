@@ -24,7 +24,7 @@ const initVisiting = (parent, viewId) => {
 			const visitable = state.tgos.find(tgo => (tgo.tgoId === visitableTgo.tgoId) && (tgo.tgoId !== visitor.tgoId));
 			if (!visitable) return;
 
-			parent.getElementsByTagName('caption')[0].textContent = visitable.name;
+			parent.getElementsByTagName('caption')[0].textContent = visitable.visitable.label;
 			// document.getElementById('visitable').visitableTogId = visitable.togId;
 			const tb = parent.getElementsByTagName('tbody')[0];
 			tb.innerHTML = '';

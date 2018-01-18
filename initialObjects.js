@@ -86,7 +86,7 @@ const createInitialObjects = () => {
 				},
 			],
 			visitable: {
-				lable: 'First Store',
+				label: 'First Store',
 				actions: [
 					{
 						label: 'buyPineapple',
