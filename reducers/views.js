@@ -10,7 +10,7 @@ export default (state = initialState, action) => {
 			if (v.viewId !== action.viewId)
 				return v;
 			if (action.type.indexOf('VIEW_') === 0)
-				return tgoReducer(v, action);
+				return viewReducer(v, action);
 			return v;
 		});
 	}

@@ -10,11 +10,15 @@ const init = () => {
 	setInterval(tick, 250);
 
 	// View specific
-	document.body.appendChild(viewActions.create(document.getElementById("canvas"), 'main', 'jesh', true));
+	document.body.appendChild(viewActions.create('main', 'jesh', true));
+	document.body.appendChild(viewActions.create('secondary', 'genStore'));
 
 	store.dispatch(viewActions.render());
 	setInterval(() => {
 		store.dispatch(viewActions.render());
+	}, 100);
+	setInterval(() => {
+		store.dispatch(viewActions.render('secondary'));
 	}, 100);
 };
 

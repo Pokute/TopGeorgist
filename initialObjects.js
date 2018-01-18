@@ -73,7 +73,7 @@ const createInitialObjects = () => {
 		tgo: {
 			tgoId: 'genStore',
 			typeId: 'building',
-			position: { x: 10, y: 7},
+			position: { x: 12, y: 12},
 			color: 'pink',
 			inventory: [
 				{

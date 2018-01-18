@@ -42,17 +42,9 @@ const createHTML = (viewId) => {
 	const infoCol = document.createElement('td');
 	viewRow.appendChild(infoCol);
 
-	const getPlayer = (state) => {
-		const s = state ? state : store.getState();
-		return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
-	}
-
 	// Stats
 	const stats = createTable('stats', 'Stats');
 	infoCol.appendChild(stats);
-	const statsBody = stats.getElementsByTagName('tbody')[0];
-	statsBody.appendChild(createStatsRow('Pos', state => getPlayer(state).position, pos => `x:${pos.x} y:${pos.y}`));
-	statsBody.appendChild(createStatsRow('MovPos', state => getPlayer(state).moveTarget, pos => `x:${pos.x} y:${pos.y}`));
 
 	// Controls
 	const controls = document.createElement('div');
@@ -72,7 +64,7 @@ const createHTML = (viewId) => {
 	return viewTable;
 };
 
-const create = (canvasElement, viewId, followTgoId = undefined, setAsDefault = false) => {
+const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 	// Check for duplicate viewId.
 
 	const html = createHTML();
@@ -93,6 +85,17 @@ const create = (canvasElement, viewId, followTgoId = undefined, setAsDefault = f
 		store.dispatch(setDefault(viewId));
 	}
 
+	if (followTgoId) {
+		const getTgo = (state, tgoId) => {
+			const s = state ? state : store.getState();
+			return s.tgos.find(tgo => tgo.tgoId === tgoId);
+		};
+
+		const statsBody = html.getElementsByClassName('stats')[0];
+		statsBody.appendChild(createStatsRow('Pos', state => getTgo(state, followTgoId).position, pos => `x:${pos.x} y:${pos.y}`));
+		statsBody.appendChild(createStatsRow('MovPos', state => getTgo(state, followTgoId).moveTarget, pos => `x:${pos.x} y:${pos.y}`));
+	}
+
 	const moveRight = document.createElement('button');
 	moveRight.textContent = 'moveRight';
 	moveRight.onclick = playerControls.movePlayerRight;
@@ -103,7 +106,7 @@ const create = (canvasElement, viewId, followTgoId = undefined, setAsDefault = f
 
 	c.addEventListener('click', (click) => {
 		const s = store.getState();
-		const v = s.views.find(v => v.viewId === s.defaults.viewId);
+		const v = s.views.find(v => v.viewId === viewId);
 		if (!v) return;
 		const { map } = s;
 		const { minTile, offset } = viewUtils.getMetrics(v.viewId);
