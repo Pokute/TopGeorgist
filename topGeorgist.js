@@ -7,29 +7,7 @@ import { initInventory } from './playerInventory';
 import { initVisiting } from './visitableControls';
 import transaction from './actions/transaction';
 import * as inventoryActions from './actions/inventory';
-
-const createView = (followTgoId) => {
-	const c = document.getElementById("canvas");
-	const ctx = c.getContext("2d");
-	store.dispatch({
-		type: 'VIEW_ADD',
-		view: {
-			viewId: 'main',
-			followTgoId,
-			position: { x: 10, y: 10 },
-			size: { x: c.width, y: c.height },
-		}
-	});
-	store.dispatch({
-		type: 'DEFAULT_SET_VIEW',
-		viewId: 'main',
-	});
-}
-
-const getPlayer = (state) => {
-	const s = state ? state : store.getState();
-	return s.tgos.find(tgo => tgo.tgoId === s.playerId);
-}
+import * as viewActions from './actions/view';
 
 const init = () => {
 	// Player
@@ -91,7 +69,7 @@ const init = () => {
 		}
 	});
 	store.dispatch({
-		type: 'DEFAULT_SET_PLAYER',
+		type: 'DEFAULTS_SET_PLAYER',
 		tgoId: 'jesh',
 	});
 
@@ -202,11 +180,13 @@ const init = () => {
 
 	initInventory('jesh');
 	
-	createView('jesh');
+	viewActions.create(document.getElementById("canvas"), 'main', 'jesh', true);
 	initVisiting('main');
 
-	drawView();
-	setInterval(drawView, 100);
+	store.dispatch(viewActions.render());
+	setInterval(() => {
+		store.dispatch(viewActions.render());
+	}, 100);
 	setInterval(tick, 250);
 
 	const moveRight = document.createElement('button');
@@ -214,120 +194,14 @@ const init = () => {
 	moveRight.onclick = playerControls.movePlayerRight;
 	document.getElementById('controls').appendChild(moveRight);
 
+	const getPlayer = (state) => {
+		const s = state ? state : store.getState();
+		return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
+	}
+	
 	// createStatsRow('Calories', state => getPlayer(state).calories);
 	createStatsRow('Pos', state => getPlayer(state).position, pos => `x:${pos.x} y:${pos.y}`);
 	createStatsRow('MovPos', state => getPlayer(state).moveTarget, pos => `x:${pos.x} y:${pos.y}`);
-
-	const c = document.getElementById("canvas");
-	c.addEventListener('click', (click) => {
-		const s = store.getState();
-		const v = s.views.find(v => v.viewId === s.defaultViewId);
-		if (!v) return;
-		const { map } = s;
-		const { minTile, offset } = getViewMetrics(s.defaultViewId);
-		const canvasCoords = {
-			x: click.offsetX,
-			y: click.offsetY,
-		};
-		const mappedCoords = {
-			x: Math.trunc(canvasCoords.x / map.tileSize + offset.x) + minTile.x,
-			y: Math.trunc(canvasCoords.y / map.tileSize + offset.y) + minTile.y,
-		};
-		store.dispatch({ 
-			type: 'PLAYER_SET_MOVE_TARGET',
-			tgoId: 'jesh',
-			moveTarget: mappedCoords,
-		});
-		console.log('canvas clicked.', mappedCoords)
-	});
-	
-};
-
-const drawCross = (pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
-	const c = document.getElementById("canvas");
-	const ctx = c.getContext("2d");
-	ctx.beginPath();
-	ctx.strokeStyle = strokeStyle;
-	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
-	ctx.lineTo(pos.x + size.x/2, pos.y + size.y/2);
-	ctx.stroke();
-	ctx.moveTo(pos.x - size.x/2, pos.y + size.y/2);
-	ctx.lineTo(pos.x + size.x/2, pos.y - size.y/2);
-	ctx.stroke();
-};	
-
-const drawTile = (pos, tile, tileSize) => {
-	const c = document.getElementById("canvas");
-	const ctx = c.getContext("2d");
-	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
-	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
-	ctx.fillRect(pos.x - tileSize / 2, pos.y - tileSize / 2,
-		tileSize, tileSize);
-}
-
-const getViewMetrics = (viewId) => {
-	const s = store.getState();
-	const v = s.views.find(v => v.viewId === viewId);
-	const followTgo = v.followTgoId
-		? s.tgos.find(tgo => tgo.tgoId === v.followTgoId)
-		: undefined;
-	const pos = followTgo ? followTgo.position : v.position;
-
-	const { map } = store.getState();
-	const min = {
-		x: Math.round(pos.x * map.tileSize - v.size.x/2),
-		y: Math.round(pos.y * map.tileSize - v.size.y/2),
-	};
-	const max = {
-		x: Math.round(pos.x * map.tileSize + v.size.x/2),
-		y: Math.round(pos.y * map.tileSize + v.size.y/2),
-	};
-	const minTile = {
-		x: Math.max(0, Math.trunc(min.x / map.tileSize)),
-		y: Math.max(0, Math.trunc(min.y / map.tileSize)),
-	};
-	const maxTile = {
-		x: Math.min(map.size.x, Math.trunc(max.x / map.tileSize)),
-		y: Math.min(map.size.y, Math.trunc(max.y / map.tileSize)),
-	};
-
-	const offset = {
-		x: min.x - Math.trunc(min.x),
-		y: min.y - Math.trunc(min.y),
-	};
-
-	return {
-		minTile,
-		maxTile,
-		offset,
-	}; 
-}
-
-const drawView = (viewId) => {
-	const s = store.getState();
-	const usedViewId = (viewId !== undefined) ? viewId : s.defaultViewId;
-	const v = s.views.find(v => v.viewId === usedViewId);
-	if (!v) return;
-
-	const { map } = store.getState();
-	const { minTile, maxTile, offset } = getViewMetrics(usedViewId);
-
-	const tileSet = store.getState().tileSets.find(ts => ts.tileSetId === map.tileSetId);
-	for (let y = minTile.y; y < maxTile.y; y++)
-		for (let x = minTile.x; x < maxTile.x; x++) {
-			drawTile({
-				x: map.tileSize * (x - minTile.x + offset.x + 0.5),
-				y: map.tileSize * (y - minTile.y + offset.y + 0.5)
-			},
-			tileSet.tiles.find(t => t.tileId === map.data[map.size.x * y + x]),
-			map.tileSize);
-		}
-
-	store.getState().tgos.forEach((p) => {
-		drawCross(
-			{ x: (p.position.x - minTile.x + offset.x + 0.5)*map.tileSize, y: (p.position.y - minTile.y + offset.y + 0.5)*map.tileSize, },
-			undefined, p.color);
-	})
 };
 
 const tick = () => {

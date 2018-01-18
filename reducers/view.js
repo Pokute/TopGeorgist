@@ -1,5 +1,6 @@
 const initialState = {
 	viewId: undefined,
+	canvas: undefined,
 	followTogId: undefined,
 	position: {
 		x: 0,

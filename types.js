@@ -11,7 +11,7 @@ const defaultType = {
 
 const getPlayer = (state) => {
 	const s = state ? state : store.getState();
-	return s.tgos.find(tgo => tgo.tgoId === s.playerId);
+	return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
 }
 
 const items = {

@@ -34,7 +34,14 @@
 
 ## Milestone 2
 
-* Hot reload?
+* tgoId generation.
+* redux store array accessor shorthand functions / utility.
+* Refactor view.
+* Player creation.
+* Multiplayer
+	* Server
+		* Where?
+* Leaderboards
 * Buildings
 	* Rent office
 		* Used to reserve land
@@ -44,15 +51,14 @@
 		* Has an account for each player
 		* Player can collect money in account.
 		* Accounts gets equal % of all rent collected from rent office.
+* Rehydrate
+* Hot reload?
 * Investigate
 	* redux-loop https://github.com/redux-loop/redux-loop
 	* reducer-reducer?
 	* Need for redux-thunk?
-* Refactor view.
 * Tick into redux.
 * Reduxise all callbacks.
-* Multiplayer
-	* Server
 * Publishing
 
 ## Milestone 3

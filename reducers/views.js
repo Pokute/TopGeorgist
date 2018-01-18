@@ -5,7 +5,7 @@ export default (state = initialState, action) => {
 	// Handle single view changes here.
 	if ((action.viewId) && 
 		(action.type !== 'VIEW_ADD') &&
-		(action.type !== 'DEFAULT_SET_VIEW')) {
+		(action.type !== 'DEFAULTS_SET_VIEW')) {
 		return state.map(v => {
 			if (v.viewId !== action.viewId)
 				return v;
