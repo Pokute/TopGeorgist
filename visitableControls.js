@@ -1,9 +1,9 @@
 import store from './store';
 
-const initVisiting = (viewId) => {
+const initVisiting = (parent, viewId) => {
 	store.subscribe(() => {
-		document.getElementById('visitableTitle').textContent = '';
-		document.getElementById('visitableBody').innerHTML = '';
+		parent.getElementsByTagName('caption')[0].textContent = '';
+		parent.getElementsByTagName('tbody')[0].innerHTML = '';
 
 		const state = store.getState();
 		const view = state.views.find(v => v.viewId === viewId);
@@ -24,9 +24,9 @@ const initVisiting = (viewId) => {
 			const visitable = state.tgos.find(tgo => tgo.tgoId === visitableTgo.tgoId);
 			if (!visitable) return;
 
-			document.getElementById('visitableTitle').textContent = visitable.name;
-			document.getElementById('visitable').visitableTogId = visitable.togId;
-			const tb = document.getElementById('visitableBody');
+			parent.getElementsByTagName('caption')[0].textContent = visitable.name;
+			// document.getElementById('visitable').visitableTogId = visitable.togId;
+			const tb = parent.getElementsByTagName('tbody')[0];
 			tb.innerHTML = '';
 			visitable.visitable.actions.forEach(a => {
 				const row = document.createElement('tr');

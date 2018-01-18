@@ -1,10 +1,9 @@
 import store from './store';
 
-const initInventory = (ownerTgoId) => {
+const initInventory = (parent, ownerTgoId) => {
 	const createInventoryRow = (invItemType) => {
 		const row = document.createElement('tr');
-		row.id = `inventory_${invItemType.typeId}`;
-		document.getElementById('statsBody').appendChild(row);;
+		row.className = `inventory_${invItemType.typeId}`;
 		const label = document.createElement('th');
 		label.textContent = invItemType.label;
 		row.appendChild(label);
@@ -25,7 +24,6 @@ const initInventory = (ownerTgoId) => {
 				row.appendChild(actions);
 			}
 		}
-		document.getElementById('inventoryBody').appendChild(row);
 		return row;
 	};
 
@@ -40,8 +38,8 @@ const initInventory = (ownerTgoId) => {
 		const owner = s.tgos.find(tgo => tgo.tgoId === ownerTgoId);
 		if (!owner || !owner.inventory) return;
 		owner.inventory.forEach(ii => {
-			let row = document.getElementById(`inventory_${ii.typeId}`);
-			if (!row) row = createInventoryRow(s.itemTypes.find(it => it.typeId === ii.typeId));
+			let row = parent.getElementsByClassName(`inventory_${ii.typeId}`)[0];
+			if (!row) row = parent.appendChild(createInventoryRow(s.itemTypes.find(it => it.typeId === ii.typeId)));
 			updateInventoryRow(row, ii);
 		});
 	});

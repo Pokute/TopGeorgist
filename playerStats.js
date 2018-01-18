@@ -2,7 +2,6 @@ import store from './store';
 
 const createStatsRow = (id, reducer, toString) => {
 	const row = document.createElement('tr');
-	document.getElementById('statsBody').appendChild(row);;
 	const label = document.createElement('th');
 	label.textContent = id;
 	row.appendChild(label);
@@ -17,6 +16,8 @@ const createStatsRow = (id, reducer, toString) => {
 				val;
 		} 
 	});
+	
+	return row;
 }
 
 export { createStatsRow };

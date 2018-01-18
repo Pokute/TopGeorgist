@@ -1,10 +1,6 @@
 import store from './store.js';
 import playerActions from './reducers/player';
-import * as playerControls from './playerControls';
-import { createStatsRow } from './playerStats';
 import createItemTypes from './types';
-import { initInventory } from './playerInventory';
-import { initVisiting } from './visitableControls';
 import transaction from './actions/transaction';
 import * as inventoryActions from './actions/inventory';
 import * as viewActions from './actions/view';
@@ -177,31 +173,16 @@ const init = () => {
 	});
 
 	createItemTypes();
-
-	initInventory('jesh');
 	
-	viewActions.create(document.getElementById("canvas"), 'main', 'jesh', true);
-	initVisiting('main');
+	setInterval(tick, 250);
+
+	// View specific
+	document.body.appendChild(viewActions.create(document.getElementById("canvas"), 'main', 'jesh', true));
 
 	store.dispatch(viewActions.render());
 	setInterval(() => {
 		store.dispatch(viewActions.render());
 	}, 100);
-	setInterval(tick, 250);
-
-	const moveRight = document.createElement('button');
-	moveRight.textContent = 'moveRight';
-	moveRight.onclick = playerControls.movePlayerRight;
-	document.getElementById('controls').appendChild(moveRight);
-
-	const getPlayer = (state) => {
-		const s = state ? state : store.getState();
-		return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
-	}
-	
-	// createStatsRow('Calories', state => getPlayer(state).calories);
-	createStatsRow('Pos', state => getPlayer(state).position, pos => `x:${pos.x} y:${pos.y}`);
-	createStatsRow('MovPos', state => getPlayer(state).moveTarget, pos => `x:${pos.x} y:${pos.y}`);
 };
 
 const tick = () => {
