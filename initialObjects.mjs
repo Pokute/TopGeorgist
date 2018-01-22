@@ -1,4 +1,4 @@
-import store from './store.js';
+import store from './store';
 import * as inventoryActions from './actions/inventory';
 import transaction from './actions/transaction';
 import playerActions from './reducers/player';

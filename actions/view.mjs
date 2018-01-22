@@ -1,4 +1,4 @@
-import store from '../store.js';
+import store from '../store';
 import * as viewUtils from '../utils/view';
 import { createStatsRow } from '../playerStats';
 import { initInventory } from '../playerInventory';

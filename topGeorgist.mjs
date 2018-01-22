@@ -1,4 +1,4 @@
-import store from './store.js';
+import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import * as viewActions from './actions/view';

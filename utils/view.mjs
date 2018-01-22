@@ -1,4 +1,4 @@
-import store from '../store.js';
+import store from '../store';
 
 const getMetrics = (viewId) => {
 	const s = store.getState();

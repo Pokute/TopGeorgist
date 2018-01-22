@@ -1,7 +1,7 @@
 module.exports = {
 	entry: [
 		'@babel/polyfill',
-		'./topGeorgist.js'
+		'./topGeorgist'
 	],
 	output: {
 		filename: 'static/topGeorgist.bundle.js'
@@ -9,7 +9,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.js$/i,
+				test: /(\.js$|\.mjs$)/i,
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
@@ -29,6 +29,9 @@ module.exports = {
 			}
 		]
 	},
+	resolve: {
+		extensions: ['.mjs', '.js'],
+	},		
 	devtool: 'source-map',
 	watch: true,
 };

@@ -4,10 +4,14 @@
 	"author": "Pokute",
 	"version": "0.0.1",
 	"main": "index.html",
+	"@std/esm": "cjs",
 	"dependencies": {
 		"@babel/polyfill": "^7.0.0-beta.37",
+		"@std/esm": "^0.19.7",
 		"redux": "3.7.2",
-		"redux-saga": "0.16.0"
+		"redux-saga": "0.16.0",
+		"uuid": "^3.2.1",
+		"ws": "^4.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.0.0-beta.37",
@@ -20,8 +24,9 @@
 		"webpack": "^3.10.0"
 	},
 	"scripts": {
-		"build": "webpack --config webpack.config.js",
-		"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist"
+		"build": "webpack --display-error-details --config webpack.config.js",
+		"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
+		"server": "node -r @std/esm --experimental-modules server.mjs"
 	},
 	"files": [
 		"static/topGeorgist.bundle.js"

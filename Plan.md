@@ -34,10 +34,11 @@
 
 ## Milestone 2
 
-* tgoId generation.
-* redux store array accessor shorthand functions / utility.
 * Refactor view.
+* tgoId generation.
+	* uuid npm package installed.
 * Player creation.
+* redux store array accessor shorthand functions / utility.
 * Multiplayer
 	* Server
 		* Where?
@@ -75,3 +76,8 @@
 		* Has beds that cost to use
 * Investigate
 	* react?, react-native with -web?
+* Rendering overhaul
+* Add graphics for most items.
+* Better map generation.
+* Economy
+	* More sinks
