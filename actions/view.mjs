@@ -101,6 +101,11 @@ const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 	moveRight.onclick = playerControls.movePlayerRight;
 	html.getElementsByClassName('controls')[0].appendChild(moveRight);
 
+	const foo = document.createElement('button');
+	foo.textContent = 'Foo!';
+	foo.onclick = playerControls.giveServerSomethingToThink;
+	html.getElementsByClassName('controls')[0].appendChild(foo);
+
 	initInventory(html.getElementsByClassName('inventory')[0], followTgoId);
 	initVisiting(html.getElementsByClassName('visitable')[0], viewId);
 

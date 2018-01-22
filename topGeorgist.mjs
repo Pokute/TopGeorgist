@@ -2,8 +2,11 @@ import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import * as viewActions from './actions/view';
+import WebSocketWrapper from 'ws-wrapper';
 
 const init = () => {
+	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
+
 	createItemTypes();
 	createInitialObjects();
 

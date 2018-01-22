@@ -1,9 +1,8 @@
 import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
-import ws from 'ws';
+import { Server as WSS } from 'ws';
 
-const WSS = ws.Server;
 // Start the server
 var wss = new WSS({ port: 4320 });
 

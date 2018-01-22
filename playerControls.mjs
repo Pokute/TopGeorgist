@@ -14,4 +14,8 @@ const movePlayerRight = () => {
 	});
 };
 
-export { movePlayerRight };
+const giveServerSomethingToThink = () => {
+	global.ws.send('Foobar!');
+};
+
+export { movePlayerRight, giveServerSomethingToThink };
