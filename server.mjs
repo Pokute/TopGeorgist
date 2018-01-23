@@ -8,6 +8,7 @@ var wss = new WSS({ port: 4320 });
 
 console.log('Started server');
 
+try {
 // When a connection is established
 wss.on('connection', function(socket) {
 	console.log('Opened connection 🎉');
@@ -18,16 +19,23 @@ wss.on('connection', function(socket) {
 
 	// When data is received
 	socket.on('message', function(message) {
-		console.log('Received: ' + message);
+		console.log('Received: ', message);
+		if (message === 'GET_ALL_OBJECTS') {
+			socket.send(JSON.stringify(store.getState()));
+		}
 	});
 
 	// The connection was closed
 	socket.on('close', function() {
 		console.log('Closed Connection 😱');
 	});
-  
-});
 
+	// The connection was closed
+	socket.on('error', function(e) {
+		console.log('Erred Connection 😱', e);
+	});
+});
+} catch (e) { console.log(e); }
 const init = () => {
 	createItemTypes();
 	createInitialObjects();

@@ -15,7 +15,7 @@ const movePlayerRight = () => {
 };
 
 const giveServerSomethingToThink = () => {
-	global.ws.send('Foobar!');
+	global.ws.send('GET_ALL_OBJECTS');
 };
 
 export { movePlayerRight, giveServerSomethingToThink };

@@ -7,6 +7,11 @@ import WebSocketWrapper from 'ws-wrapper';
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
 
+	global.ws.on('message', (msg) => {
+		console.log(msg);
+		console.log(JSON.parse(msg.data));
+	});
+
 	createItemTypes();
 	createInitialObjects();
 
