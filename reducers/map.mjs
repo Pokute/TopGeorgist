@@ -1,11 +1,20 @@
-const initialSettings = {
-	size: { x: 100, y: 100 },
+import randomJs from 'random-js';
+
+const initialState = {
+	seed: undefined,
+	size: { x: 0, y: 0 },
 	tileSize: 40,
 	tileSetId: 'basic',
 	data: []
 };
 
-const fillMapData = (usedSettings = initialSettings, fillWith = 0) => ({
+const defaultSettings = {
+	size: { x: 20, y: 20 },
+	minTileId: 0,
+	maxTileId: 2,
+};
+
+const fillMapData = (usedSettings, fillWith = 0) => ({
 	...usedSettings,
 	data: (typeof(fillWith) !== 'function') ?
 		Array(usedSettings.size.x * usedSettings.size.y)
@@ -15,12 +24,18 @@ const fillMapData = (usedSettings = initialSettings, fillWith = 0) => ({
 			.map(t => fillWith()),
 });
 
-const genRandomTiles = (maxTileNum) => (() => {
-	return Math.trunc(maxTileNum * Math.random());
-});
-
-export default (state = fillMapData(undefined, genRandomTiles(3)), action) => {
+export default (state = initialState, action) => {
 	switch (action.type) {
+		case 'MAP_GENERATE':
+			const mt = randomJs.engines.mt19937();
+			mt.seed(action.settings.seed);
+			const usedSettings = { ...defaultSettings, ...action.settings };
+			return {
+				...initialState,
+				...fillMapData(usedSettings, () => randomJs.integer(usedSettings.minTileId, usedSettings.maxTileId)(mt)),
+			}
+		case 'MAP_SET':
+			return action.mapState;
 		default:
 			return state;
 	}

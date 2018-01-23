@@ -1,15 +1,20 @@
+// Client code.
+
 import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
-import * as viewActions from './actions/view';
 import WebSocketWrapper from 'ws-wrapper';
+import * as viewActions from './actions/view';
+import * as mapActions from './actions/map';
 
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
 
 	global.ws.on('message', (msg) => {
 		console.log(msg);
-		console.log(JSON.parse(msg.data));
+		const d = JSON.parse(msg.data);
+		console.log(d);
+		if (d.map) store.dispatch(mapActions.set(d.map));
 	});
 
 	createItemTypes();

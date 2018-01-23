@@ -2,6 +2,7 @@ import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import { Server as WSS } from 'ws';
+import * as mapActions from './actions/map';
 
 // Start the server
 var wss = new WSS({ port: 4320 });
@@ -39,6 +40,8 @@ wss.on('connection', function(socket) {
 const init = () => {
 	createItemTypes();
 	createInitialObjects();
+
+	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 }, seed: 1233321 }));
 
 	setInterval(tick, 250);
 };
