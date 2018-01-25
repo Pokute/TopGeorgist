@@ -64,6 +64,13 @@ const createHTML = (viewId) => {
 	return viewTable;
 };
 
+const createControl = (label, func) => {
+	const button = document.createElement('button');
+	button.textContent = label;
+	button.onclick = func;
+	return button;
+};
+
 const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 	// Check for duplicate viewId.
 
@@ -96,15 +103,9 @@ const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 		statsBody.appendChild(createStatsRow('MovPos', state => getTgo(state, followTgoId).moveTarget, pos => `x:${pos.x} y:${pos.y}`));
 	}
 
-	const moveRight = document.createElement('button');
-	moveRight.textContent = 'moveRight';
-	moveRight.onclick = playerControls.movePlayerRight;
-	html.getElementsByClassName('controls')[0].appendChild(moveRight);
-
-	const foo = document.createElement('button');
-	foo.textContent = 'Foo!';
-	foo.onclick = playerControls.giveServerSomethingToThink;
-	html.getElementsByClassName('controls')[0].appendChild(foo);
+	html.getElementsByClassName('controls')[0].appendChild(createControl('Move right', playerControls.movePlayerRight));
+	html.getElementsByClassName('controls')[0].appendChild(createControl('Get data', playerControls.giveServerSomethingToThink));
+	html.getElementsByClassName('controls')[0].appendChild(createControl('Request player', playerControls.requestPlayer));
 
 	initInventory(html.getElementsByClassName('inventory')[0], followTgoId);
 	initVisiting(html.getElementsByClassName('visitable')[0], viewId);

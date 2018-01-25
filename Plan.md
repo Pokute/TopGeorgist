@@ -40,8 +40,13 @@
 * Player creation.
 * redux store array accessor shorthand functions / utility.
 * Multiplayer
+	* Receiving the map
+	* Receiving tgos
+		* Move function from tgos to types.
 	* Server
 		* Where?
+* Map
+	* Seeded generation.
 * Leaderboards
 * Buildings
 	* Rent office

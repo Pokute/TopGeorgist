@@ -3,6 +3,9 @@ import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import { Server as WSS } from 'ws';
 import * as mapActions from './actions/map';
+import * as plantableActions from './actions/plantable';
+
+global.isServer = true;
 
 // Start the server
 var wss = new WSS({ port: 4320 });
@@ -20,10 +23,19 @@ wss.on('connection', function(socket) {
 
 	// When data is received
 	socket.on('message', function(message) {
-		console.log('Received: ', message);
-		if (message === 'GET_ALL_OBJECTS') {
-			socket.send(JSON.stringify(store.getState()));
-		}
+		switch (message) {
+			case 'GET_ALL_OBJECTS':
+				socket.send(JSON.stringify(store.getState()));
+				break;
+			case 'PLAYER_CREATE_REQUEST':
+				store.dispatch({
+					...message.action,
+					client: 'Blah',
+				});
+				break;
+			default:
+				console.log('Unknown message: ', message);
+		};
 	});
 
 	// The connection was closed

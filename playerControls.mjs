@@ -5,7 +5,7 @@ const getPlayer = (state) => {
 	return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
 }
 
-const movePlayerRight = () => {
+export const movePlayerRight = () => {
 	const p = getPlayer();
 	store.dispatch({
 		type: 'TGO_SET_POSITION',
@@ -14,8 +14,15 @@ const movePlayerRight = () => {
 	});
 };
 
-const giveServerSomethingToThink = () => {
+export const giveServerSomethingToThink = () => {
 	global.ws.send('GET_ALL_OBJECTS');
 };
 
-export { movePlayerRight, giveServerSomethingToThink };
+export const requestPlayer = (playerLabel) => {
+	global.ws.send({
+		action: {
+			type: 'PLAYER_CREATE_REQUEST',
+			label: playerLabel,
+		},
+	});
+};

@@ -17,13 +17,11 @@ module.exports = {
 						presets: [
 							['@babel/env', {
 							  targets: {
-								  node: '6',
+								  node: '8.9.0',
 							  },
 							}],
 							'@babel/stage-0',
 						],
-						plugins: ['@babel/plugin-proposal-object-rest-spread'],
-						plugins: ['@babel/transform-regenerator']
 					}
 				}
 			}
