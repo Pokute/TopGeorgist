@@ -30,28 +30,25 @@ const plant = function* (action) {
 
 	console.log('transactionResult: ', transactionResult);
 
-	yield put({
-		type: 'TGO_ADD',
-		tgo: {
-			tgoId: Math.trunc(Math.random()*100000),
-			typeId: 'plant',
-			position: plantPosition,
-			color: 'orange',
-			plantTypeId: plantableType.growsIntoTypeId,
-			visitable: {
-				lable: `Growing here: ${plantableType.label}`,
-				actions: [
-					{
-						label: 'Harvest',
-						onClick: (actorTgoId, targetTgoId) => {
-							store.dispatch(harvestAction(actorTgoId, targetTgoId))
-						}
-					},
-				],
-			},
-			tick: (tgo) => inventoryActions.add(tgo.tgoId, tgo.plantTypeId, +(1 / 256)),
-		}
-	});
+	yield put(tgoActions.add({
+		tgoId: Math.trunc(Math.random()*100000),
+		typeId: 'plant',
+		position: plantPosition,
+		color: 'orange',
+		plantTypeId: plantableType.growsIntoTypeId,
+		visitable: {
+			lable: `Growing here: ${plantableType.label}`,
+			actions: [
+				{
+					label: 'Harvest',
+					onClick: (actorTgoId, targetTgoId) => {
+						store.dispatch(harvestAction(actorTgoId, targetTgoId))
+					}
+				},
+			],
+		},
+		tick: (tgo) => inventoryActions.add(tgo.tgoId, tgo.plantTypeId, +(1 / 256)),
+	}));
 };
 
 const harvest = function* (action) {

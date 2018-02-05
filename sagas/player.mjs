@@ -1,19 +1,17 @@
 import store from '../store';
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as playerActions from '../actions/player';
+import * as tgoActions from '../actions/tgo';
 
 const handlePlayerCreateRequest = function*(action) {
 	if (!global.isServer) return;
 	const hasNameConflict = yield select(state => state.tgos)
 		.any(tgo => (tgo.typeId === 'player') && (tgo.label === action.label))
 	if (!hasNameConflict) {
-		yield store.dispatch({
-			type: 'TGO_ADD',
-			tgo: {
-				tgoId: 'derp',
-				label: action.label,
-			},
-		});
+		yield store.dispatch(tgoActions.add({
+			tgoId: 'derp',
+			label: action.label,
+		}));
 
 		global.ws
 	}
