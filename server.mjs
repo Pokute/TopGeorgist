@@ -51,7 +51,7 @@ wss.on('connection', function(socket) {
 } catch (e) { console.log(e); }
 const init = () => {
 	createItemTypes();
-	createInitialObjects();
+	createInitialObjects(store);
 
 	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 }, seed: 1233321 }));
 

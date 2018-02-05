@@ -7,6 +7,10 @@ export const createPlayer = (store) => {
 	store.dispatch(tgoActions.add({
 		tgoId: 'jesh',
 		typeId: 'player',
+		components: [
+			'selfMoving',
+			'livingUpkeep',
+		],
 		position: {x: 5, y: 5},
 		color: 'red',
 		inventory: [
@@ -23,42 +27,8 @@ export const createPlayer = (store) => {
 				count: 10,
 			},
 		],
-		tick: (tgo) => {
-			const actions = [];
-			if (tgo.moveTarget) {
-				if ((tgo.moveTarget.x === tgo.position.x) &&
-					(tgo.moveTarget.y === tgo.position.y)) {
-					actions.push({
-						type: 'PLAYER_SET_MOVE_TARGET',
-						tgoId: tgo.tgoId,
-						moveTarget: undefined,
-					});
-				} else {
-					if  (tgo.inventory) {
-						const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
-						if (cals && cals.count > 0)
-						actions.push({
-							type: 'TGO_SET_POSITION',
-							tgoId: tgo.tgoId,
-							position: {
-								x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
-								y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
-							},
-						});
-						actions.push(inventoryActions.add(tgo.tgoId, 'calories', -10));
-					}
-				}
-			}
-			if  (tgo.inventory) {
-				const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
-				if (cals && cals.count > 0) {
-					actions.push(inventoryActions.add(tgo.tgoId, 'calories', -1));
-				}
-			}
-			return actions;
-		},
 	}));
-}
+};
 
 export const createStoreGeneral = (store) => {
 	// General store
@@ -149,7 +119,7 @@ export const createStoreGeneral = (store) => {
 			],
 		}
 	}));
-}
+};
 
 export const createTileSetBasic = (store) => {
 	store.dispatch({
@@ -163,7 +133,6 @@ export const createTileSetBasic = (store) => {
 		}
 	});
 };
-
 
 const createInitialObjects = (store) => {
 	createPlayer(store);
