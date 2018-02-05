@@ -15,14 +15,18 @@ export const movePlayerRight = () => {
 };
 
 export const giveServerSomethingToThink = () => {
-	global.ws.send('GET_ALL_OBJECTS');
+	global.ws.send(JSON.stringify({
+		action: {
+			type: 'GET_ALL_OBJECTS',
+		},
+	}));
 };
 
 export const requestPlayer = (playerLabel) => {
-	global.ws.send({
+	global.ws.send(JSON.stringify({
 		action: {
 			type: 'PLAYER_CREATE_REQUEST',
 			label: playerLabel,
 		},
-	});
+	}));
 };

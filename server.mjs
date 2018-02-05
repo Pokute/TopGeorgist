@@ -23,19 +23,36 @@ wss.on('connection', function(socket) {
 
 	// When data is received
 	socket.on('message', function(message) {
-		switch (message) {
-			case 'GET_ALL_OBJECTS':
-				socket.send(JSON.stringify(store.getState()));
-				break;
-			case 'PLAYER_CREATE_REQUEST':
-				store.dispatch({
-					...message.action,
-					client: 'Blah',
-				});
-				break;
-			default:
-				console.log('Unknown message: ', message);
-		};
+		if (typeof message === 'string') {
+			try {
+				const data = JSON.parse(message);
+				if (!data.action || !data.action.type) {
+					console.log('malformed action in data: ', data);
+					return;
+				}
+				switch (data.action.type) {
+					case 'GET_ALL_OBJECTS':
+						socket.send(JSON.stringify(store.getState()));
+						break;
+					case 'PLAYER_CREATE_REQUEST':
+						store.dispatch({
+							...data.action,
+							client: 'Blah',
+						});
+					break;
+					default:
+						console.log(`Unhandled data action of type ${data.action.type}`);
+				}
+			} catch (jsonEx) {
+				console.log('malformed JSON in message: ', message);
+				return;
+			}
+		} else if (typeof message === 'object') {
+			if (message.action) {
+			}
+		} else {
+			console.log('Unknown message of type: ', typeof message);
+		}
 	});
 
 	// The connection was closed
@@ -63,7 +80,7 @@ const tick = () => {
 	const newActions = oldState.tgos
 		.filter(tgo => tgo.tick)
 		.map(tgo => tgo.tick(tgo))
-		.reduce((acc, actions) => acc.concat(actions));
+		.reduce((acc, actions) => acc.concat(actions), []);
 	newActions.forEach(a => store.dispatch(a));
 }
 
