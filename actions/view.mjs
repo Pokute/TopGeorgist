@@ -99,8 +99,8 @@ const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 		};
 
 		const statsBody = html.getElementsByClassName('stats')[0];
-		statsBody.appendChild(createStatsRow('Pos', state => getTgo(state, followTgoId).position, pos => `x:${pos.x} y:${pos.y}`));
-		statsBody.appendChild(createStatsRow('MovPos', state => getTgo(state, followTgoId).moveTarget, pos => `x:${pos.x} y:${pos.y}`));
+		statsBody.appendChild(createStatsRow('Pos', state => getTgo(state, followTgoId), state => `x:${state.pos.x} y:${state.pos.y}`));
+		statsBody.appendChild(createStatsRow('MovPos', state => getTgo(state, followTgoId), state => `x:${state.pos.x} y:${state.pos.y}`));
 	}
 
 	html.getElementsByClassName('controls')[0].appendChild(createControl('Move right', playerControls.movePlayerRight));

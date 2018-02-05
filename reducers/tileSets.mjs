@@ -21,6 +21,8 @@ export default (state = initialState, action) => {
 				...state,
 				action.tileSet,
 			];
+		case 'TILESETS_SET':
+			return action.tileSetsState;
 		default:
 			return state;
 	}

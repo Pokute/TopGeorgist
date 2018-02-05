@@ -1,11 +1,25 @@
 {
 	"presets": [
-		"@babel/preset-env",
+		[
+			"@babel/preset-env",
+			{
+				"targets": {
+					"node": "8.9.0"
+				},
+				"exclude": [
+					"transform-regenerator"
+				],
+				"useBuiltIns": {
+					"polyfill": false,
+					"regenerator": false,
+				}
+			}
+		],
 		"@babel/stage-0"
 	],
-	"plugins": [
-		["@babel/plugin-proposal-object-rest-spread"],
-		["@babel/transform-modules-commonjs", {}],
-		["@babel/transform-regenerator"]
-	]
+	// "plugins": [
+	// 	["@babel/plugin-proposal-object-rest-spread"],
+	// 	["@babel/transform-modules-commonjs", {}],
+	// 	["@babel/transform-regenerator"]
+	// ]
 }
