@@ -28,6 +28,8 @@ export default (state = initialState, action) => {
 			];
 		case 'TGO_REMOVE':
 			return state.filter(tgo => tgo.tgoId !== action.tgoId);
+		case 'TGOS_SET':
+			return action.tgosState;
 		default:
 			return state;
 	}

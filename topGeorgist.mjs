@@ -6,7 +6,8 @@ import createInitialObjects from './initialObjects'
 import WebSocketWrapper from 'ws-wrapper';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
-import * as tileSetActions from './actions/tileSet'
+import * as tileSetActions from './actions/tileSet';
+import * as tgoActions from './actions/tgo';
 
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
@@ -17,6 +18,7 @@ const init = () => {
 		console.log(d);
 		if (d.map) store.dispatch(mapActions.set(d.map));
 		if (d.tileSets) store.dispatch(tileSetActions.set(d.tileSets));
+		if (d.tgos) store.dispatch(tgoActions.set(d.tgos));
 	});
 
 	createItemTypes();
