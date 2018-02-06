@@ -1,7 +1,8 @@
 module.exports = {
 	entry: [
 		'@babel/polyfill',
-		'./topGeorgist'
+		// './topGeorgist'
+		'./reduxIndex'
 	],
 	output: {
 		filename: 'static/topGeorgist.bundle.js'

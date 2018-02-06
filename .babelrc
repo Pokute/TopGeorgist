@@ -17,9 +17,14 @@
 		],
 		"@babel/stage-0"
 	],
-	// "plugins": [
+	"plugins": [
+		"@babel/plugin-syntax-jsx",
+		"@babel/plugin-transform-react-jsx",
+		"@babel/plugin-transform-react-display-name",
+		"@babel/plugin-transform-react-jsx-self",
+		"@babel/plugin-transform-react-jsx-source",
 	// 	["@babel/plugin-proposal-object-rest-spread"],
 	// 	["@babel/transform-modules-commonjs", {}],
 	// 	["@babel/transform-regenerator"]
-	// ]
+	]
 }
