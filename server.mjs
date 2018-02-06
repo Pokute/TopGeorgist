@@ -1,9 +1,11 @@
+import uuidv4 from 'uuid';
 import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import { Server as WSS } from 'ws';
 import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
+import * as clientActions from './actions/client';
 
 global.isServer = true;
 
@@ -16,10 +18,18 @@ try {
 // When a connection is established
 wss.on('connection', function(socket) {
 	console.log('Opened connection 🎉');
+	console.log('Creating a client');
+
+	const clientId = uuidv4();
+
+	store.dispatch(clientActions.add({
+		socket,
+		clientId,
+	}));
 
 	// Send data back to the client
-	var json = JSON.stringify({ message: 'Gotcha' });
-	socket.send(json);
+	// var json = JSON.stringify({ message: 'Gotcha' });
+	// socket.send(json);
 
 	// When data is received
 	socket.on('message', function(message) {
@@ -32,19 +42,25 @@ wss.on('connection', function(socket) {
 				}
 				switch (data.action.type) {
 					case 'GET_ALL_OBJECTS':
-						socket.send(JSON.stringify(store.getState()));
+						socket.send(JSON.stringify({
+							action: {
+								type: 'ALL_SET',
+								data: { ...store.getState(), clients:[] }
+							}
+						}));
+					// 	socket.send(JSON.stringify({ ...store.getState(), clients:[] }));
 						break;
 					case 'PLAYER_CREATE_REQUEST':
 						store.dispatch({
 							...data.action,
-							client: 'Blah',
+							clientId,
 						});
 					break;
 					default:
 						console.log(`Unhandled data action of type ${data.action.type}`);
 				}
 			} catch (jsonEx) {
-				console.log('malformed JSON in message: ', message);
+				console.log('malformed JSON in message: ', message, jsonEx);
 				return;
 			}
 		} else if (typeof message === 'object') {

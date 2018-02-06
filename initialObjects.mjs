@@ -3,8 +3,8 @@ import transaction from './actions/transaction';
 import * as playerActions from './reducers/player';
 import * as tgoActions from './actions/tgo';
 
-export const createPlayer = (store) => {
-	store.dispatch(tgoActions.add({
+export const createPlayerAction = () => {
+	return tgoActions.add({
 		tgoId: 'jesh',
 		typeId: 'player',
 		components: [
@@ -27,7 +27,7 @@ export const createPlayer = (store) => {
 				count: 10,
 			},
 		],
-	}));
+	});
 };
 
 export const createStoreGeneral = (store) => {
@@ -135,7 +135,7 @@ export const createTileSetBasic = (store) => {
 };
 
 const createInitialObjects = (store) => {
-	createPlayer(store);
+	store.dispatch(createPlayerAction());
 	createStoreGeneral(store);
 	createTileSetBasic(store);
 }

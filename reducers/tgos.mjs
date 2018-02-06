@@ -1,3 +1,5 @@
+import uuidv4 from 'uuid';
+
 import playerReducer from './player';
 import tgoReducer from './tgo';
 const initialState = [];
@@ -25,7 +27,10 @@ export default (state = initialState, action) => {
 		case 'TGO_ADD':
 			return [
 				...state,
-				action.tgo,
+				{
+					...action.tgo,
+					// ...(global.isServer ? { tgoId: uuidv4() } : {}),
+				}
 			];
 		case 'TGO_REMOVE':
 			return state.filter(tgo => tgo.tgoId !== action.tgoId);
