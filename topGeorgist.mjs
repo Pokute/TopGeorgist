@@ -29,10 +29,6 @@ const init = () => {
 
 	setInterval(tick, 250);
 
-	// View specific
-	document.body.appendChild(viewActions.create('main', 'jesh', true));
-	document.body.appendChild(viewActions.create('secondary', 'genStore'));
-
 	store.dispatch(viewActions.render());
 	setInterval(() => {
 		store.dispatch(viewActions.render());
@@ -49,8 +45,12 @@ const tick = () => {
 		.map(tgo => tgo.tick(tgo))
 		.reduce((acc, actions) => acc.concat(actions), []);
 	newActions.forEach(a => store.dispatch(a));
-}
+};
 
-window.onload = init;
+export const initOldHtml = () => {
+	// View specific
+	document.body.appendChild(viewActions.create('main', 'jesh', true));
+	document.body.appendChild(viewActions.create('secondary', 'genStore'));
+};
 
-export default {};
+export default init;
