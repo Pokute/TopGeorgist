@@ -5,7 +5,6 @@ import * as tgoActions from './actions/tgo';
 
 export const createPlayerAction = () => {
 	return tgoActions.add({
-		tgoId: 'jesh',
 		typeId: 'player',
 		components: [
 			'selfMoving',
@@ -33,7 +32,7 @@ export const createPlayerAction = () => {
 export const createStoreGeneral = (store) => {
 	// General store
 	store.dispatch(tgoActions.add({
-		tgoId: 'genStore',
+		label: 'General Store',
 		typeId: 'building',
 		position: { x: 12, y: 12},
 		color: 'pink',
@@ -135,7 +134,6 @@ export const createTileSetBasic = (store) => {
 };
 
 const createInitialObjects = (store) => {
-	store.dispatch(createPlayerAction());
 	createStoreGeneral(store);
 	createTileSetBasic(store);
 }
