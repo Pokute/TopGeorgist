@@ -1,4 +1,3 @@
-import store from '../store';
 import { put, select, takeEvery } from 'redux-saga/effects';
 // import * as playerActions from '../actions/player';
 import * as tgoActions from '../actions/tgo';
@@ -6,6 +5,7 @@ import { createPlayerAction } from '../initialObjects'
 
 const handlePlayerCreateRequest = function*(action) {
 	if (!global.isServer) return;
+	console.log('Received playerCreateRequest ', action.label)
 	const hasNameConflict = (yield select(state => state.tgos))
 		.some(tgo => (tgo.typeId === 'player') && (tgo.label === action.label))
 	if (!hasNameConflict) {
