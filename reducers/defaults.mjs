@@ -1,5 +1,5 @@
 const initialState = {
-	playerId: undefined,
+	playerTgoId: undefined,
 	viewId: undefined,
 };
 
@@ -8,7 +8,7 @@ export default (state = initialState, action) => {
 		case 'DEFAULTS_SET_PLAYER':
 			return {
 				...state,
-				playerId: action.tgoId,
+				playerTgoId: action.playerTgoId,
 			};
 		case 'DEFAULTS_SET_VIEW':
 			return {

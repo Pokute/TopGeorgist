@@ -5,11 +5,6 @@ import { initInventory } from '../playerInventory';
 import { initVisiting } from '../visitableControls';
 import * as playerControls from '../playerControls';
 
-const setDefault = (viewId) => ({
-	type: 'DEFAULTS_SET_VIEW',
-	viewId,
-});
-
 const createTable = (className, caption) => {
 	const table = document.createElement('table');
 	table.className = className;
@@ -71,23 +66,26 @@ const createControl = (label, func) => {
 	return button;
 };
 
-const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
-	// Check for duplicate viewId.
+export const create = (viewId, followTgoId = undefined) => ({
+	type: 'VIEW_ADD',
+	view: {
+		viewId,
+		// canvas: c,
+		canvasId: `view-canvas-${viewId}`,
+		followTgoId,
+		position: { x: 10, y: 10 },
+		// size: { x: c.width, y: c.height },
+	}
+});
+
+const createWithHTML = (viewId, followTgoId = undefined, setAsDefault = false) => {
+	// Add: Check for duplicate viewId.
 
 	const html = createHTML();
 
 	// const c = canvasElement;
 	const c = html.getElementsByTagName('canvas')[0];
-	store.dispatch({
-		type: 'VIEW_ADD',
-		view: {
-			viewId,
-			canvas: c,
-			followTgoId,
-			position: { x: 10, y: 10 },
-			size: { x: c.width, y: c.height },
-		}
-	});
+	store.dispatch(create(viewId, followTgoId));
 	if (setAsDefault) {
 		store.dispatch(setDefault(viewId));
 	}
@@ -135,10 +133,7 @@ const create = (viewId, followTgoId = undefined, setAsDefault = false) => {
 	return html;
 }
 
-
-const render = (viewId) => ({
+export const render = (viewId) => ({
 	type: 'VIEW_RENDER',
 	viewId,
-})
-
-export { create, render, setDefault };
+});

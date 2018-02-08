@@ -2,7 +2,7 @@ import store from './store';
 
 const getPlayer = (state) => {
 	const s = state ? state : store.getState();
-	return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerId);
+	return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerTgoId);
 }
 
 export const movePlayerRight = () => {

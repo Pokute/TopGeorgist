@@ -8,38 +8,42 @@ const handlePlayerCreateRequest = function*(action) {
 	console.log('Received playerCreateRequest ', action.label)
 	const hasNameConflict = (yield select(state => state.tgos))
 		.some(tgo => (tgo.typeId === 'player') && (tgo.label === action.label))
-	if (!hasNameConflict) {
-		const defaultPlayerAction = createPlayerAction();
-		const newPlayerAction = {
-			...defaultPlayerAction,
-			tgo: {
-				...defaultPlayerAction.tgo,
-				label: action.label,
-			}
-		};
-		yield put(newPlayerAction);
+	if (hasNameConflict) return;
 
-		const socket = yield select(state => state.clients.find(c => c.clientId === action.clientId).socket);
-		socket.send(JSON.stringify({
-			action: {
-				type: 'ALL_SET',
-				data: { ...(yield select()), clients:[] }
-			}
-		}));
-		socket.send(JSON.stringify({
-			action: {
-				type: 'DEFAULTS_SET_PLAYER',
-				tgoId: newPlayerAction.tgo.tgoId,
-			}
-		}));
-	}
+	const defaultPlayerAction = createPlayerAction();
+	const newPlayerAction = {
+		...defaultPlayerAction,
+		tgo: {
+			...defaultPlayerAction.tgo,
+			label: action.label,
+			position: {
+				x: Math.trunc(15 * Math.random()),
+				y: Math.trunc(15 * Math.random()),
+			},
+		},
+	};
+	yield put(newPlayerAction);
+
+	const socket = yield select(state => state.clients.find(c => c.clientId === action.clientId).socket);
+	socket.send(JSON.stringify({
+		action: {
+			type: 'ALL_SET',
+			data: { ...(yield select()), clients:[] }
+		}
+	}));
+	socket.send(JSON.stringify({
+		action: {
+			type: 'DEFAULTS_SET_PLAYER',
+			playerTgoId: newPlayerAction.tgo.tgoId,
+		}
+	}));
 };
 
 const handlePlayerCreateResponse = function*(action) {
 	if (global.isServer) return;
 	yield put({
 		type: 'DEFAULTS_SET_PLAYER',
-		playerId: action.tgoId,
+		playerTgoId: action.playerTgoId,
 	});
 };
 

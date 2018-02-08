@@ -2,8 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-const View = () => (
-	<p>View</p>
+import GameRenderer from './gameRenderer.react';
+
+const View = props => (
+	<div>
+		<GameRenderer
+			view={props.view}
+		/>
+	</div>
 );
 
 const mapStateToProps = state => ({

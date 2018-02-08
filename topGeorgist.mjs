@@ -13,7 +13,6 @@ const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
 
 	global.ws.on('message', (msg) => {
-
 		const data = JSON.parse(msg.data);
 		if (data && data.action && data.action.type === 'ALL_SET') {
 			const newState = data.action.data;
@@ -27,7 +26,7 @@ const init = () => {
 
 	createItemTypes();
 
-	setInterval(tick, 250);
+	if (global.isServer) setInterval(tick, 250);
 
 	store.dispatch(viewActions.render());
 	setInterval(() => {

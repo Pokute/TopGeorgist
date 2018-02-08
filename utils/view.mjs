@@ -8,15 +8,20 @@ const getMetrics = (viewId) => {
 		? s.tgos.find(tgo => tgo.tgoId === v.followTgoId)
 		: undefined;
 	const pos = followTgo ? followTgo.position : v.position;
+	const c = document.getElementById(v.canvasId);
+	const size = {
+		x: c.width,
+		y: c.height,
+	};
 
 	const { map } = store.getState();
 	const min = {
-		x: Math.round(pos.x * map.tileSize - v.size.x/2),
-		y: Math.round(pos.y * map.tileSize - v.size.y/2),
+		x: Math.round(pos.x * map.tileSize - size.x/2),
+		y: Math.round(pos.y * map.tileSize - size.y/2),
 	};
 	const max = {
-		x: Math.round(pos.x * map.tileSize + v.size.x/2),
-		y: Math.round(pos.y * map.tileSize + v.size.y/2),
+		x: Math.round(pos.x * map.tileSize + size.x/2),
+		y: Math.round(pos.y * map.tileSize + size.y/2),
 	};
 	const minTile = {
 		x: Math.max(0, Math.trunc(min.x / map.tileSize)),

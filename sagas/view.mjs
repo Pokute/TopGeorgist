@@ -18,9 +18,9 @@ const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.moveTo(pos.x - size.x/2, pos.y + size.y/2);
 	ctx.lineTo(pos.x + size.x/2, pos.y - size.y/2);
 	ctx.stroke();
-};	
+};
 
-const render = function* (action) {
+const oldRender = function* (action) {
 	const { viewId } = action;
 	const s = yield select((s) => s);
 	const usedViewId = (viewId !== undefined) ? viewId : s.defaults.viewId;
@@ -45,6 +45,45 @@ const render = function* (action) {
 		drawCross(ctx,
 			{ x: (p.position.x - minTile.x + offset.x + 0.5)*s.map.tileSize, y: (p.position.y - minTile.y + offset.y + 0.5)*s.map.tileSize, },
 			undefined, p.color);
+	})
+};
+
+const render =  function* (action) {
+	const { viewId } = action;
+	const s = yield select((s) => s);
+	const usedViewId = (viewId !== undefined) ? viewId : s.defaults.viewId;
+	const v = s.views.find(v => v.viewId === usedViewId);
+	if (!v) return;
+	const c = document.getElementById(v.canvasId);
+	if (!c) return;
+
+	const { minTile, maxTile, offset } = viewUtils.getMetrics(usedViewId);
+
+	const ctx = c.getContext('2d');
+	const tileSet = s.tileSets.find(ts => ts.tileSetId === s.map.tileSetId);
+	for (let y = minTile.y; y < maxTile.y; y++)
+		for (let x = minTile.x; x < maxTile.x; x++) {
+			drawTile(ctx, {
+				x: s.map.tileSize * (x - minTile.x + offset.x + 0.5),
+				y: s.map.tileSize * (y - minTile.y + offset.y + 0.5)
+			},
+			tileSet.tiles.find(t => t.tileId === s.map.data[s.map.size.x * y + x]),
+			s.map.tileSize);
+		}
+
+	s.tgos.forEach((tgo) => {
+		const pos = {
+			x: (tgo.position.x - minTile.x + offset.x + 0.5)*s.map.tileSize,
+			y: (tgo.position.y - minTile.y + offset.y + 0.5)*s.map.tileSize,
+		};
+		drawCross(ctx,
+			pos,
+			undefined, tgo.color);
+		if (tgo.label) {
+			ctx.fillStyle = 'black';
+			ctx.textAlign = 'center';
+			ctx.fillText(tgo.label, pos.x, pos.y - 10);
+		}
 	})
 };
 
