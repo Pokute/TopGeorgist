@@ -8,6 +8,7 @@ const View = props => (
 	<div>
 		<GameRenderer
 			view={props.view}
+			map={props.map}
 		/>
 	</div>
 );

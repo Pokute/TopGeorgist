@@ -1,3 +1,5 @@
+import * as inventoryActions from './actions/inventory';
+
 const components = {
 	'selfMoving': {
 		tick: (tgo) => {

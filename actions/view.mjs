@@ -78,6 +78,12 @@ export const create = (viewId, followTgoId = undefined) => ({
 	}
 });
 
+export const setFollowTarget = (viewId, tgoId) => ({
+	type: 'VIEW_SET_FOLLOW_TARGET',
+	viewId,
+	tgoId,
+});
+
 const createWithHTML = (viewId, followTgoId = undefined, setAsDefault = false) => {
 	// Add: Check for duplicate viewId.
 

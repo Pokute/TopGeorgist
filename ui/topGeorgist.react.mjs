@@ -9,8 +9,9 @@ const TopGeorgist = props => (
 	<div>
 		{props.views.map(v => (
 			<View
-			view={v}
-			key={v.viewId}
+				view={v}
+				map={props.map}
+				key={v.viewId}
 			/>
 		))}
 		<button
@@ -25,6 +26,7 @@ const TopGeorgist = props => (
 
 const mapStoreToProps = store => ({
 	views: store.views,
+	map: store.map,
 });
 
 export default connect(mapStoreToProps)(TopGeorgist);

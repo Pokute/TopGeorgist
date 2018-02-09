@@ -8,6 +8,7 @@ import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetActions from './actions/tileSet';
 import * as tgoActions from './actions/tgo';
+import components from './components';
 
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
@@ -21,12 +22,14 @@ const init = () => {
 			if (newState.tgos) store.dispatch(tgoActions.set(newState.tgos));
 		} else if (data && data.action && data.action.type === 'DEFAULTS_SET_PLAYER') {
 			store.dispatch(data.action);
+			store.dispatch(viewActions.setFollowTarget('main', data.action.playerTgoId));
 		}
 	});
 
 	createItemTypes();
 
-	if (global.isServer) setInterval(tick, 250);
+	// if (global.isServer) setInterval(tick, 250);
+	setInterval(tick, 250);
 
 	store.dispatch(viewActions.render());
 	setInterval(() => {
@@ -39,10 +42,17 @@ const init = () => {
 
 const tick = () => {
 	const oldState = store.getState();
+	const comp = components;
 	const newActions = oldState.tgos
-		.filter(tgo => tgo.tick)
-		.map(tgo => tgo.tick(tgo))
-		.reduce((acc, actions) => acc.concat(actions), []);
+		.filter(tgo => tgo.components)
+		.map(tgo => 
+			tgo.components
+				.map(cId => components[cId])
+				.filter(c => c.tick)
+				.map(c => c.tick(tgo))
+			)
+		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
+		.reduce((acc, action) => [...acc, ...action], []);
 	newActions.forEach(a => store.dispatch(a));
 };
 
