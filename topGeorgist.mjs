@@ -28,8 +28,8 @@ const init = () => {
 
 	createItemTypes();
 
-	// if (global.isServer) setInterval(tick, 250);
-	setInterval(tick, 250);
+	if (global.isServer) setInterval(tick, 250);
+	// setInterval(tick, 250);
 
 	store.dispatch(viewActions.render());
 	setInterval(() => {
@@ -40,7 +40,7 @@ const init = () => {
 	}, 100);
 };
 
-const tick = () => {
+export const tick = () => {
 	const oldState = store.getState();
 	const comp = components;
 	const newActions = oldState.tgos

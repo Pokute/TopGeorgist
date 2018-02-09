@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as viewUtils from '../utils/view';
+import * as netActions from '../actions/net';
 
 const GameRenderer = props => (
 	<canvas
@@ -39,11 +40,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 			x: Math.trunc(canvasCoords.x / map.tileSize + offset.x) + minTile.x,
 			y: Math.trunc(canvasCoords.y / map.tileSize + offset.y) + minTile.y,
 		};
-		dispatch({
+		const playerMoveAction = {
 			type: 'PLAYER_SET_MOVE_TARGET',
 			tgoId: v.followTgoId,
 			moveTarget: mappedCoords,
-		});
+		};
+		dispatch(playerMoveAction);
+		dispatch(netActions.send(playerMoveAction));
 		console.log('canvas clicked.', mappedCoords)
 		// event.preventDefault();
 	},

@@ -6,6 +6,7 @@ import { Server as WSS } from 'ws';
 import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
 import * as clientActions from './actions/client';
+import components from './components';
 
 global.isServer = true;
 
@@ -56,6 +57,9 @@ wss.on('connection', function(socket) {
 							clientId,
 						});
 					break;
+					case 'PLAYER_SET_MOVE_TARGET':
+						store.dispatch(data.action);
+					break;
 					default:
 						console.log(`Unhandled data action of type ${data.action.type}`);
 				}
@@ -73,11 +77,19 @@ wss.on('connection', function(socket) {
 
 	// The connection was closed
 	socket.on('close', function() {
+		store.dispatch(clientActions.remove({
+			socket,
+			clientId,
+		}));
 		console.log('Closed Connection 😱');
 	});
 
 	// The connection was closed
 	socket.on('error', function(e) {
+		store.dispatch(clientActions.remove({
+			socket,
+			clientId,
+		}));
 		console.log('Erred Connection 😱', e);
 	});
 });
@@ -93,11 +105,31 @@ const init = () => {
 
 const tick = () => {
 	const oldState = store.getState();
+	const comp = components;
 	const newActions = oldState.tgos
-		.filter(tgo => tgo.tick)
-		.map(tgo => tgo.tick(tgo))
-		.reduce((acc, actions) => acc.concat(actions), []);
+		.filter(tgo => tgo.components)
+		.map(tgo => 
+			tgo.components
+				.map(cId => components[cId])
+				.filter(c => c.tick)
+				.map(c => c.tick(tgo))
+			)
+		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
+		.reduce((acc, action) => [...acc, ...action], []);
 	newActions.forEach(a => store.dispatch(a));
+
+	oldState.clients.forEach(c => {
+		try {
+			c.socket.send(JSON.stringify({
+				action: {
+					type: 'ALL_SET',
+					data: { ...store.getState(), clients:[] }
+				}
+			}))
+		} catch (ex) {
+			console.log(ex);
+		}
+	});
 }
 
 init();
