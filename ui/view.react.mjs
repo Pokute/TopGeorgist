@@ -10,11 +10,17 @@ const View = props => (
 			view={props.view}
 			map={props.map}
 		/>
+		<div>
+			{props.player ? 
+				`Player calories: ${props.player.inventory.find(i => i.typeId === 'calories').count}`
+				: undefined
+			}
+		</div>
 	</div>
 );
 
-const mapStateToProps = state => ({
-
+const mapStoreToProps = state => ({
+	player: state.tgos.find(tgo => tgo.tgoId === state.defaults.playerTgoId)
 });
 
 View.propTypes = {
@@ -24,4 +30,4 @@ View.propTypes = {
 	size: PropTypes.object,
 };
 
-export default connect(mapStateToProps)(View);
+export default connect(mapStoreToProps)(View);
