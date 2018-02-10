@@ -1,6 +1,3 @@
-import * as inventoryActions from './actions/inventory';
-import transaction from './actions/transaction';
-import * as playerActions from './reducers/player';
 import * as tgoActions from './actions/tgo';
 
 export const createPlayerAction = () => {
@@ -29,79 +26,74 @@ export const createPlayerAction = () => {
 	});
 };
 
-export const createStoreGeneral = (store) => {
-	// General store
-	store.dispatch(tgoActions.add({
-		label: 'General Store',
-		typeId: 'building',
-		position: { x: 12, y: 12},
-		color: 'pink',
-		inventory: [
+export const storeGeneralAction = () => tgoActions.add({
+	label: 'General Store',
+	typeId: 'building',
+	position: { x: 12, y: 12},
+	color: 'pink',
+	inventory: [
+		{
+			typeId: 'money',
+			count: 5000,
+		},
+		{
+			typeId: 'pineApple',
+			count: 100,
+		},
+	],
+	visitable: {
+		label: 'First Store',
+		actions: [
 			{
-				typeId: 'money',
-				count: 5000,
-			},
-			{
-				typeId: 'pineApple',
-				count: 100,
-			},
-		],
-		visitable: {
-			label: 'First Store',
-			actions: [
-				{
-					label: 'buyPineapple',
-					onClick: {
-						type: 'STORE_TRANSACTION_REQUEST',
-						items: [
-							{
-								typeId: 'pineApple',
-								count: +1,
-							},
-							{
-								typeId: 'money',
-								count: -20,
-							},
-						],
-					},
+				label: 'buyPineapple',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'pineApple',
+							count: +1,
+						},
+						{
+							typeId: 'money',
+							count: -20,
+						},
+					],
 				},
-				{
-					label: 'sellPineapple',
-					onClick: {
-						type: 'STORE_TRANSACTION_REQUEST',
-						items: [
-							{
-								typeId: 'pineApple',
-								count: -1,
-							},
-							{
-								typeId: 'money',
-								count: -10,
-							},
-						],
-					},
-				}
-			],
-		}
-	}));
-};
+			},
+			{
+				label: 'sellPineapple',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'pineApple',
+							count: -1,
+						},
+						{
+							typeId: 'money',
+							count: -10,
+						},
+					],
+				},
+			}
+		],
+	}
+});
 
-export const createTileSetBasic = (store) => {
-	store.dispatch({
-		type: 'TILESET_ADD',
-		tileSet: {
-			tileSetId: 'basic',
-			tiles: [
-				{ tileId: 0, fillStyle: 'cyan', },
-				{ tileId: 1, fillStyle: 'green', },
-			]
-		}
-	});
-};
+export const tileSetBasicAction = () => ({
+	type: 'TILESET_ADD',
+	tileSet: {
+		tileSetId: 'basic',
+		tiles: [
+			{ tileId: 0, fillStyle: 'cyan', },
+			{ tileId: 1, fillStyle: 'green', },
+		]
+	}
+});
 
-const createInitialObjects = (store) => {
-	createStoreGeneral(store);
-	createTileSetBasic(store);
-}
+const initialObjectActions = () => [
+	storeGeneralAction(),
+	tileSetBasicAction(),
+]
 
-export default createInitialObjects;
+export default initialObjectActions;
