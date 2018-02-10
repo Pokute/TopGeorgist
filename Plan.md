@@ -43,7 +43,7 @@
 	* Receiving the map
 	* Receiving tgos
 		* Move function from tgos to types.
-	* Server
+	* Server hosting.
 		* Where?
 * Map
 	* Seeded generation.

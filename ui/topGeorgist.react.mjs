@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import CreatePlayerForm from './createPlayerForm.react';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
+import Inventory from './inventory.react';
 
 const TopGeorgist = props => (
 	<div>
@@ -21,12 +22,14 @@ const TopGeorgist = props => (
 			{'Arr!'}
 		</button>
 		<PlayerContainer />
+		<Inventory ownerTgoId={props.defaultPlayerTgoId} />
 	</div>
 );
 
 const mapStoreToProps = store => ({
 	views: store.views,
 	map: store.map,
+	defaultPlayerTgoId: store.defaults.playerTgoId,
 });
 
 export default connect(mapStoreToProps)(TopGeorgist);
