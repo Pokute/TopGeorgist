@@ -1,9 +1,9 @@
-export const add = (client) => ({
+export const add = client => ({
 	type: 'CLIENT_ADD',
 	client,
 });
 
-export const remove = client => ({
+export const remove = clientId => ({
 	type: 'CLIENT_REMOVE',
-	client,
+	clientId,
 });

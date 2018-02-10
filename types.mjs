@@ -1,6 +1,7 @@
 import store from './store';
 import transaction from './actions/transaction';
 import { plant } from './actions/plantable';
+import * as netActions from './actions/net';
 
 const defaultType = {
 	stackable: true,
@@ -31,43 +32,35 @@ const items = {
 		actions: [
 			{
 				label: 'Eat a pineapple',
-				onClick: (actorTgoId) => {
-					store.dispatch(transaction(
+				onClick: (actorTgoId) => netActions.send(transaction({
+					tgoId: actorTgoId,
+					items: [
 						{
-							tgoId: actorTgoId,
-							items: [
-								{
-									typeId: 'calories',
-									count: +500,
-								},
-								{
-									typeId: 'pineApple',
-									count: -1,
-								},
-							],
-						}
-					));
-				}
+							typeId: 'calories',
+							count: +500,
+						},
+						{
+							typeId: 'pineApple',
+							count: -1,
+						},
+					],
+				})),
 			},
 			{
 				label: 'Make into shoots',
-				onClick: (actorTgoId) => {
-					store.dispatch(transaction(
+				onClick: (actorTgoId) => netActions.send(transaction({
+					tgoId: actorTgoId,
+					items: [
 						{
-							tgoId: actorTgoId,
-							items: [
-								{
-									typeId: 'pineAppleShoot',
-									count: +2,
-								},
-								{
-									typeId: 'pineApple',
-									count: -1,
-								},
-							],
-						}
-					));
-				}
+							typeId: 'pineAppleShoot',
+							count: +2,
+						},
+						{
+							typeId: 'pineApple',
+							count: -1,
+						},
+					],
+				}))
 			},
 		]
 	},
@@ -79,7 +72,7 @@ const items = {
 		growsIntoTypeId: 'pineApple',
 		actions: [{
 			label: 'Plant',
-			onClick: (actorTgoId) => store.dispatch(plant(actorTgoId, 'pineAppleShoot')),
+			onClick: (actorTgoId) => netActions.send(plant(actorTgoId, 'pineAppleShoot')),
 		}],
 	},
 	'player': {

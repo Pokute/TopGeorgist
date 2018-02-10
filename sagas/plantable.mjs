@@ -1,6 +1,7 @@
 import store from '../store';
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
+import * as tgoActions from '../actions/tgo';
 import transaction from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
 
@@ -37,32 +38,40 @@ const plant = function* (action) {
 		color: 'orange',
 		plantTypeId: plantableType.growsIntoTypeId,
 		visitable: {
-			lable: `Growing here: ${plantableType.label}`,
+			label: `Growing here: ${plantableType.label}`,
 			actions: [
 				{
 					label: 'Harvest',
-					onClick: (actorTgoId, targetTgoId) => {
-						store.dispatch(harvestAction(actorTgoId, targetTgoId))
-					}
+					onClick: {
+						type: 'HARVEST',
+					},
 				},
 			],
 		},
-		tick: (tgo) => inventoryActions.add(tgo.tgoId, tgo.plantTypeId, +(1 / 256)),
+		inventory: [
+			{
+				typeId: plantableType.growsIntoTypeId,
+				count: 0.25,
+			}
+		],
+		components: [
+			['inventoryChange', { typeId: plantableType.growsIntoTypeId, perTick: (1 / 256) }]
+		],
 	}));
 };
 
 const harvest = function* (action) {
-	const { actorTgoId, targetTgoId } = action;
+	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === actorTgoId);
-	const targetTgo = s.tgos.find(tgo => tgo.tgoId === targetTgoId);
+	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
+	const targetTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
 
 	if (!actorTgo.position || !targetTgo.position || 
 		(actorTgo.position.x !== targetTgo.position.x) || (actorTgo.position.y !== targetTgo.position.y))
 		return false;
 
 	const transactionResult = yield put(transaction({
-		tgoId: actorTgoId,
+		tgoId: tgoId,
 		items: [
 			{
 				typeId: targetTgo.plantTypeId,
@@ -74,7 +83,7 @@ const harvest = function* (action) {
 
 	yield put({
 		type: 'TGO_REMOVE',
-		tgoId: targetTgoId,
+		tgoId: visitableTgoId,
 	});
 };
 

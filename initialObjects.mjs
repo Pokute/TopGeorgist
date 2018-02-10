@@ -8,7 +8,7 @@ export const createPlayerAction = () => {
 		typeId: 'player',
 		components: [
 			'selfMoving',
-			'livingUpkeep',
+			['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
 		],
 		position: {x: 5, y: 5},
 		color: 'red',
@@ -51,69 +51,35 @@ export const createStoreGeneral = (store) => {
 			actions: [
 				{
 					label: 'buyPineapple',
-					onClick: (actorTgoId, targetTgoId) => {
-						store.dispatch(transaction(
+					onClick: {
+						type: 'STORE_TRANSACTION_REQUEST',
+						items: [
 							{
-								tgoId: actorTgoId,
-								items: [
-									{
-										typeId: 'pineApple',
-										count: +1,
-									},
-									{
-										typeId: 'money',
-										count: -20,
-									},
-								],
+								typeId: 'pineApple',
+								count: +1,
 							},
 							{
-								tgoId: targetTgoId,
-								items: [
-									{
-										typeId: 'pineApple',
-										count: -1,
-									},
-									{
-										typeId: 'money',
-										count: +20,
-									},
-								],
+								typeId: 'money',
+								count: -20,
 							},
-						));
-					}
+						],
+					},
 				},
 				{
 					label: 'sellPineapple',
-					onClick: (actorTgoId, targetTgoId) => {
-						store.dispatch(transaction(
+					onClick: {
+						type: 'STORE_TRANSACTION_REQUEST',
+						items: [
 							{
-								tgoId: actorTgoId,
-								items: [
-									{
-										typeId: 'pineApple',
-										count: -1,
-									},
-									{
-										typeId: 'money',
-										count: +10,
-									},
-								],
+								typeId: 'pineApple',
+								count: -1,
 							},
 							{
-								tgoId: targetTgoId,
-								items: [
-									{
-										typeId: 'pineApple',
-										count: +1,
-									},
-									{
-										typeId: 'money',
-										count: -10,
-									},
-								],
+								typeId: 'money',
+								count: -10,
 							},
-						));
-					}
+						],
+					},
 				}
 			],
 		}

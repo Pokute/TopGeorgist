@@ -31,19 +31,25 @@ const components = {
 			return actions;
 		},
 	},
-	'livingUpkeep': {
-		tick: (tgo) => {
+	'inventoryChange': {
+		tick: (tgo, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];
-			if  (tgo.inventory) {
-				const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
+			if (tgo.inventory) {
+				const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
 				if (cals && cals.count > 0) {
-					actions.push(inventoryActions.add(tgo.tgoId, 'calories', -1));
+					actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));
 				}
 			}
 			return actions;
 		}
 	},
 	'consumable': {
+		
+	},
+	'consumer': {
+
+	},
+	'trader': {
 		
 	}
 }

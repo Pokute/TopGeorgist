@@ -1,5 +1,6 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
+import transctionAction from '../actions/transaction';
 
 const transaction = function* (action) {
 	const { participants } = action;
@@ -45,8 +46,23 @@ const transaction = function* (action) {
 	yield actions.map(function*(a) {yield put(a);});
 }
 
+
+const storeTransactionRequest = function* (action) {
+	yield put(transctionAction(
+		{
+			tgoId: action.tgoId,
+			items: action.items,
+		},
+		{
+			tgoId: action.visitableTgoId,
+			items: action.items.map(i => ({ ...i, count: -1 * i.count })),
+		},
+	));
+}
+
 const transactionListener = function*() {
 	yield takeEvery('TRANSACTION', transaction);
+	yield takeEvery('STORE_TRANSACTION_REQUEST', storeTransactionRequest);
 }
 
 export default transactionListener;

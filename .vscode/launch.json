@@ -8,7 +8,7 @@
 			"type": "node",
 			"request": "attach",
 			"name": "Attach to server",
-			"port": 9229
+			"port": 9229,
 		},
 		{
 			"type": "chrome",
@@ -16,6 +16,15 @@
 			"name": "Launch Chrome against localhost",
 			"url": "http://localhost:4321/indexReact",
 			"webRoot": "${workspaceFolder}"
+		}
+	],
+	"compounds": [
+		{
+			"name": "Server+client",
+			"configurations": [
+				"Attach to server",
+				"Launch Chrome against localhost",
+			]
 		}
 	]
 }

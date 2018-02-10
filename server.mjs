@@ -58,6 +58,10 @@ wss.on('connection', function(socket) {
 						});
 					break;
 					case 'PLAYER_SET_MOVE_TARGET':
+					case 'TRANSACTION':
+					case 'PLANT':
+					case 'HARVEST':
+					case 'STORE_TRANSACTION_REQUEST':
 						store.dispatch(data.action);
 					break;
 					default:
@@ -77,19 +81,13 @@ wss.on('connection', function(socket) {
 
 	// The connection was closed
 	socket.on('close', function() {
-		store.dispatch(clientActions.remove({
-			socket,
-			clientId,
-		}));
+		store.dispatch(clientActions.remove(clientId));
 		console.log('Closed Connection 😱');
 	});
 
 	// The connection was closed
 	socket.on('error', function(e) {
-		store.dispatch(clientActions.remove({
-			socket,
-			clientId,
-		}));
+		store.dispatch(clientActions.remove(clientId));
 		console.log('Erred Connection 😱', e);
 	});
 });
@@ -105,14 +103,16 @@ const init = () => {
 
 const tick = () => {
 	const oldState = store.getState();
-	const comp = components;
 	const newActions = oldState.tgos
 		.filter(tgo => tgo.components)
 		.map(tgo => 
 			tgo.components
-				.map(cId => components[cId])
-				.filter(c => c.tick)
-				.map(c => c.tick(tgo))
+				.map(cId => (typeof cId === 'string')
+					? [cId, undefined]
+					: cId)
+				.map(cId => [components[cId[0]], cId[1]])
+				.filter(c => c[0].tick)
+				.map(c => c[0].tick(tgo, c[1]))
 			)
 		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
 		.reduce((acc, action) => [...acc, ...action], []);
