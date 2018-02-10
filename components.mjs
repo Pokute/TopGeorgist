@@ -35,10 +35,10 @@ const components = {
 		tick: (tgo, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];
 			if (tgo.inventory) {
-				const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
-				if (cals && cals.count > 0) {
+				// const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
+				// if (cals && cals.count > 0) {
 					actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));
-				}
+				// }
 			}
 			return actions;
 		}
