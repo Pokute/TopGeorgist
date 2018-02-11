@@ -62,6 +62,10 @@ wss.on('connection', function(socket) {
 					case 'PLANT':
 					case 'HARVEST':
 					case 'STORE_TRANSACTION_REQUEST':
+					case 'GOVERNMENT_CLAIM_CITIZENSHIP':
+					case 'GOVERNMENT_CLAIM_STIPEND':
+					case 'RENT_OFFICE_CLAIM_LAND':
+					case 'RENT_OFFICE_PAY_RENT':
 						store.dispatch(data.action);
 					break;
 					default:

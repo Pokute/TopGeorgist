@@ -7,7 +7,7 @@ const listActions = [
 	'TGO_ADD',
 	'TGO_REMOVE',
 	'TGOS_SET',
-]
+];
 
 export default (state = initialState, action) => {
 	// Handle single tgo changes here.

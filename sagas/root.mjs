@@ -1,15 +1,19 @@
-import transaction from './transaction';
-import plant from './plantable';
-import view from './view';
-import player from './player';
+import buildingGovernment from './buildings/government';
+import buildingRentOffice from './buildings/rentOffice';
 import net from './net';
+import plant from './plantable';
+import player from './player';
+import transaction from './transaction';
+import view from './view';
 
 const rootSaga = function* () {
-	yield* transaction();
-	yield* plant();
-	yield* view();
-	yield* player();
+	yield* buildingGovernment();
+	yield* buildingRentOffice();
 	yield* net();
+	yield* plant();
+	yield* player();
+	yield* transaction();
+	yield* view();
 };
 
 export default rootSaga;

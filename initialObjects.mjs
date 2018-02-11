@@ -1,4 +1,5 @@
 import * as tgoActions from './actions/tgo';
+import governmentListener from './sagas/buildings/government.mjs';
 
 export const createPlayerAction = () => {
 	return tgoActions.add({
@@ -80,6 +81,66 @@ export const storeGeneralAction = () => tgoActions.add({
 	}
 });
 
+export const rentOfficeAction = () => tgoActions.add({
+	label: 'Rent office',
+	typeId: 'building',
+	position: { x: 9, y: 8},
+	color: 'pink',
+	inventory: [
+		{
+			typeId: 'money',
+			count: 25000,
+		},
+	],
+	visitable: {
+		label: 'Rent office - visit here to claim and pay for land rent.',
+		actions: [
+			{
+				label: 'Claim land',
+				onClick: {
+					type: 'RENT_OFFICE_CLAIM_LAND',
+				}
+			},
+			{
+				label: 'Pay outstanding rent',
+				onClick: {
+					type: 'RENT_OFFICE_PAY_RENT',
+				}
+			},
+		],
+	},
+});
+
+export const GovernmentAction = () => tgoActions.add({
+	label: 'Government',
+	typeId: 'building',
+	position: { x: 7, y: 11},
+	color: 'pink',
+	inventory: [
+		{
+			typeId: 'money',
+			count: 1000000,
+		},
+	],
+	visitable: {
+		label: 'Government building - Here you can claim your stipend.',
+		actions: [
+			{
+				label: 'Claim accrued stipend',
+				onClick: {
+					type: 'GOVERNMENT_CLAIM_STIPEND',
+				},
+			},
+			{
+				label: 'Apply for citizenship',
+				onClick: {
+					type: 'GOVERNMENT_CLAIM_CITIZENSHIP',
+				}
+			},
+		],
+	},
+});
+
 export const leaderBoardAction = () => tgoActions.add({
 	label: 'Leaderboard',
 	leaderBoard: true,
@@ -103,6 +164,8 @@ export const tileSetBasicAction = () => ({
 
 const initialObjectActions = () => [
 	storeGeneralAction(),
+	rentOfficeAction(),
+	GovernmentAction(),
 	leaderBoardAction(),
 	tileSetBasicAction(),
 ]

@@ -34,7 +34,7 @@ const mapStoreToProps = (state, passedProps) => ({
 			.map(tgo => ({ label: tgo.label, money: tgo.inventory.find(it => it.typeId === 'money').count }))
 			.sort((pa, pb) => pb.money - pa.money)
 		: undefined,
-})
+});
 
 const mapDispatchToProps = (dispatch, passedProps) => ({
 	onActionClick: action => (() => dispatch(netActions.send({

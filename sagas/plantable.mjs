@@ -1,4 +1,3 @@
-import store from '../store';
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
 import * as tgoActions from '../actions/tgo';
