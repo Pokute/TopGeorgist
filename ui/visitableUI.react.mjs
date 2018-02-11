@@ -16,8 +16,25 @@ const VisitableUI = props => (
 				</button>
 			))
 		}
+		{props.visitable.leaderBoard
+			? <ol>
+				{props.leaderBoard.map(p => (
+					<li key={p.label}>{`${p.label}: ${p.money}`}</li>
+				))}
+			</ol>
+			: null
+		}
 	</div>
 );
+
+const mapStoreToProps = (state, passedProps) => ({
+	leaderBoard: passedProps.visitable.leaderBoard
+		? state.tgos
+			.filter(tgo => tgo.typeId === 'player')
+			.map(tgo => ({ label: tgo.label, money: tgo.inventory.find(it => it.typeId === 'money').count }))
+			.sort((pa, pb) => pb.money - pa.money)
+		: undefined,
+})
 
 const mapDispatchToProps = (dispatch, passedProps) => ({
 	onActionClick: action => (() => dispatch(netActions.send({
@@ -27,4 +44,4 @@ const mapDispatchToProps = (dispatch, passedProps) => ({
 	}))),
 });
 
-export default connect(undefined, mapDispatchToProps)(VisitableUI);
+export default connect(mapStoreToProps, mapDispatchToProps)(VisitableUI);

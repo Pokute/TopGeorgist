@@ -71,13 +71,23 @@ export const storeGeneralAction = () => tgoActions.add({
 						},
 						{
 							typeId: 'money',
-							count: -10,
+							count: 10,
 						},
 					],
 				},
 			}
 		],
 	}
+});
+
+export const leaderBoardAction = () => tgoActions.add({
+	label: 'Leaderboard',
+	leaderBoard: true,
+	position: { x: 4, y: 5},
+	color: 'yellow',
+	visitable: {
+		label: 'Leaderboard',
+	},
 });
 
 export const tileSetBasicAction = () => ({
@@ -93,6 +103,7 @@ export const tileSetBasicAction = () => ({
 
 const initialObjectActions = () => [
 	storeGeneralAction(),
+	leaderBoardAction(),
 	tileSetBasicAction(),
 ]
 
