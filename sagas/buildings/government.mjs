@@ -2,6 +2,7 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import * as governmentActions from '../../actions/government';
 import * as inventoryActions from '../../actions/inventory';
 import transaction from '../../actions/transaction';
+import { checkOnVisitableLocation } from '../../utils/visitable';
 
 const claimCitizenship = function*(action) {
 	const { tgoId, visitableTgoId } = action;
@@ -9,8 +10,7 @@ const claimCitizenship = function*(action) {
 	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
 	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
 
-	if (!actorTgo.position || !visitableTgo.position || 
-		(actorTgo.position.x !== visitableTgo.position.x) || (actorTgo.position.y !== visitableTgo.position.y))
+	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;
 
 	const citizen = s.government.citizens.find(tgo => tgo.tgoId === actorTgo);
@@ -24,8 +24,7 @@ const claimStipend = function*(action) {
 	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
 	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
 
-	if (!actorTgo.position || !visitableTgo.position || 
-		(actorTgo.position.x !== visitableTgo.position.x) || (actorTgo.position.y !== visitableTgo.position.y))
+	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;
 
 	const citizen = s.government.citizens.find(tgo => tgo.tgoId === tgoId);
