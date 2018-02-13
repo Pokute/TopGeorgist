@@ -3,7 +3,7 @@ import * as inventoryActions from '../actions/inventory';
 import * as tgoActions from '../actions/tgo';
 import transaction from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
-import { checkOnVisitableLocation } from '../../utils/visitable';
+import { checkOnVisitableLocation } from '../utils/visitable';
 
 const plant = function* (action) {
 	const { actorTgoId, plantableTypeId } = action;
@@ -64,7 +64,7 @@ const harvest = function* (action) {
 	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
 	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
-	const targetTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
+	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;
@@ -73,8 +73,8 @@ const harvest = function* (action) {
 		tgoId: tgoId,
 		items: [
 			{
-				typeId: targetTgo.plantTypeId,
-				count: targetTgo.inventory.find(i => i.typeId === targetTgo.plantTypeId).count,
+				typeId: visitableTgo.plantTypeId,
+				count: visitableTgo.inventory.find(i => i.typeId === visitableTgo.plantTypeId).count,
 			},
 		],
 	}));

@@ -30,5 +30,3 @@ export const rent = (tgoId, position) => ({
 	tgoId,
 	position,
 });
-
-export const government;
