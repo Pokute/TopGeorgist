@@ -1,5 +1,6 @@
 // Client code.
 
+import config from './config';
 import store from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
@@ -11,7 +12,7 @@ import * as tgoActions from './actions/tgo';
 import components from './components';
 
 const init = () => {
-	global.ws = new WebSocketWrapper(new WebSocket('ws://localhost:4320'));
+	global.ws = new WebSocketWrapper(new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`));
 
 	global.ws.on('message', (msg) => {
 		const data = JSON.parse(msg.data);

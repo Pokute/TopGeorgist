@@ -1,4 +1,5 @@
 import uuidv4 from 'uuid';
+import config from './config';
 import store from './store';
 import createItemTypes from './types';
 import initialObjectActions from './initialObjects'
@@ -11,7 +12,7 @@ import components from './components';
 global.isServer = true;
 
 // Start the server
-var wss = new WSS({ port: 4320 });
+var wss = new WSS({ port: config.gameServer.port });
 
 console.log('Started server');
 
