@@ -20,6 +20,13 @@ export const addDebt = (tgoId, amount) => ({
 	amount,
 });
 
+export const addRentDebt = (tgoId, position, amount) => ({
+	type: 'GOVERNMENT_CLAIM_DEBT_ADD',
+	tgoId,
+	position,
+	amount,
+});
+
 export const distribute = (money) => ({
 	type: 'GOVERNMENT_DISTRIBUTE',
 	money,

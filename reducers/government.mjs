@@ -6,8 +6,15 @@ const initialState = {
 
 const initialCitizenState = {
 	stipend: 50,
+};
+
+const initialClaimState = {
+	tgoId: undefined,
+	position: undefined,
 	rentDebt: 0,
 };
+
+const rentPerTick = 0.5;
 
 export default (state = initialState, action) => {
 	switch (action.type) {
@@ -47,9 +54,33 @@ export default (state = initialState, action) => {
 				...state,
 				claims: [
 					...claims,
-					actions.claim,
+					{
+						...initialClaimState,
+						tgoId: action.tgoId,
+						position: action.position,
+					}
 				],
 			};
+		case 'GOVERNMENT_STIPEND_ADD':
+			const citizen = state.citizens.find(c => c.tgoId === action.tgoId);
+			return {
+				...state,
+				citizens: [
+					...state.citizens.filter(c => c !== citizen),
+					{
+						...citizen,
+						stipend: citizen.stipend + action.amount,
+					}
+				]
+			}
+		case 'TICK':
+			return {
+				...state,
+				claims: claims.map(c => ({
+					...c,
+					rentDebt: c.rentDebt + rentPerTick,
+				})),
+			}
 		default:
 			return state;
 	}
