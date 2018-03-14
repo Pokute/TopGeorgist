@@ -17,6 +17,7 @@ const init = () => {
 	global.ws.on('message', (msg) => {
 		const data = JSON.parse(msg.data);
 		if (data && data.action && data.action.type === 'ALL_SET') {
+			store.dispatch(data.action);
 			const newState = data.action.data;
 			if (newState.map) store.dispatch(mapActions.set(newState.map));
 			if (newState.tileSets) store.dispatch(tileSetActions.set(newState.tileSets));

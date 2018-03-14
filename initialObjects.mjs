@@ -83,6 +83,7 @@ export const storeGeneralAction = () => tgoActions.add({
 
 export const rentOfficeAction = () => tgoActions.add({
 	label: 'Rent office',
+	rentOffice: true,
 	typeId: 'building',
 	position: { x: 9, y: 8},
 	color: 'pink',
@@ -96,6 +97,12 @@ export const rentOfficeAction = () => tgoActions.add({
 		label: 'Rent office - visit here to claim and pay for land rent.',
 		actions: [
 			{
+				parameters: [{
+					name: 'position',
+					label: 'Position',
+					type: 'position',
+					required: true,
+				}],
 				label: 'Claim land',
 				onClick: {
 					type: 'RENT_OFFICE_CLAIM_LAND',
@@ -113,6 +120,7 @@ export const rentOfficeAction = () => tgoActions.add({
 
 export const GovernmentAction = () => tgoActions.add({
 	label: 'Government',
+	governmentBuilding: true,
 	typeId: 'building',
 	position: { x: 7, y: 11},
 	color: 'pink',

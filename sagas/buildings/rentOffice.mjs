@@ -32,7 +32,7 @@ const payRent = function* (action) {
 	const citizen = s.government.citizens.find(tgo => tgo.tgoId === tgoId);
 	if (!citizen) return false;
 
-	const citizenClaims = s.government.claims.find(c => c.tgoId === tgoId);
+	const citizenClaims = s.government.claims.filter(c => c.tgoId === tgoId);
 	for (let claim of citizenClaims) {
 		const currentRentDebt = claim.rentDebt;
 		const currentMoney = actorTgo.inventory.find(it => it.typeId === 'money').count;

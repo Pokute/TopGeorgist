@@ -2,18 +2,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import * as netActions from '../actions/net';
+import VisitableGovernmentBuilding from './visitable/governmentBuilding';
+import VisitableRentOffice from './visitable/rentOffice';
+import Action from './action.mjs';
 
 const VisitableUI = props => (
 	<div>
 		<p>{props.visitable.label}</p>
 		{(props.visitable.visitable.actions || [])
 			.map(va => (
-				<button
+				<Action
 					key={va.label}
-					onClick={props.onActionClick(va)}
-				>
-					{va.label}
-				</button>
+					action={va}
+					additionalSentData={{
+						tgoId: props.visitor.tgoId,
+						visitableTgoId: props.visitable.tgoId,
+					}}
+				/>
 			))
 		}
 		{props.visitable.leaderBoard
@@ -22,6 +27,14 @@ const VisitableUI = props => (
 					<li key={p.label}>{`${p.label}: ${p.money}`}</li>
 				))}
 			</ol>
+			: null
+		}
+		{props.visitable.governmentBuilding 
+			? <VisitableGovernmentBuilding />
+			: null
+		}
+		{props.visitable.rentOffice 
+			? <VisitableRentOffice />
 			: null
 		}
 	</div>

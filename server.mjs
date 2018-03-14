@@ -123,6 +123,8 @@ const tick = () => {
 		.reduce((acc, action) => [...acc, ...action], []);
 	newActions.forEach(a => store.dispatch(a));
 
+	store.dispatch({ type: 'TICK' });
+
 	oldState.clients.forEach(c => {
 		try {
 			c.socket.send(JSON.stringify({

@@ -5,6 +5,7 @@ const initialState = {
 };
 
 const initialCitizenState = {
+	tgoId: undefined,
 	stipend: 50,
 };
 
@@ -19,6 +20,7 @@ const rentPerTick = 0.5;
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case 'CITIZEN_ADD':
+			if (state.citizens.find(c => c.tgoId === action.tgoId)) return state;
 			return {
 				...state,
 				citizens: [
@@ -53,7 +55,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				claims: [
-					...claims,
+					...state.claims,
 					{
 						...initialClaimState,
 						tgoId: action.tgoId,
@@ -72,15 +74,19 @@ export default (state = initialState, action) => {
 						stipend: citizen.stipend + action.amount,
 					}
 				]
-			}
+			};
 		case 'TICK':
 			return {
 				...state,
-				claims: claims.map(c => ({
+				claims: state.claims.map(c => ({
 					...c,
 					rentDebt: c.rentDebt + rentPerTick,
 				})),
-			}
+			};
+		case 'ALL_SET':
+			return {
+				...action.data.government,
+			};
 		default:
 			return state;
 	}
