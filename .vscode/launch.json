@@ -15,7 +15,8 @@
 			"request": "launch",
 			"name": "Launch Chrome against localhost",
 			"url": "http://localhost:24321/",
-			"webRoot": "${workspaceFolder}"
+			"webRoot": "${workspaceFolder}",
+			"breakOnLoad": true
 		}
 	],
 	"compounds": [

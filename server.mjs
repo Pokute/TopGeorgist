@@ -1,3 +1,4 @@
+import serverConfig from './serverConfig';
 import uuidv4 from 'uuid';
 import config from './config';
 import store from './store';
@@ -8,8 +9,6 @@ import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
 import * as clientActions from './actions/client';
 import components from './components';
-
-global.isServer = true;
 
 // Start the server
 var wss = new WSS({ port: config.gameServer.port });
@@ -102,41 +101,6 @@ const init = () => {
 	initialObjectActions().forEach(o => store.dispatch(o));
 
 	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 }, seed: 1233321 }));
-
-	setInterval(tick, 250);
 };
-
-const tick = () => {
-	const oldState = store.getState();
-	const newActions = oldState.tgos
-		.filter(tgo => tgo.components)
-		.map(tgo => 
-			tgo.components
-				.map(cId => (typeof cId === 'string')
-					? [cId, undefined]
-					: cId)
-				.map(cId => [components[cId[0]], cId[1]])
-				.filter(c => c[0].tick)
-				.map(c => c[0].tick(tgo, c[1]))
-			)
-		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
-		.reduce((acc, action) => [...acc, ...action], []);
-	newActions.forEach(a => store.dispatch(a));
-
-	store.dispatch({ type: 'TICK' });
-
-	oldState.clients.forEach(c => {
-		try {
-			c.socket.send(JSON.stringify({
-				action: {
-					type: 'ALL_SET',
-					data: { ...store.getState(), clients:[] }
-				}
-			}))
-		} catch (ex) {
-			console.log(ex);
-		}
-	});
-}
 
 init();

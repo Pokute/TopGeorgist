@@ -5,6 +5,7 @@ import government from './government';
 import itemTypes from './itemTypes';
 import map from './map';
 import tgos from './tgos';
+import ticker from './ticker';
 import tileSets from './tileSets';
 import views from './views';
 
@@ -15,6 +16,7 @@ const topGeorgist = combineReducers({
 	itemTypes,
 	map,
 	tgos,
+	ticker,
 	tileSets,
 	views,
 });
