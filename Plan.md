@@ -43,8 +43,6 @@
 	* Receiving the map
 	* Receiving tgos
 		* Move function from tgos to types.
-	* Server hosting.
-		* Where?
 * Map
 	* Seeded generation.
 * Leaderboards
@@ -57,17 +55,22 @@
 		* Has an account for each player
 		* Player can collect money in account.
 		* Accounts gets equal % of all rent collected from rent office.
-* Rehydrate
-* Hot reload?
-* Investigate
-	* redux-loop https://github.com/redux-loop/redux-loop
-	* reducer-reducer?
-	* Need for redux-thunk?
 * Tick into redux.
 * Reduxise all callbacks.
-* Publishing
 
 ## Milestone 3
+* Time sinks
+	* Doing most actions should require ticks to complete.
+	* Most actions can be paused
+* UI progress bar.
+	* Segmented by ticks, but progress 0 -> 1 is linear in progress bar
+	* Above means that for most tasks, the start parts take long time and don't produce much, but later parts take less time and produce more.
+* Farming overhaul
+	* Progress can be seen
+	* Pineapples grow edible, but calories doesn't increase after certain point.
+* UI mouse selection of positions
+* Economy
+	* More sinks
 * Player
 	* New "energy" stat.
 	* Doing different actions use "energy"
@@ -79,10 +82,20 @@
 * Buildings
 	* Barracks
 		* Has beds that cost to use
-* Investigate
-	* react?, react-native with -web?
 * Rendering overhaul
 * Add graphics for most items.
 * Better map generation.
-* Economy
-	* More sinks
+* Rehydrate
+* Hot reload?
+* Publishing
+* Investigate
+	* redux-loop https://github.com/redux-loop/redux-loop
+	* reducer-reducer?
+	* Need for redux-thunk?
+* Server hosting.
+	* Where?
+
+## Icebox
+
+* Investigate
+	* react?, react-native with -web?
