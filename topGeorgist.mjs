@@ -30,9 +30,6 @@ const init = () => {
 
 	createItemTypes();
 
-	if (global.isServer) setInterval(tick, 250);
-	// setInterval(tick, 250);
-
 	store.dispatch(viewActions.render());
 	setInterval(() => {
 		store.dispatch(viewActions.render());
@@ -40,22 +37,6 @@ const init = () => {
 	setInterval(() => {
 		store.dispatch(viewActions.render('secondary'));
 	}, 100);
-};
-
-export const tick = () => {
-	const oldState = store.getState();
-	const comp = components;
-	const newActions = oldState.tgos
-		.filter(tgo => tgo.components)
-		.map(tgo => 
-			tgo.components
-				.map(cId => components[cId])
-				.filter(c => c.tick)
-				.map(c => c.tick(tgo))
-			)
-		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
-		.reduce((acc, action) => [...acc, ...action], []);
-	newActions.forEach(a => store.dispatch(a));
 };
 
 export const initOldHtml = () => {

@@ -99,7 +99,7 @@ const createItemTypeAction = it => ({
 
 const createItemTypes = () => {
 	const actions = Object.entries(items)
-		.map(e => ({ ...e[1], typeId: e[0] }))
+		.map(([key, val]) => ({ ...val, typeId: key }))
 		.map(i => ({ ...defaultType, ...i }))
 		.map(createItemTypeAction);
 	actions.forEach(a => store.dispatch(a));
