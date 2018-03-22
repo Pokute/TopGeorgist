@@ -6,10 +6,12 @@
 }
 
 .progressBar .segment {
-	display: flex;
+	display: inline-flex;
 	flex-direction: inherit;
 	flex-flow: nowrap;
+	align-content: center;
 	border: 5px solid firebrick;
+	justify-content: space-around;
 }
 
 .progressBar .segment .done {
@@ -18,4 +20,10 @@
 
 .progressBar .segment .pending {
 	background-color: gainsboro;
+}
+
+.progressBar .segment .title {
+	position: absolute;
+	color: black;
+	align-self: center;
 }

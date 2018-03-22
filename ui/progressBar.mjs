@@ -13,8 +13,11 @@ const ProgressBar = (props) => {
 						key={`${segment.title}-${i}`}
 						style={{ flex: segment.cost }}
 					>
-						<div className='done' style={{ flex: (segmentProgress) }} />
-						<div className='pending' style={{ flex: (1 - segmentProgress) }} />
+						{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
+						{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
+						<div className='title'>
+							{segment.title}
+						</div>
 					</div>
 				)
 			})}
