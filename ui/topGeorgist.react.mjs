@@ -5,6 +5,7 @@ import CreatePlayerForm from './createPlayerForm.react';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';
+import ProgressBar from './progressBar.mjs';
 
 const TopGeorgist = props => (
 	<div>
@@ -15,6 +16,14 @@ const TopGeorgist = props => (
 				key={v.viewId}
 			/>
 		))}
+		<ProgressBar
+			progress={1.25}
+			segments={[
+				{ title: 'Part1', cost: 3, },
+				{ title: 'Part2', cost: 2, },
+				{ title: 'Part3', cost: 4, },
+			]}
+		/>
 		<button
 			onClick={() => { console.log('Arr!'); }}
 			type={'button'}

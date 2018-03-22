@@ -1,0 +1,21 @@
+.progressBar {
+	display: flex;
+	flex-direction: row;
+	flex-flow: nowrap;
+	height: 5em;
+}
+
+.progressBar .segment {
+	display: flex;
+	flex-direction: inherit;
+	flex-flow: nowrap;
+	border: 5px solid firebrick;
+}
+
+.progressBar .segment .done {
+	background-color: blue;
+}
+
+.progressBar .segment .pending {
+	background-color: gainsboro;
+}
