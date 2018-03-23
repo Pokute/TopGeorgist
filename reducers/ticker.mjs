@@ -1,11 +1,13 @@
 const initialState = {
-	currentTick: undefined,
+	currentTick: 0,
 	tickInterval: 250,
 	running: true,
 };
 
 export default (state = initialState, action) => {
 	switch (action.type) {
+		case 'ALL_SET':
+			return action.data.ticker;
 		case 'TICK':
 			return {
 				...state,

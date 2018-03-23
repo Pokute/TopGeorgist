@@ -5,22 +5,31 @@ const ProgressBar = (props) => {
 	const totalCost = props.segments.reduce((cost, segment) => cost+segment.cost, 0);
 	return (
 		<div className='progressBar'>
-			{props.segments.map((segment, i) => {
-				const segmentProgress = Math.max(0, Math.min((props.progress - i), 1))
-				return (
-					<div
-						className='segment'
-						key={`${segment.title}-${i}`}
-						style={{ flex: segment.cost }}
-					>
-						{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
-						{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
-						<div className='title'>
-							{segment.title}
+			{props.segments.reduce(({components, costAcc, i}, segment) => {
+				const segmentProgress = Math.max(0, Math.min((props.progress - costAcc) / segment.cost, 1))
+				return {
+					components: [...components, (
+						<div
+							className='segment'
+							key={`${segment.title}-${i}`}
+							style={{ flex: segment.cost }}
+						>
+							{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
+							{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
+							<div className='title'>
+								{segment.title}
+							</div>
 						</div>
-					</div>
-				)
-			})}
+					)],
+					costAcc: costAcc + segment.cost,
+				}
+			},
+			{
+				components: [],
+				costAcc: 0,
+			})
+				.components
+			}
 		</div>
 	);
 }

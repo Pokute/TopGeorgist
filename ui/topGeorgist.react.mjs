@@ -17,7 +17,7 @@ const TopGeorgist = props => (
 			/>
 		))}
 		<ProgressBar
-			progress={1.25}
+			progress={((props.currentTick % 90) / 90) * 9}
 			segments={[
 				{ title: 'Part1', cost: 3, },
 				{ title: 'Part2', cost: 2, },
@@ -39,6 +39,7 @@ const mapStoreToProps = store => ({
 	views: store.views,
 	map: store.map,
 	defaultPlayerTgoId: store.defaults.playerTgoId,
+	currentTick: store.ticker.currentTick,
 });
 
 export default connect(mapStoreToProps)(TopGeorgist);
