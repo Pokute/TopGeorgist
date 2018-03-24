@@ -31,12 +31,12 @@ const init = () => {
 	createItemTypes();
 
 	store.dispatch(viewActions.render());
-	setInterval(() => {
-		store.dispatch(viewActions.render());
-	}, 100);
-	setInterval(() => {
-		store.dispatch(viewActions.render('secondary'));
-	}, 100);
+	// setInterval(() => {
+	// 	store.dispatch(viewActions.render());
+	// }, 100);
+	// setInterval(() => {
+	// 	store.dispatch(viewActions.render('secondary'));
+	// }, 100);
 };
 
 export const initOldHtml = () => {

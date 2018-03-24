@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 const ProgressBar = (props) => {
 	const totalCost = props.segments.reduce((cost, segment) => cost+segment.cost, 0);
+	const tickPlusTimeProgress = props.progress + ((Date.now() - props.tickTime) / props.tickInterval);
 	return (
 		<div className='progressBar'>
 			{props.segments.reduce(({components, costAcc, i}, segment) => {
-				const segmentProgress = Math.max(0, Math.min((props.progress - costAcc) / segment.cost, 1))
+				const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / segment.cost, 1))
 				return {
 					components: [...components, (
 						<div
@@ -40,7 +42,7 @@ ProgressBar.propTypes = {
 		cost: PropTypes.number,
 		// progress: PropTypes.number,
 		title: PropTypes.string,
-	})),
+	}))
 }
 
 PropTypes.defaultProps = {
@@ -48,4 +50,9 @@ PropTypes.defaultProps = {
 	segments: [],
 }
 
-export default ProgressBar;
+const mapStoreToProps = store => ({
+	tickTime: store.ticker.tickTime,
+	tickInterval: store.ticker.tickInterval,
+});
+
+export default connect(mapStoreToProps)(ProgressBar);

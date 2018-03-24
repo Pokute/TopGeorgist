@@ -1,6 +1,7 @@
 const initialState = {
 	currentTick: 0,
 	tickInterval: 250,
+	tickTime: Date.now(),
 	running: true,
 };
 
@@ -12,6 +13,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				currentTick: state.currentTick + 1,
+				tickTime: action.tickTime,
 			};
 		case 'SET_TICK_INTERVAL':
 			return {

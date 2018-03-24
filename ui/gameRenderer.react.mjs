@@ -4,15 +4,76 @@ import { connect } from 'react-redux';
 import * as viewUtils from '../utils/view';
 import * as netActions from '../actions/net';
 
-const GameRenderer = props => (
-	<canvas
-		id={`view-canvas-${props.view.viewId}`}
-		width={1000}
-		height={600}
-		onClick={props.onClick}
-	>
-	</canvas>
-);
+const drawTile = (ctx, pos, tile, tileSize) => {
+	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
+	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+	ctx.fillRect(pos.x - tileSize / 2, pos.y - tileSize / 2,
+		tileSize, tileSize);
+}
+
+const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
+	ctx.beginPath();
+	ctx.strokeStyle = strokeStyle;
+	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
+	ctx.lineTo(pos.x + size.x/2, pos.y + size.y/2);
+	ctx.stroke();
+	ctx.moveTo(pos.x - size.x/2, pos.y + size.y/2);
+	ctx.lineTo(pos.x + size.x/2, pos.y - size.y/2);
+	ctx.stroke();
+};
+
+const componentRender = (props, store) => {
+	const s = store;
+	const usedViewId = (props.view.viewId !== undefined) ? props.view.viewId : s.defaults.viewId;
+	const v = s.views.find(v => v.viewId === usedViewId);
+	if (!v) return;
+	const c = document.getElementById(v.canvasId);
+	if (!c) return;
+
+	const { minTile, maxTile, offset } = viewUtils.getMetrics(usedViewId);
+
+	const ctx = c.getContext('2d');
+	const tileSet = s.tileSets.find(ts => ts.tileSetId === s.map.tileSetId);
+	if (!tileSet) return;
+	for (let y = minTile.y; y < maxTile.y; y++)
+		for (let x = minTile.x; x < maxTile.x; x++) {
+			drawTile(ctx, {
+				x: s.map.tileSize * (x - minTile.x + offset.x + 0.5),
+				y: s.map.tileSize * (y - minTile.y + offset.y + 0.5)
+			},
+			tileSet.tiles.find(t => t.tileId === s.map.data[s.map.size.x * y + x]),
+			s.map.tileSize);
+		}
+
+	s.tgos.forEach((tgo) => {
+		const pos = {
+			x: (tgo.position.x - minTile.x + offset.x + 0.5)*s.map.tileSize,
+			y: (tgo.position.y - minTile.y + offset.y + 0.5)*s.map.tileSize,
+		};
+		drawCross(ctx,
+			pos,
+			undefined, tgo.color);
+		if (tgo.label) {
+			ctx.fillStyle = 'black';
+			ctx.textAlign = 'center';
+			ctx.fillText(tgo.label, pos.x, pos.y - 10);
+		}
+	})
+};
+
+const GameRenderer = props => {
+	componentRender(props, props.store);
+
+	return (
+		<canvas
+			id={`view-canvas-${props.view.viewId}`}
+			width={1000}
+			height={600}
+			onClick={props.onClick}
+		>
+		</canvas>
+	);
+};
 
 GameRenderer.propTypes = {
 	view: PropTypes.object,
@@ -22,6 +83,7 @@ const mapStoreToProps = (store, ownProps) => ({
 	// map: store.map,
 	tgos: store.tgos,
 	tileSet: store.tileSets.find(ts => ts.tileSetId === store.map.tileSetId),
+	store,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

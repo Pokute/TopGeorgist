@@ -1,5 +1,6 @@
 export const tick = () => ({
 	type: 'TICK',
+	tickTime: Date.now(),
 });
 
 export const setTickInterval = tickInterval => ({

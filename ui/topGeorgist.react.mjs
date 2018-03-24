@@ -17,11 +17,11 @@ const TopGeorgist = props => (
 			/>
 		))}
 		<ProgressBar
-			progress={((props.currentTick % 90) / 90) * 9}
+			progress={(props.currentTick % 160)}
 			segments={[
-				{ title: 'Part1', cost: 3, },
-				{ title: 'Part2', cost: 2, },
-				{ title: 'Part3', cost: 4, },
+				{ title: 'Part1', cost: 20, },
+				{ title: 'Part2', cost: 100, },
+				{ title: 'Part3', cost: 40, },
 			]}
 		/>
 		<button
