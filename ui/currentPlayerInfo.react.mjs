@@ -8,7 +8,7 @@ const CurrentPlayerInfo = props => (
 );
 
 const mapStoreToProps = store => ({
-	player: store.tgos.find(tgo => tgo.tgoId === store.defaults.playerTgoId),
+	player: store.tgos[store.defaults.playerTgoId],
 });
 
 export default connect(mapStoreToProps)(CurrentPlayerInfo);

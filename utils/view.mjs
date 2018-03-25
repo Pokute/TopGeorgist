@@ -2,10 +2,10 @@ import store from '../store';
 
 const getMetrics = (viewId) => {
 	const s = store.getState();
-	const v = s.views.find(v => v.viewId === viewId);
+	const v = s.views[viewId];
 	if (!v) throw new TypeError('Undefined viewId');
 	const followTgo = v.followTgoId
-		? s.tgos.find(tgo => tgo.tgoId === v.followTgoId)
+		? s.tgos[v.followTgoId]
 		: undefined;
 	const pos = followTgo ? followTgo.position : v.position;
 	const c = document.getElementById(v.canvasId);

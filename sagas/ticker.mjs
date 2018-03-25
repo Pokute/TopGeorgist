@@ -15,7 +15,7 @@ const tickerSaga = function*() {
 
 const tick = function*() {
 	const oldState = yield select();
-	const newActions = oldState.tgos
+	const newActions = Object.values(oldState.tgos)
 		.filter(tgo => tgo.components)
 		.map(tgo => 
 			tgo.components

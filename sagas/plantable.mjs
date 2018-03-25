@@ -8,12 +8,12 @@ import { checkOnVisitableLocation } from '../utils/visitable';
 const plant = function* (action) {
 	const { actorTgoId, plantableTypeId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === actorTgoId);
+	const actorTgo = s.tgos[actorTgoId];
 	const plantableType = s.itemTypes[plantableTypeId];
 
 	const plantPosition = actorTgo.position;
 
-	const freePlot = !s.tgos
+	const freePlot = !Object.values(s.tgos)
 		.filter(tgo => tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y))
 		.map(tgo => s.itemTypes[tgo.typeId])
 		.some(type => type.building);
@@ -63,8 +63,8 @@ const plant = function* (action) {
 const harvest = function* (action) {
 	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
-	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
+	const actorTgo = s.tgos[tgoId];
+	const visitableTgo = s.tgos[visitableTgoId];
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;

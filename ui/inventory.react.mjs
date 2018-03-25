@@ -29,7 +29,7 @@ const Inventory = props => props.inventory ?
 
 const mapStoreToProps = (store, passedProps) => ({
 	inventory: passedProps.ownerTgoId
-		? store.tgos.find(tgo => tgo.tgoId === passedProps.ownerTgoId).inventory
+		? store.tgos[passedProps.ownerTgoId].inventory
 		: undefined,
 	itemTypes: store.itemTypes,
 });

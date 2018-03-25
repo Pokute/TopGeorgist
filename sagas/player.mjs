@@ -6,7 +6,7 @@ import { createPlayerAction } from '../initialObjects'
 const handlePlayerCreateRequest = function*(action) {
 	if (!global.isServer) return;
 	console.log('Received playerCreateRequest ', action.label)
-	const hasNameConflict = (yield select(state => state.tgos))
+	const hasNameConflict = Object.values(yield select(state => state.tgos))
 		.some(tgo => (tgo.typeId === 'player') && (tgo.label === action.label))
 	if (hasNameConflict) return;
 

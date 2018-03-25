@@ -12,7 +12,7 @@ const defaultType = {
 
 const getPlayer = (state) => {
 	const s = state ? state : store.getState();
-	return s.tgos.find(tgo => tgo.tgoId === s.defaults.playerTgoId);
+	return s.tgos[s.defaults.playerTgoId];
 }
 
 const items = {

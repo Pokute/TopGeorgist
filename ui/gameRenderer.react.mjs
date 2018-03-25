@@ -41,7 +41,7 @@ const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 			map.tileSize);
 		}
 
-	tgos.forEach((tgo) => {
+	Object.values(tgos).forEach(tgo => {
 		const pos = {
 			x: (tgo.position.x - minTile.x + offset.x + 0.5)*map.tileSize,
 			y: (tgo.position.y - minTile.y + offset.y + 0.5)*map.tileSize,
@@ -75,7 +75,7 @@ GameRenderer.propTypes = {
 	view: PropTypes.object,
 	// from Store
 	map: PropTypes.object,
-	tgos: PropTypes.arrayOf(PropTypes.object),
+	tgos: PropTypes.object,
 	tileSet: PropTypes.object,
 }
 

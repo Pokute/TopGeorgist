@@ -7,8 +7,8 @@ import { checkOnVisitableLocation } from '../../utils/visitable';
 const claimLand = function* (action) {
 	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
-	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
+	const actorTgo = s.tgos[tgoId];
+	const visitableTgo = s.tgos[visitableTgoId];
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;
@@ -23,8 +23,8 @@ const claimLand = function* (action) {
 const payRent = function* (action) {
 	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
-	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
+	const actorTgo = s.tgos[tgoId];
+	const visitableTgo = s.tgos[visitableTgoId];
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
 		return false;

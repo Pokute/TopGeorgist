@@ -1,25 +1,24 @@
 import viewReducer from './view';
-const initialState = [];
+const initialState = {};
 
 export default (state = initialState, action) => {
 	// Handle single view changes here.
 	if ((action.viewId) && 
 		(action.type !== 'VIEW_ADD') &&
 		(action.type !== 'DEFAULTS_SET_VIEW')) {
-		return state.map(v => {
-			if (v.viewId !== action.viewId)
-				return v;
-			if (action.type.indexOf('VIEW_') === 0)
-				return viewReducer(v, action);
-			return v;
-		});
+		return {
+			...state,
+			[action.viewId]: (action.type.indexOf('VIEW_') === 0)
+				? viewReducer(state[action.viewId], action)
+				: state[action.viewId]
+		};
 	}
 	switch (action.type) {
 		case 'VIEW_ADD':
-			return [
+			return {
 				...state,
-				action.view,
-			];
+				[action.view.viewId]: action.view,
+			};
 		default:
 			return state;
 	}

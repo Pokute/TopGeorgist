@@ -42,7 +42,7 @@ const VisitableUI = props => (
 
 const mapStoreToProps = (state, passedProps) => ({
 	leaderBoard: passedProps.visitable.leaderBoard
-		? state.tgos
+		? Object.values(state.tgos)
 			.filter(tgo => tgo.typeId === 'player')
 			.map(tgo => ({ label: tgo.label, money: tgo.inventory.find(it => it.typeId === 'money').count }))
 			.sort((pa, pb) => pb.money - pa.money)

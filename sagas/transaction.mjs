@@ -17,7 +17,7 @@ const transaction = function* (action) {
 	// Items shape: { typeId, count };
 
 	const participantsWithInfo = yield participants.map(function*(p) {
-		const pTgo = yield select(state => state.tgos.find(tgo => tgo.tgoId === p.tgoId));
+		const pTgo = yield select(state => state.tgos[p.tgoId]);
 		const newItems = yield p.items.map(function*(i) {
 			return {
 				...i,

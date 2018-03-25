@@ -9,7 +9,7 @@ import ProgressBar from './progressBar.mjs';
 
 const TopGeorgist = props => (
 	<div>
-		{props.views.map(v => (
+		{Object.values(props.views).map(v => (
 			<View
 				view={v}
 				map={props.map}

@@ -28,11 +28,11 @@ const View = props => (
 );
 
 const mapStoreToProps = state => {
-	const player = state.tgos.find(tgo => tgo.tgoId === state.defaults.playerTgoId);
+	const player = state.tgos[state.defaults.playerTgoId];
 	return {
 		player,
 		visitables: player ? 
-			state.tgos
+			Object.values(state.tgos)
 				.filter(tgo => (tgo.position.x === player.position.x) && (tgo.position.y === player.position.y))
 				.map(tgo => ({ ...tgo, type: state.itemTypes[tgo.typeId] }))
 				.filter(tgo => tgo.visitable)
