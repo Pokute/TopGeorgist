@@ -24,11 +24,11 @@ const handlePlayerCreateRequest = function*(action) {
 	};
 	yield put(newPlayerAction);
 
-	const socket = yield select(state => state.clients.find(c => c.clientId === action.clientId).socket);
+	const socket = yield select(state => state.clients[action.clientId].socket);
 	socket.send(JSON.stringify({
 		action: {
 			type: 'ALL_SET',
-			data: { ...(yield select()), clients:[] }
+			data: { ...(yield select()), clients:{} }
 		}
 	}));
 	socket.send(JSON.stringify({

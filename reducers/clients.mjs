@@ -1,15 +1,16 @@
 import clientReducer from './client';
-const initialState = [];
+const initialState = {};
 
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case 'CLIENT_ADD':
-			return [
+			return {
 				...state,
-				action.client,
-			];
+				[action.client.clientId]: action.client,
+			};
 		case 'CLIENT_REMOVE':
-			return state.filter(c => c.clientId !== action.clientId);
+			const {[action.clientId]: undefined, ...rest} = state;
+			return rest;
 		default:
 			return state;
 	}

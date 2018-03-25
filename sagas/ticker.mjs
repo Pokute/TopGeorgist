@@ -31,12 +31,12 @@ const tick = function*() {
 	yield newActions.map(a => put(a));
 	
 	const newState = yield select();
-	const calls = newState.clients.map(c => 
+	const calls = Object.values(newState.clients).map(c => 
 		call([c.socket, c.socket.send],
 			JSON.stringify({
 				action: {
 					type: 'ALL_SET',
-					data: { ...newState, clients:[] }
+					data: { ...newState, clients:{} }
 				}
 			})
 		)

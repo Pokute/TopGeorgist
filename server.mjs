@@ -46,7 +46,7 @@ wss.on('connection', function(socket) {
 						socket.send(JSON.stringify({
 							action: {
 								type: 'ALL_SET',
-								data: { ...store.getState(), clients:[] }
+								data: { ...store.getState(), clients:{} }
 							}
 						}));
 					// 	socket.send(JSON.stringify({ ...store.getState(), clients:[] }));
