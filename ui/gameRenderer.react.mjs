@@ -82,7 +82,7 @@ GameRenderer.propTypes = {
 const mapStoreToProps = (store, ownProps) => ({
 	map: store.map,
 	tgos: store.tgos,
-	tileSet: store.tileSets.find(ts => ts.tileSetId === store.map.tileSetId),
+	tileSet: store.tileSets[store.map.tileSetId],
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -1,5 +1,5 @@
 import tileSetReducer from './tileSet';
-const initialState = [];
+const initialState = {};
 
 export default (state = initialState, action) => {
 	// Handle single tgo changes here.
@@ -17,10 +17,10 @@ export default (state = initialState, action) => {
 // }
 	switch (action.type) {
 		case 'TILESET_ADD':
-			return [
+			return {
 				...state,
-				action.tileSet,
-			];
+				[action.tileSet.tileSetId]: action.tileSet,
+			};
 		case 'TILESETS_SET':
 			return action.tileSetsState;
 		default:
