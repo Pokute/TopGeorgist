@@ -29,23 +29,10 @@ const items = {
 		label: 'Pineapple',
 		stackable: true,
 		isInteger: false,
+		components: [
+			'consumable',
+		],
 		actions: [
-			{
-				label: 'Eat a pineapple',
-				onClick: (actorTgoId) => netActions.send(transaction({
-					tgoId: actorTgoId,
-					items: [
-						{
-							typeId: 'calories',
-							count: +500,
-						},
-						{
-							typeId: 'pineApple',
-							count: -1,
-						},
-					],
-				})),
-			},
 			{
 				label: 'Make into shoots',
 				onClick: (actorTgoId) => netActions.send(transaction({

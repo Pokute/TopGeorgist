@@ -44,7 +44,21 @@ const components = {
 		}
 	},
 	'consumable': {
-		
+		actions: [
+			{
+				consume: {
+					label: 'Eat it',
+					onClick: {
+						type: 'CONSUMABLE_CONSUME',
+					},
+					actorRequirements: {
+						components: [
+							'consumer',
+						],
+					},
+				}
+			}
+		]
 	},
 	'consumer': {
 

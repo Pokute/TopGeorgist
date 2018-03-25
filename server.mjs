@@ -57,6 +57,7 @@ wss.on('connection', function(socket) {
 						});
 					break;
 					case 'PLAYER_SET_MOVE_TARGET':
+					case 'CONSUMABLE_CONSUME':
 					case 'TRANSACTION':
 					case 'PLANT':
 					case 'HARVEST':
