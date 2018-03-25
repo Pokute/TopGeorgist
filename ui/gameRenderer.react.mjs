@@ -22,17 +22,12 @@ const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.stroke();
 };
 
-const renderCanvas = ({map, tgos, tileSet, view}) => {
-	const s = {
-		map,
-		tgos,
-	};
-	const v = view;
+const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 	if (!v) return;
 	const c = document.getElementById(v.canvasId);
 	if (!c) return;
 
-	const { minTile, maxTile, offset } = viewUtils.getMetrics(view.viewId);
+	const { minTile, maxTile, offset } = viewUtils.getMetrics(v.viewId);
 
 	const ctx = c.getContext('2d');
 	if (!tileSet) return;

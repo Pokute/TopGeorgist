@@ -73,7 +73,7 @@ ProgressBar.propTypes = {
 }
 
 ProgressBar.defaultProps = {
-	perFrameIncrease: false,
+	perFrameIncrease: true,
 	progress: 0,
 	segments: [],
 }
