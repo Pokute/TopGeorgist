@@ -1,15 +1,15 @@
 const initialState = {
 	tileSetId: undefined,
-	tiles: [],
+	tiles: {},
 }
 
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case 'TILESET_ADD_TILE':
-			return [
+			return {
 				...state,
-				action.tile,
-			];
+				[action.tile.tileId]: action.tile,
+			};
 		default:
 			return state;
 	}

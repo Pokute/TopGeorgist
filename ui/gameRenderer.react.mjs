@@ -37,7 +37,7 @@ const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 				x: map.tileSize * (x - minTile.x + offset.x + 0.5),
 				y: map.tileSize * (y - minTile.y + offset.y + 0.5)
 			},
-			tileSet.tiles.find(t => t.tileId === map.data[map.size.x * y + x]),
+			tileSet.tiles[map.data[map.size.x * y + x]],
 			map.tileSize);
 		}
 
