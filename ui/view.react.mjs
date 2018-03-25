@@ -34,7 +34,7 @@ const mapStoreToProps = state => {
 		visitables: player ? 
 			state.tgos
 				.filter(tgo => (tgo.position.x === player.position.x) && (tgo.position.y === player.position.y))
-				.map(tgo => ({ ...tgo, type: state.itemTypes.find(it => it.typeId === tgo.typeId) }))
+				.map(tgo => ({ ...tgo, type: state.itemTypes[tgo.typeId] }))
 				.filter(tgo => tgo.visitable)
 			: []
 	};

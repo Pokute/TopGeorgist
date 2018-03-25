@@ -1,12 +1,15 @@
-const initialState = [];
+const initialState = {};
 
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case 'ITEMTYPE_ADD':
-			return [
+			if (Object.keys(state).includes(action.itemType.typeId)) {
+				console.warn(`Overrided item type ${action.itemType.typeId}`);
+			}
+			return {
 				...state,
-				action.itemType,
-			];
+				[action.itemType.typeId]: action.itemType,
+			};
 		default:
 			return state;
 	}

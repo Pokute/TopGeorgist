@@ -10,7 +10,7 @@ const Inventory = props => props.inventory ?
 				key={i.typeId}
 			>
 				<span>{`${i.typeId} : ${i.count}`}</span>
-				{((props.itemTypes.find(it => it.typeId === i.typeId) || {}) // Find the itemType
+				{((props.itemTypes[i.typeId] || {}) // Find the itemType
 					.actions || []) // and with it's actions...
 					.map(a =>
 						<button

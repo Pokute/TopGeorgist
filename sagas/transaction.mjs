@@ -21,7 +21,7 @@ const transaction = function* (action) {
 		const newItems = yield p.items.map(function*(i) {
 			return {
 				...i,
-				type: yield select(state => state.itemTypes.find(it => it.typeId === i.typeId)),
+				type: yield select(state => state.itemTypes[i.typeId]),
 				ownerCount: { count: 0, ...(pTgo.inventory || []).find(ii => ii.typeId === i.typeId) }.count | 0,
 			};
 		});

@@ -9,13 +9,13 @@ const plant = function* (action) {
 	const { actorTgoId, plantableTypeId } = action;
 	const s = yield select(state => state);
 	const actorTgo = s.tgos.find(tgo => tgo.tgoId === actorTgoId);
-	const plantableType = s.itemTypes.find(it => it.typeId === plantableTypeId);
+	const plantableType = s.itemTypes[plantableTypeId];
 
 	const plantPosition = actorTgo.position;
 
 	const freePlot = !s.tgos
 		.filter(tgo => tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y))
-		.map(tgo => s.itemTypes.find(it => it.typeId === tgo.typeId))
+		.map(tgo => s.itemTypes[tgo.typeId])
 		.some(type => type.building);
 	if (!freePlot) return false;
 
