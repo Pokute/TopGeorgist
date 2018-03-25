@@ -4,24 +4,21 @@ import { connect } from 'react-redux';
 import * as playerActions from '../actions/player';
 import * as netActions from '../actions/net';
 
-class CreatePlayerForm extends React.Component {
-	render = () => (
-		<form
-			onSubmit={this.props.onSubmit}
+const CreatePlayerForm = (props) => (
+	<form
+		onSubmit={props.onSubmit}
+	>
+		<input
+			type={'text'}
+			name={'playerLabel'}
+		/>
+		<button
+			type={'submit'}
 		>
-			<input
-				type={'text'}
-				name={'playerLabel'}
-				ref={input => this.nameInput = input}
-			/>
-			<button
-				type={'submit'}
-			>
-				{'Create player'}
-			</button>
-		</form>
-	);
-};
+			{'Create player'}
+		</button>
+	</form>
+);
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
 	onSubmit: (event) => {

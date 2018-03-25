@@ -8,7 +8,6 @@ import { Server as WSS } from 'ws';
 import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
 import * as clientActions from './actions/client';
-import components from './components';
 
 // Start the server
 var wss = new WSS({ port: config.gameServer.port });

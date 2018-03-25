@@ -9,7 +9,6 @@ import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetActions from './actions/tileSet';
 import * as tgoActions from './actions/tgo';
-import components from './components';
 
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`));
