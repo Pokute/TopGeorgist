@@ -10,7 +10,7 @@ const middleWares = applyMiddleware(sagaMiddleware)
 
 let enhancer;
 
-if (global.isServer || true) {
+if (global.isServer) {
 	// Server
 	enhancer = compose(middleWares)
 } else {

@@ -1,5 +1,6 @@
 import buildingGovernment from './buildings/government';
 import buildingRentOffice from './buildings/rentOffice';
+import frame from './frame';
 import net from './net';
 import plant from './plantable';
 import player from './player';
@@ -10,6 +11,7 @@ import view from './view';
 const rootSaga = function* () {
 	yield* buildingGovernment();
 	yield* buildingRentOffice();
+	yield* frame();
 	yield* net();
 	yield* plant();
 	yield* player();

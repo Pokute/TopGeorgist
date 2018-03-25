@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import clients from './clients';
 import defaults from './defaults';
+import frame from './frame';
 import government from './government';
 import itemTypes from './itemTypes';
 import map from './map';
@@ -12,6 +13,7 @@ import views from './views';
 const topGeorgist = combineReducers({
 	clients,
 	defaults,
+	frame,
 	government,
 	itemTypes,
 	map,

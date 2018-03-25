@@ -22,33 +22,34 @@ const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.stroke();
 };
 
-const componentRender = (props, store) => {
-	const s = store;
-	const usedViewId = (props.view.viewId !== undefined) ? props.view.viewId : s.defaults.viewId;
-	const v = s.views.find(v => v.viewId === usedViewId);
+const renderCanvas = ({map, tgos, tileSet, view}) => {
+	const s = {
+		map,
+		tgos,
+	};
+	const v = view;
 	if (!v) return;
 	const c = document.getElementById(v.canvasId);
 	if (!c) return;
 
-	const { minTile, maxTile, offset } = viewUtils.getMetrics(usedViewId);
+	const { minTile, maxTile, offset } = viewUtils.getMetrics(view.viewId);
 
 	const ctx = c.getContext('2d');
-	const tileSet = s.tileSets.find(ts => ts.tileSetId === s.map.tileSetId);
 	if (!tileSet) return;
 	for (let y = minTile.y; y < maxTile.y; y++)
 		for (let x = minTile.x; x < maxTile.x; x++) {
 			drawTile(ctx, {
-				x: s.map.tileSize * (x - minTile.x + offset.x + 0.5),
-				y: s.map.tileSize * (y - minTile.y + offset.y + 0.5)
+				x: map.tileSize * (x - minTile.x + offset.x + 0.5),
+				y: map.tileSize * (y - minTile.y + offset.y + 0.5)
 			},
-			tileSet.tiles.find(t => t.tileId === s.map.data[s.map.size.x * y + x]),
-			s.map.tileSize);
+			tileSet.tiles.find(t => t.tileId === map.data[map.size.x * y + x]),
+			map.tileSize);
 		}
 
-	s.tgos.forEach((tgo) => {
+	tgos.forEach((tgo) => {
 		const pos = {
-			x: (tgo.position.x - minTile.x + offset.x + 0.5)*s.map.tileSize,
-			y: (tgo.position.y - minTile.y + offset.y + 0.5)*s.map.tileSize,
+			x: (tgo.position.x - minTile.x + offset.x + 0.5)*map.tileSize,
+			y: (tgo.position.y - minTile.y + offset.y + 0.5)*map.tileSize,
 		};
 		drawCross(ctx,
 			pos,
@@ -62,7 +63,7 @@ const componentRender = (props, store) => {
 };
 
 const GameRenderer = props => {
-	componentRender(props, props.store);
+	renderCanvas(props);
 
 	return (
 		<canvas
@@ -77,13 +78,16 @@ const GameRenderer = props => {
 
 GameRenderer.propTypes = {
 	view: PropTypes.object,
+	// from Store
+	map: PropTypes.object,
+	tgos: PropTypes.arrayOf(PropTypes.object),
+	tileSet: PropTypes.object,
 }
 
 const mapStoreToProps = (store, ownProps) => ({
-	// map: store.map,
+	map: store.map,
 	tgos: store.tgos,
 	tileSet: store.tileSets.find(ts => ts.tileSetId === store.map.tileSetId),
-	store,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
