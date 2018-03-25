@@ -1,0 +1,104 @@
+Plan for Top Georgist:
+
+✔ Milestone 1: @done(18-03-25 06:44)
+
+	✔ Autopack with webpack. @done(18-03-25 06:43)
+	✔ Itch.io page @done(18-03-25 06:43)
+		✘ Butler push @cancelled(18-03-25 06:43)
+	✔ Open up in browser @done(18-03-25 06:43)
+	✔ Has a player @done(18-03-25 06:43)
+		✔ Player can move around @done(18-03-25 06:43)
+		✔ Player has property "money" @done(18-03-25 06:43)
+			✔ Player can spend money. @done(18-03-25 06:43)
+		✔ Player has property "calories" @done(18-03-25 06:43)
+			✔ Calories drop all the time. @done(18-03-25 06:43)
+		✔ Player has inventory. @done(18-03-25 06:43)
+	✔ Has a map @done(18-03-25 06:43)
+		✔ Store @done(18-03-25 06:43)
+			✔ Buys food @done(18-03-25 06:43)
+			✔ Sells food @done(18-03-25 06:43)
+			✔ Has property "money" @done(18-03-25 06:43)
+			✔ Has limited inventory @done(18-03-25 06:43)
+		✔ Plots @done(18-03-25 06:43)
+			✔ Player can plant shoots @done(18-03-25 06:43)
+			✔ Shoots grow into food @done(18-03-25 06:43)
+			✔ It takes time for shoots to grow into food. @done(18-03-25 06:43)
+			✔ Food can be collected by players, removing the seed. @done(18-03-25 06:43)
+	✔ Items @done(18-03-25 06:43)
+		✔ Money @done(18-03-25 06:43)
+		✔ Shoots @done(18-03-25 06:43)
+			✔ Can be planted @done(18-03-25 06:43)
+		✔ Food @done(18-03-25 06:43)
+			✔ Can be eaten to increase calories @done(18-03-25 06:43)
+			✔ Can be turned into 2 shoots. @done(18-03-25 06:43)
+
+✔ Milestone 2: @done(18-03-25 06:44)
+
+	✔ Refactor view. @done(18-03-25 06:44)
+	✔ tgoId generation. @done(18-03-25 06:44)
+		✔ uuid npm package installed. @done(18-03-25 06:44)
+	✔ Player creation. @done(18-03-25 06:44)
+	✔ Multiplayer @done(18-03-25 06:44)
+		✔ Receiving the map @done(18-03-25 06:44)
+		✔ Receiving tgos @done(18-03-25 06:44)
+			✔ Move function from tgos to types. @done(18-03-25 06:44)
+	✔ Map @done(18-03-25 06:44)
+		✔ Seeded generation. @done(18-03-25 06:44)
+	✔ Leaderboards @done(18-03-25 06:44)
+	✔ Buildings @done(18-03-25 06:44)
+		✔ Rent office @done(18-03-25 06:44)
+			✔ Used to reserve land @done(18-03-25 06:44)
+			✔ Used to pay rent @done(18-03-25 06:44)
+		✔ Government building @done(18-03-25 06:44)
+			✔ Player spawns here @done(18-03-25 06:44)
+			✔ Has an account for each player @done(18-03-25 06:44)
+			✔ Player can collect money in account. @done(18-03-25 06:44)
+			✔ Accounts gets equal % of all rent collected from rent office. @done(18-03-25 06:44)
+	✔ Tick into redux. @done(18-03-25 06:44)
+	✔ Reduxise all callbacks. @done(18-03-25 06:44)
+
+Milestone 3:
+
+	☐ Move actions from Types to Components.
+	☐ Time sinks
+		☐ Doing most actions should require ticks to complete.
+		☐ Most actions can be paused
+	✔ UI progress bar. @done(18-03-25 06:45)
+		✔ Segmented by ticks, but progress 0 -> 1 is linear in progress bar @done(18-03-25 06:45)
+		- Above means that for most tasks, the start parts take long time and don't produce much, but later parts take less time and produce more.
+	☐ Farming overhaul
+		☐ Progress can be seen
+		☐ Pineapples grow edible, but calories doesn't increase after certain point.
+	☐ UI mouse selection of positions
+	☐ Economy
+		☐ More sinks
+	☐ Player
+		☐ New "energy" stat.
+		☐ Doing different actions use "energy"
+		☐ Calorie burn regenerates energy.
+		☐ Can sleep
+			☐ Can be done anywhere.
+			☐ Regenerates energy
+			☐ Sleeping in a bed regenerates more energy.
+	☐ Buildings
+		☐ Barracks
+			☐ Has beds that cost to use
+	✔ redux store array accessor shorthand functions / utility. @done(18-03-25 06:44)
+	☐ Rendering overhaul
+		✔ 60fps support @done(18-03-25 06:50)
+	☐ Add graphics for most items.
+	☐ Better map generation.
+	☐ Rehydrate
+	☐ Hot reload?
+	☐ Publishing
+	☐ Investigate
+		☐ redux-loop https://github.com/redux-loop/redux-loop
+		☐ reducer-reducer?
+		☐ Need for redux-thunk?
+	☐ Server hosting.
+		☐ Where?
+
+Icebox:
+
+	☐ Investigate
+		☐ react-native with -web?
