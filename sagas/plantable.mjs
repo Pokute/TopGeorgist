@@ -5,8 +5,7 @@ import transaction from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
 import { checkOnVisitableLocation } from '../utils/visitable';
 
-const plant = function* (action) {
-	const { actorTgoId, plantableTypeId } = action;
+const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 	const s = yield select(state => state);
 	const actorTgo = s.tgos[actorTgoId];
 	const plantableType = s.itemTypes[plantableTypeId];

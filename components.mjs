@@ -57,11 +57,31 @@ const components = {
 						],
 					},
 				}
-			}
+			},
+			{
+				turnIntoSeeds: {
+					label: 'Turn into seeds',
+					onClick: {
+						type: 'CONSUMABLE_INTO_SEEDS',
+					},
+				}
+			},
 		]
 	},
 	'consumer': {
 
+	},
+	'plantable': {
+		actions: [
+			{
+				consume: {
+					label: 'Plant it',
+					onClick: {
+						type: 'PLANT',
+					},
+				}
+			},
+		],
 	},
 	'trader': {
 		

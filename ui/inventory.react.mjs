@@ -55,11 +55,11 @@ const mapStoreToProps = (store, passedProps) => ({
 
 const mapDispatchToProps = (dispatch, passedProps) => ({
 	onActionClick: action => (() => dispatch(action.onClick(passedProps.ownerTgoId))),
-	onComponentActionClick: (action, consumableTypeId) => (
+	onComponentActionClick: (action, targetTypeId) => (
 		() => dispatch(netActions.send({
 			...action.onClick,
 			actorTgoId: passedProps.ownerTgoId,
-			consumableTypeId,
+			targetTypeId,
 		}))
 	),
 });

@@ -32,35 +32,16 @@ const items = {
 		components: [
 			'consumable',
 		],
-		actions: [
-			{
-				label: 'Make into shoots',
-				onClick: (actorTgoId) => netActions.send(transaction({
-					tgoId: actorTgoId,
-					items: [
-						{
-							typeId: 'pineAppleShoot',
-							count: +2,
-						},
-						{
-							typeId: 'pineApple',
-							count: -1,
-						},
-					],
-				}))
-			},
-		]
 	},
 	'pineAppleShoot': {
+		components: [
+			'plantable',
+		],
 		label: 'Pineapple shoot',
 		stackable: true,
 		isInteger: true,
 		building: true,
 		growsIntoTypeId: 'pineApple',
-		actions: [{
-			label: 'Plant',
-			onClick: (actorTgoId) => netActions.send(plant(actorTgoId, 'pineAppleShoot')),
-		}],
 	},
 	'player': {
 		label: 'Player',
