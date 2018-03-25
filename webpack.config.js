@@ -26,11 +26,11 @@ module.exports = {
 					}
 				}
 			}
-		]
+		],
 	},
 	resolve: {
 		extensions: ['.mjs', '.js'],
-	},		
+	},
 	devtool: 'source-map',
-	watch: true,
+	watch: true
 };

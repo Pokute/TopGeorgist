@@ -1,4 +1,3 @@
-import store from './store';
 import transaction from './actions/transaction';
 import { plant } from './actions/plantable';
 import * as netActions from './actions/net';
@@ -8,11 +7,6 @@ const defaultType = {
 	isInteger: true,
 	positiveOnly: true,
 	building: false,
-}
-
-const getPlayer = (state) => {
-	const s = state ? state : store.getState();
-	return s.tgos[s.defaults.playerTgoId];
 }
 
 const items = {
@@ -65,12 +59,12 @@ const createItemTypeAction = it => ({
 	itemType: it,
 });
 
-const createItemTypes = () => {
+const createItemTypes = dispatch => {
 	const actions = Object.entries(items)
 		.map(([key, val]) => ({ ...val, typeId: key }))
 		.map(i => ({ ...defaultType, ...i }))
 		.map(createItemTypeAction);
-	actions.forEach(a => store.dispatch(a));
+	actions.forEach(a => dispatch(a));
 };
 
 export default createItemTypes;

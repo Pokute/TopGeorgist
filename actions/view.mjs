@@ -1,4 +1,3 @@
-import store from '../store';
 import * as viewUtils from '../utils/view';
 
 export const create = (viewId, followTgoId = undefined) => ({

@@ -1,7 +1,7 @@
 import serverConfig from './serverConfig';
 import uuidv4 from 'uuid';
 import config from './config';
-import store from './store';
+import { store } from './store';
 import createItemTypes from './types';
 import initialObjectActions from './initialObjects'
 import { Server as WSS } from 'ws';
@@ -98,7 +98,7 @@ wss.on('connection', function(socket) {
 });
 } catch (e) { console.log(e); }
 const init = () => {
-	createItemTypes();
+	createItemTypes(store.dispatch);
 	initialObjectActions().forEach(o => store.dispatch(o));
 
 	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 }, seed: 1233321 }));

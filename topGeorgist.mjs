@@ -1,7 +1,7 @@
 // Client code.
 
 import config from './config';
-import store from './store';
+import { store } from './store';
 import createItemTypes from './types';
 import createInitialObjects from './initialObjects'
 import WebSocketWrapper from 'ws-wrapper';
@@ -27,7 +27,7 @@ const init = () => {
 		}
 	});
 
-	createItemTypes();
+	createItemTypes(store.dispatch);
 
 	store.dispatch(viewActions.render());
 	// setInterval(() => {

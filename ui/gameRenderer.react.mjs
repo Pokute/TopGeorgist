@@ -27,7 +27,7 @@ const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 	const c = document.getElementById(v.canvasId);
 	if (!c) return;
 
-	const { minTile, maxTile, offset } = viewUtils.getMetrics(v.viewId);
+	const { minTile, maxTile, offset } = viewUtils.getMetrics(v, tgos, map);
 
 	const ctx = c.getContext('2d');
 	if (!tileSet) return;
@@ -92,7 +92,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 		if (!v) return;
 		const map = ownProps.map;
 		if (!map) return;
-		const { minTile, offset } = viewUtils.getMetrics(v.viewId);
+		const { minTile, offset } = viewUtils.getMetrics(v, [], {});
 		const canvasCoords = {
 			x: event.nativeEvent.offsetX,
 			y: event.nativeEvent.offsetY,
