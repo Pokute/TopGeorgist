@@ -7,6 +7,8 @@ export const createPlayerAction = () => {
 		components: [
 			'selfMoving',
 			['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
+			'consumer',
+			'player',
 		],
 		position: {x: 5, y: 5},
 		color: 'red',

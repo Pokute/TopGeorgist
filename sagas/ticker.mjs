@@ -23,7 +23,7 @@ const tick = function*() {
 					? [cId, undefined]
 					: cId)
 				.map(cId => [components[cId[0]], cId[1]])
-				.filter(c => c[0].tick)
+				.filter(c => c[0] && c[0].tick)
 				.map(c => c[0].tick(tgo, c[1]))
 			)
 		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level

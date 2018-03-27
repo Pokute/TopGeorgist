@@ -1,5 +1,5 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
-// import * as playerActions from '../actions/player';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
+import * as playerActions from '../actions/player';
 import * as tgoActions from '../actions/tgo';
 import { createPlayerAction } from '../initialObjects'
 
@@ -47,9 +47,47 @@ const handlePlayerCreateResponse = function*(action) {
 	});
 };
 
+const handleQueueForOwner = function* (owner) {
+	const getCompletedTasks = (tasksQueue) => tasksQueue.reduce(({ completed, remaining, continueCompleting }, task) => (
+			(continueCompleting && task.cost && (task.progress.time >= task.cost.time)) 
+			? {
+				completed: [...completed, task],
+				remaining,
+				continueCompleting: true,
+			}
+			:  {
+				completed,
+				remaining : [...remaining, task],
+				continueCompleting: false,
+			}
+		),
+		{ completed: [], remaining: [], continueCompleting: true }
+	);
+
+	const [topTask, ...restOfTaskQueue] = owner.taskQueue;
+	const newTaskQueue = [{ ...topTask, progress: { time: topTask.progress.time + 1 } }, ...restOfTaskQueue];
+	const { completed: completedTasks, remaining: remainingTasks } = getCompletedTasks(newTaskQueue);
+
+	// First remove completed items from TaskQueue so that other sagas see access them.
+	yield put(playerActions.setTaskQueue(owner.tgoId, remainingTasks));
+
+	yield (completedTasks.map(task => put(task.action)));
+	// let newTaskQueue = player.taskQueue;
+
+	// } while (player)
+}
+
+const handleQueueTick = function* (action) {
+	const s = yield select();
+	const queueOwners = Object.values(s.tgos).filter(tgo => (tgo.taskQueue && tgo.taskQueue.length > 0));
+
+	for (let queueOwner of queueOwners) yield call(handleQueueForOwner, queueOwner);
+}
+
 const playerListener = function*() {
 	yield takeEvery('PLAYER_CREATE_REQUEST', handlePlayerCreateRequest);
 	yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
+	yield takeEvery('TICK', handleQueueTick);
 };
 
 export default playerListener;

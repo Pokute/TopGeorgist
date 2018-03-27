@@ -1,20 +1,37 @@
 import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import * as playerActions from '../actions/player';
 import transaction from '../actions/transaction';
 
 const consume = function* ({actorTgoId, targetTypeId}) {
-	yield put(transaction({
-		tgoId: actorTgoId,
-		items: [
-			{
-				typeId: 'calories',
-				count: +500,
+	const actorTgo = (yield select()).tgos[actorTgoId];
+	const targetType = (yield select()).itemTypes[targetTypeId];
+	if (!actorTgo.components.includes('consumer')) return null;
+	if (!actorTgo.components.includes('player')) return null;
+
+	yield put(playerActions.addTaskQueue(actorTgoId,
+		[{
+			title: `Eating ${targetType.label}`,
+			progress: {
+				time: 0,
 			},
-			{
-				typeId: targetTypeId,
-				count: -1,
+			cost: {
+				time: 20,
 			},
-		],
-	}));
+			action: transaction({
+				tgoId: actorTgoId,
+				items: [
+					{
+						typeId: 'calories',
+						count: +500,
+					},
+					{
+						typeId: targetTypeId,
+						count: -1,
+					},
+				],
+			}),
+		}]
+	));
 }
 
 const intoSeeds = function* ({actorTgoId, targetTypeId}) {

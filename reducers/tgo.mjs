@@ -1,6 +1,6 @@
 import inventoryReducer from './inventory';
 
-const initialState = {
+export const initialState = {
 	tgoId: undefined,
 	position: {
 		x: 0,

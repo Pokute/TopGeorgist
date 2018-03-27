@@ -9,7 +9,7 @@ class ProgressBar extends React.Component {
 				? ((props.frameTime - props.tickTime) / props.tickInterval)
 				: 0
 			),
-			props.segments.reduce((cost, segment) => cost+segment.cost, 0)
+			props.segments.reduce((cost, segment) => cost+props.costMapping(segment), 0)
 		)
 	);
 
@@ -24,18 +24,18 @@ class ProgressBar extends React.Component {
 
 	render = () => {
 		const props = this.props;
-		const totalCost = props.segments.reduce((cost, segment) => cost+segment.cost, 0);
+		const totalCost = props.segments.reduce((cost, segment) => cost+props.costMapping(segment), 0);
 		const tickPlusTimeProgress = this.calcTickPlusTimeProgress(props);
 		return (
 			<div className='progressBar'>
 				{props.segments.reduce(({components, costAcc, i}, segment) => {
-					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / segment.cost, 1))
+					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / props.costMapping(segment), 1))
 					return {
 						components: [...components, (
 							<div
 								className='segment'
 								key={`${segment.title}-${i}`}
-								style={{ flex: segment.cost }}
+								style={{ flex: props.costMapping(segment) }}
 							>
 								{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
 								{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
@@ -44,7 +44,7 @@ class ProgressBar extends React.Component {
 								</div>
 							</div>
 						)],
-						costAcc: costAcc + segment.cost,
+						costAcc: costAcc + props.costMapping(segment),
 					}
 				},
 				{
@@ -59,6 +59,7 @@ class ProgressBar extends React.Component {
 }
 
 ProgressBar.propTypes = {
+	costMapping: PropTypes.func,
 	perFrameIncrease: PropTypes.bool,
 	progress: PropTypes.number,
 	segments: PropTypes.arrayOf(PropTypes.shape({
@@ -73,6 +74,7 @@ ProgressBar.propTypes = {
 }
 
 ProgressBar.defaultProps = {
+	costMapping: ({ cost }) => cost,
 	perFrameIncrease: true,
 	progress: 0,
 	segments: [],

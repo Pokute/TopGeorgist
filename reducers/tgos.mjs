@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid';
 
-import playerReducer from './player';
-import tgoReducer from './tgo';
+import { initialState as playerInitialState, default as playerReducer } from './player';
+import { initialState as tgoInitialState, default as tgoReducer } from './tgo';
 const initialState = {};
 const listActions = [
 	'TGO_ADD',
@@ -36,6 +36,8 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				[action.tgo.tgoId]: {
+					...(action.tgo.typeId === 'player' ? playerInitialState : {}),
+					...tgoInitialState,
 					...action.tgo,
 					// ...(global.isServer ? { tgoId: uuidv4() } : {}),
 				}
