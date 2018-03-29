@@ -7,11 +7,17 @@
 	"@std/esm": "cjs",
 	"dependencies": {
 		"@std/esm": "^0.19.7",
+		"classnames": "^2.2.5",
+		"null-loader": "^0.1.1",
+		"prop-types": "^15.6.1",
 		"random-js": "^1.0.8",
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",
 		"react-redux": "^5.0.6",
 		"redux": "3.7.2",
+		"redux-batched-subscribe": "^0.1.6",
+		"redux-persist": "^5.9.1",
+		"redux-persist-node-storage": "^2.0.0",
 		"redux-saga": "0.16.0",
 		"uuid": "^3.2.1",
 		"ws": "^4.0.0",
@@ -28,7 +34,15 @@
 		"@babel/preset-env": "^7.0.0-beta.37",
 		"@babel/preset-stage-0": "^7.0.0-beta.37",
 		"babel-loader": "^8.0.0-beta.0",
+		"eslint": "^4.9.0",
+		"eslint-config-airbnb": "^16.1.0",
+		"eslint-plugin-import": "^2.7.0",
+		"eslint-plugin-jsx-a11y": "^6.0.2",
+		"eslint-plugin-react": "^7.4.0",
 		"webpack": "^3.10.0"
+	},
+	"browser": {
+		"redux-persist-node-storage": "./node-modules/null-loader"
 	},
 	"scripts": {
 		"build": "webpack --display-error-details --config webpack.config.js",

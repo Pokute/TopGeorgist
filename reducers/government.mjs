@@ -28,21 +28,21 @@ export default (state = initialState, action) => {
 					{
 						...initialCitizenState,
 						tgoId: action.tgoId,
-					}
+					},
 				],
 			};
 		case 'CITIZEN_REMOVE':
 			return {
 				...state,
-				citizens: state.citizens.filter(tgo => tgo.tgoId !== action.tgoId)
+				citizens: state.citizens.filter(tgo => tgo.tgoId !== action.tgoId),
 			};
-		case 'GOVERNMENT_DISTRIBUTE':{
+		case 'GOVERNMENT_DISTRIBUTE': {
 			const totalMoney = (action.money + state.rentModulus);
 			const citizenCount = state.citizens.length;
 			const moneyPerCitizen = Math.trunc(totalMoney / citizenCount);
 			return {
 				...state,
-				citizens: state.citizens.map(c => ({...c, stipend: c.stipend + moneyPerCitizen})),
+				citizens: state.citizens.map(c => ({ ...c, stipend: c.stipend + moneyPerCitizen })),
 				rentModulus: totalMoney - (moneyPerCitizen * citizenCount),
 			};
 		}
@@ -60,10 +60,10 @@ export default (state = initialState, action) => {
 						...initialClaimState,
 						tgoId: action.tgoId,
 						position: action.position,
-					}
+					},
 				],
 			};
-		case 'GOVERNMENT_STIPEND_ADD':
+		case 'GOVERNMENT_STIPEND_ADD': {
 			const citizen = state.citizens.find(c => c.tgoId === action.tgoId);
 			return {
 				...state,
@@ -72,9 +72,10 @@ export default (state = initialState, action) => {
 					{
 						...citizen,
 						stipend: citizen.stipend + action.amount,
-					}
-				]
+					},
+				],
 			};
+		}
 		case 'TICK':
 			return {
 				...state,

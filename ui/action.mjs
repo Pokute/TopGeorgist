@@ -20,7 +20,7 @@ const Action = props => (
 );
 
 const mapDispatchToProps = (dispatch, passedProps) => ({
-	onSubmit: action => (event => {
+	onSubmit: action => ((event) => {
 		event.preventDefault();
 		const formData = new FormData(event.target);
 		dispatch(netActions.send({
@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch, passedProps) => ({
 			...(passedProps.action.parameters || [])
 				.map(parameter => packParam(parameter, formData))
 				.reduce((combined, paramData) => ({ ...combined, ...paramData }), {}),
-		}))
+		}));
 	}),
 });
 

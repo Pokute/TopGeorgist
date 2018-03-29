@@ -1,20 +1,15 @@
-import store from '../store';
-
-const getMetrics = (viewId) => {
-	const s = store.getState();
-	const v = s.views.find(v => v.viewId === viewId);
-	if (!v) throw new TypeError('Undefined viewId');
-	const followTgo = v.followTgoId
-		? s.tgos.find(tgo => tgo.tgoId === v.followTgoId)
+const getMetrics = (view, tgos, map) => {
+	if (!view) throw new TypeError('Undefined view');
+	const followTgo = view.followTgoId
+		? tgos[view.followTgoId]
 		: undefined;
-	const pos = followTgo ? followTgo.position : v.position;
-	const c = document.getElementById(v.canvasId);
+	const pos = followTgo ? followTgo.position : view.position;
+	const c = document.getElementById(view.canvasId);
 	const size = {
 		x: c.width,
 		y: c.height,
 	};
 
-	const { map } = store.getState();
 	const min = {
 		x: Math.round(pos.x * map.tileSize - size.x/2),
 		y: Math.round(pos.y * map.tileSize - size.y/2),
@@ -41,7 +36,7 @@ const getMetrics = (viewId) => {
 		minTile,
 		maxTile,
 		offset,
-	}; 
-}
+	};
+};
 
 export { getMetrics };

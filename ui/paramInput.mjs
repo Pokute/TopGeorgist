@@ -17,7 +17,7 @@ const paramInputPositionPack = (parameter, formData) => ({
 });
 
 const typeMap = {
-	'position': { render: ParamInputPosition, pack: paramInputPositionPack } ,
+	position: { render: ParamInputPosition, pack: paramInputPositionPack } ,
 };
 
 const ParamInput = props => typeMap[props.parameter.type].render(props);

@@ -1,15 +1,13 @@
 // Client code.
 
-import config from './config';
-import store from './store';
-import createItemTypes from './types';
-import createInitialObjects from './initialObjects'
 import WebSocketWrapper from 'ws-wrapper';
+import config from './config';
+import { store } from './store';
+import createItemTypes from './types';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetActions from './actions/tileSet';
 import * as tgoActions from './actions/tgo';
-import components from './components';
 
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`));
@@ -28,40 +26,15 @@ const init = () => {
 		}
 	});
 
-	createItemTypes();
-
-	if (global.isServer) setInterval(tick, 250);
-	// setInterval(tick, 250);
+	createItemTypes(store.dispatch);
 
 	store.dispatch(viewActions.render());
-	setInterval(() => {
-		store.dispatch(viewActions.render());
-	}, 100);
-	setInterval(() => {
-		store.dispatch(viewActions.render('secondary'));
-	}, 100);
-};
-
-export const tick = () => {
-	const oldState = store.getState();
-	const comp = components;
-	const newActions = oldState.tgos
-		.filter(tgo => tgo.components)
-		.map(tgo => 
-			tgo.components
-				.map(cId => components[cId])
-				.filter(c => c.tick)
-				.map(c => c.tick(tgo))
-			)
-		.reduce((acc, action) => [...acc, ...action], []) // Flatten one level
-		.reduce((acc, action) => [...acc, ...action], []);
-	newActions.forEach(a => store.dispatch(a));
-};
-
-export const initOldHtml = () => {
-	// View specific
-	document.body.appendChild(viewActions.create('main', 'jesh', true));
-	document.body.appendChild(viewActions.create('secondary', 'genStore'));
+	// setInterval(() => {
+	// 	store.dispatch(viewActions.render());
+	// }, 100);
+	// setInterval(() => {
+	// 	store.dispatch(viewActions.render('secondary'));
+	// }, 100);
 };
 
 export default init;

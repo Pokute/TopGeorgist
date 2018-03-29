@@ -5,17 +5,18 @@ import transaction from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
 import { checkOnVisitableLocation } from '../utils/visitable';
 
-const plant = function* (action) {
-	const { actorTgoId, plantableTypeId } = action;
+const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === actorTgoId);
-	const plantableType = s.itemTypes.find(it => it.typeId === plantableTypeId);
+	const actorTgo = s.tgos[actorTgoId];
+	const plantableType = s.itemTypes[plantableTypeId];
 
 	const plantPosition = actorTgo.position;
 
-	const freePlot = !s.tgos
-		.filter(tgo => tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y))
-		.map(tgo => s.itemTypes.find(it => it.typeId === tgo.typeId))
+	const freePlot = !Object.values(s.tgos)
+		.filter(tgo => (
+			tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y)
+		))
+		.map(tgo => s.itemTypes[tgo.typeId])
 		.some(type => type.building);
 	if (!freePlot) return false;
 
@@ -32,7 +33,7 @@ const plant = function* (action) {
 	console.log('transactionResult: ', transactionResult);
 
 	yield put(tgoActions.add({
-		tgoId: Math.trunc(Math.random()*100000),
+		tgoId: Math.trunc(Math.random() * 100000),
 		typeId: 'plant',
 		position: plantPosition,
 		color: 'orange',
@@ -52,10 +53,10 @@ const plant = function* (action) {
 			{
 				typeId: plantableType.growsIntoTypeId,
 				count: 0.25,
-			}
+			},
 		],
 		components: [
-			['inventoryChange', { typeId: plantableType.growsIntoTypeId, perTick: (1 / 256) }]
+			['inventoryChange', { typeId: plantableType.growsIntoTypeId, perTick: (1 / 256) }],
 		],
 	}));
 };
@@ -63,14 +64,13 @@ const plant = function* (action) {
 const harvest = function* (action) {
 	const { tgoId, visitableTgoId } = action;
 	const s = yield select(state => state);
-	const actorTgo = s.tgos.find(tgo => tgo.tgoId === tgoId);
-	const visitableTgo = s.tgos.find(tgo => tgo.tgoId === visitableTgoId);
+	const actorTgo = s.tgos[tgoId];
+	const visitableTgo = s.tgos[visitableTgoId];
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
-		return false;
+	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
 	const transactionResult = yield put(transaction({
-		tgoId: tgoId,
+		tgoId,
 		items: [
 			{
 				typeId: visitableTgo.plantTypeId,
@@ -86,7 +86,7 @@ const harvest = function* (action) {
 	});
 };
 
-const plantListener = function*() {
+const plantListener = function* () {
 	yield takeEvery('PLANT', plant);
 	yield takeEvery('HARVEST', harvest);
 };

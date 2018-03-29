@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid';
 
-export const add = (tgo) => ({
+export const add = tgo => ({
 	type: 'TGO_ADD',
 	tgo: {
 		...tgo,
@@ -8,9 +8,7 @@ export const add = (tgo) => ({
 	},
 });
 
-export const set = (tgosState) => {
-	return {
-		type: 'TGOS_SET',
-		tgosState,
-	};
-};
+export const set = tgosState => ({
+	type: 'TGOS_SET',
+	tgosState,
+});

@@ -1,36 +1,35 @@
 import * as tgoActions from './actions/tgo';
-import governmentListener from './sagas/buildings/government.mjs';
 
-export const createPlayerAction = () => {
-	return tgoActions.add({
-		typeId: 'player',
-		components: [
-			'selfMoving',
-			['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
-		],
-		position: {x: 5, y: 5},
-		color: 'red',
-		inventory: [
-			{
-				typeId: 'calories',
-				count: 2000,
-			},
-			{
-				typeId: 'money',
-				count: 500,
-			},
-			{
-				typeId: 'pineApple',
-				count: 10,
-			},
-		],
-	});
-};
+export const createPlayerAction = () => tgoActions.add({
+	typeId: 'player',
+	components: [
+		'selfMoving',
+		['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
+		'consumer',
+		'player',
+	],
+	position: { x: 5, y: 5 },
+	color: 'red',
+	inventory: [
+		{
+			typeId: 'calories',
+			count: 2000,
+		},
+		{
+			typeId: 'money',
+			count: 500,
+		},
+		{
+			typeId: 'pineApple',
+			count: 10,
+		},
+	],
+});
 
 export const storeGeneralAction = () => tgoActions.add({
 	label: 'General Store',
 	typeId: 'building',
-	position: { x: 12, y: 12},
+	position: { x: 12, y: 12 },
 	color: 'pink',
 	inventory: [
 		{
@@ -76,16 +75,16 @@ export const storeGeneralAction = () => tgoActions.add({
 						},
 					],
 				},
-			}
+			},
 		],
-	}
+	},
 });
 
 export const rentOfficeAction = () => tgoActions.add({
 	label: 'Rent office',
 	rentOffice: true,
 	typeId: 'building',
-	position: { x: 9, y: 8},
+	position: { x: 9, y: 8 },
 	color: 'pink',
 	inventory: [
 		{
@@ -106,13 +105,13 @@ export const rentOfficeAction = () => tgoActions.add({
 				label: 'Claim land',
 				onClick: {
 					type: 'RENT_OFFICE_CLAIM_LAND',
-				}
+				},
 			},
 			{
 				label: 'Pay outstanding rent',
 				onClick: {
 					type: 'RENT_OFFICE_PAY_RENT',
-				}
+				},
 			},
 		],
 	},
@@ -122,7 +121,7 @@ export const GovernmentAction = () => tgoActions.add({
 	label: 'Government',
 	governmentBuilding: true,
 	typeId: 'building',
-	position: { x: 7, y: 11},
+	position: { x: 7, y: 11 },
 	color: 'pink',
 	inventory: [
 		{
@@ -143,7 +142,7 @@ export const GovernmentAction = () => tgoActions.add({
 				label: 'Apply for citizenship',
 				onClick: {
 					type: 'GOVERNMENT_CLAIM_CITIZENSHIP',
-				}
+				},
 			},
 		],
 	},
@@ -152,7 +151,7 @@ export const GovernmentAction = () => tgoActions.add({
 export const leaderBoardAction = () => tgoActions.add({
 	label: 'Leaderboard',
 	leaderBoard: true,
-	position: { x: 4, y: 5},
+	position: { x: 4, y: 5 },
 	color: 'yellow',
 	visitable: {
 		label: 'Leaderboard',
@@ -164,10 +163,10 @@ export const tileSetBasicAction = () => ({
 	tileSet: {
 		tileSetId: 'basic',
 		tiles: [
-			{ tileId: 0, fillStyle: 'cyan', },
-			{ tileId: 1, fillStyle: 'green', },
-		]
-	}
+			{ tileId: 0, fillStyle: 'cyan' },
+			{ tileId: 1, fillStyle: 'green' },
+		],
+	},
 });
 
 const initialObjectActions = () => [
@@ -176,6 +175,6 @@ const initialObjectActions = () => [
 	GovernmentAction(),
 	leaderBoardAction(),
 	tileSetBasicAction(),
-]
+];
 
 export default initialObjectActions;

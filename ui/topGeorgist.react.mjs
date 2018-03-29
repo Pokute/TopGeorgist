@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import CreatePlayerForm from './createPlayerForm.react';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';
 
 const TopGeorgist = props => (
 	<div>
-		{props.views.map(v => (
+		{Object.values(props.views).map(v => (
 			<View
 				view={v}
 				map={props.map}
@@ -30,6 +29,7 @@ const mapStoreToProps = store => ({
 	views: store.views,
 	map: store.map,
 	defaultPlayerTgoId: store.defaults.playerTgoId,
+	currentTick: store.ticker.currentTick,
 });
 
 export default connect(mapStoreToProps)(TopGeorgist);

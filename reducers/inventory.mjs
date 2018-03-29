@@ -2,7 +2,7 @@ const initialState = [];
 
 export default (state = initialState, action) => {
 	switch (action.type) {
-		case 'TGO_INVENTORY_ADD':
+		case 'TGO_INVENTORY_ADD': {
 			const existingItem = state.find(ii => ii.typeId === action.item.typeId);
 			const existingCount = existingItem ? existingItem.count : 0;
 			return [
@@ -12,6 +12,7 @@ export default (state = initialState, action) => {
 					count: action.item.count + existingCount,
 				},
 			];
+		}
 		default:
 			return state;
 	}

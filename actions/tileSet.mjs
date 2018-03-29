@@ -1,6 +1,4 @@
-export const set = (tileSetsState) => {
-	return {
-		type: 'TILESETS_SET',
-		tileSetsState,
-	};
-};
+export const set = tileSetsState => ({
+	type: 'TILESETS_SET',
+	tileSetsState,
+});

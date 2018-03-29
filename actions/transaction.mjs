@@ -1,8 +1,6 @@
-const transaction = (...participants) => {
-	return {
-		type: 'TRANSACTION',
-		participants,
-	};
-};
+const transaction = (...participants) => ({
+	type: 'TRANSACTION',
+	participants,
+});
 
 export default transaction;

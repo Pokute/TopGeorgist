@@ -2,10 +2,10 @@ module.exports = {
 	entry: [
 		'@babel/polyfill',
 		// './topGeorgist'
-		'./reduxIndex'
+		'./reduxIndex',
 	],
 	output: {
-		filename: 'static/topGeorgist.bundle.js'
+		filename: 'static/topGeorgist.bundle.js',
 	},
 	module: {
 		rules: [
@@ -17,20 +17,20 @@ module.exports = {
 					options: {
 						presets: [
 							['@babel/env', {
-							  targets: {
-								  node: '8.9.0',
-							  },
+								targets: {
+									node: '8.9.0',
+								},
 							}],
 							'@babel/stage-0',
 						],
-					}
-				}
-			}
-		]
+					},
+				},
+			},
+		],
 	},
 	resolve: {
 		extensions: ['.mjs', '.js'],
-	},		
+	},
 	devtool: 'source-map',
 	watch: true,
 };

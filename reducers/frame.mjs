@@ -1,14 +1,15 @@
 const initialState = {
-	tileSetId: undefined,
-	tiles: {},
+	current: 0,
+	frameTime: Date.now(),
 };
 
 export default (state = initialState, action) => {
 	switch (action.type) {
-		case 'TILESET_ADD_TILE':
+		case 'FRAME':
 			return {
 				...state,
-				[action.tile.tileId]: action.tile,
+				current: state.current + 1,
+				frameTime: action.frameTime,
 			};
 		default:
 			return state;

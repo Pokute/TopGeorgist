@@ -1,6 +1,6 @@
 import inventoryReducer from './inventory';
 
-const initialState = {
+export const initialState = {
 	tgoId: undefined,
 	position: {
 		x: 0,
@@ -8,7 +8,7 @@ const initialState = {
 	},
 	color: 'red',
 	renderer: undefined,
-}
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {

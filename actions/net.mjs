@@ -1,4 +1,4 @@
-export const send = (sendAction) => ({
+export const send = sendAction => ({
 	type: 'NET_SEND',
 	sendAction,
 });

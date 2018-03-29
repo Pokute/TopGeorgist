@@ -1,3 +1,6 @@
 node_modules
+0.static/*.bundle.js*
+1.static/*.bundle.js*
 static/topGeorgist.bundle.js
 static/topGeorgist.bundle.js.map
+storage

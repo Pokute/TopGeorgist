@@ -1,0 +1,12 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+    "todo.file": "Plan.todo",
+    "eslint.enable": true,
+    "eslint.options": {
+        "extensions": [
+            ".js",
+            ".mjs"
+        ]
+    }
+}

@@ -1,17 +1,13 @@
-const plant = (actorTgoId, plantableTypeId) => {
-	return {
-		type: 'PLANT',
-		actorTgoId,
-		plantableTypeId,
-	};
-};
+const plant = (actorTgoId, plantableTypeId) => ({
+	type: 'PLANT',
+	actorTgoId,
+	plantableTypeId,
+});
 
-const harvest = (actorTgoId, targetTgoId) => {
-	return {
-		type: 'HARVEST',
-		actorTgoId,
-		targetTgoId,
-	};
-};
+const harvest = (actorTgoId, targetTgoId) => ({
+	type: 'HARVEST',
+	actorTgoId,
+	targetTgoId,
+});
 
 export { plant, harvest };
