@@ -22,7 +22,7 @@ const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.stroke();
 };
 
-const renderCanvas = ({map, tgos, tileSet, view: v}) => {
+const renderCanvas = ({ map, tgos, tileSet, view: v }) => {
 	if (!v) return;
 	const c = document.getElementById(v.canvasId);
 	if (!c) return;
@@ -41,7 +41,7 @@ const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 			map.tileSize);
 		}
 
-	Object.values(tgos).forEach(tgo => {
+	Object.values(tgos).forEach((tgo) => {
 		const pos = {
 			x: (tgo.position.x - minTile.x + offset.x + 0.5)*map.tileSize,
 			y: (tgo.position.y - minTile.y + offset.y + 0.5)*map.tileSize,
@@ -57,7 +57,7 @@ const renderCanvas = ({map, tgos, tileSet, view: v}) => {
 	})
 };
 
-const GameRenderer = props => {
+const GameRenderer = (props) => {
 	renderCanvas(props);
 
 	return (
@@ -66,8 +66,7 @@ const GameRenderer = props => {
 			width={1000}
 			height={600}
 			onClick={props.onClick}
-		>
-		</canvas>
+		/>
 	);
 };
 
@@ -85,12 +84,10 @@ const mapStoreToProps = (store, ownProps) => ({
 	tileSet: store.tileSets[store.map.tileSetId],
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, { view: v, map }) => ({
 	onClick: (event) => {
 		console.log('We clicked!');
-		const v = ownProps.view;
 		if (!v) return;
-		const map = ownProps.map;
 		if (!map) return;
 		const { minTile, offset } = viewUtils.getMetrics(v, [], {});
 		const canvasCoords = {
@@ -108,7 +105,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 		};
 		dispatch(playerMoveAction);
 		dispatch(netActions.send(playerMoveAction));
-		console.log('canvas clicked.', mappedCoords)
+		console.log('canvas clicked.', mappedCoords);
 		// event.preventDefault();
 	},
 });

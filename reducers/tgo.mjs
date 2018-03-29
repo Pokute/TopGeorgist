@@ -8,7 +8,7 @@ export const initialState = {
 	},
 	color: 'red',
 	renderer: undefined,
-}
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {

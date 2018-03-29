@@ -8,9 +8,10 @@ export default (state = initialState, action) => {
 				...state,
 				[action.client.clientId]: action.client,
 			};
-		case 'CLIENT_REMOVE':
-			const {[action.clientId]: undefined, ...rest} = state;
+		case 'CLIENT_REMOVE': {
+			const { [action.clientId]: undefined, ...rest } = state;
 			return rest;
+		}
 		default:
 			return state;
 	}

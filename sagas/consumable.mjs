@@ -1,14 +1,15 @@
-import { call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import * as playerActions from '../actions/player';
 import transaction from '../actions/transaction';
 
-const consume = function* ({actorTgoId, targetTypeId}) {
+const consume = function* ({ actorTgoId, targetTypeId }) {
 	const actorTgo = (yield select()).tgos[actorTgoId];
 	const targetType = (yield select()).itemTypes[targetTypeId];
-	if (!actorTgo.components.includes('consumer')) return null;
-	if (!actorTgo.components.includes('player')) return null;
+	if (!actorTgo.components.includes('consumer')) return false;
+	if (!actorTgo.components.includes('player')) return false;
 
-	yield put(playerActions.addTaskQueue(actorTgoId,
+	yield put(playerActions.addTaskQueue(
+		actorTgoId,
 		[{
 			title: `Eating ${targetType.label}`,
 			progress: {
@@ -30,11 +31,12 @@ const consume = function* ({actorTgoId, targetTypeId}) {
 					},
 				],
 			}),
-		}]
+		}],
 	));
-}
+	return true;
+};
 
-const intoSeeds = function* ({actorTgoId, targetTypeId}) {
+const intoSeeds = function* ({ actorTgoId, targetTypeId }) {
 	yield put(transaction({
 		tgoId: actorTgoId,
 		items: [
@@ -48,9 +50,9 @@ const intoSeeds = function* ({actorTgoId, targetTypeId}) {
 			},
 		],
 	}));
-}
+};
 
-const consumableRootSaga = function*() {
+const consumableRootSaga = function* () {
 	yield takeEvery('CONSUMABLE_CONSUME', consume);
 	yield takeEvery('CONSUMABLE_INTO_SEEDS', intoSeeds);
 };

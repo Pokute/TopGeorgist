@@ -1,7 +1,7 @@
 export const initialState = {
 	moveTarget: undefined,
-	taskQueue: []
-}
+	taskQueue: [],
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {
@@ -18,7 +18,10 @@ export default (state = initialState, action) => {
 		case 'PLAYER_ADD_TASK_QUEUE':
 			return {
 				...state,
-				taskQueue: [...state.taskQueue, ...(Array.isArray(action.taskQueue) ? action.taskQueue : [action.taskQueue])],
+				taskQueue: [
+					...state.taskQueue,
+					...(Array.isArray(action.taskQueue) ? action.taskQueue : [action.taskQueue]),
+				],
 			};
 		default:
 			return state;

@@ -1,7 +1,6 @@
-import uuidv4 from 'uuid';
+import playerReducer, { initialState as playerInitialState } from './player';
+import tgoReducer, { initialState as tgoInitialState } from './tgo';
 
-import { initialState as playerInitialState, default as playerReducer } from './player';
-import { initialState as tgoInitialState, default as tgoReducer } from './tgo';
 const initialState = {};
 const listActions = [
 	'TGO_ADD',
@@ -10,26 +9,28 @@ const listActions = [
 ];
 
 const reduceByType = (tgo, action) => {
-	if (!tgo) return 
-	if (action.type.indexOf('TGO_') === 0)
+	if (!tgo) return undefined;
+	if (action.type.indexOf('TGO_') === 0) {
 		return tgoReducer(tgo, action);
-	if (action.type.indexOf('PLAYER_') === 0)
+	} else if (action.type.indexOf('PLAYER_') === 0) {
 		return playerReducer(tgo, action);
+	}
 	return tgo;
 };
 
 export default (state = initialState, action) => {
 	// Handle single tgo changes here.
-	if ((action.tgoId) && 
+	if ((action.tgoId) &&
 		(listActions.indexOf(action.type) === -1)) {
 		const modifiedTgo = reduceByType(state[action.tgoId], action);
-		if (modifiedTgo)
+		if (modifiedTgo) {
 			return {
 				...state,
 				[action.tgoId]: modifiedTgo,
 			};
-		else
-			return state;
+		}
+
+		return state;
 	}
 	switch (action.type) {
 		case 'TGO_ADD':
@@ -39,12 +40,12 @@ export default (state = initialState, action) => {
 					...(action.tgo.typeId === 'player' ? playerInitialState : {}),
 					...tgoInitialState,
 					...action.tgo,
-					// ...(global.isServer ? { tgoId: uuidv4() } : {}),
-				}
+				},
 			};
-		case 'TGO_REMOVE':
-			const {[action.tgoId]: undefined, ...rest} = state;
+		case 'TGO_REMOVE': {
+			const { [action.tgoId]: undefined, ...rest } = state;
 			return rest;
+		}
 		case 'TGOS_SET':
 			return action.tgosState;
 		default:

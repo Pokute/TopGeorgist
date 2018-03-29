@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import CreatePlayerForm from './createPlayerForm.react';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';

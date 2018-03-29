@@ -10,14 +10,16 @@ const claimLand = function* (action) {
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
-		return false;
+	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
-	const existingClaim = s.government.claims.find(c => ((c.position.x === action.position.x) && (c.position.y === action.position.y)));
-	if (existingClaim)
-		return false;
+	const existingClaim = s.government.claims
+		.find(c => (
+			(c.position.x === action.position.x) && (c.position.y === action.position.y)
+		));
+	if (existingClaim) return false;
 
 	yield put(governmentActions.rent(action.tgoId, action.position));
+	return true;
 };
 
 const payRent = function* (action) {
@@ -26,24 +28,24 @@ const payRent = function* (action) {
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo))
-		return false;
+	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
 	const citizen = s.government.citizens.find(tgo => tgo.tgoId === tgoId);
 	if (!citizen) return false;
 
 	const citizenClaims = s.government.claims.filter(c => c.tgoId === tgoId);
-	for (let claim of citizenClaims) {
+	for (const claim of citizenClaims) {
 		const currentRentDebt = claim.rentDebt;
 		const currentMoney = actorTgo.inventory.find(it => it.typeId === 'money').count;
 		const change = Math.max(Math.min(currentRentDebt, currentMoney), 0);
 		yield put(governmentActions.addRentDebt(tgoId, claim.position, -change));
 		yield put(inventoryActions.add(tgoId, 'money', -change));
 		yield put(governmentActions.distribute(change));
-	};
+	}
+	return true;
 };
 
-const rentOfficeListener = function*() {
+const rentOfficeListener = function* () {
 	yield takeEvery('RENT_OFFICE_CLAIM_LAND', claimLand);
 	yield takeEvery('RENT_OFFICE_PAY_RENT', payRent);
 };

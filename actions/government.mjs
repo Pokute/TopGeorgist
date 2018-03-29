@@ -27,7 +27,7 @@ export const addRentDebt = (tgoId, position, amount) => ({
 	amount,
 });
 
-export const distribute = (money) => ({
+export const distribute = money => ({
 	type: 'GOVERNMENT_DISTRIBUTE',
 	money,
 });

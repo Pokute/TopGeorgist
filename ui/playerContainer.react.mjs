@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import CurrentPlayerInfo from './currentPlayerInfo.react';
 import CreatePlayerForm from './createPlayerForm.react';
 
-const PlayerContainer = props => {
+const PlayerContainer = (props) => {
 	if (props.defaultPlayerTgoId) {
 		return <CurrentPlayerInfo />;
-	} else {
-		return <CreatePlayerForm />;
 	}
-}
+
+	return <CreatePlayerForm />;
+};
 
 const mapStoreToProps = store => ({
 	defaultPlayerTgoId: store.defaults.playerTgoId,

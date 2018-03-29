@@ -1,5 +1,3 @@
-import * as viewUtils from '../utils/view';
-
 export const create = (viewId, followTgoId = undefined) => ({
 	type: 'VIEW_ADD',
 	view: {
@@ -18,7 +16,7 @@ export const setFollowTarget = (viewId, tgoId) => ({
 	tgoId,
 });
 
-export const render = (viewId) => ({
+export const render = viewId => ({
 	type: 'VIEW_RENDER',
 	viewId,
 });

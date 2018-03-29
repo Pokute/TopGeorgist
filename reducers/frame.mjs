@@ -1,7 +1,7 @@
 const initialState = {
 	current: 0,
 	frameTime: Date.now(),
-}
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {

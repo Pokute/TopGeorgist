@@ -10,7 +10,7 @@ const initialState = {
 		x: 100,
 		y: 100,
 	},
-}
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {
@@ -28,7 +28,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				followTgoId: action.tgoId,
-			}
+			};
 		default:
 			return state;
 	}

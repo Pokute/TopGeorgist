@@ -10,7 +10,7 @@ export const createPlayerAction = () => {
 			'consumer',
 			'player',
 		],
-		position: {x: 5, y: 5},
+		position: {x: 5, y: 5 },
 		color: 'red',
 		inventory: [
 			{
@@ -32,7 +32,7 @@ export const createPlayerAction = () => {
 export const storeGeneralAction = () => tgoActions.add({
 	label: 'General Store',
 	typeId: 'building',
-	position: { x: 12, y: 12},
+	position: { x: 12, y: 12 },
 	color: 'pink',
 	inventory: [
 		{

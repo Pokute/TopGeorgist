@@ -1,7 +1,7 @@
 const initialState = {
 	tileSetId: undefined,
 	tiles: {},
-}
+};
 
 export default (state = initialState, action) => {
 	switch (action.type) {

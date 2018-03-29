@@ -13,20 +13,21 @@ const VisitableRentOffice = props => (
 					<li>
 						{`Total rent debt: ${props.citizenClaims.reduce((total, c) => total + c.rentDebt, 0)}`}
 					</li>
-					{props.citizenClaims.map(c => 
-					<li key={`${c.position.x},${c.position.y}`}>
-						{`Claim - Position: ${c.position.x},${c.position.y} Outstanding rent: ${c.rentDebt}`}
-					</li>)}
+					{props.citizenClaims.map(c => (
+						<li key={`${c.position.x},${c.position.y}`}>
+							{`Claim - Position: ${c.position.x},${c.position.y} Outstanding rent: ${c.rentDebt}`}
+						</li>
+					))}
 				</ul>
 			</li>)
 		}
 	</ul>
 );
 
-const mapStoreToProps = (state) => ({
+const mapStoreToProps = state => ({
 	claims: state.government.claims,
-	citizen: state.government.citizens.find(c => c.tgoId = state.defaults.playerTgoId),
-	citizenClaims: state.government.claims.filter(c => c.tgoId = state.defaults.playerTgoId),
+	citizen: state.government.citizens.find(c => c.tgoId === state.defaults.playerTgoId),
+	citizenClaims: state.government.claims.filter(c => c.tgoId === state.defaults.playerTgoId),
 });
 
 export default connect(mapStoreToProps)(VisitableRentOffice);

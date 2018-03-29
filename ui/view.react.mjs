@@ -27,7 +27,7 @@ const View = props => (
 	</div>
 );
 
-const mapStoreToProps = state => {
+const mapStoreToProps = (state) => {
 	const player = state.tgos[state.defaults.playerTgoId];
 	return {
 		player,

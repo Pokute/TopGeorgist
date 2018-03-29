@@ -23,7 +23,7 @@ export default (state = initialState, action) => {
 		case 'SET_TICKER_RUNNING':
 			return {
 				...state,
-				running,
+				running: action.running,
 			};
 		default:
 			return state;

@@ -1,9 +1,10 @@
 import tileSetReducer from './tileSet';
+
 const initialState = {};
 
 export default (state = initialState, action) => {
 	// Handle single tgo changes here.
-// if ((action.tgoId) && 
+// if ((action.tgoId) &&
 // 	(action.type != 'TGO_ADD')) {
 // 	return state.map(p => {
 // 		if (p.tgoId !== action.tgoId)
