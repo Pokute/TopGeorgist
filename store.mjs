@@ -6,51 +6,56 @@ import { persistStore, persistReducer } from 'redux-persist';
 // AsyncNodeStorage is not included in browser.
 import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
-import topGeorgist from './reducers/index'
+import topGeorgist from './reducers/index';
 import rootSaga from './sagas/root';
 
 const sagaMiddleware = createSagaMiddleware();
-const middleWares = applyMiddleware(sagaMiddleware)
+const middleWares = applyMiddleware(sagaMiddleware);
 
 let enhancer;
-let store;
-let persistor;
+let letStore;
+let letPersistor;
 
 if (global.isServer) {
 	// Server
 	enhancer = compose(middleWares);
-	const persistReducers = persistReducer({
+	const persistReducers = persistReducer(
+		{
 			key: 'root',
 			storage: new AsyncNodeStorage('storage/'),
 			version: 1,
 		},
-		topGeorgist
+		topGeorgist,
 	);
-	store = createStore(
+	letStore = createStore(
 		persistReducers,
 		undefined,
-		enhancer
+		enhancer,
 	);
-	persistor = persistStore(store);
+	letPersistor = persistStore(letStore);
 } else {
 	// Client
 	enhancer = compose(
 		middleWares,
-		batchedSubscribe(notify => {
-			if (window.requestAnimationFrame)
-				window.requestAnimationFrame(notify)
-			else
+		batchedSubscribe((notify) => {
+			if (window.requestAnimationFrame) {
+				window.requestAnimationFrame(notify);
+			} else {
 				notify();
-		})
+			}
+		}),
 	);
-	store = createStore(
+	letStore = createStore(
 		topGeorgist,
 		undefined,
-		enhancer
+		enhancer,
 	);
 }
 
 sagaMiddleware.run(rootSaga);
+
+const store = letStore;
+const persistor = letPersistor;
 
 export {
 	store,

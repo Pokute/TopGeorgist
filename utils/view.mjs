@@ -36,7 +36,7 @@ const getMetrics = (view, tgos, map) => {
 		minTile,
 		maxTile,
 		offset,
-	}; 
-}
+	};
+};
 
 export { getMetrics };

@@ -9,7 +9,7 @@ const frameLoop = function* () {
 		yield call(reqWinFrame);
 		yield put(frameActions.frame());
 	}
-}
+};
 
 const frameRootSaga = function* () {
 	if (global.isServer) return;

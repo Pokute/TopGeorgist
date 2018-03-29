@@ -9,6 +9,7 @@
 		"@std/esm": "^0.19.7",
 		"classnames": "^2.2.5",
 		"null-loader": "^0.1.1",
+		"prop-types": "^15.6.1",
 		"random-js": "^1.0.8",
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",

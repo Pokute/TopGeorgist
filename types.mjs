@@ -1,25 +1,21 @@
-import transaction from './actions/transaction';
-import { plant } from './actions/plantable';
-import * as netActions from './actions/net';
-
 const defaultType = {
 	stackable: true,
 	isInteger: true,
 	positiveOnly: true,
 	building: false,
-}
+};
 
 const items = {
-	'calories': {
+	calories: {
 		label: 'Calories',
 		stackable: true,
 		isInteger: false,
 	},
-	'money': {
+	money: {
 		label: 'Money',
 		stackable: true,
 	},
-	'pineApple': {
+	pineApple: {
 		label: 'Pineapple',
 		stackable: true,
 		isInteger: false,
@@ -27,7 +23,7 @@ const items = {
 			'consumable',
 		],
 	},
-	'pineAppleShoot': {
+	pineAppleShoot: {
 		components: [
 			'plantable',
 		],
@@ -37,20 +33,20 @@ const items = {
 		building: true,
 		growsIntoTypeId: 'pineApple',
 	},
-	'player': {
+	player: {
 		label: 'Player',
 		stackable: false,
 	},
-	'building': {
+	building: {
 		label: 'Building',
 		stackable: false,
 		building: true,
 	},
-	'plant': {
+	plant: {
 		label: 'Plant',
 		stackable: false,
 		isInteger: true,
-		building: true
+		building: true,
 	},
 };
 
@@ -59,7 +55,7 @@ const createItemTypeAction = it => ({
 	itemType: it,
 });
 
-const createItemTypes = dispatch => {
+const createItemTypes = (dispatch) => {
 	const actions = Object.entries(items)
 		.map(([key, val]) => ({ ...val, typeId: key }))
 		.map(i => ({ ...defaultType, ...i }))

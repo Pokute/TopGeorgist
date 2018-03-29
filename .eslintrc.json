@@ -5,6 +5,7 @@
     },
     "rules": {
         "func-names":"off",
+        "import/extensions": "never",
         "indent": ["error", "tab", {
             "SwitchCase": 1
         }],
@@ -28,5 +29,15 @@
         "react/jsx-indent": ["error", "tab"],
         "react/jsx-indent-props": ["error", "tab"],
         "react/jsx-filename-extension": ["off"]
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js",
+                    ".mjs"
+                ]
+            }
+        }
     }
 }

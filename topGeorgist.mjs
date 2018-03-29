@@ -1,10 +1,9 @@
 // Client code.
 
+import WebSocketWrapper from 'ws-wrapper';
 import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
-import createInitialObjects from './initialObjects'
-import WebSocketWrapper from 'ws-wrapper';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetActions from './actions/tileSet';
@@ -36,12 +35,6 @@ const init = () => {
 	// setInterval(() => {
 	// 	store.dispatch(viewActions.render('secondary'));
 	// }, 100);
-};
-
-export const initOldHtml = () => {
-	// View specific
-	document.body.appendChild(viewActions.create('main', 'jesh', true));
-	document.body.appendChild(viewActions.create('secondary', 'genStore'));
 };
 
 export default init;

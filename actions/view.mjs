@@ -7,7 +7,7 @@ export const create = (viewId, followTgoId = undefined) => ({
 		followTgoId,
 		position: { x: 10, y: 10 },
 		// size: { x: c.width, y: c.height },
-	}
+	},
 });
 
 export const setFollowTarget = (viewId, tgoId) => ({

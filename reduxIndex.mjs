@@ -10,11 +10,11 @@ import * as defaultsActions from './actions/defaults';
 init();
 
 const mainView = store.dispatch(viewActions.create('main', 'jesh'));
-store.dispatch(defaultsActions.setViewId('main'))
+store.dispatch(defaultsActions.setViewId('main'));
 
 render(
 	<Provider store={store}>
 		<TopGeorgist />
 	</Provider>,
-	document.getElementById('root')
+	document.getElementById('root'),
 );

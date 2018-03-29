@@ -1,3 +1,3 @@
 global.isServer = true;
 
-export default {}
+export default {};

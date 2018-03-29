@@ -1,7 +1,7 @@
 import * as inventoryActions from './actions/inventory';
 
 const components = {
-	'selfMoving': {
+	selfMoving: {
 		tick: (tgo) => {
 			const actions = [];
 			if (tgo.moveTarget) {
@@ -13,9 +13,10 @@ const components = {
 						moveTarget: undefined,
 					});
 				} else {
-					if  (tgo.inventory) {
-						const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
-						if (cals && cals.count > 0)
+					if (!tgo.inventory) return [];
+
+					const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
+					if (cals && cals.count > 0) {
 						actions.push({
 							type: 'TGO_SET_POSITION',
 							tgoId: tgo.tgoId,
@@ -31,19 +32,19 @@ const components = {
 			return actions;
 		},
 	},
-	'inventoryChange': {
+	inventoryChange: {
 		tick: (tgo, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];
 			if (tgo.inventory) {
 				// const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
 				// if (cals && cals.count > 0) {
-					actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));
+				actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));
 				// }
 			}
 			return actions;
-		}
+		},
 	},
-	'consumable': {
+	consumable: {
 		actions: [
 			{
 				consume: {
@@ -56,7 +57,7 @@ const components = {
 							'consumer',
 						],
 					},
-				}
+				},
 			},
 			{
 				turnIntoSeeds: {
@@ -64,14 +65,14 @@ const components = {
 					onClick: {
 						type: 'CONSUMABLE_INTO_SEEDS',
 					},
-				}
+				},
 			},
-		]
+		],
 	},
-	'consumer': {
+	consumer: {
 
 	},
-	'plantable': {
+	plantable: {
 		actions: [
 			{
 				consume: {
@@ -79,13 +80,12 @@ const components = {
 					onClick: {
 						type: 'PLANT',
 					},
-				}
+				},
 			},
 		],
 	},
-	'trader': {
-		
-	}
-}
+	trader: {
+	},
+};
 
 export default components;

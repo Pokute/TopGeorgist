@@ -7,9 +7,12 @@ import * as netActions from '../actions/net';
 const drawTile = (ctx, pos, tile, tileSize) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
 	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
-	ctx.fillRect(pos.x - tileSize / 2, pos.y - tileSize / 2,
-		tileSize, tileSize);
-}
+	ctx.fillRect(
+		pos.x - tileSize / 2, pos.y - tileSize / 2,
+		tileSize,
+		tileSize,
+	);
+};
 
 const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.beginPath();
@@ -33,12 +36,15 @@ const renderCanvas = ({ map, tgos, tileSet, view: v }) => {
 	if (!tileSet) return;
 	for (let y = minTile.y; y < maxTile.y; y++)
 		for (let x = minTile.x; x < maxTile.x; x++) {
-			drawTile(ctx, {
-				x: map.tileSize * (x - minTile.x + offset.x + 0.5),
-				y: map.tileSize * (y - minTile.y + offset.y + 0.5)
-			},
-			tileSet.tiles[map.data[map.size.x * y + x]],
-			map.tileSize);
+			drawTile(
+				ctx, 
+				{
+					x: map.tileSize * (x - minTile.x + offset.x + 0.5),
+					y: map.tileSize * (y - minTile.y + offset.y + 0.5)
+				},
+				tileSet.tiles[map.data[map.size.x * y + x]],
+				map.tileSize,
+			);
 		}
 
 	Object.values(tgos).forEach((tgo) => {
@@ -76,9 +82,9 @@ GameRenderer.propTypes = {
 	map: PropTypes.object,
 	tgos: PropTypes.object,
 	tileSet: PropTypes.object,
-}
+};
 
-const mapStoreToProps = (store, ownProps) => ({
+const mapStoreToProps = store => ({
 	map: store.map,
 	tgos: store.tgos,
 	tileSet: store.tileSets[store.map.tileSetId],
