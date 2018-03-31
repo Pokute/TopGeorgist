@@ -5,7 +5,7 @@
     },
     "rules": {
         "func-names":"off",
-        "import/extensions": "never",
+        "import/extensions": "off",
         "indent": ["error", "tab", {
             "SwitchCase": 1
         }],
@@ -20,7 +20,7 @@
                 "selector": "WithStatement",
                 "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
             }
-        ],        
+        ],
         "no-tabs": ["off"],
         "no-unused-vars": ["error", {
             "argsIgnorePattern": "^_",

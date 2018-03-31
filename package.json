@@ -8,6 +8,7 @@
 	"dependencies": {
 		"@std/esm": "^0.19.7",
 		"classnames": "^2.2.5",
+		"express": "^4.16.3",
 		"null-loader": "^0.1.1",
 		"prop-types": "^15.6.1",
 		"random-js": "^1.0.8",
@@ -39,7 +40,8 @@
 		"eslint-plugin-import": "^2.7.0",
 		"eslint-plugin-jsx-a11y": "^6.0.2",
 		"eslint-plugin-react": "^7.4.0",
-		"webpack": "^3.10.0"
+		"webpack": "^4.4.1",
+		"webpack-dev-middleware": "^3.1.0"
 	},
 	"browser": {
 		"redux-persist-node-storage": "./node-modules/null-loader"
@@ -47,7 +49,8 @@
 	"scripts": {
 		"build": "webpack --display-error-details --config webpack.config.js",
 		"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-		"server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r @std/esm --experimental-modules server.mjs"
+		"server": "supervisor -e js,mjs -i node_modules,ui --inspect=127.0.0.1:9230 -- -r @std/esm --experimental-modules server.mjs",
+		"express": "node --inspect -r @std/esm --experimental-modules expressServer.mjs"
 	},
 	"files": [
 		"static/topGeorgist.bundle.js"

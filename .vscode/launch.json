@@ -8,13 +8,13 @@
 			"type": "node",
 			"request": "attach",
 			"name": "Attach to server",
-			"port": 9229,
+			"port": 9230,
 		},
 		{
 			"type": "chrome",
 			"request": "launch",
 			"name": "Launch Chrome against localhost",
-			"url": "http://localhost:24321/",
+			"url": "http://localhost:24321/index.html",
 			"webRoot": "${workspaceFolder}",
 			"breakOnLoad": true
 		}

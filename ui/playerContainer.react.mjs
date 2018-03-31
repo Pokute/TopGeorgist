@@ -6,7 +6,7 @@ import CurrentPlayerInfo from './currentPlayerInfo.react';
 import CreatePlayerForm from './createPlayerForm.react';
 
 const propTypes = {
-	defaultPlayerTgoId: PropTypes.string.isRequired,
+	defaultPlayerTgoId: PropTypes.string,
 };
 
 const PlayerContainer = (props) => {

@@ -1,10 +1,10 @@
 const config = {
 	gameServer: {
-		host: '84.249.137.94',
+		host: 'localhost',
 		port: 24320,
 	},
 	httpServer: {
-		host: '84.249.137.94',
+		host: 'localhost',
 		port: 24321,
 	},
 };

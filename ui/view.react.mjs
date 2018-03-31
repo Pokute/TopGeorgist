@@ -49,7 +49,7 @@ View.propTypes = {
 	position: PropTypes.object,
 	size: PropTypes.object,
 	// From store
-	player: PropTypes.object.isRequired,
+	player: PropTypes.object,
 	visitables: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

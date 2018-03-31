@@ -3,8 +3,9 @@ import createSagaMiddleware from 'redux-saga';
 import { batchedSubscribe } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 // AsyncNodeStorage is not included in browser.
-import { AsyncNodeStorage } from 'redux-persist-node-storage';
+// import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
 import topGeorgist from './reducers/index';
 import rootSaga from './sagas/root';
@@ -22,7 +23,7 @@ if (global.isServer) {
 	const persistReducers = persistReducer(
 		{
 			key: 'root',
-			storage: new AsyncNodeStorage('storage/'),
+			storage,
 			version: 1,
 		},
 		topGeorgist,
