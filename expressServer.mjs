@@ -10,7 +10,7 @@ const app = express();
 const devMiddleware = webpackDevMiddleware(
 	webpack(webpackConfig),
 	{
-		// publicPath: webpackConfig.output.publicPath,
+		publicPath: webpackConfig.output.publicPath,
 		// compress: true,
 		// hot: true,
 		// stats: 'errors-only',
@@ -21,12 +21,6 @@ const devMiddleware = webpackDevMiddleware(
 
 app.use(devMiddleware);
 
-app.get('/', (req, res) => {
-});
-
-// Add the route to the control panel React app.
-app.use('/', express.static('./static'), (req, res) => {
-	// res.redirect('index.html');
-});
+app.use(express.static('static'));
 
 app.listen(config.httpServer);

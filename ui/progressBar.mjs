@@ -63,7 +63,7 @@ ProgressBar.propTypes = {
 	perFrameIncrease: PropTypes.bool,
 	progress: PropTypes.number,
 	segments: PropTypes.arrayOf(PropTypes.shape({
-		cost: PropTypes.number,
+		cost: PropTypes.object,
 		// progress: PropTypes.number,
 		title: PropTypes.string,
 	})),
