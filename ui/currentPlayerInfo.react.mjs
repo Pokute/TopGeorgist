@@ -2,6 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ProgressBar from './progressBar';
 
+const costMapper = (task) => {
+	if (!task.cost) return () => 0;
+
+	return (({ cost: { time } }) => time);
+};
+
 const CurrentPlayerInfo = props => (
 	<div>
 		<ProgressBar
@@ -12,8 +18,16 @@ const CurrentPlayerInfo = props => (
 			// 	{ title: 'Part3', cost: 40, },
 			// ]}
 			segments={props.player.taskQueue}
-			progress={(props.player.taskQueue && (props.player.taskQueue.length > 0)) ? props.player.taskQueue[0].progress.time : 0 }
-			costMapping={({ cost: { time }}) => time}
+			progress={(props.player.taskQueue && (props.player.taskQueue.length > 0) && props.player.taskQueue[0].progress)
+				? props.player.taskQueue[0].progress.time
+				: 0
+			}
+			costMapping={
+				(props.player.taskQueue && (props.player.taskQueue.length > 0)
+					? costMapper(props.player.taskQueue[0])
+					: () => 0
+				)
+			}
 		/>
 		{`Player name: ${props.player.label}`}
 	</div>

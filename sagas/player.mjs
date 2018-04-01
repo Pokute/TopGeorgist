@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import * as playerActions from '../actions/player';
 import * as tgoActions from '../actions/tgo';
 import { createPlayerAction } from '../initialObjects';
@@ -47,6 +47,38 @@ const handlePlayerCreateResponse = function* (action) {
 	});
 };
 
+const handlePlayerSetMoveTarget = function* ({ tgoId, moveTarget }) {
+	const tgo = (yield select()).tgos[tgoId];
+	if (!tgo) return false;
+	yield put(playerActions.addTaskQueue(
+		tgoId,
+		[{
+			title: `Moving to (${moveTarget.x}, ${moveTarget.y})`,
+			advanceActions: [
+				{
+					type: 'PLAYER_MOVE_TOWARDS',
+					tgoId,
+				},
+			],
+		}],
+	));
+	return true;
+};
+
+const handlePlayerMoveTowards = function* ({ tgoId }) {
+	const tgo = (yield select()).tgos[tgoId];
+	if (!tgo) return false;
+	yield put({
+		type: 'TGO_SET_POSITION',
+		tgoId: tgo.tgoId,
+		position: {
+			x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
+			y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
+		},
+	});
+	return true;
+};
+
 const handleQueueForOwner = function* (owner) {
 	const getCompletedTasks = tasksQueue => tasksQueue
 		.reduce(
@@ -67,8 +99,32 @@ const handleQueueForOwner = function* (owner) {
 		);
 
 	const [topTask, ...restOfTaskQueue] = owner.taskQueue;
+
+	const advanceTask = task => ({
+		...task,
+		...(task.progress
+			? {
+				progress: {
+					...task.progress,
+					time: task.progress.time + 1,
+				},
+			}
+			: {}
+		),
+		...(task.advanceActions
+			? {
+				generatedAdvanceActions: task.advanceActions.map(a => a),
+			}
+			: {}
+		),
+	});
+
+	const { generatedAdvanceActions, ...advancedTask } = advanceTask(topTask);
+
+	yield all(generatedAdvanceActions.map(a => put(a)));
+
 	const newTaskQueue = [
-		{ ...topTask, progress: { time: topTask.progress.time + 1 } },
+		advancedTask,
 		...restOfTaskQueue,
 	];
 	const { completed: completedTasks, remaining: remainingTasks } = getCompletedTasks(newTaskQueue);
@@ -94,6 +150,8 @@ const handleQueueTick = function* () {
 const playerListener = function* () {
 	yield takeEvery('PLAYER_CREATE_REQUEST', handlePlayerCreateRequest);
 	yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
+	yield takeEvery('PLAYER_SET_MOVE_TARGET', handlePlayerSetMoveTarget);
+	yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);
 	yield takeEvery('TICK', handleQueueTick);
 };
 
