@@ -65,6 +65,12 @@ Milestone 3:
 		✔ Plant pineapple shoots @done(18-03-25 08:27)
 	☐ Time sinks
 		☐ Doing most actions should require ticks to complete.
+			☐ Movement
+			✔ Eating @done(18-04-01 03:41)
+			☐ Planting
+			☐ Extracting seeds
+			☐ Trading
+			☐ Government/Rent office bureucracy
 		☐ Most actions can be paused
 	✔ UI progress bar. @done(18-03-25 06:45)
 		✔ Segmented by ticks, but progress 0 -> 1 is linear in progress bar @done(18-03-25 06:45)
@@ -73,8 +79,25 @@ Milestone 3:
 		☐ Progress can be seen
 		☐ Pineapples grow edible, but calories doesn't increase after certain point.
 	☐ UI mouse selection of positions
+		✔ Simplify gameRender. @done(18-04-01 05:19)
 	☐ Economy
 		☐ More sinks
+	✔ redux store array accessor shorthand functions / utility. @done(18-03-25 06:44)
+	☐ Rendering overhaul
+		✔ 60fps support @done(18-03-25 06:50)
+	☐ Add graphics for most items.
+	✔ Rehydrate - server side. @done(18-04-01 03:38)
+	☐ Client automatic reconnect.
+	☐ Client resume player name.
+	☐ Client side token persistence.
+	☐ Hot reload?
+	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
+		☐ Eslint to support class arrow methods.
+	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
+	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
+	
+Milestone 4:
+
 	☐ Player
 		☐ New "energy" stat.
 		☐ Doing different actions use "energy"
@@ -86,13 +109,7 @@ Milestone 3:
 	☐ Buildings
 		☐ Barracks
 			☐ Has beds that cost to use
-	✔ redux store array accessor shorthand functions / utility. @done(18-03-25 06:44)
-	☐ Rendering overhaul
-		✔ 60fps support @done(18-03-25 06:50)
-	☐ Add graphics for most items.
 	☐ Better map generation.
-	☐ Rehydrate
-	☐ Hot reload?
 	☐ Publishing
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop
@@ -100,6 +117,11 @@ Milestone 3:
 		☐ Need for redux-thunk?
 	☐ Server hosting.
 		☐ Where?
+
+Stories:
+
+	☐ Player passes a food cart and tempted by delicious aromas has to either buy and eat some of the appealing food or suffer a mood malus.
+	☐ Government has ordered a census of all ducks. A player picks up a contract for an area, but encounters a closed off area with high tolls. By entering a census mode, he's able to count the ducks inside, but is otherwise near blind and must return to starting position to exit the mode.
 
 Icebox:
 

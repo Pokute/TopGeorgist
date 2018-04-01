@@ -4,12 +4,18 @@ import { connect } from 'react-redux';
 
 import GameRenderer from './gameRenderer.react';
 import VisitableUI from './visitableUI.react';
+import { getMinMax } from '../utils/view';
 
 const View = props => (
 	<div>
 		<GameRenderer
 			view={props.view}
 			map={props.map}
+			{...getMinMax(
+				document.getElementById(props.view.canvasId),
+				props.center,
+				props.map,
+			)}
 		/>
 		<div>
 			{props.player ?
@@ -27,7 +33,7 @@ const View = props => (
 	</div>
 );
 
-const mapStoreToProps = (state) => {
+const mapStoreToProps = (state, passedProps) => {
 	const player = state.tgos[state.defaults.playerTgoId];
 	return {
 		player,
@@ -38,6 +44,9 @@ const mapStoreToProps = (state) => {
 				.map(tgo => ({ ...tgo, type: state.itemTypes[tgo.typeId] }))
 				.filter(tgo => tgo.visitable)
 			: [],
+		center: (passedProps.view.followTgoId && state.tgos[passedProps.view.followTgoId])
+			? state.tgos[passedProps.view.followTgoId].position
+			: passedProps.view.position,
 	};
 };
 
