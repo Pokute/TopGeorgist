@@ -76,6 +76,7 @@ const handleQueueForOwner = function* (owner) {
 	// First remove completed items from TaskQueue so that other sagas see access them.
 	yield put(playerActions.setTaskQueue(owner.tgoId, remainingTasks));
 
+	if (completedTasks.some(task => task.PUT)) console.warn('Task action has a put already.');
 	yield (completedTasks.map(task => put(task.action)));
 	// let newTaskQueue = player.taskQueue;
 

@@ -49,8 +49,8 @@
 	"scripts": {
 		"build": "webpack --display-error-details --config webpack.config.js",
 		"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-		"server": "supervisor -e js,mjs -i node_modules,ui --inspect=127.0.0.1:9230 -- -r @std/esm --experimental-modules server.mjs",
-		"express": "node --inspect -r @std/esm --experimental-modules expressServer.mjs"
+		"server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r @std/esm --experimental-modules server.mjs",
+		"express": "node -r @std/esm --experimental-modules expressServer.mjs"
 	},
 	"files": [
 		"static/topGeorgist.bundle.js"

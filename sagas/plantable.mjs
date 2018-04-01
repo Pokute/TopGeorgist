@@ -33,7 +33,7 @@ const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 
 	console.log('transactionResult: ', transactionResult);
 
-	const planting = put(tgoActions.add({
+	const planting = tgoActions.add({
 		tgoId: Math.trunc(Math.random() * 100000),
 		typeId: 'plant',
 		position: plantPosition,
@@ -59,9 +59,9 @@ const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 		components: [
 			['inventoryChange', { typeId: plantableType.growsIntoTypeId, perTick: (1 / 256) }],
 		],
-	}));
+	});
 
-	return put(playerActions.addTaskQueue(
+	yield put(playerActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Planting ${plantableType.label}`,
@@ -74,17 +74,17 @@ const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 			action: planting,
 		}],
 	));
+	return true;
 };
 
-const harvest = function* (action) {
-	const { tgoId, visitableTgoId } = action;
+const harvest = function* ({ tgoId, visitableTgoId }) {
 	const s = yield select(state => state);
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
-	const transactionResult = yield put(transaction({
+	const transactionResult = transaction({
 		tgoId,
 		items: [
 			{
@@ -92,13 +92,41 @@ const harvest = function* (action) {
 				count: visitableTgo.inventory.find(i => i.typeId === visitableTgo.plantTypeId).count,
 			},
 		],
-	}));
+	});
 	console.log('transactionResult: ', transactionResult);
+	const plantType = (yield select()).itemTypes[visitableTgo.plantTypeId];
 
-	return put({
+	const remove = {
 		type: 'TGO_REMOVE',
 		tgoId: visitableTgoId,
-	});
+	};
+	yield put(playerActions.addTaskQueue(
+		tgoId,
+		[
+			{
+				title: `Harvesting ${plantType.label}`,
+				progress: {
+					time: 0,
+				},
+				cost: {
+					time: 15,
+				},
+				action: transactionResult,
+			},
+			{
+				title: `Removing`,
+				progress: {
+					time: 0,
+				},
+				cost: {
+					time: 0,
+				},
+				action: remove,
+			},
+		],
+	));
+
+	return true;
 };
 
 const plantListener = function* () {

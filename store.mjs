@@ -25,6 +25,7 @@ if (global.isServer) {
 			key: 'root',
 			storage,
 			version: 1,
+			blacklist: ['clients'],
 		},
 		topGeorgist,
 	);
