@@ -67,8 +67,8 @@ Milestone 3:
 		☐ Doing most actions should require ticks to complete.
 			☐ Movement
 			✔ Eating @done(18-04-01 03:41)
-			☐ Planting
-			☐ Extracting seeds
+			✔ Planting @done(18-04-01 14:03)
+			✔ Extracting seeds @done(18-04-01 13:55)
 			☐ Trading
 			☐ Government/Rent office bureucracy
 		☐ Most actions can be paused

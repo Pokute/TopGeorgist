@@ -37,19 +37,32 @@ const consume = function* ({ actorTgoId, targetTypeId }) {
 };
 
 const intoSeeds = function* ({ actorTgoId, targetTypeId }) {
-	yield put(transaction({
-		tgoId: actorTgoId,
-		items: [
-			{
-				typeId: 'pineAppleShoot',
-				count: +2,
+	const targetType = (yield select()).itemTypes[targetTypeId];
+	yield put(playerActions.addTaskQueue(
+		actorTgoId,
+		[{
+			title: `Extracting seeds from ${targetType.label}`,
+			progress: {
+				time: 0,
 			},
-			{
-				typeId: targetTypeId,
-				count: -1,
+			cost: {
+				time: 50,
 			},
-		],
-	}));
+			action: transaction({
+				tgoId: actorTgoId,
+				items: [
+					{
+						typeId: 'pineAppleShoot',
+						count: +2,
+					},
+					{
+						typeId: targetTypeId,
+						count: -1,
+					},
+				],
+			}),
+		}],
+	));
 };
 
 const consumableRootSaga = function* () {
