@@ -10,6 +10,12 @@ export const create = (viewId, followTgoId = undefined) => ({
 	},
 });
 
+export const rawClick = (viewId, mapPosition) => ({
+	type: 'VIEW_RAW_CLICK',
+	mapPosition,
+	viewId,
+});
+
 export const setFollowTarget = (viewId, tgoId) => ({
 	type: 'VIEW_SET_FOLLOW_TARGET',
 	viewId,
@@ -20,3 +26,13 @@ export const render = viewId => ({
 	type: 'VIEW_RENDER',
 	viewId,
 });
+
+export const clickActionStack = {
+	push: action => ({
+		type: 'VIEW_CLICK_ACTION_STACK_PUSH',
+		action,
+	}),
+	pop: () => ({
+		type: 'VIEW_CLICK_ACTION_STACK_POP',
+	}),
+};

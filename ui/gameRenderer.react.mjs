@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as viewUtils from '../utils/view';
 import * as netActions from '../actions/net';
+import * as viewActions from '../actions/view';
 
 const drawTile = (ctx, pos, tile, tileSize) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
@@ -140,6 +141,20 @@ const mapStoreToProps = store => ({
 
 const mapDispatchToProps = (dispatch, { view: v, map, minTile }) => ({
 	onClick: (event) => {
+		if (!v) return;
+		if (!map) return;
+
+		const canvasCoords = {
+			x: event.nativeEvent.offsetX,
+			y: event.nativeEvent.offsetY,
+		};
+		const mappedCoords = {
+			x: Math.trunc((canvasCoords.x / map.tileSize) + minTile.x),
+			y: Math.trunc((canvasCoords.y / map.tileSize) + minTile.y),
+		};
+		dispatch(viewActions.rawClick(v.viewId, mappedCoords));
+	},
+	onClickMove: (event) => {
 		console.log('We clicked!');
 		if (!v) return;
 		if (!map) return;

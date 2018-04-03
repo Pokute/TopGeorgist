@@ -10,6 +10,7 @@ const initialState = {
 		x: 100,
 		y: 100,
 	},
+	clickActionStack: [],
 };
 
 export default (state = initialState, action) => {
@@ -28,6 +29,16 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				followTgoId: action.tgoId,
+			};
+		case 'VIEW_CLICK_ACTION_STACK_PUSH':
+			return {
+				...state,
+				clickActionStack: [ ...state.clickActionStack, action.action ],
+			};
+		case 'VIEW_CLICK_ACTION_STACK_POP':
+			return {
+				...state,
+				clickActionStack: state.clickActionStack.slice(0, -1),
 			};
 		default:
 			return state;
