@@ -47,13 +47,13 @@ const handlePlayerCreateResponse = function* (action) {
 	});
 };
 
-const handlePlayerSetMoveTarget = function* ({ tgoId, moveTarget }) {
+const handlePlayerSetMoveTarget = function* ({ tgoId, position }) {
 	const tgo = (yield select()).tgos[tgoId];
 	if (!tgo) return false;
 	yield put(playerActions.addTaskQueue(
 		tgoId,
 		[{
-			title: `Moving to (${moveTarget.x}, ${moveTarget.y})`,
+			title: `Moving to (${position.x}, ${position.y})`,
 			advanceActions: [
 				{
 					type: 'PLAYER_MOVE_TOWARDS',

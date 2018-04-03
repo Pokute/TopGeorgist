@@ -154,29 +154,6 @@ const mapDispatchToProps = (dispatch, { view: v, map, minTile }) => ({
 		};
 		dispatch(viewActions.rawClick(v.viewId, mappedCoords));
 	},
-	onClickMove: (event) => {
-		console.log('We clicked!');
-		if (!v) return;
-		if (!map) return;
-
-		const canvasCoords = {
-			x: event.nativeEvent.offsetX,
-			y: event.nativeEvent.offsetY,
-		};
-		const mappedCoords = {
-			x: Math.trunc((canvasCoords.x / map.tileSize) + minTile.x),
-			y: Math.trunc((canvasCoords.y / map.tileSize) + minTile.y),
-		};
-		const playerMoveAction = {
-			type: 'PLAYER_SET_MOVE_TARGET',
-			tgoId: v.followTgoId,
-			moveTarget: mappedCoords,
-		};
-		dispatch(playerMoveAction);
-		dispatch(netActions.send(playerMoveAction));
-		console.log('canvas clicked.', mappedCoords);
-		// event.preventDefault();
-	},
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(GameRenderer);

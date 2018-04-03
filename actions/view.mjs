@@ -1,6 +1,9 @@
+import { initialState } from '../reducers/view';
+
 export const create = (viewId, followTgoId = undefined) => ({
 	type: 'VIEW_ADD',
 	view: {
+		...initialState,
 		viewId,
 		// canvas: c,
 		canvasId: `view-canvas-${viewId}`,
@@ -28,11 +31,13 @@ export const render = viewId => ({
 });
 
 export const clickActionStack = {
-	push: action => ({
+	push: (viewId, action) => ({
 		type: 'VIEW_CLICK_ACTION_STACK_PUSH',
+		viewId,
 		action,
 	}),
-	pop: () => ({
+	pop: viewId => ({
 		type: 'VIEW_CLICK_ACTION_STACK_POP',
+		viewId,
 	}),
 };

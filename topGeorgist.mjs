@@ -23,6 +23,10 @@ const init = () => {
 		} else if (data && data.action && data.action.type === 'DEFAULTS_SET_PLAYER') {
 			store.dispatch(data.action);
 			store.dispatch(viewActions.setFollowTarget('main', data.action.playerTgoId));
+			store.dispatch(viewActions.clickActionStack.push('main', {
+				type: 'PLAYER_SET_MOVE_TARGET',
+				tgoId: store.getState().defaults.playerTgoId,
+			}));
 		}
 	});
 

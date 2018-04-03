@@ -80,8 +80,8 @@ Milestone 3:
 		☐ Progress can be seen
 		☐ Pineapples grow edible, but calories doesn't increase after certain point.
 	✔ View click handling generification. @done(18-04-03 22:12)
-		☐ UI mouse selection of positions
-		☐ New code for movement target.
+		☐ UI mouse selection of positions in UI paramInput.
+		✔ New code for movement target. @done(18-04-03 23:08)
 	✔ Simplify gameRender. @done(18-04-01 05:19)
 	☐ Economy
 		☐ More sinks
@@ -113,8 +113,9 @@ Milestone 4:
 		☐ Barracks
 			☐ Has beds that cost to use
 	☐ Better map generation.
-	☐ Refactor client code.
-	☐ Refactor server code.
+	☐ Refactor client init/mainloop code.
+	☐ Refactor server init/mainloop code.
+	☐ Move netActions.send to a redux-saga that listens to all applicable actions?
 	☐ Publishing
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop

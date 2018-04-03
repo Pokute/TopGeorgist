@@ -11,7 +11,7 @@ const handleViewRawClick = function* ({ mapPosition, viewId }) {
 
 	yield put({
 		...topAction,
-		mapPosition,
+		position: mapPosition,
 		viewId,
 	});
 

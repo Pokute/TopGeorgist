@@ -1,4 +1,4 @@
-const initialState = {
+export const initialState = {
 	viewId: undefined,
 	canvas: undefined,
 	followTgoId: undefined,
@@ -33,7 +33,7 @@ export default (state = initialState, action) => {
 		case 'VIEW_CLICK_ACTION_STACK_PUSH':
 			return {
 				...state,
-				clickActionStack: [ ...state.clickActionStack, action.action ],
+				clickActionStack: [...state.clickActionStack, action.action],
 			};
 		case 'VIEW_CLICK_ACTION_STACK_POP':
 			return {

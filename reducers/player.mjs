@@ -8,7 +8,7 @@ export default (state = initialState, action) => {
 		case 'PLAYER_SET_MOVE_TARGET':
 			return {
 				...state,
-				moveTarget: action.moveTarget,
+				moveTarget: action.position,
 			};
 		case 'PLAYER_SET_TASK_QUEUE':
 			return {
