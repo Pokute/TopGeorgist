@@ -95,9 +95,11 @@ Milestone 3:
 	☐ Client side token persistence.
 	☐ Hot reload?
 	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
-		☐ Eslint to support class arrow methods.
+	☐ Eslint to support class arrow methods.
 	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
+	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
+	☐ Progressbar Storybook tests.
 	
 Milestone 4:
 
@@ -117,7 +119,6 @@ Milestone 4:
 	☐ Refactor server init/mainloop code.
 	☐ Move netActions.send to a redux-saga that listens to all applicable actions?
 	☐ Publishing
-	☐ Storybook (@storybook/react-native) https://github.com/storybooks/storybook
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop
 		☐ reducer-reducer?

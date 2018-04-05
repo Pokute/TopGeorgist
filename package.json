@@ -1,58 +1,66 @@
 {
-	"name": "top-georgist",
-	"description": "Top Georgist",
-	"author": "Pokute",
-	"version": "0.0.1",
-	"main": "index.html",
-	"@std/esm": "cjs",
-	"dependencies": {
-		"@std/esm": "^0.19.7",
-		"classnames": "^2.2.5",
-		"express": "^4.16.3",
-		"null-loader": "^0.1.1",
-		"prop-types": "^15.6.1",
-		"random-js": "^1.0.8",
-		"react": "^16.2.0",
-		"react-dom": "^16.2.0",
-		"react-redux": "^5.0.6",
-		"redux": "3.7.2",
-		"redux-batched-subscribe": "^0.1.6",
-		"redux-persist": "^5.9.1",
-		"redux-persist-node-storage": "^2.0.0",
-		"redux-saga": "0.16.0",
-		"uuid": "^3.2.1",
-		"ws": "^4.0.0",
-		"ws-wrapper": "^1.3.2"
-	},
-	"devDependencies": {
-		"@babel/core": "^7.0.0-beta.37",
-		"@babel/plugin-syntax-jsx": "^7.0.0-beta.39",
-		"@babel/plugin-transform-react-display-name": "^7.0.0-beta.39",
-		"@babel/plugin-transform-react-jsx": "^7.0.0-beta.39",
-		"@babel/plugin-transform-react-jsx-self": "^7.0.0-beta.39",
-		"@babel/plugin-transform-react-jsx-source": "^7.0.0-beta.39",
-		"@babel/polyfill": "^7.0.0-beta.39",
-		"@babel/preset-env": "^7.0.0-beta.37",
-		"@babel/preset-stage-0": "^7.0.0-beta.37",
-		"babel-loader": "^8.0.0-beta.0",
-		"eslint": "^4.9.0",
-		"eslint-config-airbnb": "^16.1.0",
-		"eslint-plugin-import": "^2.7.0",
-		"eslint-plugin-jsx-a11y": "^6.0.2",
-		"eslint-plugin-react": "^7.4.0",
-		"webpack": "^4.4.1",
-		"webpack-dev-middleware": "^3.1.0"
-	},
-	"browser": {
-		"redux-persist-node-storage": "./node-modules/null-loader"
-	},
-	"scripts": {
-		"build": "webpack --display-error-details --config webpack.config.js",
-		"butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-		"server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r @std/esm --experimental-modules server.mjs",
-		"express": "node -r @std/esm --experimental-modules expressServer.mjs"
-	},
-	"files": [
-		"static/topGeorgist.bundle.js"
-	]
+  "name": "top-georgist",
+  "description": "Top Georgist",
+  "author": "Pokute",
+  "version": "0.0.1",
+  "main": "index.html",
+  "@std/esm": "cjs",
+  "dependencies": {
+    "@std/esm": "^0.19.7",
+    "classnames": "^2.2.5",
+    "express": "^4.16.3",
+    "null-loader": "^0.1.1",
+    "prop-types": "^15.6.1",
+    "random-js": "^1.0.8",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "redux": "3.7.2",
+    "redux-batched-subscribe": "^0.1.6",
+    "redux-persist": "^5.9.1",
+    "redux-persist-node-storage": "^2.0.0",
+    "redux-saga": "0.16.0",
+    "uuid": "^3.2.1",
+    "ws": "^4.0.0",
+    "ws-wrapper": "^1.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/plugin-syntax-jsx": "^7.0.0-beta.39",
+    "@babel/plugin-transform-react-display-name": "^7.0.0-beta.39",
+    "@babel/plugin-transform-react-jsx": "^7.0.0-beta.39",
+    "@babel/plugin-transform-react-jsx-self": "^7.0.0-beta.39",
+    "@babel/plugin-transform-react-jsx-source": "^7.0.0-beta.39",
+    "@babel/polyfill": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.37",
+    "@babel/preset-stage-0": "^7.0.0-beta.37",
+    "babel-loader": "^8.0.0-beta.0",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "webpack": "^4.4.1",
+    "webpack-dev-middleware": "^3.1.0",
+    "@storybook/react": "^4.0.0-alpha.1",
+    "@storybook/addon-actions": "^4.0.0-alpha.1",
+    "@storybook/addon-links": "^4.0.0-alpha.1",
+    "@storybook/addons": "^4.0.0-alpha.1",
+    "babel-core": "^6.26.0",
+    "babel-runtime": "^6.26.0"
+  },
+  "browser": {
+    "redux-persist-node-storage": "./node-modules/null-loader"
+  },
+  "scripts": {
+    "build": "webpack --display-error-details --config webpack.config.js",
+    "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
+    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r @std/esm --experimental-modules server.mjs",
+    "express": "node -r @std/esm --experimental-modules expressServer.mjs",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "files": [
+    "static/topGeorgist.bundle.js"
+  ]
 }
