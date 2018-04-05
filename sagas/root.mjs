@@ -6,6 +6,7 @@ import frame from './frame';
 import net from './net';
 import plant from './plantable';
 import player from './player';
+import taskQueue from './taskQueue';
 import ticker from './ticker';
 import transaction from './transaction';
 import view from './view';
@@ -19,6 +20,7 @@ const rootSaga = function* () {
 	yield* net();
 	yield* plant();
 	yield* player();
+	yield* taskQueue();
 	yield* ticker();
 	yield* transaction();
 	yield* view();

@@ -1,7 +1,7 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
 import * as tgoActions from '../actions/tgo';
-import * as playerActions from '../actions/player';
+import * as taskQueueActions from '../actions/taskQueue';
 import transaction from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
 import { checkOnVisitableLocation } from '../utils/visitable';
@@ -61,7 +61,7 @@ const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 		],
 	});
 
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Planting ${plantableType.label}`,
@@ -100,7 +100,7 @@ const harvest = function* ({ tgoId, visitableTgoId }) {
 		type: 'TGO_REMOVE',
 		tgoId: visitableTgoId,
 	};
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		tgoId,
 		[
 			{

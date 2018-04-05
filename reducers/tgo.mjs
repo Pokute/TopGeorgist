@@ -1,4 +1,5 @@
 import inventoryReducer from './inventory';
+import taskQueueReducer from './taskQueue';
 
 export const initialState = {
 	tgoId: undefined,
@@ -11,6 +12,13 @@ export const initialState = {
 };
 
 export default (state = initialState, action) => {
+	if (action.type.indexOf('TGO_TASK_QUEUE_') === 0) {
+		return {
+			...state,
+			taskQueue: taskQueueReducer(state.taskQueue, action),
+		};
+	}
+
 	switch (action.type) {
 		case 'TGO_SET_POSITION':
 			return {

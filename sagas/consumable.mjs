@@ -1,5 +1,5 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import * as playerActions from '../actions/player';
+import * as taskQueueActions from '../actions/taskQueue';
 import transaction from '../actions/transaction';
 
 const consume = function* ({ actorTgoId, targetTypeId }) {
@@ -8,7 +8,7 @@ const consume = function* ({ actorTgoId, targetTypeId }) {
 	if (!actorTgo.components.includes('consumer')) return false;
 	if (!actorTgo.components.includes('player')) return false;
 
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Eating ${targetType.label}`,
@@ -38,7 +38,7 @@ const consume = function* ({ actorTgoId, targetTypeId }) {
 
 const intoSeeds = function* ({ actorTgoId, targetTypeId }) {
 	const targetType = (yield select()).itemTypes[targetTypeId];
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Extracting seeds from ${targetType.label}`,

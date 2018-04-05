@@ -1,7 +1,7 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
 import transctionAction from '../actions/transaction';
-import * as playerActions from '../actions/player';
+import * as taskQueueActions from '../actions/taskQueue';
 
 const transaction = function* (action) {
 	const { participants } = action;
@@ -55,7 +55,7 @@ const transaction = function* (action) {
 };
 
 const storeTransactionRequest = function* (action) {
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		action.tgoId,
 		[{
 			title: `Trading`,

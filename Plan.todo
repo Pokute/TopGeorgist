@@ -117,6 +117,7 @@ Milestone 4:
 	☐ Refactor server init/mainloop code.
 	☐ Move netActions.send to a redux-saga that listens to all applicable actions?
 	☐ Publishing
+	☐ Storybook (@storybook/react-native) https://github.com/storybooks/storybook
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop
 		☐ reducer-reducer?

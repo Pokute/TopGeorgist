@@ -1,6 +1,5 @@
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import * as playerActions from '../actions/player';
-import * as tgoActions from '../actions/tgo';
+import { put, select, takeEvery } from 'redux-saga/effects';
+import * as taskQueueActions from '../actions/taskQueue';
 import { createPlayerAction } from '../initialObjects';
 
 const handlePlayerCreateRequest = function* (action) {
@@ -50,7 +49,7 @@ const handlePlayerCreateResponse = function* (action) {
 const handlePlayerSetMoveTarget = function* ({ tgoId, position }) {
 	const tgo = (yield select()).tgos[tgoId];
 	if (!tgo) return false;
-	yield put(playerActions.addTaskQueue(
+	yield put(taskQueueActions.addTaskQueue(
 		tgoId,
 		[{
 			title: `Moving to (${position.x}, ${position.y})`,
@@ -79,80 +78,11 @@ const handlePlayerMoveTowards = function* ({ tgoId }) {
 	return true;
 };
 
-const handleQueueForOwner = function* (owner) {
-	const getCompletedTasks = tasksQueue => tasksQueue
-		.reduce(
-			({ completed, remaining, continueCompleting }, task) => (
-				(continueCompleting && task.cost && (task.progress.time >= task.cost.time))
-					? {
-						completed: [...completed, task],
-						remaining,
-						continueCompleting: true,
-					}
-					: {
-						completed,
-						remaining: [...remaining, task],
-						continueCompleting: false,
-					}
-			),
-			{ completed: [], remaining: [], continueCompleting: true },
-		);
-
-	const [topTask, ...restOfTaskQueue] = owner.taskQueue;
-
-	const advanceTask = task => ({
-		...task,
-		...(task.progress
-			? {
-				progress: {
-					...task.progress,
-					time: task.progress.time + 1,
-				},
-			}
-			: {}
-		),
-		...(task.advanceActions
-			? {
-				generatedAdvanceActions: task.advanceActions.map(a => a),
-			}
-			: {}
-		),
-	});
-
-	const { generatedAdvanceActions, ...advancedTask } = advanceTask(topTask);
-
-	yield all(generatedAdvanceActions.map(a => put(a)));
-
-	const newTaskQueue = [
-		advancedTask,
-		...restOfTaskQueue,
-	];
-	const { completed: completedTasks, remaining: remainingTasks } = getCompletedTasks(newTaskQueue);
-
-	// First remove completed items from TaskQueue so that other sagas see access them.
-	yield put(playerActions.setTaskQueue(owner.tgoId, remainingTasks));
-
-	if (completedTasks.some(task => task.PUT)) console.warn('Task action has a put already.');
-	yield (completedTasks.map(task => put(task.action)));
-	// let newTaskQueue = player.taskQueue;
-
-	// } while (player)
-};
-
-const handleQueueTick = function* () {
-	const s = yield select();
-	const queueOwners = Object.values(s.tgos)
-		.filter(tgo => (tgo.taskQueue && tgo.taskQueue.length > 0));
-
-	for (const queueOwner of queueOwners) yield call(handleQueueForOwner, queueOwner);
-};
-
 const playerListener = function* () {
 	yield takeEvery('PLAYER_CREATE_REQUEST', handlePlayerCreateRequest);
 	yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
 	yield takeEvery('PLAYER_SET_MOVE_TARGET', handlePlayerSetMoveTarget);
 	yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);
-	yield takeEvery('TICK', handleQueueTick);
 };
 
 export default playerListener;
