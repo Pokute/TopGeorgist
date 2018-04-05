@@ -27,8 +27,26 @@ storiesOf('Button', module)
 storiesOf('ProgressBar', module)
 	.addDecorator(story => <Provider store={store}>{story()}</Provider>)
 	.add('Empty', () => <ProgressBar />)
+	.add('Progress only 0-1', () => <ProgressBar
+			progress={0.5}
+		/>)
+	.add('Progress and cost only', () => <ProgressBar
+			progress={2.5}
+			cost={4}
+		/>)
 	.add('One item', () => <ProgressBar
 			segments={[
 				{ cost: 5, title: 'One item.' }
 			]}
-		/>);
+		/>)
+	.add('Multiple segments', () => <ProgressBar
+		segments={[
+			{ cost: 5, title: 'One item.' }
+		]}
+	/>)
+	.add('redux & framerate', () => <ProgressBar
+		segments={[
+			{ cost: 5, title: 'One item.' }
+		]}
+	/>)
+;
