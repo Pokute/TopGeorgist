@@ -4,14 +4,18 @@
   "author": "Pokute",
   "version": "0.0.1",
   "main": "index.html",
-  "@std/esm": "cjs",
+  "esm": {
+    "mode": "auto",
+    "cjs": true,
+    "await": true
+  },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.44",
-    "@std/esm": "^0.19.7",
     "babel-bridge": "^1.12.11",
     "babel-core": "^7.0.0-bridge.0",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.11",
+    "esm": "^3.0.17",
     "express": "^4.16.3",
     "null-loader": "^0.1.1",
     "prop-types": "^15.6.1",
@@ -59,8 +63,8 @@
   "scripts": {
     "build": "webpack --display-error-details --config webpack.config.js",
     "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r @std/esm --experimental-modules server.mjs",
-    "express": "node -r @std/esm --experimental-modules expressServer.mjs",
+    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r esm --experimental-modules server.mjs",
+    "express": "node -r esm expressServer.mjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

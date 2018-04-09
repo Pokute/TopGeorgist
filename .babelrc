@@ -10,6 +10,7 @@
 					'transform-regenerator',
 				],
 				useBuiltIns: false,
+				modules: false,
 			},
 		],
 		'@babel/stage-0',

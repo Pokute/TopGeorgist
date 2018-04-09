@@ -1,7 +1,7 @@
 import express from 'express';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackConfig from './webpack.config.js';
+import webpackConfig from './webpack.config';
 
 import config from './config';
 

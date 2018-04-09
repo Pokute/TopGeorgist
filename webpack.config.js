@@ -1,6 +1,6 @@
 import commonConfig from './webpack.common.config';
 
-export default {
+const config = {
 	mode: 'development',
 	entry: [
 		// './topGeorgist'
@@ -14,3 +14,5 @@ export default {
 	devtool: 'source-map',
 	watch: true,
 };
+
+export default config;

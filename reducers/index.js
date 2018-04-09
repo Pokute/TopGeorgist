@@ -23,4 +23,4 @@ const topGeorgist = combineReducers({
 	views,
 });
 
-export default topGeorgist
+export default topGeorgist;

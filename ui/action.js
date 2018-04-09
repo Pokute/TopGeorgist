@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import * as netActions from '../actions/net';
-import ParamInput, { packParam } from './paramInput.mjs';
+import ParamInput, { packParam } from './paramInput';
 
 const Action = props => (
 	<form

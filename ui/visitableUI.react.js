@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as netActions from '../actions/net';
 import VisitableGovernmentBuilding from './visitable/governmentBuilding';
 import VisitableRentOffice from './visitable/rentOffice';
-import Action from './action.mjs';
+import Action from './action';
 
 const VisitableUI = props => (
 	<div>
