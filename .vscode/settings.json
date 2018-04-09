@@ -8,5 +8,6 @@
             ".js",
             ".mjs"
         ]
-    }
+    },
+    "javascript.referencesCodeLens.enabled": true
 }

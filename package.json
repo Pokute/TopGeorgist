@@ -63,8 +63,8 @@
   "scripts": {
     "build": "webpack --display-error-details --config webpack.config.js",
     "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r esm --experimental-modules server.mjs",
-    "express": "node -r esm expressServer.mjs",
+    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r esm --experimental-modules server.js",
+    "express": "node -r esm expressServer.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

@@ -5,12 +5,6 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
-			"request": "attach",
-			"name": "Attach to server",
-			"port": 9229,
-		},
-		{
 			"type": "chrome",
 			"request": "launch",
 			"name": "Launch Chrome against localhost",
@@ -18,15 +12,47 @@
 			"webRoot": "${workspaceFolder}",
 			"port": 9222,
 			"breakOnLoad": true
-		}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch express",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"express"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch gameserver",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"server"
+			],
+			"port": 9229,
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Start storybook",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"storybook"
+			]
+		},
 	],
 	"compounds": [
 		{
-			"name": "Server+client",
+			"name": "Servers&client",
 			"configurations": [
-				"Attach to server",
 				"Launch Chrome against localhost",
-			]
+				"Launch express",
+				"Launch gameserver",
+			],
 		}
 	]
 }
