@@ -48,12 +48,16 @@
     "@storybook/addon-links": "^4.0.0-alpha.1",
     "@storybook/addons": "^4.0.0-alpha.1",
     "@storybook/react": "^4.0.0-alpha.1",
+    "@types/react": "^16.3.17",
+    "awesome-typescript-loader": "^5.0.0",
     "babel-loader": "^8.0.0-beta.2",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
+    "source-map-loader": "^0.2.3",
+    "typescript": "^2.9.1",
     "webpack": "^4.4.1",
     "webpack-dev-middleware": "^3.1.0"
   },
@@ -61,10 +65,11 @@
     "redux-persist-node-storage": "./node-modules/null-loader"
   },
   "scripts": {
+    "compile-local": "./node_modules/typescript/bin/tsc",
     "build": "webpack --display-error-details --config webpack.config.js",
     "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-    "server": "supervisor -e js,mjs -i node_modules,ui --inspect -- -r esm --experimental-modules server.js",
-    "express": "node -r esm expressServer.js",
+    "server": "npm run compile-local && supervisor -e js,mjs -i node_modules,ui --inspect -- -r esm --experimental-modules compiled/server.js",
+    "express": "npm run compile-local && node -r esm compiled/expressServer.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

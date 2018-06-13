@@ -3,21 +3,30 @@ module.exports = {
 		extensions: [
 			'.js',
 			'.mjs',
+			'.ts',
+			'.tsx',
 		],
 	},
 	module: {
 		rules: [
 			{
-				test: /(\.js$|\.mjs$)/i,
+				test: /(\.js$|\.mjs$|\.ts|\.tsx)/i,
 				exclude: /node_modules/,
-				type: 'javascript/auto',
 				use: {
-					loader: 'babel-loader',
-					options: {
-						babelrc: true,
-					},
+					loader: 'awesome-typescript-loader',
 				},
 			},
+			// {
+			// 	test: /(\.js$|\.mjs$|\.ts|\.tsx)/i,
+			// 	exclude: /node_modules/,
+			// 	type: 'javascript/auto',
+			// 	use: {
+			// 		loader: 'babel-loader',
+			// 		options: {
+			// 			babelrc: true,
+			// 		},
+			// 	},
+			// },
 			{
 				test: /\.css$/,
 				use: [

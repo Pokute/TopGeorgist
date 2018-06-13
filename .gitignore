@@ -4,3 +4,4 @@ node_modules
 static/topGeorgist.bundle.js
 static/topGeorgist.bundle.js.map
 storage
+compiled

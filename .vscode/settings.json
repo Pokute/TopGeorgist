@@ -9,5 +9,8 @@
             ".mjs"
         ]
     },
-    "javascript.referencesCodeLens.enabled": true
+    "javascript.referencesCodeLens.enabled": true,
+    "cSpell.words": [
+        "Georgist",
+    ]
 }
