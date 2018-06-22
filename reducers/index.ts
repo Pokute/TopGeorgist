@@ -11,16 +11,20 @@ import tileSets from './tileSets';
 import views from './views';
 
 const topGeorgist = combineReducers({
-	clients,
 	defaults,
-	frame,
-	government,
-	itemTypes,
-	map,
-	tgos,
-	ticker,
-	tileSets,
-	views,
 });
+
+// const topGeorgist = combineReducers({
+// 	clients,
+// 	defaults,
+// 	frame,
+// 	government,
+// 	itemTypes,
+// 	map,
+// 	tgos,
+// 	ticker,
+// 	tileSets,
+// 	views,
+// });
 
 export default topGeorgist;

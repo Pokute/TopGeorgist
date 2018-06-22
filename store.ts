@@ -1,6 +1,6 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { batchedSubscribe } from 'redux-batched-subscribe';
+import { batchedSubscribe, NotifyFunction } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
@@ -31,26 +31,26 @@ if (global.isServer) {
 	);
 	letStore = createStore(
 		persistReducers,
-		undefined,
+		{},
 		enhancer,
 	);
 	letPersistor = persistStore(letStore);
 } else {
 	// Client
-	enhancer = compose(
+	const enhancer = compose(
 		middleWares,
-		batchedSubscribe((notify) => {
-			if (window.requestAnimationFrame) {
-				window.requestAnimationFrame(notify);
-			} else {
-				notify();
-			}
-		}),
+		// batchedSubscribe((notify: NotifyFunction) => {
+		// 	if (window.requestAnimationFrame) {
+		// 		window.requestAnimationFrame(notify);
+		// 	} else {
+		// 		notify();
+		// 	}
+		// }),
 	);
 	letStore = createStore(
 		topGeorgist,
-		undefined,
-		enhancer,
+		{},
+		enhancer
 	);
 }
 
