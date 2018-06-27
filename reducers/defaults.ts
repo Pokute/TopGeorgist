@@ -1,18 +1,16 @@
+import IAction from './action';
+
 type TgoId = string;
 type ViewId = string;
 
 export interface type {
-	playerTgoId?: TgoId,
-	viewId?: ViewId,
+	readonly playerTgoId?: TgoId,
+	readonly viewId?: ViewId,
 };
 
 const initialState: type = {
 	playerTgoId: undefined,
 	viewId: undefined,
-};
-
-export interface IAction {
-	type: string,
 };
 
 export interface IDefaultSetPlayer extends IAction {

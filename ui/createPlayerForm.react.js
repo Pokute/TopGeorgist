@@ -9,11 +9,11 @@ const CreatePlayerForm = props => (
 		onSubmit={props.onSubmit}
 	>
 		<input
-			type={'text'}
-			name={'playerLabel'}
+			type="text"
+			name="playerLabel"
 		/>
 		<button
-			type={'submit'}
+			type="submit"
 		>
 			{'Create player'}
 		</button>
