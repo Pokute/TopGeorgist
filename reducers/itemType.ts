@@ -1,3 +1,5 @@
+export type TypeId = string;
+
 const initialState = {
 	typeId: undefined,
 	stackable: true,
