@@ -1,14 +1,27 @@
 import { combineReducers } from 'redux'
-import clients from './clients';
-import defaults from './defaults';
-import frame from './frame';
+import clients, { ClientsState } from './clients';
+import defaults, { type as DefaultsType } from './defaults';
+import frame, { FrameStateType } from './frame';
 import government from './government';
-import itemTypes from './itemTypes';
-import map from './map';
-import tgos from './tgos';
-import ticker from './ticker';
-import tileSets from './tileSets';
-import views from './views';
+import itemTypes, { ItemTypesState } from './itemTypes';
+import map, { MapType } from './map';
+import tgos, { TgosState } from './tgos';
+import ticker, { TickerStateType } from './ticker';
+import tileSets, { TileSetsState } from './tileSets';
+import views, { ViewsState } from './views';
+
+export interface RootStateType {
+	clients: ClientsState,
+	defaults: DefaultsType,
+	frame: FrameStateType,
+	// government: GovernmentStateType,
+	itemTypes: ItemTypesState,
+	map: MapType,
+	tgos: TgosState,
+	ticker: TickerStateType,
+	tileSets: TileSetsState,
+	view: ViewsState,
+};
 
 const topGeorgist = combineReducers({
 	clients,
@@ -18,7 +31,7 @@ const topGeorgist = combineReducers({
 	itemTypes,
 	map,
 	tgos,
-	// ticker,
+	ticker,
 	tileSets,
 	views,
 });
