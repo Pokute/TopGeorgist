@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import clients, { ClientsState } from './clients';
 import defaults, { type as DefaultsType } from './defaults';
 import frame, { FrameStateType } from './frame';
-import government from './government';
+import government, { GovernmentStateType } from './government';
 import itemTypes, { ItemTypesState } from './itemTypes';
 import map, { MapType } from './map';
 import tgos, { TgosState } from './tgos';
@@ -14,7 +14,7 @@ export interface RootStateType {
 	clients: ClientsState,
 	defaults: DefaultsType,
 	frame: FrameStateType,
-	// government: GovernmentStateType,
+	government: GovernmentStateType,
 	itemTypes: ItemTypesState,
 	map: MapType,
 	tgos: TgosState,
@@ -27,7 +27,7 @@ const topGeorgist = combineReducers({
 	clients,
 	defaults,
 	frame,
-	// government,
+	government,
 	itemTypes,
 	map,
 	tgos,
