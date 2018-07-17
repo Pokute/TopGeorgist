@@ -17,7 +17,7 @@ const topGeorgist = combineReducers({
 	// government,
 	// itemTypes,
 	// map,
-	// tgos,
+	tgos,
 	// ticker,
 	// tileSets,
 	views,

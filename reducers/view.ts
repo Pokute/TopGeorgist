@@ -2,9 +2,10 @@ import { ActionType, getType } from "typesafe-actions";
 import { TgoId } from "./tgo";
 import { clickActionStack } from "../actions/view";
 
-import * as viewActions from '../actions/view'; 
+import { ViewsState } from './views';
+import * as viewActions from '../actions/view';
 
-export type ViewId = string;
+export type ViewId = keyof ViewsState;
 
 type ViewAction = ActionType<typeof viewActions>;
 
@@ -40,7 +41,7 @@ export const initialState: ViewInitialType = {
 	clickActionStack: [],
 };
 
-export default (state: ViewType, action: ViewAction): ViewType | void => {
+export default (state: ViewType, action: ViewAction): ViewType => {
 	switch (action.type) {
 		case getType(viewActions.setPosition):
 			return {
@@ -67,5 +68,7 @@ export default (state: ViewType, action: ViewAction): ViewType | void => {
 				...state,
 				clickActionStack: state.clickActionStack.slice(0, -1),
 			};
+		default:
+			return state;
 	}
 };

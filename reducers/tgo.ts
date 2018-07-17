@@ -5,10 +5,13 @@ import * as inventoryActions from '../actions/inventory';
 import inventoryReducer from './inventory';
 import taskQueueReducer from './taskQueue';
 import { TypeId } from './itemType';
+import { TgosState } from './tgos';
+import taskQueue from './taskQueue';
+import * as taskQueueActions from '../actions/taskQueue';
 
 type TgoAction = ActionType<typeof tgoActions>
 
-export type TgoId = string;
+export type TgoId = keyof TgosState;
 
 export interface TgoInitialType {
 	readonly position: {
@@ -36,13 +39,19 @@ export const initialState:TgoType = {
 	typeId: '',
 };
 
+const taskQueueActionsList = [
+	taskQueueActions.addTaskQueue,
+	taskQueueActions.setTaskQueue,
+].map(a => getType(a));
+
 export default (state: TgoType, action: TgoAction) : TgoType => {
-	// if (action.type.indexOf('TGO_TASK_QUEUE_') === 0) {
-	// 	return {
-	// 		...state,
-	// 		taskQueue: taskQueueReducer(state.taskQueue, action),
-	// 	};
-	// }
+	// Handle single view changes here.
+	if (taskQueueActionsList.some(a => a === action.type)) {
+		return {
+			...state,
+			taskQueue: taskQueueReducer(state.taskQueue, action),
+		};
+	}
 
 	switch (action.type) {
 		case getType(tgoActions.setPosition):

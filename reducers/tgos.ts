@@ -2,17 +2,17 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import playerReducer, { initialState as playerInitialState } from './player';
 import tgoReducer, { initialState as tgoInitialState, TgoType } from './tgo';
-import { add, remove, setAll } from '../actions/tgo'; 
+import * as tgoActions from '../actions/tgo'; 
 
-type TgosState = {
+export type TgosState = {
 	[extraProps: string]: TgoType;
 };
 
 const initialState: TgosState = {};
 const listActions = [
-	// tgoActions.add,
-	// tgoActions.remove,
-	// tgoActions.setAll,
+	tgoActions.add,
+	tgoActions.remove,
+	tgoActions.setAll,
 ];
 
 // const reduceByType = (tgo, action) => {
@@ -25,9 +25,9 @@ const listActions = [
 // 	return tgo;
 // };
 
-type TgosAction = ActionType<typeof add & typeof remove & typeof setAll>;
+type TgosAction = ActionType<typeof tgoActions>;
 
-export default (state: TgosState = initialState, action: TgosAction) => {
+export default (state: TgosState = initialState, action: TgosAction): TgosState => {
 	// Handle single tgo changes here.
 	// if ((action.tgoId) &&
 	// 	(listActions.indexOf(action.type) === -1)) {
