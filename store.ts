@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 // AsyncNodeStorage is not included in browser.
 // import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
-import topGeorgist from './reducers/index';
+import topGeorgist from './reducers';
 import rootSaga from './sagas/root';
 
 const sagaMiddleware = createSagaMiddleware();

@@ -6,7 +6,7 @@ import { store } from './store';
 import createItemTypes from './types';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
-import * as tileSetActions from './actions/tileSet';
+import * as tileSetsActions from './actions/tileSets';
 import * as tgoActions from './actions/tgo';
 
 const init = () => {
@@ -18,8 +18,8 @@ const init = () => {
 			store.dispatch(data.action);
 			const newState = data.action.data;
 			if (newState.map) store.dispatch(mapActions.set(newState.map));
-			if (newState.tileSets) store.dispatch(tileSetActions.set(newState.tileSets));
-			if (newState.tgos) store.dispatch(tgoActions.set(newState.tgos));
+			if (newState.tileSets) store.dispatch(tileSetsActions.set(newState.tileSets));
+			if (newState.tgos) store.dispatch(tgoActions.setAll(newState.tgos));
 		} else if (data && data.action && data.action.type === 'DEFAULTS_SET_PLAYER') {
 			store.dispatch(data.action);
 			store.dispatch(viewActions.setFollowTarget('main', data.action.playerTgoId));
