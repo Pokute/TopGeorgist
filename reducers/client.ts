@@ -1,11 +1,13 @@
 import { AnyAction } from "redux";
+import { ClientsState } from "./clients";
+import { TgoId } from "./tgo";
 
-export type ClientId = string;
+export type ClientId = keyof ClientsState;
 
 export interface ClientType {
 	readonly clientId: ClientId,
 	readonly socket: any,
-	readonly playerTgoId: string,
+	readonly playerTgoId: TgoId,
 }
 
 const initialState: ClientType = {

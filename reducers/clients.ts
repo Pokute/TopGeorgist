@@ -3,7 +3,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import { ClientId, ClientType, default as clientReducer} from './client';
 import * as clientActions from '../actions/client'; 
 
-type ClientsState = {
+export type ClientsState = {
 	[extraProps: string]: ClientType;
 };
 
