@@ -19,7 +19,7 @@ const topGeorgist = combineReducers({
 	map,
 	tgos,
 	// ticker,
-	// tileSets,
+	tileSets,
 	views,
 });
 

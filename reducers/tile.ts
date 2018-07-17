@@ -1,9 +1,9 @@
-import { Color } from "../node_modules/csstype";
-import { AnyAction } from "../node_modules/redux";
+import { Color } from "csstype";
+import { AnyAction } from "redux";
 
 export type TileId = string;
 
-interface TileType {
+export interface TileType {
 	tileId: TileId,
 	fillStyle: Color,
 }
