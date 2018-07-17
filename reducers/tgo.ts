@@ -10,6 +10,7 @@ import taskQueue from './taskQueue';
 import * as taskQueueActions from '../actions/taskQueue';
 
 type TgoAction = ActionType<typeof tgoActions>
+type TaskQueueAction = ActionType<typeof taskQueueActions>
 
 export type TgoId = keyof TgosState;
 
@@ -44,12 +45,12 @@ const taskQueueActionsList = [
 	taskQueueActions.setTaskQueue,
 ].map(a => getType(a));
 
-export default (state: TgoType, action: TgoAction) : TgoType => {
+export default (state: TgoType, action: TgoAction | TaskQueueAction) : TgoType => {
 	// Handle single view changes here.
 	if (taskQueueActionsList.some(a => a === action.type)) {
 		return {
 			...state,
-			taskQueue: taskQueueReducer(state.taskQueue, action),
+			taskQueue: taskQueueReducer(state.taskQueue, action as TaskQueueAction),
 		};
 	}
 
