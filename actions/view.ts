@@ -1,5 +1,4 @@
 import { createAction } from 'typesafe-actions';
-
 import { ViewId } from '../reducers/view';
 
 export const setPosition = createAction('VIEW_SET_POSITION', (resolve) => {
@@ -44,8 +43,6 @@ export const clickActionStack = {
 		});
 	}),
 	pop: createAction('VIEW_CLICK_ACTION_STACK_POP', (resolve) => {
-		return (viewId: ViewId) => resolve({
-			viewId,
-		});
+		return () => resolve();
 	}),
 };
