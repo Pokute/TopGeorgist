@@ -1,8 +1,11 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
+import { ActionType, getType } from 'typesafe-actions';
+
 import * as taskQueueActions from '../actions/taskQueue';
 import { transaction } from '../actions/transaction';
+import * as consumableActions from '../actions/consumable';
 
-const consume = function* ({ actorTgoId, targetTypeId }) {
+const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.consume>) {
 	const actorTgo = (yield select()).tgos[actorTgoId];
 	const targetType = (yield select()).itemTypes[targetTypeId];
 	if (!actorTgo.components.includes('consumer')) return false;
@@ -36,7 +39,7 @@ const consume = function* ({ actorTgoId, targetTypeId }) {
 	return true;
 };
 
-const intoSeeds = function* ({ actorTgoId, targetTypeId }) {
+const intoSeeds = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.intoSeeds>) {
 	const targetType = (yield select()).itemTypes[targetTypeId];
 	yield put(taskQueueActions.addTaskQueue(
 		actorTgoId,
@@ -66,8 +69,8 @@ const intoSeeds = function* ({ actorTgoId, targetTypeId }) {
 };
 
 const consumableRootSaga = function* () {
-	yield takeEvery('CONSUMABLE_CONSUME', consume);
-	yield takeEvery('CONSUMABLE_INTO_SEEDS', intoSeeds);
+	yield takeEvery(getType(consumableActions.consume), consume);
+	yield takeEvery(getType(consumableActions.intoSeeds), intoSeeds);
 };
 
 export default consumableRootSaga;

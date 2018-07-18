@@ -1,10 +1,10 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { getType } from 'typesafe-actions';
+import { ActionType, getType } from 'typesafe-actions';
 
 import * as tgoActions from '../actions/tgo';
 import * as netActions from '../actions/net';
 
-const sendAction = function* (action) {
+const sendAction = function* (action: ActionType<typeof tgoActions.setMoveTarget>) {
 	yield put(netActions.send(action));
 };
 
