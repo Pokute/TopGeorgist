@@ -1,22 +1,25 @@
-import * as express from 'express';
-import * as webpack from 'webpack';
-import * as webpackDevMiddleware from 'webpack-dev-middleware';
+import express from 'express';
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackConfig from './webpack.config';
 
 import config from './config';
 
 const app = express();
 
+const devMiddlewareOptions: webpackDevMiddleware.Options = 
+{
+	publicPath: '',
+	// compress: true,
+	// hot: true,
+	// stats: 'errors-only',
+	// noInfo: true,
+	// errorDetails: true,
+};
+
 const devMiddleware = webpackDevMiddleware(
 	webpack(webpackConfig),
-	{
-		publicPath: webpackConfig.output.publicPath,
-		// compress: true,
-		// hot: true,
-		// stats: 'errors-only',
-		// noInfo: true,
-		// errorDetails: true,
-	},
+	devMiddlewareOptions
 );
 
 app.use(devMiddleware);

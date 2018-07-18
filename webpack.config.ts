@@ -1,6 +1,8 @@
+import * as webpack from 'webpack';
+
 import commonConfig from './webpack.common.config';
 
-const config = {
+const config: webpack.Configuration = {
 	mode: 'development',
 	entry: [
 		// './topGeorgist'
@@ -9,6 +11,7 @@ const config = {
 	target: 'web',
 	output: {
 		filename: 'static/topGeorgist.bundle.js',
+		publicPath: '',
 	},
 	...commonConfig,
 	devtool: 'source-map',

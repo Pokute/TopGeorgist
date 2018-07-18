@@ -1,11 +1,11 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';
+import topGeorgist, { RootStateType } from '../reducers';
 
-const TopGeorgist = props => (
+const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>
 		{Object.values(props.views).map(v => (
 			<View
@@ -25,7 +25,7 @@ const TopGeorgist = props => (
 	</div>
 );
 
-const mapStoreToProps = store => ({
+const mapStoreToProps = (store: RootStateType) => ({
 	views: store.views,
 	map: store.map,
 	defaultPlayerTgoId: store.defaults.playerTgoId,

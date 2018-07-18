@@ -5,7 +5,7 @@ import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryIt
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType } from './taskQueue';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
-import { AnyAction } from '../node_modules/redux';
+import { AnyAction } from 'redux';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [

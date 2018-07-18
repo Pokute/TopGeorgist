@@ -12,5 +12,6 @@
     "javascript.referencesCodeLens.enabled": true,
     "cSpell.words": [
         "Georgist",
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
