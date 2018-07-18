@@ -14,7 +14,7 @@ import * as clientActions from './actions/client';
 import { set as allSet } from './actions/allSet';
 import { getType } from 'typesafe-actions';
 import { TgoActionList } from './reducers/tgo';
-import { AnyAction } from './node_modules/redux';
+import { AnyAction } from 'redux';
 import { extendedSocket } from './reducers/client';
 
 // Start the server

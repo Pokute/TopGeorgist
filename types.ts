@@ -1,4 +1,5 @@
 import { add } from './actions/itemTypes';
+import { Dispatch } from './node_modules/redux';
 
 const defaultType = {
 	stackable: true,
@@ -52,7 +53,7 @@ const items = {
 	},
 };
 
-const createItemTypes = (dispatch) => {
+const createItemTypes = (dispatch: Dispatch) => {
 	const actions = Object.entries(items)
 		.map(([key, val]) => ({ ...val, typeId: key }))
 		.map(i => ({ ...defaultType, ...i }))

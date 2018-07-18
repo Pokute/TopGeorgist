@@ -1,4 +1,5 @@
 import * as inventoryActions from './actions/inventory';
+import { TgoType } from './reducers/tgo';
 
 const components = {
 	selfMoving: {
@@ -33,7 +34,7 @@ const components = {
 		// },
 	},
 	inventoryChange: {
-		tick: (tgo, options = { typeId: 'calories', perTick: -1 }) => {
+		tick: (tgo: TgoType, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];
 			if (tgo.inventory) {
 				// const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);

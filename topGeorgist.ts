@@ -1,6 +1,7 @@
 // Client code.
 
 import WebSocketWrapper from 'ws-wrapper';
+
 import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
@@ -12,7 +13,7 @@ import * as tgosActions from './actions/tgos';
 const init = () => {
 	global.ws = new WebSocketWrapper(new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`));
 
-	global.ws.on('message', (msg) => {
+	global.ws.on('message', (msg: any) => {
 		const data = JSON.parse(msg.data);
 		if (data && data.action && data.action.type === 'ALL_SET') {
 			store.dispatch(data.action);

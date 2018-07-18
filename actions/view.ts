@@ -31,7 +31,7 @@ export const setFollowTarget = createAction('VIEW_SET_FOLLOW_TARGET', (resolve) 
 });
 
 export const render = createAction('VIEW_RENDER', (resolve) => {
-	return (viewId: ViewId) => resolve({
+	return (viewId?: ViewId) => resolve({
 		viewId,
 	});
 });
