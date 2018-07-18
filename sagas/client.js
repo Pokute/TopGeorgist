@@ -1,4 +1,7 @@
 import { put, takeEvery } from 'redux-saga/effects';
+import { getType } from 'typesafe-actions';
+
+import * as tgoActions from '../actions/tgo';
 import * as netActions from '../actions/net';
 
 const sendAction = function* (action) {
@@ -10,7 +13,7 @@ const clientListener = function* () {
 
 	yield takeEvery(
 		[
-			'PLAYER_SET_MOVE_TARGET',
+			getType(tgoActions.setMoveTarget),
 		],
 		sendAction,
 	);

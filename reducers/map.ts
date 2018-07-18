@@ -23,6 +23,8 @@ const initialState = {
 	size: { x: 0, y: 0 },
 	tileSize: 40,
 	tileSetId: 'basic',
+	// minTileId: 0,
+	// maxTileId: 0,
 	data: [],
 };
 
@@ -31,11 +33,12 @@ export interface MapSettings {
 		x: number,
 		y: number,
 	},
-	minTileId: number,
-	maxTileId: number,
+	minTileId?: number,
+	maxTileId?: number,
+	seed?: number,
 };
 
-const defaultSettings: MapSettings = {
+const defaultSettings = {
 	size: { x: 20, y: 20 },
 	minTileId: 0,
 	maxTileId: 2,
@@ -58,7 +61,7 @@ export default (state: MapType = initialState, action: MapAction): MapType => {
 		case getType(mapActions.generate): {
 			const mt = randomEngines.mt19937();
 			mt.seed(action.payload.settings.seed);
-			const usedSettings = { ...defaultSettings, ...action.payload.settings };
+			const usedSettings: Required<MapSettings> = { ...defaultSettings, ...action.payload.settings };
 			return {
 				...initialState,
 				...fillMapData(

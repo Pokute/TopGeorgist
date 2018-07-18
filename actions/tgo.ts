@@ -1,38 +1,24 @@
-import { v4 as uuidv4 } from 'uuid';
 import { createAction } from 'typesafe-actions';
 
-import { TgoType, TgoInitialType, TgoId } from '../reducers/tgo';
-import { TgosState } from '../reducers/tgos';
+import { TgoType, TgoId } from '../reducers/tgo';
 
-interface TgoWithoutId extends TgoInitialType {
-	tgoId: never,
+interface TgoAction {
+	tgoId: TgoId,
 };
 
-export const setAll = createAction('TGOS_SET', (resolve) => {
-	return (tgos: TgosState) => resolve({
-		tgos,
-	});
-});
-
-export const add = createAction('TGO_ADD', (resolve) => {
-	return (tgo: TgoWithoutId) => resolve({
-		tgo: {
-			...tgo,
-			tgoId: uuidv4(),
-		},
-	});
-});
-
-export const remove = createAction('TGO_REMOVE', (resolve) => {
-	return (tgoId: TgoId) => resolve({
-		tgoId,
-	});
-});
+// const resolveTgoAction = (payload: TgoAction, meta: any) => (resolve: any) => resolve(payload, meta);
 
 export const setPosition = createAction('TGO_SET_POSITION', (resolve) => {
 	return (tgoId: TgoId, position: TgoType['position']) => resolve({
 		tgoId,
 		position,
+	});
+});
+
+export const setMoveTarget = createAction('TGO_SET_MOVE_TARGET', (resolve) => {
+	return (tgoId: TgoId, moveTarget: TgoType['moveTarget']) => resolve({
+		tgoId,
+		moveTarget,
 	});
 });
 

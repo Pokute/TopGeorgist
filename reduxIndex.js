@@ -9,8 +9,8 @@ import * as defaultsActions from './actions/defaults';
 
 init();
 
-const mainView = store.dispatch(viewsActions.create('main', 'jesh'));
-store.dispatch(defaultsActions.setViewId(mainView.viewId));
+const mainViewAction = store.dispatch(viewsActions.create('main', 'jesh'));
+store.dispatch(defaultsActions.setViewId(mainViewAction.payload.view.viewId));
 
 render(
 	<Provider store={store}>

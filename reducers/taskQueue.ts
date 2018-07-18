@@ -9,9 +9,13 @@ export type TaskQueueType = TaskType[];
 
 export const initialState = [];
 
-type TaskQueueAction = ActionType<typeof taskQueueActions>
+export type TaskQueueActionType = ActionType<typeof taskQueueActions>
+export const TaskQueueActionList = [
+	taskQueueActions.setTaskQueue,
+	taskQueueActions.setTaskQueue,
+];
 
-export default (state = initialState, action: TaskQueueAction) => {
+export default (state = initialState, action: TaskQueueActionType) => {
 	switch (action.type) {
 		case (getType(taskQueueActions.setTaskQueue)):
 			return Array.isArray(action.payload.taskQueue) ? action.payload.taskQueue : [action.payload.taskQueue];

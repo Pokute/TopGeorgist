@@ -20,7 +20,7 @@ export interface RootStateType {
 	tgos: TgosState,
 	ticker: TickerStateType,
 	tileSets: TileSetsState,
-	view: ViewsState,
+	views: ViewsState,
 };
 
 const topGeorgist = combineReducers({

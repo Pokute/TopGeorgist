@@ -1,6 +1,6 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as taskQueueActions from '../actions/taskQueue';
-import transaction from '../actions/transaction';
+import { transaction } from '../actions/transaction';
 
 const consume = function* ({ actorTgoId, targetTypeId }) {
 	const actorTgo = (yield select()).tgos[actorTgoId];

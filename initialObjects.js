@@ -1,6 +1,7 @@
-import * as tgoActions from './actions/tgo';
+import * as tgosActions from './actions/tgos';
+import { add as tileSetAdd } from './actions/tileSets';
 
-export const createPlayerAction = () => tgoActions.add({
+export const createPlayerAction = () => tgosActions.add({
 	typeId: 'player',
 	components: [
 		'selfMoving',
@@ -26,7 +27,7 @@ export const createPlayerAction = () => tgoActions.add({
 	],
 });
 
-export const storeGeneralAction = () => tgoActions.add({
+export const storeGeneralAction = () => tgosActions.add({
 	label: 'General Store',
 	typeId: 'building',
 	position: { x: 12, y: 12 },
@@ -80,7 +81,7 @@ export const storeGeneralAction = () => tgoActions.add({
 	},
 });
 
-export const rentOfficeAction = () => tgoActions.add({
+export const rentOfficeAction = () => tgosActions.add({
 	label: 'Rent office',
 	rentOffice: true,
 	typeId: 'building',
@@ -117,7 +118,7 @@ export const rentOfficeAction = () => tgoActions.add({
 	},
 });
 
-export const GovernmentAction = () => tgoActions.add({
+export const GovernmentAction = () => tgosActions.add({
 	label: 'Government',
 	governmentBuilding: true,
 	typeId: 'building',
@@ -148,7 +149,7 @@ export const GovernmentAction = () => tgoActions.add({
 	},
 });
 
-export const leaderBoardAction = () => tgoActions.add({
+export const leaderBoardAction = () => tgosActions.add({
 	label: 'Leaderboard',
 	leaderBoard: true,
 	position: { x: 4, y: 5 },
@@ -158,15 +159,12 @@ export const leaderBoardAction = () => tgoActions.add({
 	},
 });
 
-export const tileSetBasicAction = () => ({
-	type: 'TILESET_ADD',
-	tileSet: {
-		tileSetId: 'basic',
-		tiles: [
-			{ tileId: 0, fillStyle: 'cyan' },
-			{ tileId: 1, fillStyle: 'green' },
-		],
-	},
+export const tileSetBasicAction = () => tileSetAdd({
+	tileSetId: 'basic',
+	tiles: [
+		{ tileId: 0, fillStyle: 'cyan' },
+		{ tileId: 1, fillStyle: 'green' },
+	],
 });
 
 const initialObjectActions = () => [

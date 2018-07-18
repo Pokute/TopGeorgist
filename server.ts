@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { Server as WSS } from 'ws';
 
 import './serverConfig';
@@ -6,10 +6,16 @@ import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
 import initialObjectActions from './initialObjects';
+import * as tgoActions from './actions/tgo';
+import * as playerActions from './actions/player';
 import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
 import * as clientActions from './actions/client';
 import { set as allSet } from './actions/allSet';
+import { getType } from 'typesafe-actions';
+import { TgoActionList } from './reducers/tgo';
+import { AnyAction } from './node_modules/redux';
+import { extendedSocket } from './reducers/client';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -24,14 +30,22 @@ try {
 
 		const clientId = uuidv4();
 
+		const extended: extendedSocket = Object.create(socket, {
+			'sendAction': {
+				enumerable: true,
+				value: function(action: AnyAction) {
+					this.send(JSON.stringify({
+						action
+					}));
+				},
+				writable: true,
+			}
+		});
+
 		store.dispatch(clientActions.add({
-			socket,
+			socket: extended,
 			clientId,
 		}));
-
-		// Send data back to the client
-		// var json = JSON.stringify({ message: 'Gotcha' });
-		// socket.send(json);
 
 		// When data is received
 		socket.on('message', (message) => {
@@ -44,21 +58,20 @@ try {
 					}
 					switch (data.action.type) {
 						case 'GET_ALL_OBJECTS':
-							socket.send(JSON.stringify({
-								action:	allSet({
+							extended.sendAction(
+								allSet({
 									...store.getState(),
 									clients: {},
 								}),
-							}));
-							// 	socket.send(JSON.stringify({ ...store.getState(), clients:[] }));
+							);
 							break;
-						case 'PLAYER_CREATE_REQUEST':
-							store.dispatch({
-								...data.action,
+						case getType(playerActions.playerRequest):
+							store.dispatch(playerActions.playerRequestServer({
+								...data.action.payload,
 								clientId,
-							});
+							}));
 							break;
-						case 'PLAYER_SET_MOVE_TARGET':
+						case getType(tgoActions.setMoveTarget):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':
 						case 'TRANSACTION':
@@ -75,12 +88,12 @@ try {
 							console.log(`Unhandled data action of type ${data.action.type}`);
 					}
 				} catch (jsonEx) {
-					console.log('malformed JSON in message: ', message, jsonEx);
+					console.log('malformed JSON in message: ', message, '|', jsonEx);
 					return;
 				}
-			} else if (typeof message === 'object') {
-				if (message.action) {
-				}
+			// } else if (typeof message === 'object') {
+			// 	if (message.action) {
+			// 	}
 			} else {
 				console.log('Unknown message of type: ', typeof message);
 			}

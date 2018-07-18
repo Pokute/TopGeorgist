@@ -1,7 +1,9 @@
 import IAction from './action';
+import { getType, ActionType } from 'typesafe-actions';
 
-type TgoId = string;
-type ViewId = string;
+import * as defaultActions from '../actions/defaults';
+import { TgoId } from './tgo';
+import { ViewId } from './view';
 
 export interface type {
 	readonly playerTgoId?: TgoId,
@@ -9,39 +11,24 @@ export interface type {
 };
 
 const initialState: type = {
-	playerTgoId: undefined,
-	viewId: undefined,
+	playerTgoId: '',
+	viewId: '',
 };
 
-export interface IDefaultSetPlayer extends IAction {
-	playerTgoId?: TgoId,
-}
+export type DefaultsActionType = ActionType<typeof defaultActions>;
 
-export interface IDefaultSetView extends IAction {
-	viewId?: ViewId,
-}
-
-type DefaultsAction =
-	IDefaultSetPlayer |
-	IDefaultSetView
-;
-
-export default (state: type = initialState, action: DefaultsAction) => {
+export default (state: type = initialState, action: DefaultsActionType): type => {
 	switch (action.type) {
-		case 'DEFAULTS_SET_PLAYER': {
-			const setPlayerAction = action as IDefaultSetPlayer;
+		case getType(defaultActions.setPlayerTgoId):
 			return {
 				...state,
-				playerTgoId: setPlayerAction.playerTgoId,
+				playerTgoId: action.payload.playerTgoId,
 			};
-		}
-		case 'DEFAULTS_SET_VIEW': {
-			const setViewAction = action as IDefaultSetView;
+		case getType(defaultActions.setViewId):
 			return {
 				...state,
-				viewId: setViewAction.viewId,
+				viewId: action.payload.viewId,
 			};
-		}
 		default:
 			return state;
 	}

@@ -23,7 +23,7 @@ const CreatePlayerForm = props => (
 const mapDispatchToProps = dispatch => ({
 	onSubmit: (event) => {
 		const data = new FormData(event.target);
-		dispatch(netActions.send(playerActions.playerRequest(data.get('playerLabel'))));
+		dispatch(netActions.send(playerActions.playerRequest({ label: data.get('playerLabel') })));
 		event.preventDefault();
 	},
 });

@@ -1,5 +1,6 @@
 declare namespace NodeJS {
 	export interface Global {
-	  isServer: boolean
+		isServer: boolean,
+		ws: any,
 	}
-  }
+}

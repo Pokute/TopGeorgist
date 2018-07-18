@@ -1,48 +1,29 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
-import playerReducer, { initialState as playerInitialState } from './player';
-import tgoReducer, { initialState as tgoInitialState, TgoType } from './tgo';
+import playerReducer, { initialState as playerInitialState, PlayerActionType } from './player';
+import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType } from './tgo';
 import * as tgoActions from '../actions/tgo'; 
+import * as tgosActions from '../actions/tgos'; 
+import { InventoryActionType } from './inventory';
 
 export type TgosState = {
 	[extraProps: string]: TgoType;
 };
 
 const initialState: TgosState = {};
-const listActions = [
-	tgoActions.add,
-	tgoActions.remove,
-	tgoActions.setAll,
-];
 
-// const reduceByType = (tgo, action) => {
-// 	if (!tgo) return undefined;
-// 	if (action.type.indexOf('TGO_') === 0) {
-// 		return tgoReducer(tgo, action);
-// 	} else if (action.type.indexOf('PLAYER_') === 0) {
-// 		return playerReducer(tgo, action);
-// 	}
-// 	return tgo;
-// };
+type TgosAction = ActionType<typeof tgosActions>;
 
-type TgosAction = ActionType<typeof tgoActions>;
+const singleTgoReducer = (state: TgosState = initialState, action: TgoActionType | PlayerActionType | InventoryActionType): TgosState => {
+	return state;
+}
 
-export default (state: TgosState = initialState, action: TgosAction): TgosState => {
-	// Handle single tgo changes here.
-	// if ((action.tgoId) &&
-	// 	(listActions.indexOf(action.type) === -1)) {
-	// 	const modifiedTgo = reduceByType(state[action.tgoId], action);
-	// 	if (modifiedTgo) {
-	// 		return {
-	// 			...state,
-	// 			[action.tgoId]: modifiedTgo,
-	// 		};
-	// 	}
-
-	// 	return state;
-	// }
+export default (state: TgosState = initialState, action: TgosAction | TgoActionType | PlayerActionType | InventoryActionType): TgosState => {
+	if (isActionOf(tgoActions.setColor, action)) {
+		return singleTgoReducer(state, action);
+	}
 	switch (action.type) {
-		case getType(tgoActions.add):
+		case getType(tgosActions.add):
 			return {
 				...state,
 				[action.payload.tgo.tgoId]: {
@@ -51,11 +32,12 @@ export default (state: TgosState = initialState, action: TgosAction): TgosState 
 					...action.payload.tgo,
 				},
 			};
-		case getType(tgoActions.remove): {
+		case getType(tgosActions.remove): 
+		{
 			const { [action.payload.tgoId]: undefined, ...rest } = state;
 			return rest;
 		}
-		case getType(tgoActions.setAll):
+		case getType(tgosActions.setAll):
 			return action.payload.tgos;
 		default:
 			return state;

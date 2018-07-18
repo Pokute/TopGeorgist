@@ -1,8 +1,8 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as inventoryActions from '../actions/inventory';
-import * as tgoActions from '../actions/tgo';
+import * as tgosActions from '../actions/tgos';
 import * as taskQueueActions from '../actions/taskQueue';
-import transaction from '../actions/transaction';
+import { transaction } from '../actions/transaction';
 import { harvest as harvestAction } from '../actions/plantable';
 import { checkOnVisitableLocation } from '../utils/visitable';
 
@@ -33,7 +33,7 @@ const plant = function* ({ actorTgoId, targetTypeId: plantableTypeId }) {
 
 	console.log('transactionResult: ', transactionResult);
 
-	const planting = tgoActions.add({
+	const planting = tgosActions.add({
 		tgoId: Math.trunc(Math.random() * 100000),
 		typeId: 'plant',
 		position: plantPosition,

@@ -20,7 +20,7 @@ const listActions = [
 
 export default (state: ViewsState = initialState, action: ViewAction | ViewsAction) => {
 	// Handle single view changes here.
-	if (listActions.some(a => a === action.type)) {
+/* 	if (listActions.some(a => a === action.type)) {
 		const viewAction = action as ViewAction;
 		const newSubObject = viewReducer(state[viewAction.payload.viewId], viewAction);
 		if (newSubObject !== state[viewAction.payload.viewId]) {
@@ -31,7 +31,7 @@ export default (state: ViewsState = initialState, action: ViewAction | ViewsActi
 		}
 		return state;
 	}
-
+ */
 	switch (action.type) {
 		case getType(viewsActions.create): {
 			return {

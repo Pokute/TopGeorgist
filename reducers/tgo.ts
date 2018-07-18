@@ -1,16 +1,26 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as tgoActions from '../actions/tgo'; 
-import * as inventoryActions from '../actions/inventory'; 
-import inventoryReducer from './inventory';
-import taskQueueReducer from './taskQueue';
+import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryItem } from './inventory';
+import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType } from './taskQueue';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
-import taskQueue from './taskQueue';
-import * as taskQueueActions from '../actions/taskQueue';
+import { AnyAction } from '../node_modules/redux';
 
-type TgoAction = ActionType<typeof tgoActions>
-type TaskQueueAction = ActionType<typeof taskQueueActions>
+export type TgoActionType = ActionType<typeof tgoActions>
+const TgoOwnActionList = [
+	tgoActions.setColor,
+	tgoActions.setPosition,
+];
+const TgoOtherReducers = [
+	{ reducer: inventoryReducer, actions: InventoryActionList },
+	{ reducer: taskQueueReducer, actions: TaskQueueActionList },
+];
+const TgoOthersActionList = TgoOtherReducers.reduce((actions: any[], reducer) => [ ...actions, ...reducer.actions ], []);
+export const TgoActionList = [
+	...TgoOwnActionList,
+	...TgoOthersActionList,
+];
 
 export type TgoId = keyof TgosState;
 
@@ -22,7 +32,8 @@ export interface TgoInitialType {
 	readonly color: string,
 	readonly renderer?: any,
 	readonly typeId: TypeId,
-	[extraProp: string]: any,
+	readonly inventory?: InventoryItem[],
+	readonly [extraProp: string]: any,
 };
 
 export interface TgoType extends TgoInitialType {
@@ -40,20 +51,7 @@ export const initialState:TgoType = {
 	typeId: '',
 };
 
-const taskQueueActionsList = [
-	taskQueueActions.addTaskQueue,
-	taskQueueActions.setTaskQueue,
-].map(a => getType(a));
-
-export default (state: TgoType, action: TgoAction | TaskQueueAction) : TgoType => {
-	// Handle single view changes here.
-	if (taskQueueActionsList.some(a => a === action.type)) {
-		return {
-			...state,
-			taskQueue: taskQueueReducer(state.taskQueue, action as TaskQueueAction),
-		};
-	}
-
+export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType) : TgoType => {
 	switch (action.type) {
 		case getType(tgoActions.setPosition):
 			return {
@@ -65,12 +63,14 @@ export default (state: TgoType, action: TgoAction | TaskQueueAction) : TgoType =
 				...state,
 				color: action.payload.color,
 			};
-		// case getType(inventoryActions.add):
-		// 	return {
-		// 		...state,
-		// 		inventory: inventoryReducer(state.inventory, action),
-		// 	};
-		default:
-			return state;
+		default: {
+			let usedState = state;
+			const newInventory = state.inventory ? inventoryReducer(state.inventory, action as InventoryActionType) : undefined;
+			if (newInventory !== usedState.inventory) usedState = { ...usedState, newInventory };
+			const newTaskQueue = state.taskQueue ? taskQueueReducer(state.taskQueue, action as TaskQueueActionType) : undefined;
+			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, newInventory };
+
+			return usedState;
+		}
 	}
 };
