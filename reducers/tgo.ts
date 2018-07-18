@@ -40,6 +40,7 @@ export interface TgoInitialType {
 	readonly typeId: TypeId,
 	readonly inventory?: ReadonlyArray<InventoryItem>,
 	readonly components?: ReadonlyArray<ComponentType>,
+	readonly plantTypeId?: TypeId,
 	readonly [extraProp: string]: any,
 };
 

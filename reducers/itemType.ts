@@ -5,8 +5,11 @@ export type TypeId = string;
 
 export interface ItemType {
 	readonly typeId: TypeId,
+	label?: string,
 	stackable?: boolean,
 	positiveOnly?: boolean,
+	building?: boolean,
+	growsIntoTypeId?: TypeId,
 };
 
 const initialState: ItemType = {

@@ -25,7 +25,7 @@ const handlePlayerCreateRequest = function* (action: ActionType<typeof playerAct
 	const newPlayerAction = {
 		...defaultPlayerAction,
 		tgo: {
-			...defaultPlayerAction.tgo,
+			...defaultPlayerAction.payload.tgo,
 			label: action.payload.label,
 			position: {
 				x: Math.trunc(15 * Math.random()),

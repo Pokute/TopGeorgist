@@ -5,7 +5,6 @@ import { TgosState } from '../reducers/tgos';
 import { TgoInitialType, TgoId } from '../reducers/tgo';
 
 interface TgoWithoutId extends TgoInitialType {
-	tgoId: never,
 };
 
 export const setAll = createAction('TGOS_SET', (resolve) => {
