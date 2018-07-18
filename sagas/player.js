@@ -1,4 +1,5 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
+import { set as allSet } from '../actions/allSet';
 import * as taskQueueActions from '../actions/taskQueue';
 import { createPlayerAction } from '../initialObjects';
 
@@ -24,12 +25,11 @@ const handlePlayerCreateRequest = function* (action) {
 	yield put(newPlayerAction);
 
 	const socket = yield select(state => state.clients[action.clientId].socket);
-	socket.send(JSON.stringify({
-		action: {
-			type: 'ALL_SET',
-			data: { ...(yield select()), clients: {} },
-		},
-	}));
+	socket.send(JSON.stringify(allSet({
+		...(yield select()),
+		clients: {},
+	})));
+
 	socket.send(JSON.stringify({
 		action: {
 			type: 'DEFAULTS_SET_PLAYER',

@@ -16,7 +16,7 @@ const init = () => {
 		const data = JSON.parse(msg.data);
 		if (data && data.action && data.action.type === 'ALL_SET') {
 			store.dispatch(data.action);
-			const newState = data.action.data;
+			const newState = data.action.payload;
 			if (newState.map) store.dispatch(mapActions.set(newState.map));
 			if (newState.tileSets) store.dispatch(tileSetsActions.set(newState.tileSets));
 			if (newState.tgos) store.dispatch(tgoActions.setAll(newState.tgos));

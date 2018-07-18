@@ -1,3 +1,5 @@
+import { add } from './actions/itemTypes';
+
 const defaultType = {
 	stackable: true,
 	isInteger: true,
@@ -50,16 +52,11 @@ const items = {
 	},
 };
 
-const createItemTypeAction = it => ({
-	type: 'ITEMTYPE_ADD',
-	itemType: it,
-});
-
 const createItemTypes = (dispatch) => {
 	const actions = Object.entries(items)
 		.map(([key, val]) => ({ ...val, typeId: key }))
 		.map(i => ({ ...defaultType, ...i }))
-		.map(createItemTypeAction);
+		.map(add);
 	actions.forEach(a => dispatch(a));
 };
 

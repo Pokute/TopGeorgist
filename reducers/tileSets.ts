@@ -10,6 +10,10 @@ export type TileSetsState = {
 
 const initialState = {};
 
+const tileSetActions2 = [
+	tileSetActions.addTile,
+].map(a => getType(a));
+
 const listActions = [
 	tileSetsActions.add,
 	tileSetsActions.set,
@@ -20,7 +24,7 @@ type TileSetsAction = ActionType<typeof tileSetsActions>;
 
 export default (state: TileSetsState = initialState, action: TileSetAction | TileSetsAction): TileSetsState => {
 	// Handle single view changes here.
-	if (!listActions.some(a => a === action.type)) {
+	if (tileSetActions2.some(a => a === action.type)) {
 		const tileAction = action as TileSetAction;
 		const newTileSet = tileSetReducer(state[tileAction.payload.tileSetId], tileAction);
 		if (newTileSet !== state[tileAction.payload.tileSetId]) {

@@ -9,6 +9,7 @@ import initialObjectActions from './initialObjects';
 import * as mapActions from './actions/map';
 import * as plantableActions from './actions/plantable';
 import * as clientActions from './actions/client';
+import { set as allSet } from './actions/allSet';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -44,10 +45,10 @@ try {
 					switch (data.action.type) {
 						case 'GET_ALL_OBJECTS':
 							socket.send(JSON.stringify({
-								action: {
-									type: 'ALL_SET',
-									data: { ...store.getState(), clients: {} },
-								},
+								action:	allSet({
+									...store.getState(),
+									clients: {},
+								}),
 							}));
 							// 	socket.send(JSON.stringify({ ...store.getState(), clients:[] }));
 							break;

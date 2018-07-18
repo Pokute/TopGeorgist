@@ -3,6 +3,7 @@ import { delay } from 'redux-saga';
 
 import * as tickerActions from '../actions/ticker';
 import components from '../components';
+import { set as allSet } from '../actions/allSet';
 
 const tickerSaga = function* () {
 	while (true) {
@@ -36,10 +37,10 @@ const tick = function* () {
 	const calls = Object.values(newState.clients).map(c => call(
 		[c.socket, c.socket.send],
 		JSON.stringify({
-			action: {
-				type: 'ALL_SET',
-				data: { ...newState, clients: {} },
-			},
+			action:	allSet({
+				...newState,
+				clients: {},
+			}),
 		}),
 	));
 	try {
