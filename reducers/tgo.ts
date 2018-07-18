@@ -5,7 +5,7 @@ import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryIt
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType } from './taskQueue';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
-import { AnyAction } from 'redux';
+import { ComponentList } from '../components';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -24,6 +24,12 @@ export const TgoActionList = [
 
 export type TgoId = keyof TgosState;
 
+export type ComponentId = keyof ComponentList;
+export type ComponentProps = {
+	readonly [extraProp: string]: any,
+};
+export type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
+
 export interface TgoInitialType {
 	readonly position: {
 		readonly x: number,
@@ -32,7 +38,8 @@ export interface TgoInitialType {
 	readonly color: string,
 	readonly renderer?: any,
 	readonly typeId: TypeId,
-	readonly inventory?: InventoryItem[],
+	readonly inventory?: ReadonlyArray<InventoryItem>,
+	readonly components?: ReadonlyArray<ComponentType>,
 	readonly [extraProp: string]: any,
 };
 

@@ -1,7 +1,16 @@
 import * as inventoryActions from './actions/inventory';
 import { TgoType } from './reducers/tgo';
+import { AnyAction } from 'redux';
 
-const components = {
+export interface ComponentTicker {
+	tick: (tgo: TgoType, options: any) => AnyAction | never,
+}
+
+export interface ComponentList {
+	[componentName: string]: any,
+}
+
+const components: ComponentList = {
 	selfMoving: {
 		// tick: (tgo) => {
 		// 	const actions = [];
