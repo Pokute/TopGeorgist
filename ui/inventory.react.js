@@ -57,9 +57,12 @@ const mapDispatchToProps = (dispatch, passedProps) => ({
 	onActionClick: action => (() => dispatch(action.onClick(passedProps.ownerTgoId))),
 	onComponentActionClick: (action, targetTypeId) => (
 		() => dispatch(netActions.send({
-			...action.onClick,
-			actorTgoId: passedProps.ownerTgoId,
-			targetTypeId,
+			type: action.onClick.type,
+			payload: {
+				...action.onClick,
+				actorTgoId: passedProps.ownerTgoId,
+				targetTypeId,
+			},
 		}))
 	),
 });

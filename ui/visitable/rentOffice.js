@@ -26,7 +26,7 @@ const VisitableRentOffice = props => (
 
 const mapStoreToProps = state => ({
 	claims: state.government.claims,
-	citizen: state.government.citizens.find(c => c.tgoId === state.defaults.playerTgoId),
+	citizen: state.government.citizens[state.defaults.playerTgoId],
 	citizenClaims: state.government.claims.filter(c => c.tgoId === state.defaults.playerTgoId),
 });
 

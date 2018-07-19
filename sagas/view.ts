@@ -13,7 +13,10 @@ const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: Actio
 
 	yield put({
 		...topAction,
-		position: mapPosition,
+		payload: {
+			...topAction.payload,
+			position: mapPosition,
+		},
 		viewId,
 	});
 

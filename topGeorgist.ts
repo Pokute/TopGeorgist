@@ -8,6 +8,7 @@ import createItemTypes from './types';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetsActions from './actions/tileSets';
+import * as tgoActions from './actions/tgo';
 import * as tgosActions from './actions/tgos';
 
 const init = () => {
@@ -24,11 +25,13 @@ const init = () => {
 		} else if (data && data.action && data.action.type === 'DEFAULTS_SET_PLAYER') {
 			store.dispatch(data.action);
 			const defaultPlayerTgoId = store.getState().defaults.playerTgoId;
-			store.dispatch(viewActions.setFollowTarget('main', defaultPlayerTgoId));
-			store.dispatch(viewActions.clickActionStack.push('main', {
-				type: 'PLAYER_SET_MOVE_TARGET',
-				tgoId: defaultPlayerTgoId,
-			}));
+			if (defaultPlayerTgoId) {
+				store.dispatch(viewActions.setFollowTarget('main', defaultPlayerTgoId));
+				store.dispatch(viewActions.clickActionStack.push('main', tgoActions.setMoveTarget(
+					defaultPlayerTgoId,
+					{ x: 0, y: 0 }
+				)));
+			}
 		}
 	});
 

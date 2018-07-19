@@ -16,9 +16,9 @@ export const setPosition = createAction('TGO_SET_POSITION', (resolve) => {
 });
 
 export const setMoveTarget = createAction('TGO_SET_MOVE_TARGET', (resolve) => {
-	return (tgoId: TgoId, moveTarget: TgoType['moveTarget']) => resolve({
+	return (tgoId: TgoId, position: TgoType['moveTarget']) => resolve({
 		tgoId,
-		moveTarget,
+		position,
 	});
 });
 

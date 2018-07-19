@@ -7,6 +7,14 @@ import * as viewActions from '../actions/view';
 
 export type ViewId = keyof ViewsState;
 
+export const viewActionList = [
+	viewActions.setPosition,
+	viewActions.setSize,
+	viewActions.setFollowTarget,
+	viewActions.clickActionStack.push,
+	viewActions.clickActionStack.pop,
+];
+
 type ViewAction = ActionType<typeof viewActions>;
 
 export interface ViewInitialType {

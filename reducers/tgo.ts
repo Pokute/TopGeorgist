@@ -64,6 +64,11 @@ export const initialState:TgoType = {
 
 export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType) : TgoType => {
 	switch (action.type) {
+		case getType(tgoActions.setMoveTarget):
+			return {
+				...state,
+				moveTarget: action.payload.position,
+			};
 		case getType(tgoActions.setPosition):
 			return {
 				...state,
@@ -76,10 +81,10 @@ export default (state: TgoType, action: TgoActionType | InventoryActionType | Ta
 			};
 		default: {
 			let usedState = state;
-			const newInventory = state.inventory ? inventoryReducer(state.inventory, action as InventoryActionType) : undefined;
-			if (newInventory !== usedState.inventory) usedState = { ...usedState, newInventory };
-			const newTaskQueue = state.taskQueue ? taskQueueReducer(state.taskQueue, action as TaskQueueActionType) : undefined;
-			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, newInventory };
+			const newInventory = inventoryReducer(state.inventory, action as InventoryActionType);
+			if (newInventory !== usedState.inventory) usedState = { ...usedState, inventory: newInventory };
+			const newTaskQueue = taskQueueReducer(state.taskQueue, action as TaskQueueActionType);
+			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, taskQueue: newTaskQueue };
 
 			return usedState;
 		}

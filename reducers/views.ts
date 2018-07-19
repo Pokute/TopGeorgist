@@ -3,7 +3,8 @@ import { ActionType, getType, isActionOf } from 'typesafe-actions';
 
 import * as viewActions from '../actions/view';
 import * as viewsActions from '../actions/views';
-import viewReducer, { ViewType } from './view';
+import viewReducer, { ViewType, viewActionList } from './view';
+import view from './view';
 
 export type ViewsState = {
 	[extraProps: string]: ViewType;
@@ -36,10 +37,21 @@ export default (state: ViewsState = initialState, action: ViewAction | ViewsActi
 		case getType(viewsActions.create): {
 			return {
 				...state,
-				[(action as ViewsAction).payload.view.viewId]: (action as ViewsAction).payload.view,
+				[action.payload.view.viewId]: action.payload.view,
 			};
 		}
 		default:
+			const a1 = viewActions.clickActionStack.push;
+			const agt = getType(a1);
+			if (isActionOf(a1, action)) {
+				const newViewState = viewReducer(state[action.payload.viewId], action);
+				if (newViewState !== state[action.payload.viewId]) {
+					return {
+						...state,
+						[action.payload.viewId]: newViewState,
+					};
+				}
+			}
 			return state;
 	}
 };

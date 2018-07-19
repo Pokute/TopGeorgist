@@ -49,13 +49,14 @@ const handlePlayerCreateRequest = function* (action: ActionType<typeof playerAct
 // 	yield put(setPlayerTgoId(action.playerTgoId));
 // };
 
-const handlePlayerSetMoveTarget = function* ({ payload: { tgoId, moveTarget} }: ActionType<typeof tgoActions.setMoveTarget>) {
-	const tgo = (yield select()).tgos[tgoId];
+const handlePlayerSetMoveTarget = function* ({ payload: { tgoId, position} }: ActionType<typeof tgoActions.setMoveTarget>) {
+	const tgo: TgoType = (yield select()).tgos[tgoId];
 	if (!tgo) return false;
+	console.log('starting moving towards ', position.x, ',', position.y);
 	yield put(taskQueueActions.addTaskQueue(
 		tgoId,
 		[{
-			title: `Moving to (${moveTarget.x}, ${moveTarget.y})`,
+			title: `Moving to (${position.x}, ${position.y})`,
 			advanceActions: [
 				{
 					type: 'PLAYER_MOVE_TOWARDS',
@@ -66,8 +67,8 @@ const handlePlayerSetMoveTarget = function* ({ payload: { tgoId, moveTarget} }: 
 	));
 	return true;
 };
-/* 
-const handlePlayerMoveTowards = function* ({ tgoId }) {
+
+const handlePlayerMoveTowards = function* ({ tgoId }: any) {
 	const tgo = (yield select()).tgos[tgoId];
 	if (!tgo) return false;
 	yield put(setPosition(tgo.tgoId,
@@ -78,12 +79,12 @@ const handlePlayerMoveTowards = function* ({ tgoId }) {
 	));
 	return true;
 };
- */
+
 const playerListener = function* () {
 	yield takeEvery(getType(playerActions.playerRequestServer), handlePlayerCreateRequest);
 	// yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
 	yield takeEvery(getType(tgoActions.setMoveTarget), handlePlayerSetMoveTarget);
-	// yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);
+	yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);
 };
 
 export default playerListener;

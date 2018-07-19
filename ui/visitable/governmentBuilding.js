@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 const VisitableGovernmentBuilding = props => (
 	<ul>
 		<li>{'Government info:'}</li>
-		<li>{`Citizens: ${props.government.citizens.length}`}</li>
+		<li>{`Citizens: ${Object.keys(props.government.citizens).length}`}</li>
 		{props.citizen === undefined
 			? <li>{'You are not a citizen yet'}</li>
 			: (
@@ -21,7 +21,7 @@ const VisitableGovernmentBuilding = props => (
 
 const mapStoreToProps = state => ({
 	government: state.government,
-	citizen: state.government.citizens.find(c => c.tgoId === state.defaults.playerTgoId),
+	citizen: state.government.citizens[state.defaults.playerTgoId],
 });
 
 export default connect(mapStoreToProps)(VisitableGovernmentBuilding);

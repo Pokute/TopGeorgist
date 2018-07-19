@@ -43,8 +43,10 @@ export const TaskQueueActionList = [
 export default (state: TaskQueueType = initialState, action: TaskQueueActionType): TaskQueueType => {
 	switch (action.type) {
 		case (getType(taskQueueActions.setTaskQueue)):
-			return Array.isArray(action.payload.taskQueue) ? action.payload.taskQueue : [action.payload.taskQueue];
+			console.log('setting task queue: ',  action.payload)
+		return Array.isArray(action.payload.taskQueue) ? action.payload.taskQueue : [action.payload.taskQueue];
 		case (getType(taskQueueActions.addTaskQueue)):
+			console.log('adding to task queue: ',  action.payload)
 			return [
 				...state,
 				...(Array.isArray(action.payload.taskQueue) ? action.payload.taskQueue : [action.payload.taskQueue]),

@@ -52,6 +52,7 @@ try {
 			if (typeof message === 'string') {
 				try {
 					const data = JSON.parse(message);
+					console.log(data);
 					if (!data.action || !data.action.type) {
 						console.log('malformed action in data: ', data);
 						return;

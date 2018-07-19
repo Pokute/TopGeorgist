@@ -7,9 +7,11 @@ import { RootStateType } from '../reducers';
 import { TgoType } from '../reducers/tgo';
 import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue';
 import { AnyAction } from 'redux';
+import tgos from '../reducers/tgos';
 
 const handleQueueForOwner = function* (owner: TgoType) {
 	if (!owner.taskQueue) return false;
+	console.log('TaskQueue: ', owner.taskQueue);
 	const getCompletedTasks = (tasksQueue: TaskQueueType) => tasksQueue
 		.reduce(
 			({ completed, remaining, continueCompleting }: { completed: TaskType[], remaining: TaskType[], continueCompleting: boolean}, task) => (
@@ -66,7 +68,9 @@ const handleQueueForOwner = function* (owner: TgoType) {
 };
 
 const handleQueueTick = function* () {
+	// console.log('HandleQueue');
 	const s: RootStateType = yield select();
+	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
 	const queueOwners = Object.values(s.tgos)
 		.filter(tgo => (tgo.taskQueue && tgo.taskQueue.length > 0));
 
