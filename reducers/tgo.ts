@@ -35,6 +35,7 @@ export interface TgoInitialType {
 		readonly x: number,
 		readonly y: number,
 	},
+	readonly label?: string,
 	readonly color: string,
 	readonly renderer?: any,
 	readonly typeId: TypeId,
@@ -42,6 +43,7 @@ export interface TgoInitialType {
 	readonly taskQueue?: TaskQueueType,
 	readonly components?: ReadonlyArray<ComponentType>,
 	readonly plantTypeId?: TypeId,
+	readonly visitable?: any,
 	readonly [extraProp: string]: any,
 };
 

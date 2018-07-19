@@ -1,15 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 
 import CurrentPlayerInfo from './currentPlayerInfo.react';
 import CreatePlayerForm from './createPlayerForm.react';
+import { TgoId } from '../reducers/tgo';
+import { RootStateType } from '../reducers';
 
-const propTypes = {
-	defaultPlayerTgoId: PropTypes.string,
-};
+export interface propTypes {
+	defaultPlayerTgoId: TgoId,
+}
 
-const PlayerContainer = (props) => {
+const PlayerContainer = (props: propTypes) => {
 	if (props.defaultPlayerTgoId) {
 		return <CurrentPlayerInfo />;
 	}
@@ -17,9 +18,7 @@ const PlayerContainer = (props) => {
 	return <CreatePlayerForm />;
 };
 
-PlayerContainer.propTypes = propTypes;
-
-const mapStoreToProps = store => ({
+const mapStoreToProps = (store: RootStateType) => ({
 	defaultPlayerTgoId: store.defaults.playerTgoId,
 });
 

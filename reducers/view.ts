@@ -11,6 +11,7 @@ type ViewAction = ActionType<typeof viewActions>;
 
 export interface ViewInitialType {
 	canvas?: HTMLCanvasElement,
+	canvasId?: string,
 	followTgoId?: TgoId,
 	position: {
 		x: number,
