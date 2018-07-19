@@ -1,8 +1,33 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue';
+import { AnyAction } from 'redux';
 
-export interface TaskType {
+export type TaskCost = {
+	time?: number,
+	[additionalCostItems: string]: any
+};
+
+export type TaskType = {
+	title?: string,
+	cost?: TaskCost,
+	progress?: TaskCost,
+	action?: AnyAction,
+	advanceActions?: AnyAction[],
+};
+
+export const checkTaskCompletion = (task: TaskType): boolean => {
+	if (!task.cost) return true;
+	if (!task.progress) {
+		return false
+	} else {
+		return (Object.keys(task.cost).every(
+			costItem => task.cost
+				&& task.progress
+				&& task.progress[costItem]
+				&& (task.progress[costItem] >= task.cost[costItem])
+		));
+	}
 };
 
 export type TaskQueueType = TaskType[];
@@ -15,7 +40,7 @@ export const TaskQueueActionList = [
 	taskQueueActions.setTaskQueue,
 ];
 
-export default (state = initialState, action: TaskQueueActionType) => {
+export default (state: TaskQueueType = initialState, action: TaskQueueActionType): TaskQueueType => {
 	switch (action.type) {
 		case (getType(taskQueueActions.setTaskQueue)):
 			return Array.isArray(action.payload.taskQueue) ? action.payload.taskQueue : [action.payload.taskQueue];

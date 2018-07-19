@@ -2,7 +2,7 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as tgoActions from '../actions/tgo'; 
 import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryItem } from './inventory';
-import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType } from './taskQueue';
+import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList } from '../components';
@@ -39,6 +39,7 @@ export interface TgoInitialType {
 	readonly renderer?: any,
 	readonly typeId: TypeId,
 	readonly inventory?: ReadonlyArray<InventoryItem>,
+	readonly taskQueue?: TaskQueueType,
 	readonly components?: ReadonlyArray<ComponentType>,
 	readonly plantTypeId?: TypeId,
 	readonly [extraProp: string]: any,
