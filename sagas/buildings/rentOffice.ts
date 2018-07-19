@@ -1,12 +1,14 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
+import { ActionType, getType } from 'typesafe-actions';
+
 import * as governmentActions from '../../actions/government';
 import * as inventoryActions from '../../actions/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
+import { RootStateType } from '../../reducers';
 
-const claimLand = function* (action) {
-	const { tgoId, visitableTgoId } = action;
-	const s = yield select(state => state);
+const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
+	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 
@@ -14,29 +16,29 @@ const claimLand = function* (action) {
 
 	const existingClaim = s.government.claims
 		.find(c => (
-			(c.position.x === action.position.x) && (c.position.y === action.position.y)
+			(c.position.x === position.x) && (c.position.y === position.y)
 		));
 	if (existingClaim) return false;
 
-	yield put(governmentActions.rent(action.tgoId, action.position));
+	yield put(governmentActions.rent(tgoId, position));
 	return true;
 };
 
-const payRent = function* (action) {
-	const { tgoId, visitableTgoId } = action;
-	const s = yield select(state => state);
+const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
+	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
-	const citizen = s.government.citizens.find(tgo => tgo.tgoId === tgoId);
+	const citizen = s.government.citizens[tgoId];
 	if (!citizen) return false;
 
 	const citizenClaims = s.government.claims.filter(c => c.tgoId === tgoId);
 	for (const claim of citizenClaims) {
 		const currentRentDebt = claim.rentDebt;
-		const currentMoney = actorTgo.inventory.find(it => it.typeId === 'money').count;
+		const moneyItem = actorTgo.inventory ? actorTgo.inventory.find(it => it.typeId === 'money') : { count: 0 };
+		const currentMoney = moneyItem ? moneyItem.count : 0;
 		const change = Math.max(Math.min(currentRentDebt, currentMoney), 0);
 		yield put(governmentActions.addRentDebt(tgoId, claim.position, -change));
 		yield put(inventoryActions.add(tgoId, 'money', -change));
