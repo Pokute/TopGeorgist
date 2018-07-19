@@ -1,11 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as viewUtils from '../utils/view';
-import * as netActions from '../actions/net';
-import * as viewActions from '../actions/view';
+import { Dispatch } from 'redux';
 
-const drawTile = (ctx, pos, tile, tileSize) => {
+import * as viewActions from '../actions/view';
+import { ViewType } from '../reducers/view';
+import { RootStateType } from '../reducers';
+import { TgosState } from '../reducers/tgos';
+import { TileType } from '../reducers/tile';
+import { TileSetType } from '../reducers/tileSet';
+import { MapType } from '../reducers/map';
+
+const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number }, tile: TileType, tileSize: number) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
 	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 	ctx.fillRect(
@@ -15,7 +20,7 @@ const drawTile = (ctx, pos, tile, tileSize) => {
 	);
 };
 
-const drawCross = (ctx, pos, size = {x: 10, y: 10}, strokeStyle = 'black') => {
+const drawCross = (ctx: CanvasRenderingContext2D, pos: { x: number, y: number }, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.beginPath();
 	ctx.strokeStyle = strokeStyle;
 	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
@@ -32,11 +37,19 @@ const renderCanvasMap = ({
 	map,
 	tileSet,
 	canvas,
+}:{
+	minTile: { x: number, y: number },
+	maxTile: { x: number, y: number },
+	map: MapType,
+	tileSet: TileSetType,
+	canvas: HTMLCanvasElement,
 }) => {
 	if (!canvas) return;
 	if (!tileSet) return;
 
-	const ctx = canvas.getContext('2d');
+	const tryCanvas = canvas.getContext('2d');
+	if (!tryCanvas) return;
+	const ctx = tryCanvas as CanvasRenderingContext2D;
 	for (let y = Math.floor(minTile.y); y < Math.ceil(maxTile.y); y++)
 		for (let x = Math.floor(minTile.x); x < Math.ceil(maxTile.x); x++) {
 			const tile = (
@@ -63,11 +76,19 @@ const renderCanvasTgos = ({
 	tgos,
 	canvas,
 	tileSize,
+}:{
+	minTile: { x: number, y: number },
+	maxTile: { x: number, y: number },
+	tgos: TgosState,
+	canvas: HTMLCanvasElement,
+	tileSize: number,
 }) => {
 	if (!canvas) return;
 	// console.log(minTile, maxTile);
 
-	const ctx = canvas.getContext('2d');
+	const tryCanvas = canvas.getContext('2d');
+	if (!tryCanvas) return;
+	const ctx = tryCanvas as CanvasRenderingContext2D;
 
 	Object.values(tgos).forEach((tgo) => {
 		const pos = {
@@ -92,6 +113,13 @@ const renderCanvas = ({
 	tgos,
 	tileSet,
 	canvas,
+}:{
+	minTile: { x: number, y: number },
+	maxTile: { x: number, y: number },
+	map: MapType,
+	tgos: TgosState,
+	tileSet: TileSetType,
+	canvas: HTMLCanvasElement,
 }) => {
 	if (!canvas) return;
 	// console.log(minTile, maxTile);
@@ -101,13 +129,33 @@ const renderCanvas = ({
 	renderCanvasTgos({ minTile, maxTile, tgos, canvas, tileSize: map.tileSize });
 };
 
-class GameRenderer extends React.Component {
+export interface Type {
+	view: ViewType,
+	map: MapType,
+	minTile: { x: number, y: number },
+	maxTile: { x: number, y: number },
+}
+
+type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;
+
+class GameRenderer extends React.Component<Props> {
+	private canvas?: HTMLCanvasElement;
+
 	render = () => {
-		renderCanvas({ ...this.props, canvas: this.canvas });
+		if (this.canvas) {
+			renderCanvas({
+				minTile: this.props.minTile,
+				maxTile: this.props.maxTile,
+				map: this.props.map,
+				tgos: this.props.tgos,
+				tileSet: this.props.tileSet,
+				canvas: this.canvas
+			});
+		}
 
 		return (
 			<canvas
-				ref={(c) => { this.canvas = c; }}
+				ref={(c) => { this.canvas = c || undefined; }}
 				id={`view-canvas-${this.props.view.viewId}`}
 				width={1000}
 				height={600}
@@ -117,30 +165,13 @@ class GameRenderer extends React.Component {
 	};
 };
 
-GameRenderer.propTypes = {
-	view: PropTypes.object,
-	// from Store
-	map: PropTypes.object,
-	tgos: PropTypes.object,
-	tileSet: PropTypes.object,
-	minTile: PropTypes.shape({
-		x: PropTypes.number.isRequired,
-		y: PropTypes.number.isRequired,
-	}).isRequired,
-	maxTile: PropTypes.shape({
-		x: PropTypes.number.isRequired,
-		y: PropTypes.number.isRequired,
-	}).isRequired,
-};
-
-const mapStoreToProps = store => ({
-	map: store.map,
+const mapStoreToProps = (store: RootStateType) => ({
 	tgos: store.tgos,
 	tileSet: store.tileSets[store.map.tileSetId],
 });
 
-const mapDispatchToProps = (dispatch, { view: v, map, minTile }) => ({
-	onClick: (event) => {
+const mapDispatchToProps = (dispatch: Dispatch, { view: v, map, minTile }: Type) => ({
+	onClick: (event: React.MouseEvent<HTMLCanvasElement>) => {
 		if (!v) return;
 		if (!map) return;
 
@@ -156,4 +187,9 @@ const mapDispatchToProps = (dispatch, { view: v, map, minTile }) => ({
 	},
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(GameRenderer);
+export default connect<
+	ReturnType<typeof mapStoreToProps>,
+	ReturnType<typeof mapDispatchToProps>,
+	Type,
+	RootStateType
+>(mapStoreToProps, mapDispatchToProps)(GameRenderer);

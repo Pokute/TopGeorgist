@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import GameRenderer from './gameRenderer.react';
 import VisitableUI from './visitableUI.react';
 import { getMinMax } from '../utils/view';
-import { ViewId, ViewType } from '../reducers/view';
-import { TgoId, TgoType } from '../reducers/tgo';
+import { ViewType } from '../reducers/view';
+import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType } from '../reducers/map';
 
