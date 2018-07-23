@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RootStateType } from '../../reducers';
 
-const VisitableRentOffice = props => (
+const VisitableRentOffice = (props: ReturnType<typeof mapStoreToProps>) => (
 	<ul>
 		<li>{'Rent office info:'}</li>
-		<li>{`Total rented land: ${props.claims.legth}`}</li>
+		<li>{`Total rented land: ${props.claims.length}`}</li>
 		{props.citizen === undefined
 			? <li>{'You have no claims since you are not a citizen'}</li>
 			: (<li>
@@ -24,9 +25,9 @@ const VisitableRentOffice = props => (
 	</ul>
 );
 
-const mapStoreToProps = state => ({
+const mapStoreToProps = (state: RootStateType) => ({
 	claims: state.government.claims,
-	citizen: state.government.citizens[state.defaults.playerTgoId],
+	citizen: state.defaults.playerTgoId ? state.government.citizens[state.defaults.playerTgoId] : undefined,
 	citizenClaims: state.government.claims.filter(c => c.tgoId === state.defaults.playerTgoId),
 });
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RootStateType } from '../../reducers';
 
-const VisitableGovernmentBuilding = props => (
+const VisitableGovernmentBuilding = (props: ReturnType<typeof mapStoreToProps>) => (
 	<ul>
 		<li>{'Government info:'}</li>
 		<li>{`Citizens: ${Object.keys(props.government.citizens).length}`}</li>
@@ -19,9 +20,9 @@ const VisitableGovernmentBuilding = props => (
 	</ul>
 );
 
-const mapStoreToProps = state => ({
+const mapStoreToProps = (state: RootStateType) => ({
 	government: state.government,
-	citizen: state.government.citizens[state.defaults.playerTgoId],
+	citizen: state.defaults.playerTgoId ? state.government.citizens[state.defaults.playerTgoId] : undefined,
 });
 
 export default connect(mapStoreToProps)(VisitableGovernmentBuilding);
