@@ -3,16 +3,11 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import * as netActions from '../actions/net';
-import ParamInput, { packParam, Parameter } from './paramInput';
+import ParamInput, { packParam } from './paramInput';
+import { Action } from '../components';
 
 export interface Type {
-	action: {
-		label: string,
-		parameters: Parameter[],
-		onClick: {
-			type: string,
-		}
-	},
+	action: Action,
 	additionalSentData: any,
 	onSubmit(action: Type['action']): () => void,
 }

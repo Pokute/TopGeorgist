@@ -2,13 +2,39 @@ import * as inventoryActions from './actions/inventory';
 import { TgoType } from './reducers/tgo';
 import { AnyAction } from 'redux';
 
+import { Parameter } from './ui/paramInput';
+
+export interface Action {
+	label: string,
+	parameters: Parameter[],
+	onClick: {
+		type: string,
+	}
+}
+
 export interface ComponentTicker {
 	tick: (tgo: TgoType, options: any) => AnyAction | never,
 }
 
-export interface ComponentList {
-	[componentName: string]: any,
+export interface ComponentActionable {
+	actions: Array<Action>,
 }
+
+export interface ComponentEmpty {
+};
+
+type Component = ComponentEmpty | ComponentTicker | ComponentActionable;
+
+export interface ComponentList {
+	[componentName: string]: Component,
+}
+
+type ComponentWithParams = [
+	string,
+	any
+];
+
+export type ComponentArray = ReadonlyArray<string | ComponentWithParams>;
 
 const components: ComponentList = {
 	selfMoving: {

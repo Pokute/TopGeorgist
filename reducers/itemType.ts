@@ -1,15 +1,21 @@
 import { ItemTypesState } from "./itemTypes";
+import { ComponentList, ComponentArray } from "../components";
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = string;
 
-export interface ItemType {
-	readonly typeId: TypeId,
+export interface InitialItemType {
 	label?: string,
 	stackable?: boolean,
 	positiveOnly?: boolean,
+	isInteger?: boolean,
 	building?: boolean,
 	growsIntoTypeId?: TypeId,
+	components?: ComponentArray,
+};
+
+export interface ItemType extends InitialItemType {
+	readonly typeId: TypeId,
 };
 
 const initialState: ItemType = {

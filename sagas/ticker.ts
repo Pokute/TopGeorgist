@@ -3,7 +3,7 @@ import { delay } from 'redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as tickerActions from '../actions/ticker';
-import components from '../components';
+import components, { ComponentTicker } from '../components';
 import { set as allSet } from '../actions/allSet';
 import { RootStateType } from '../reducers';
 import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo';
@@ -35,11 +35,11 @@ const tick = function* () {
 					: cId
 			)) as ReadonlyArray<[ ComponentId, ComponentProps ]>)
 			.map(([cName, cProps]) => [components[cName], cProps])
-			.filter(c => c[0] && c[0].tick)
-			.map(c => c[0].tick(tgo, c[1])),
+			.filter(c => c[0] && 'tick' in c[0])
+			.map(c => (c[0] as ComponentTicker).tick(tgo, c[1])),
 		)
 		.reduce((acc: AnyAction[], action) => [...acc, ...action], []) // Flatten one level
-		.reduce((acc: AnyAction[], action) => [...acc, ...action], []);
+		// .reduce((acc: AnyAction[], action) => [...acc, ...action], []);
 	yield newActions.map(a => put(a));
 
 	const newState: RootStateType = yield select();

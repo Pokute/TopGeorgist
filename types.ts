@@ -1,5 +1,6 @@
 import { add } from './actions/itemTypes';
 import { Dispatch } from './node_modules/redux';
+import { InitialItemType } from './reducers/itemType';
 
 const defaultType = {
 	stackable: true,
@@ -8,7 +9,11 @@ const defaultType = {
 	building: false,
 };
 
-const items = {
+export type InitialItemTypesState = {
+	[extraProps: string]: InitialItemType;
+};
+
+const items: InitialItemTypesState = {
 	calories: {
 		label: 'Calories',
 		stackable: true,
