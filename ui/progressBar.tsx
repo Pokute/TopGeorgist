@@ -2,20 +2,24 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RootStateType } from '../reducers';
 
-interface Segment {
-	cost: any,
-	// progress: PropTypes.number,
-	title: string,
-}
+// interface Segment {
+// 	cost: any,
+// 	// progress: PropTypes.number,
+// 	title: string,
+// }
+
+type Segment = any;
 
 interface Type {
-	costMapping: (segment: Segment) => number,
-	perFrameIncrease: boolean,
-	progress: number,
-	segments: Array<Segment>,
+	costMapping?: (segment: Segment) => number,
+	perFrameIncrease?: boolean,
+	progress?: number,
+	segments?: Array<Segment>,
 };
 
+type InternalType = Required<Type>;
 type Props = Type & ReturnType<typeof mapStoreToProps>;
+type InternalProps = InternalType & ReturnType<typeof mapStoreToProps>;
 
 class ProgressBar extends React.Component<Props> {
 	static defaultProps = {
@@ -27,11 +31,11 @@ class ProgressBar extends React.Component<Props> {
 	
 	calcTickPlusTimeProgress = (props: Props) => Math.max(0,
 		Math.min(
-			props.progress + (props.perFrameIncrease
+			props.progress! + (props.perFrameIncrease
 				? ((props.frameTime - props.tickTime) / props.tickInterval)
 				: 0
 			),
-			props.segments.reduce((cost, segment) => cost+props.costMapping(segment), 0)
+			props.segments!.reduce((cost, segment) => cost+props.costMapping!(segment), 0)
 		)
 	);
 
@@ -46,18 +50,18 @@ class ProgressBar extends React.Component<Props> {
 
 	render = () => {
 		const props = this.props;
-		const totalCost = props.segments.reduce((cost, segment) => cost+props.costMapping(segment), 0);
+		const totalCost = props.segments!.reduce((cost, segment) => cost+props.costMapping!(segment), 0);
 		const tickPlusTimeProgress = this.calcTickPlusTimeProgress(props);
 		return (
 			<div className='progressBar'>
-				{props.segments.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
-					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / props.costMapping(segment), 1))
+				{props.segments!.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
+					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / props.costMapping!(segment), 1))
 					return {
 						components: [...components, (
 							<div
 								className='segment'
 								key={`${segment.title}-${i}`}
-								style={{ flex: props.costMapping(segment) }}
+								style={{ flex: props.costMapping!(segment) }}
 							>
 								{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
 								{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
@@ -66,7 +70,7 @@ class ProgressBar extends React.Component<Props> {
 								</div>
 							</div>
 						)],
-						costAcc: costAcc + props.costMapping(segment),
+						costAcc: costAcc + props.costMapping!(segment),
 					}
 				},
 				{
