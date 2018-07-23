@@ -1,10 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import * as netActions from '../actions/net';
-import ParamInput, { packParam } from './paramInput';
+import ParamInput, { packParam, Parameter } from './paramInput';
 
-const Action = props => (
+export interface Type {
+	action: {
+		label: string,
+		parameters: Parameter[],
+		onClick: {
+			type: string,
+		}
+	},
+	additionalSentData: any,
+	onSubmit(action: Type['action']): () => void,
+}
+
+const Action = (props: Type) => (
 	<form
 		onSubmit={props.onSubmit(props.action)}
 	>
@@ -19,10 +32,10 @@ const Action = props => (
 	</form>
 );
 
-const mapDispatchToProps = (dispatch, passedProps) => ({
-	onSubmit: action => ((event) => {
+const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
+	onSubmit: (action: Type['action']) => ((event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = new FormData(event.target);
+		const formData = new FormData(event.currentTarget);
 		dispatch(netActions.send({
 			...action.onClick,
 			...passedProps.additionalSentData,
