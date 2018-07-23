@@ -150,6 +150,7 @@ export const GovernmentAction = () => tgosActions.add({
 });
 
 export const leaderBoardAction = () => tgosActions.add({
+	typeId: 'building',
 	label: 'Leaderboard',
 	leaderBoard: true,
 	position: { x: 4, y: 5 },
@@ -161,10 +162,10 @@ export const leaderBoardAction = () => tgosActions.add({
 
 export const tileSetBasicAction = () => tileSetAdd({
 	tileSetId: 'basic',
-	tiles: [
-		{ tileId: 0, fillStyle: 'cyan' },
-		{ tileId: 1, fillStyle: 'green' },
-	],
+	tiles: {
+		'0': { tileId: '0', fillStyle: 'cyan' },
+		'1': { tileId: '1', fillStyle: 'green' },
+	},
 });
 
 const initialObjectActions = () => [
