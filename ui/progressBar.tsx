@@ -1,9 +1,31 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { RootStateType } from '../reducers';
 
-class ProgressBar extends React.Component {
-	calcTickPlusTimeProgress = (props) => Math.max(0,
+interface Segment {
+	cost: any,
+	// progress: PropTypes.number,
+	title: string,
+}
+
+interface Type {
+	costMapping: (segment: Segment) => number,
+	perFrameIncrease: boolean,
+	progress: number,
+	segments: Array<Segment>,
+};
+
+type Props = Type & ReturnType<typeof mapStoreToProps>;
+
+class ProgressBar extends React.Component<Props> {
+	static defaultProps = {
+		costMapping: ({ cost }: { cost: number }) => cost,
+		perFrameIncrease: true,
+		progress: 0,
+		segments: [],
+	}
+	
+	calcTickPlusTimeProgress = (props: Props) => Math.max(0,
 		Math.min(
 			props.progress + (props.perFrameIncrease
 				? ((props.frameTime - props.tickTime) / props.tickInterval)
@@ -13,7 +35,7 @@ class ProgressBar extends React.Component {
 		)
 	);
 
-	shouldComponentUpdate = (nextProps) => {
+	shouldComponentUpdate = (nextProps: Props) => {
 		if (this.calcTickPlusTimeProgress(this.props) !== this.calcTickPlusTimeProgress(nextProps))
 			return true;
 		if (this.props.segments !== nextProps.segments)
@@ -28,7 +50,7 @@ class ProgressBar extends React.Component {
 		const tickPlusTimeProgress = this.calcTickPlusTimeProgress(props);
 		return (
 			<div className='progressBar'>
-				{props.segments.reduce(({components, costAcc, i}, segment) => {
+				{props.segments.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
 					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / props.costMapping(segment), 1))
 					return {
 						components: [...components, (
@@ -58,29 +80,22 @@ class ProgressBar extends React.Component {
 	}
 }
 
-ProgressBar.propTypes = {
-	costMapping: PropTypes.func,
-	perFrameIncrease: PropTypes.bool,
-	progress: PropTypes.number,
-	segments: PropTypes.arrayOf(PropTypes.shape({
-		cost: PropTypes.object,
-		// progress: PropTypes.number,
-		title: PropTypes.string,
-	})),
-	// From store
-	tickTime: PropTypes.number.isRequired,
-	tickInterval: PropTypes.number.isRequired,
-	frameTime: PropTypes.number.isRequired,
-}
+// ProgressBar.propTypes = {
+// 	costMapping: PropTypes.func,
+// 	perFrameIncrease: PropTypes.bool,
+// 	progress: PropTypes.number,
+// 	segments: PropTypes.arrayOf(PropTypes.shape({
+// 		cost: PropTypes.object,
+// 		// progress: PropTypes.number,
+// 		title: PropTypes.string,
+// 	})),
+// 	// From store
+// 	tickTime: PropTypes.number.isRequired,
+// 	tickInterval: PropTypes.number.isRequired,
+// 	frameTime: PropTypes.number.isRequired,
+// }
 
-ProgressBar.defaultProps = {
-	costMapping: ({ cost }) => cost,
-	perFrameIncrease: true,
-	progress: 0,
-	segments: [],
-}
-
-const mapStoreToProps = store => ({
+const mapStoreToProps = (store: RootStateType) => ({
 	tickTime: store.ticker.tickTime,
 	tickInterval: store.ticker.tickInterval,
 	frameTime: store.frame.frameTime,
