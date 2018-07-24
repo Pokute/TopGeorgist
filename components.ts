@@ -3,12 +3,17 @@ import { TgoType } from './reducers/tgo';
 import { AnyAction } from 'redux';
 
 import { Parameter } from './ui/paramInput';
+import { TypeId } from './reducers/itemType';
 
 export interface Action {
 	label: string,
-	parameters: Parameter[],
+	parameters?: Parameter[],
 	onClick: {
 		type: string,
+		items?: Array<{
+			typeId: TypeId,
+			count: number,
+		}>,
 	}
 }
 

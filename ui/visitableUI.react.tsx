@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import * as netActions from '../actions/net';
 import VisitableGovernmentBuilding from './visitable/governmentBuilding';
 import VisitableRentOffice from './visitable/rentOffice';
-import Action from './action';
 import { TgoType } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
+import { Action } from '../components';
+import ActionUI from './action';
 
 export interface Type {
 	visitable: TgoType,
@@ -17,17 +18,19 @@ export interface Type {
 const VisitableUI = (props: Type & ReturnType<typeof mapStoreToProps>) => (
 	<div>
 		<p>{props.visitable.label}</p>
-		{/* (props.visitable.visitable.actions || [])
+		{props.visitable.visitable
+			? ((props.visitable.visitable.actions || []) as Action[])
 			.map(va => (
-				<Action
+				<ActionUI
 					key={va.label}
 					action={va}
 					additionalSentData={{
-						tgoId: props.visitor.tgoId,
+						tgoId: props.visitor!.tgoId,
 						visitableTgoId: props.visitable.tgoId,
 					}}
 				/>
-			)) */
+			))
+			: undefined
 		}
 		{props.visitable.leaderBoard && props.leaderBoard
 			? <ol>
@@ -69,7 +72,7 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
-/* 	onActionClick: action => {
+	onActionClick: (action: Action) => {
 		if (!passedProps.visitor) return undefined;
 		(() => dispatch(netActions.send({
 			...action.onClick,
@@ -77,6 +80,6 @@ const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
 			visitableTgoId: passedProps.visitable.tgoId,
 		})))
 	},
- */});
+});
 
 export default connect(mapStoreToProps, mapDispatchToProps)(VisitableUI);

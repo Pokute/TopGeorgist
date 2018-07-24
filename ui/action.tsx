@@ -9,12 +9,12 @@ import { Action } from '../components';
 export interface Type {
 	action: Action,
 	additionalSentData: any,
-	onSubmit(action: Type['action']): () => void,
+	onSubmit?(action: Type['action']): () => void,
 }
 
-const Action = (props: Type) => (
+const Action = (props: Type & ReturnType<typeof mapDispatchToProps>) => (
 	<form
-		onSubmit={props.onSubmit(props.action)}
+		onSubmit={props.onSubmit!(props.action)}
 	>
 		{(props.action.parameters || [])
 			.map(p => <ParamInput key={p.name} parameter={p} />)

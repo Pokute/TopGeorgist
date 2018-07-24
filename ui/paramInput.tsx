@@ -4,6 +4,7 @@ export interface Parameter {
 	name: string,
 	label: string,
 	type: keyof TypeMap,
+	required?: boolean,
 };
 
 const ParamInputPosition = ({ parameter }: { parameter: Parameter}) => (

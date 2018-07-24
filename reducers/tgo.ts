@@ -5,7 +5,7 @@ import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryIt
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
-import { ComponentList } from '../components';
+import { ComponentList, Action } from '../components';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -43,7 +43,10 @@ export interface TgoInitialType {
 	readonly taskQueue?: TaskQueueType,
 	readonly components?: ReadonlyArray<ComponentType>,
 	readonly plantTypeId?: TypeId,
-	readonly visitable?: any,
+	readonly visitable?: {
+		label: string,
+		actions?: Action[],
+	},
 	readonly [extraProp: string]: any,
 };
 
