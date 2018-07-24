@@ -25,7 +25,7 @@ const tick = function* () {
 	type TgoTypeWithComponents = TgoType & {
 		components: ReadonlyArray<ComponentType>,
 	};
-	components['selfMoving'];
+
 	const newActions: AnyAction[] = (Object.values(oldState.tgos)
 		.filter(tgo => tgo.components) as TgoTypeWithComponents[])
  		.map(tgo => (tgo.components
@@ -36,10 +36,11 @@ const tick = function* () {
 			)) as ReadonlyArray<[ ComponentId, ComponentProps ]>)
 			.map(([cName, cProps]) => [components[cName], cProps])
 			.filter(c => c[0] && 'tick' in c[0])
-			.map(c => (c[0] as ComponentTicker).tick(tgo, c[1])),
+			.map(c => (c[0] as ComponentTicker).tick(tgo, c[1]))
+			.filter(actions => actions && actions.length > 0) as Array<AnyAction[]>
 		)
-		.reduce((acc: AnyAction[], action) => [...acc, ...action], []) // Flatten one level
-		// .reduce((acc: AnyAction[], action) => [...acc, ...action], []);
+		.reduce((acc: Array<AnyAction[]>, action) => [...acc, ...action], []) // Flatten one level
+		.reduce((acc: AnyAction[], action) => [...acc, ...action], []);
 	yield newActions.map(a => put(a));
 
 	const newState: RootStateType = yield select();

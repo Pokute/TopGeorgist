@@ -13,7 +13,7 @@ export interface Action {
 }
 
 export interface ComponentTicker {
-	tick: (tgo: TgoType, options: any) => AnyAction | never,
+	tick: (tgo: TgoType, options: any) => AnyAction[] | void,
 }
 
 export interface ComponentActionable {
