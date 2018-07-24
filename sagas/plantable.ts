@@ -80,7 +80,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 	return true;
 };
 
-const harvest = function* ({ payload: { actorTgoId, targetTgoId }}: ActionType<typeof plantableActions.harvest>) {
+const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targetTgoId }}: ActionType<typeof plantableActions.harvest>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
 	const visitableTgo = s.tgos[targetTgoId];
@@ -105,7 +105,9 @@ const harvest = function* ({ payload: { actorTgoId, targetTgoId }}: ActionType<t
 
 	const remove = {
 		type: 'TGO_REMOVE',
-		tgoId: targetTgoId,
+		payload: {
+			tgoId: targetTgoId,
+		},
 	};
 	yield put(taskQueueActions.addTaskQueue(
 		actorTgoId,

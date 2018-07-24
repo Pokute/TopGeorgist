@@ -10,8 +10,8 @@ export const plant = createAction('PLANT', resolve => {
 });
 
 export const harvest = createAction('HARVEST', resolve => {
-	return (actorTgoId: TgoId, targetTgoId: TgoId) => resolve({
-		actorTgoId,
-		targetTgoId,
+	return (tgoId: TgoId, visitableTgoId: TgoId) => resolve({
+		tgoId,
+		visitableTgoId,
 	});
 });
