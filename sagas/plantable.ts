@@ -8,10 +8,10 @@ import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
 
-const plant = function* ({ payload: { actorTgoId, plantableTypeId }}: ActionType<typeof plantableActions.plant>) {
+const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
-	const plantableType = s.itemTypes[plantableTypeId];
+	const plantableType = s.itemTypes[targetTypeId];
 
 	const plantPosition = actorTgo.position;
 
@@ -27,7 +27,7 @@ const plant = function* ({ payload: { actorTgoId, plantableTypeId }}: ActionType
 		tgoId: actorTgoId,
 		items: [
 			{
-				typeId: plantableTypeId,
+				typeId: targetTypeId,
 				count: -1,
 			},
 		],

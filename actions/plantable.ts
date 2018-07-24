@@ -3,9 +3,9 @@ import { TgoId } from '../reducers/tgo';
 import { TypeId } from '../reducers/itemType';
 
 export const plant = createAction('PLANT', resolve => {
-	return (actorTgoId: TgoId, plantableTypeId: TypeId) => resolve({
+	return (actorTgoId: TgoId, targetTypeId: TypeId) => resolve({
 		actorTgoId,
-		plantableTypeId,
+		targetTypeId,
 	});
 });
 
