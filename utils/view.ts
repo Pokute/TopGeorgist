@@ -1,9 +1,11 @@
-const getMinMax = (canvasElement, center, map) => {
+import { MapType } from "../reducers/map";
+
+const getMinMax = (canvasElement?: HTMLCanvasElement, center?: { x: number, y: number}, map?: MapType) => {
 	// if (!canvasElement) throw new TypeError('Undefined canvasElement');
 	// if (!center || !center.x || !center.y) throw new TypeError('Undefined/bad center');
-	if (!canvasElement) return { minTile: { x: 0, y: 0}, maxTile: { x: 0, y: 0}, };
+	if (!canvasElement || !map) return { minTile: { x: 0, y: 0}, maxTile: { x: 0, y: 0}, };
 	if (!center || center.x === undefined || center.y === undefined) throw new TypeError('Undefined/bad center');
-	const c = canvasElement;
+	const c = canvasElement!;
 	const size = {
 		x: c.width,
 		y: c.height,

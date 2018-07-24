@@ -18,6 +18,7 @@ export interface Type {
 };
 
 const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
+	if (!props.view.canvasId) return null;
 	let displayedCalories = 0;
 	if (props.player && props.player.inventory) {
 		const caloriesItem = props.player.inventory.find(i => i.typeId === 'calories');
@@ -29,7 +30,7 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 				view={props.view}
 				map={props.map}
 				{...getMinMax(
-					document.getElementById(props.view.canvasId || ''),
+					document.getElementById(props.view.canvasId) as HTMLCanvasElement,
 					props.center,
 					props.map,
 				)}
