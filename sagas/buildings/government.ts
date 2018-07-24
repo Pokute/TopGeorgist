@@ -5,7 +5,7 @@ import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
 
-const claimCitizenship = function* ({ tgoId, visitableTgoId }: any) {
+const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
@@ -20,7 +20,7 @@ const claimCitizenship = function* ({ tgoId, visitableTgoId }: any) {
 	return true;
 };
 
-const claimStipend = function* ({ tgoId, visitableTgoId }: any) {
+const claimStipend = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
