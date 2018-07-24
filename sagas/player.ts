@@ -24,13 +24,15 @@ const handlePlayerCreateRequest = function* (action: ActionType<typeof playerAct
 	const defaultPlayerAction = createPlayerAction();
 	const newPlayerAction = {
 		...defaultPlayerAction,
-		tgo: {
-			...defaultPlayerAction.payload.tgo,
-			label: action.payload.label,
-			position: {
-				x: Math.trunc(15 * Math.random()),
-				y: Math.trunc(15 * Math.random()),
-			},
+		payload: {
+			tgo: {
+				...defaultPlayerAction.payload.tgo,
+				label: action.payload.label,
+				position: {
+					x: Math.trunc(15 * Math.random()),
+					y: Math.trunc(15 * Math.random()),
+				},
+			},	
 		},
 	};
 	yield put(newPlayerAction);
