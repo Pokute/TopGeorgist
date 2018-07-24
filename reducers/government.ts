@@ -56,7 +56,7 @@ export default (state: GovernmentStateType = initialState, action: GovernmentAct
 	switch (action.type) {
 		case (getType(governmentActions.addCitizen)):
 			const citizen = state.citizens[action.payload];
-			if (!citizen) return state;
+			if (citizen) return state; // Already a citizen.
 
 			return {
 				...state,
