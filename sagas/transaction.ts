@@ -82,9 +82,9 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	return true;
 };
 
-const storeTransactionRequest = function* (action: ReturnType<typeof transactionActions.storeTransactionRequest>) {
+const storeTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
 	yield put(taskQueueActions.addTaskQueue(
-		action.payload.tgoId,
+		tgoId,
 		[{
 			title: `Trading`,
 			progress: {
@@ -95,12 +95,12 @@ const storeTransactionRequest = function* (action: ReturnType<typeof transaction
 			},
 			action: transactionActions.transaction(
 				{
-					tgoId: action.payload.tgoId,
-					items: action.payload.items,
+					tgoId: tgoId,
+					items: items,
 				},
 				{
-					tgoId: action.payload.visitableTgoId,
-					items: action.payload.items.map(i => ({ ...i, count: -1 * i.count })),
+					tgoId: visitableTgoId,
+					items: items.map(i => ({ ...i, count: -1 * i.count })),
 				},
 			),
 		}],

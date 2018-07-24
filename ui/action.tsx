@@ -31,12 +31,16 @@ const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
 	onSubmit: (action: Type['action']) => ((event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
+		const { type, ...onClickActionParams } = action.onClick;
 		dispatch(netActions.send({
-			...action.onClick,
-			...passedProps.additionalSentData,
-			...(passedProps.action.parameters || [])
-				.map(parameter => packParam(parameter, formData))
-				.reduce((combined, paramData) => ({ ...combined, ...paramData }), {}),
+			type,
+			payload: {
+				...onClickActionParams,
+				...passedProps.additionalSentData,
+				...(passedProps.action.parameters || [])
+					.map(parameter => packParam(parameter, formData))
+					.reduce((combined, paramData) => ({ ...combined, ...paramData }), {}),
+			}
 		}));
 	}),
 });
