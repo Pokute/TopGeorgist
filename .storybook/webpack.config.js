@@ -6,7 +6,45 @@
 // When you add this file, we won't add the default configurations which is similar
 // to "React Create App". This only has babel loader to load JavaScript.
 
-commonConfig = require('../webpack.common.config');
+commonConfig = {
+	resolve: {
+		extensions: [
+			'.js',
+			'.mjs',
+			'.ts',
+			'.tsx',
+		],
+	},
+	module: {
+		rules: [
+			{
+				test: /(\.js$|\.mjs$|\.ts|\.tsx)/i,
+				exclude: /node_modules/,
+				use: {
+					loader: 'awesome-typescript-loader',
+				},
+			},
+			// {
+			// 	test: /(\.js$|\.mjs$|\.ts|\.tsx)/i,
+			// 	exclude: /node_modules/,
+			// 	type: 'javascript/auto',
+			// 	use: {
+			// 		loader: 'babel-loader',
+			// 		options: {
+			// 			babelrc: true,
+			// 		},
+			// 	},
+			// },
+			{
+				test: /\.css$/,
+				use: [
+					{ loader: 'style-loader' },
+					{ loader: 'css-loader' },
+				],
+			},
+		],
+	},
+};
 
 const config = {
 	...commonConfig,
