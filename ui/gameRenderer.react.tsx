@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -138,31 +138,37 @@ export interface Type {
 
 type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;
 
-class GameRenderer extends React.Component<Props> {
-	private canvas?: HTMLCanvasElement;
+const GameRenderer: React.SFC<Props> = ({
+	view,
+	map,
+	minTile,
+	maxTile,
+	tgos,
+	tileSet,
+	onClick,
+}) => {
+	const canvas = useRef<HTMLCanvasElement>();
 
-	render = () => {
-		if (this.canvas) {
-			renderCanvas({
-				minTile: this.props.minTile,
-				maxTile: this.props.maxTile,
-				map: this.props.map,
-				tgos: this.props.tgos,
-				tileSet: this.props.tileSet,
-				canvas: this.canvas
-			});
-		}
+	if (canvas.current) {
+		renderCanvas({
+			minTile: minTile,
+			maxTile: maxTile,
+			map: map,
+			tgos: tgos,
+			tileSet: tileSet,
+			canvas: canvas.current
+		});
+	}
 
-		return (
-			<canvas
-				ref={(c) => { this.canvas = c || undefined; }}
-				id={`view-canvas-${this.props.view.viewId}`}
-				width={1000}
-				height={600}
-				onClick={this.props.onClick}
-			/>
-		);
-	};
+	return (
+		<canvas
+			ref={canvas}
+			id={`view-canvas-${view.viewId}`}
+			width={1000}
+			height={600}
+			onClick={onClick}
+		/>
+	);
 };
 
 const mapStoreToProps = (store: RootStateType) => ({

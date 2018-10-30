@@ -1,13 +1,13 @@
-import React, { FormEvent } from 'react';
-import { connect, MapDispatchToProps } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 
 import * as playerActions from '../actions/player';
 import * as netActions from '../actions/net';
 import { Dispatch } from 'redux';
 
-const CreatePlayerForm = (props: ReturnType<typeof mapDispatchToProps>) => (
+const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => (
 	<form
-		onSubmit={props.onSubmit}
+		onSubmit={onSubmit}
 	>
 		<input
 			type="text"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RootStateType } from '../reducers';
 
@@ -21,68 +21,72 @@ type InternalType = Required<Type>;
 type Props = Type & ReturnType<typeof mapStoreToProps>;
 type InternalProps = InternalType & ReturnType<typeof mapStoreToProps>;
 
-class ProgressBar extends React.Component<Props> {
-	static defaultProps = {
-		costMapping: ({ cost }: { cost: number }) => cost,
-		perFrameIncrease: true,
-		progress: 0,
-		segments: [],
-	}
-	
-	calcTickPlusTimeProgress = (props: Props) => Math.max(0,
+const ProgressBar: React.SFC<Props> = ({
+	costMapping,
+	perFrameIncrease,
+	progress,
+	segments,
+	tickTime,
+	tickInterval,
+	frameTime,
+}) => {
+	const calcTickPlusTimeProgress = () => Math.max(0,
 		Math.min(
-			props.progress! + (props.perFrameIncrease
-				? ((props.frameTime - props.tickTime) / props.tickInterval)
+			progress! + (perFrameIncrease
+				? ((frameTime - tickTime) / tickInterval)
 				: 0
 			),
-			props.segments!.reduce((cost, segment) => cost+props.costMapping!(segment), 0)
+			segments!.reduce((cost, segment) => cost+costMapping!(segment), 0)
 		)
 	);
 
-	shouldComponentUpdate = (nextProps: Props) => {
-		if (this.calcTickPlusTimeProgress(this.props) !== this.calcTickPlusTimeProgress(nextProps))
-			return true;
-		if (this.props.segments !== nextProps.segments)
-			return true;
+	// const shouldComponentUpdate = (nextProps: Props) => {
+	// 	if (calcTickPlusTimeProgress(props) !== calcTickPlusTimeProgress(nextProps))
+	// 		return true;
+	// 	if (props.segments !== nextProps.segments)
+	// 		return true;
 		
-		return false;
-	}
+	// 	return false;
+	// }
 
-	render = () => {
-		const props = this.props;
-		const totalCost = props.segments!.reduce((cost, segment) => cost+props.costMapping!(segment), 0);
-		const tickPlusTimeProgress = this.calcTickPlusTimeProgress(props);
-		return (
-			<div className='progressBar'>
-				{props.segments!.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
-					const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / props.costMapping!(segment), 1))
-					return {
-						components: [...components, (
-							<div
-								className='segment'
-								key={`${segment.title}-${i}`}
-								style={{ flex: props.costMapping!(segment) }}
-							>
-								{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
-								{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
-								<div className='title'>
-									{segment.title}
-								</div>
+	const totalCost = segments!.reduce((cost, segment) => cost+costMapping!(segment), 0);
+	const tickPlusTimeProgress = calcTickPlusTimeProgress();
+	return (
+		<div className='progressBar'>
+			{segments!.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
+				const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / costMapping!(segment), 1))
+				return {
+					components: [...components, (
+						<div
+							className='segment'
+							key={`${segment.title}-${i}`}
+							style={{ flex: costMapping!(segment) }}
+						>
+							{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
+							{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
+							<div className='title'>
+								{segment.title}
 							</div>
-						)],
-						costAcc: costAcc + props.costMapping!(segment),
-					}
-				},
-				{
-					components: [],
-					costAcc: 0,
-				})
-					.components
+						</div>
+					)],
+					costAcc: costAcc + costMapping!(segment),
 				}
-			</div>
-		);
-	}
+			},
+			{
+				components: [],
+				costAcc: 0,
+			})
+				.components
+			}
+		</div>
+	);
 }
+ProgressBar.defaultProps = {
+	costMapping: ({ cost }: { cost: number }) => cost,
+	perFrameIncrease: true,
+	progress: 0,
+	segments: [],
+};
 
 // ProgressBar.propTypes = {
 // 	costMapping: PropTypes.func,
