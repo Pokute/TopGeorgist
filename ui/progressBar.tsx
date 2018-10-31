@@ -83,9 +83,11 @@ const ProgressBar: React.SFC<Props> = ({
 }
 ProgressBar.defaultProps = {
 	costMapping: ({ cost }: { cost: number }) => cost,
-	perFrameIncrease: true,
+	perFrameIncrease: false,
 	progress: 0,
-	segments: [],
+	segments: [{
+		cost: 1,
+	}],
 };
 
 // ProgressBar.propTypes = {

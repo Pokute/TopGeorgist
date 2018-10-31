@@ -11,7 +11,7 @@
 			"url": "http://localhost:24321/index.html",
 			"webRoot": "${workspaceFolder}",
 			"port": 9222,
-			"breakOnLoad": true
+			"breakOnLoad": false,
 		},
 		{
 			"type": "node",
@@ -33,6 +33,17 @@
 				"server"
 			],
 			"port": 9229,
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Storybook Debug",
+			"url": "http://localhost:6006",
+			"sourceMaps": true,
+			"webRoot": "${workspaceFolder}",
+			"sourceMapPathOverrides": {
+			  "webpack:///*": "${webRoot}/*",
+			},
 		},
 		{
 			"type": "node",

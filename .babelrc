@@ -13,7 +13,6 @@
 				modules: false,
 			},
 		],
-		'@babel/stage-0',
 	],
 	plugins: [
 		'@babel/plugin-syntax-jsx',
