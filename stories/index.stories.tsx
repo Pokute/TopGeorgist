@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 
 import { storiesOf } from '@storybook/react';
@@ -24,29 +24,71 @@ import '../static/style/topGeorgist.css';
 // 		</Button>
 // 	));
 
+interface ProgressIncreaser { children: (progress: number) => JSX.Element, maxCost: number, step?: number, initialProgress?: number };
+const ProgressIncreaser: React.SFC<ProgressIncreaser> = ({ children, maxCost, step, initialProgress }) => {
+	const [ progress, setProgress ] = useState(initialProgress!);
+	return (
+		<>
+			{children(progress)}
+			<button
+				onClick={() => setProgress((oldProgress: number) => (oldProgress + step!) % maxCost)}
+			>
+				Increase progress by {step}.
+			</button>
+		</>
+	);
+};
+ProgressIncreaser.defaultProps = {
+	step: 1,
+	initialProgress: 0,
+};
+
 storiesOf('ProgressBar', module)
 	.addDecorator(story => <Provider store={store}>{story()}</Provider>)
 	.add('Empty', () => <ProgressBar />)
-	.add('Progress only 0-1', () => <ProgressBar
-			progress={0.5}
-		/>)
+	.add('Progress only 0-1', () => (<ProgressIncreaser
+			maxCost={1}
+			initialProgress={0.5}
+			step={0.125}
+		>
+			{progress => (
+				<ProgressBar
+					progress={progress}
+				/>
+			)}
+		</ProgressIncreaser>))
 	// .add('Progress and cost only', () => <ProgressBar
 	// 		progress={2.5}
 	// 		cost={4}
 	// 	/>)
-	.add('One item', () => <ProgressBar
-			segments={[
-				{ cost: 5, title: 'One item.' }
-			]}
-		/>)
-	.add('Multiple segments', () => <ProgressBar
-		progress={8}
-		segments={[
-			{ cost: 5, title: 'Cost of 5.' },
-			{ cost: 10, title: '10.' },
-			{ cost: 7, title: 'Seven.' },
-		]}
-	/>)
+	.add('One item', () => (<ProgressIncreaser
+			maxCost={5}
+			initialProgress={2}
+		>
+			{progress => (
+				<ProgressBar
+					progress={progress}
+					segments={[
+						{ cost: 5, title: 'One item.' }
+					]}
+				/>
+			)}
+		</ProgressIncreaser>))
+	.add('Multiple segments', () => (<ProgressIncreaser
+			maxCost={22}
+			initialProgress={8}
+		>
+			{progress => (
+				<ProgressBar
+					progress={progress}
+					segments={[
+						{ cost: 5, title: 'Cost of 5.' },
+						{ cost: 10, title: '10.' },
+						{ cost: 7, title: 'Seven.' },
+					]}
+				/>
+			)}
+		</ProgressIncreaser>))
 	.add('redux & framerate', () => <ProgressBar
 		segments={[
 			{ cost: 5, title: 'One item.' }

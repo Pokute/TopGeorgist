@@ -9,9 +9,10 @@ declare module "react" {
   ): void
 
   type Lazy<T> = () => T
+  type ReThinkState<T> = (prevState: T) => T
   export function useState<T>(
     initialState: T | Lazy<T>
-  ): [T, (newValue: T) => void]
+  ): [T, (newValue: T | ReThinkState<T>) => void]
 
   type Dispatch<A> = (action: A) => void
   type Reducer<S, A> = (initialState: S, action: A) => S

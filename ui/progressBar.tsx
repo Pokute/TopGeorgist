@@ -17,9 +17,36 @@ interface Type {
 	segments?: Array<Segment>,
 };
 
-type InternalType = Required<Type>;
 type Props = Type & ReturnType<typeof mapStoreToProps>;
-type InternalProps = InternalType & ReturnType<typeof mapStoreToProps>;
+
+interface ProgressBarSegmentProps {
+	progressFraction: number,
+	cost: number,
+	title?: string
+};
+
+const ProgressBarSegment: React.SFC<ProgressBarSegmentProps> = ({
+	progressFraction,
+	cost,
+	title,
+}) => (
+	<div
+		className='segment'
+		style={{ flex: cost }}
+	>
+		{(progressFraction > 0) && <div className='done' style={{ flex: (progressFraction) }} />}
+		{(progressFraction < 1) && <div className='pending' style={{ flex: (1 - progressFraction) }} />}
+		{title ?
+			(<div className='title'>
+				{title}
+			</div>)
+			: null
+		}
+	</div>
+);
+ProgressBarSegment.defaultProps = {
+	title: undefined,
+};
 
 const ProgressBar: React.SFC<Props> = ({
 	costMapping,
@@ -57,17 +84,12 @@ const ProgressBar: React.SFC<Props> = ({
 				const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / costMapping!(segment), 1))
 				return {
 					components: [...components, (
-						<div
-							className='segment'
+						<ProgressBarSegment
 							key={`${segment.title}-${i}`}
-							style={{ flex: costMapping!(segment) }}
-						>
-							{(segmentProgress > 0) && <div className='done' style={{ flex: (segmentProgress) }} />}
-							{(segmentProgress < 1) && <div className='pending' style={{ flex: (1 - segmentProgress) }} />}
-							<div className='title'>
-								{segment.title}
-							</div>
-						</div>
+							cost={costMapping!(segment)}
+							progressFraction={segmentProgress}
+							title={segment.title}
+						/>
 					)],
 					costAcc: costAcc + costMapping!(segment),
 				}
