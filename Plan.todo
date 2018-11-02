@@ -172,3 +172,14 @@ Tasks vs Goals:
 	Only Tasks.
 		Goals can be implemented by having bigger tasks.
 		Having multiple levels for same functionality is stupid, what's when we have multiple goals together? Saga, epic, megagoal?
+
+	Alternative:
+		Replace Task.Cost with Task.Goals?
+		
+	Alternative:
+		Replace Task.Cost with Task.Requirements?
+		Requirement can be another task.
+
+	
+	Alternative:
+		Have ONLY goals.
