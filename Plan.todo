@@ -156,7 +156,7 @@ Tasks vs Goals:
 			* Title - what the players will see.
 			* Cost - A list of requirements for completion.
 			* Progress - Basically copy of cost in structure.
-			* Action - Which redux action will fire when completed.
+			* completionAction - Which redux action will fire when completed.
 			* advanceActions - Redux actions that are repeated until Progress reaches Cost.
 		Verdict:
 			Doesn't support Tasks that require tasks to complete. At least without wrapping one into an action.

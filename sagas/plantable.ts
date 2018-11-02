@@ -74,7 +74,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 			cost: {
 				time: 50,
 			},
-			action: planting,
+			completionAction: planting,
 		}],
 	));
 	return true;
@@ -120,7 +120,7 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 				cost: {
 					time: 15,
 				},
-				action: transactionResult,
+				completionAction: transactionResult,
 			},
 			{
 				title: `Removing`,
@@ -130,7 +130,7 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 				cost: {
 					time: 0,
 				},
-				action: remove,
+				completionAction: remove,
 			},
 		],
 	));

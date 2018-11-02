@@ -64,7 +64,7 @@ const handleQueueForOwner = function* (owner: TgoType) {
 	if (completedTasks.some(task => task.hasOwnProperty('PUT'))) {
 		console.warn('Task action has a PUT already.');
 	}
-	yield (completedTasks.filter(task => task.action).map((task: TaskType) => put(task.action as AnyAction)));
+	yield (completedTasks.filter(task => task.completionAction).map((task: TaskType) => put(task.completionAction as AnyAction)));
 };
 
 const handleQueueTick = function* () {

@@ -12,14 +12,14 @@ export type TaskType = {
 	title?: string,
 	cost?: TaskCost,
 	progress?: TaskCost,
-	action?: AnyAction,
+	completionAction?: AnyAction,
 	advanceActions?: AnyAction[],
 };
 
 export const checkTaskCompletion = (task: TaskType): boolean => {
 	if (!task.cost) return true;
 	if (!task.progress) {
-		return false
+		return false;
 	} else {
 		return (Object.keys(task.cost).every(
 			costItem => task.cost

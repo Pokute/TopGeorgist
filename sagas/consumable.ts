@@ -21,7 +21,7 @@ const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType
 			cost: {
 				time: 20,
 			},
-			action: transaction({
+			completionAction: transaction({
 				tgoId: actorTgoId,
 				items: [
 					{
@@ -51,7 +51,7 @@ const intoSeeds = function* ({ payload: { actorTgoId, targetTypeId } }: ActionTy
 			cost: {
 				time: 50,
 			},
-			action: transaction({
+			completionAction: transaction({
 				tgoId: actorTgoId,
 				items: [
 					{

@@ -93,7 +93,7 @@ const storeTransactionRequest = function* ({ payload: { tgoId, items, visitableT
 			cost: {
 				time: 12,
 			},
-			action: transactionActions.transaction(
+			completionAction: transactionActions.transaction(
 				{
 					tgoId: tgoId,
 					items: items,
