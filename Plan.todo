@@ -190,10 +190,32 @@ Tasks vs Goals:
 		Replace Task.Cost with Task.Requirements?
 		Requirement can be another task.
 
+	Alterantive:
+		New Work
+		Task -> Goal
+
+		Work converts one resource to another
+			Log => Plank
+			Energy => Movement
+		
+		Goal has requirements
+		Goal 'figures out' if it needs sub Goals to satisfy requirements
+		Goal creates Works until requirements are met
+
+		Example:
+			Goal - Reach destination
+
+			There's 'knowledge' that reaching destination requires movement work to create 'steps'
+
+				Checks whether at destination
+					Yes: Job done
+					No:
+						Select a work that best results in movement
+						Use movement to create an action that results in a player position change
+
 	
 	Alternative:
 		Have ONLY goals.
-
 Connections, Clients, accounts , players and controlleds
 
 	Connection
