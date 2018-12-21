@@ -72,14 +72,14 @@
     "eslint-plugin-react": "^7.11.1",
     "source-map-loader": "^0.2.3",
     "typescript": "^3.1.5",
-    "webpack": "^4.4.1",
-    "webpack-dev-middleware": "^3.1.0"
+    "webpack": "^4.28.1",
+    "webpack-dev-middleware": "^3.4.0"
   },
   "browser": {
     "redux-persist-node-storage": "./node-modules/null-loader"
   },
   "scripts": {
-    "compile-local": "./node_modules/typescript/bin/tsc",
+    "compile-local": "./node_modules/typescript/bin/tsc --esModuleInterop",
     "build": "webpack --display-error-details --config webpack.config.js",
     "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
     "server": "npm run compile-local && supervisor -e js,mjs -i node_modules,ui --inspect-brk -- -r esm --experimental-modules compiled/server.js",
