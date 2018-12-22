@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import accounts, { AccountsState } from './accounts';
 import clients, { ClientsState } from './clients';
 import defaults, { type as DefaultsType } from './defaults';
 import frame, { FrameStateType } from './frame';
@@ -11,6 +12,7 @@ import tileSets, { TileSetsState } from './tileSets';
 import views, { ViewsState } from './views';
 
 export interface RootStateType {
+	accounts: AccountsState,
 	clients: ClientsState,
 	defaults: DefaultsType,
 	frame: FrameStateType,
@@ -24,6 +26,7 @@ export interface RootStateType {
 };
 
 const topGeorgist = combineReducers({
+	accounts,
 	clients,
 	defaults,
 	frame,

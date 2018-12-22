@@ -8,6 +8,7 @@ import { ViewType } from '../reducers/view';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType } from '../reducers/map';
+import AccountInfo from './AccountInfo';
 
 export interface Type {
 	view: ViewType,
@@ -35,6 +36,7 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 					props.map,
 				)}
 			/>
+			<AccountInfo />
 			<div>
 				{`Player calories: ${displayedCalories}`}
 				{props.visitables.map(v => (

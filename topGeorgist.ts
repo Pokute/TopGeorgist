@@ -22,15 +22,18 @@ const init = () => {
 			if (newState.map) store.dispatch(mapActions.set(newState.map));
 			if (newState.tileSets) store.dispatch(tileSetsActions.set(newState.tileSets));
 			if (newState.tgos) store.dispatch(tgosActions.setAll(newState.tgos));
-		} else if (data && data.action && data.action.type === 'DEFAULTS_SET_PLAYER') {
+		} else if (data && data.action &&
+			['DEFAULTS_SET_PLAYER', 'DEFAULTS_SET_ACCOUNT'].includes(data.action.type)) {
 			store.dispatch(data.action);
-			const defaultPlayerTgoId = store.getState().defaults.playerTgoId;
-			if (defaultPlayerTgoId) {
-				store.dispatch(viewActions.setFollowTarget('main', defaultPlayerTgoId));
-				store.dispatch(viewActions.clickActionStack.push('main', tgoActions.setMoveTarget(
-					defaultPlayerTgoId,
-					{ x: 0, y: 0 }
-				)));
+			if (data.action.type === 'DEFAULTS_SET_PLAYER') {
+				const defaultPlayerTgoId = store.getState().defaults.playerTgoId;
+				if (defaultPlayerTgoId) {
+					store.dispatch(viewActions.setFollowTarget('main', defaultPlayerTgoId));
+					store.dispatch(viewActions.clickActionStack.push('main', tgoActions.setMoveTarget(
+						defaultPlayerTgoId,
+						{ x: 0, y: 0 }
+					)));
+				}
 			}
 		}
 	});

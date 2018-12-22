@@ -6,6 +6,7 @@ import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
 import initialObjectActions from './initialObjects';
+import * as accountsActions from './actions/accounts';
 import * as tgoActions from './actions/tgo';
 import * as playerActions from './actions/player';
 import * as mapActions from './actions/map';
@@ -43,8 +44,8 @@ try {
 		});
 
 		store.dispatch(clientActions.add({
-			socket: extended,
 			clientId,
+			socket: extended,
 		}));
 
 		// When data is received
@@ -65,6 +66,12 @@ try {
 									clients: {},
 								}),
 							);
+							break;
+						case getType(accountsActions.accountRequest):
+							store.dispatch(accountsActions.accountRequestWithClient({
+								...data.action.payload,
+								clientId,
+							}));
 							break;
 						case getType(playerActions.playerRequest):
 							store.dispatch(playerActions.playerRequestServer({

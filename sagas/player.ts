@@ -1,7 +1,10 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery, take } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
+import * as accountsActions from '../actions/accounts';
 import { set as allSet } from '../actions/allSet';
+import * as defaultsActions from '../actions/defaults';
+import * as netActions from '../actions/net';
 import * as taskQueueActions from '../actions/taskQueue';
 import * as tgoActions from '../actions/tgo';
 import * as playerActions from '../actions/player';
@@ -11,15 +14,22 @@ import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
 import { setPosition } from '../actions/tgo';
 
-const handlePlayerCreateRequest = function* (action: ActionType<typeof playerActions.playerRequestServer>) {
+const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!global.isServer) return;
-	console.log('Received playerCreateRequest ', action.payload.label);
+	console.log('Received playerCreateRequest ', label);
 	const state: ReturnType<typeof topGeorgist> = yield select();
-	// const hasNameConflict = Object.values(yield select((state : { tgos: TgosState }) => state.tgos))
-	// 	.some((tgo: TgoType) => (tgo.typeId === 'player') && (tgo.label === action.label));
 	const hasNameConflict = Object.values(state.tgos)
-		.some((tgo: TgoType) => (tgo.typeId === 'player') && (tgo.label === action.payload.label));
+		.some((tgo: TgoType) => (tgo.typeId === 'player') && (tgo.label === label));
 	if (hasNameConflict) return;
+
+	if (!state.accounts[accountId]) {
+		// Account not found.
+		return;
+	}
+	if (state.accounts[accountId].playerTgoId) {
+		// Account already has an player.
+		return;
+	}
 
 	const defaultPlayerAction = createPlayerAction();
 	const newPlayerAction = {
@@ -27,23 +37,46 @@ const handlePlayerCreateRequest = function* (action: ActionType<typeof playerAct
 		payload: {
 			tgo: {
 				...defaultPlayerAction.payload.tgo,
-				label: action.payload.label,
+				label: label,
 				position: {
 					x: Math.trunc(15 * Math.random()),
 					y: Math.trunc(15 * Math.random()),
 				},
-			},	
+			},
 		},
 	};
 	yield put(newPlayerAction);
 
-	const socket = state.clients[action.payload.clientId].socket;
+	const socket = state.clients[clientId].socket;
 	socket.sendAction(allSet({
 		...(yield select()),
 		clients: {},
 	}));
 
 	socket.sendAction(setPlayerTgoId(newPlayerAction.payload.tgo.tgoId));
+};
+
+const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<typeof playerActions.playerRequest>) {
+	if (global.isServer) return; // Client only
+
+	const state: ReturnType<typeof topGeorgist> = yield select();
+	let accountId;
+	if (!state.defaults.accountId) {
+		yield put(netActions.send(accountsActions.accountRequest({
+			username: '',
+			password: '',
+		})));
+		const setAccountIdAction: ActionType<typeof defaultsActions.setAccountId> = yield take(getType(defaultsActions.setAccountId));
+		accountId = setAccountIdAction.payload.accountId;
+	} else {
+		accountId = state.defaults.accountId;
+	}
+
+	yield put(netActions.send(playerActions.playerRequest({
+		accountId,
+		label,
+	})));
+	yield take(getType(defaultsActions.setPlayerTgoId));
 };
 
 // const handlePlayerCreateResponse = function* (action) {
@@ -84,6 +117,7 @@ const handlePlayerMoveTowards = function* ({ tgoId }: any) {
 
 const playerListener = function* () {
 	yield takeEvery(getType(playerActions.playerRequestServer), handlePlayerCreateRequest);
+	yield takeEvery(getType(playerActions.clientPlayerCreate), handleClientPlayerCreate);
 	// yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
 	yield takeEvery(getType(tgoActions.setMoveTarget), handlePlayerSetMoveTarget);
 	yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);

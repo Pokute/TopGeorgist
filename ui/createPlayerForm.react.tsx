@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 		const data = new FormData(event.currentTarget);
 		const playerLabel = data.get('playerLabel');
 		if (typeof playerLabel === 'string') {
-			dispatch(netActions.send(playerActions.playerRequest({ label: playerLabel })));
+			dispatch(playerActions.clientPlayerCreate({ label: playerLabel }));
 		}
 	},
 });

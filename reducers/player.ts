@@ -1,8 +1,13 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as playerActions from '../actions/player'
+import { TgoInitialType } from './tgo';
 
-export const initialState = {
+export interface PlayerType {
+	moveTarget?: TgoInitialType['position'],
+};
+
+export const initialState: PlayerType = {
 	moveTarget: undefined,
 };
 
@@ -11,7 +16,7 @@ export const PlayerActionList = [
 	playerActions.playerRequest,
 ];
 
-export default (state: any = initialState, action: PlayerActionType) => {
+export default (state: PlayerType = initialState, action: PlayerActionType): PlayerType => {
 	switch (action.type) {
 		case getType(playerActions.playerRequest):
 			return {

@@ -1,3 +1,4 @@
+import account from './account';
 import buildingGovernment from './buildings/government';
 import buildingRentOffice from './buildings/rentOffice';
 import client from './client';
@@ -12,6 +13,7 @@ import transaction from './transaction';
 import view from './view';
 
 const rootSaga = function* () {
+	yield* account();
 	yield* buildingGovernment();
 	yield* buildingRentOffice();
 	yield* client();

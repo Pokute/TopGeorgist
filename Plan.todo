@@ -183,3 +183,39 @@ Tasks vs Goals:
 	
 	Alternative:
 		Have ONLY goals.
+
+Clients, accounts , players and controlleds
+
+	Clients
+		Saves an account token locally on browser.
+		(Later) Remembers current Controlled since those can be switched.
+
+	Account = Player
+		One account countrols a single player.
+
+	Account
+		Account has a password.
+		Account has a player linked.
+		Account has a list of tokens to allow remembering users.
+
+	Player
+		A tgo.
+
+	Controlled
+		Basically a Tgo with a separate uuid. Every Account(?) has a list of uuids that are allowed to control it.
+
+	Other considerations.
+		Anyone who wants to play, creates a Player first.
+		Account is automatically created with every new Player.
+		This Automatic Account doesn't have a password. Token is saved on browser so users can resume playing any time.
+		A username / password pair can be assigned to an Automatic Account. This allows logging in with different browsers/devices.
+
+	Flow:
+		Client connects to server, client is added to redux.clients
+		User wants to creates a player
+			Client checks if an account is created,
+				if account doesn't exist:
+					creates an account
+					waits an account to be received.
+				Account Exists or account has been recevied:
+					Create a player for the account.
