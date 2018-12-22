@@ -92,8 +92,11 @@ Milestone 3:
 	☐ Add graphics for most items.
 	✔ Rehydrate - server side. @done(18-04-01 03:38)
 	☐ Client automatic reconnect.
-	☐ Client resume player name.
-	☐ Client side token persistence.
+	✔ Client resume player name. @done(18-12-22 11:20)
+	✔ Client side token persistence. @done(18-12-22 11:20)
+	☐ Password salting.
+		☐ Client-side.
+		☐ Server-side.
 	☐ Hot reload?
 	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
 	☐ Eslint to support class arrow methods.
