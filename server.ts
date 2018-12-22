@@ -81,11 +81,11 @@ try {
 								clientId,
 							}));
 							break;
-						case getType(accountCommActions.login):
+						case getType(accountCommActions.loginClientSalted):
 						case getType(accountCommActions.loginWithToken):
 							store.dispatch(withClient(data.action, clientId));
 							break;
-						case getType(accountCommActions.createAccountWithToken):
+						case getType(accountCommActions.createAccountWithTokenClientSalted):
 						case getType(tgoActions.setMoveTarget):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':

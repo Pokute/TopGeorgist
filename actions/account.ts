@@ -26,17 +26,17 @@ export const deleteToken = createAction('ACCOUNT_DELETE_TOKEN', resolve => {
 });
 
 export const upgradeAccount = createAction('ACCOUNT_UPGRADE', resolve => {
-	return ({ accountId, username, password }: { accountId: AccountId, username: AccountType['username'], password: AccountType['password'] }) => resolve({
+	return ({ accountId, username, clientSaltedPassword }: { accountId: AccountId, username: AccountType['username'], clientSaltedPassword: AccountType['clientSaltedPassword'] }) => resolve({
 		accountId,
 		username,
-		password,
+		clientSaltedPassword,
 	});
 });
 
 export const changePassword = createAction('ACCOUNT_CHANGE_PASSWORD', resolve => {
-	return ({ accountId, password, oldPassword }: { accountId: AccountId, password: AccountType['password'], oldPassword: AccountType['password'] }) => resolve({
+	return ({ accountId, clientSaltedPassword, clientSaltedOldPassword }: { accountId: AccountId, clientSaltedPassword: AccountType['clientSaltedPassword'], clientSaltedOldPassword: AccountType['clientSaltedPassword'] }) => resolve({
 		accountId,
-		password,
-		oldPassword,
+		clientSaltedPassword,
+		clientSaltedOldPassword,
 	});
 });

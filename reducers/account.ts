@@ -17,7 +17,7 @@ export interface AccountType {
 	readonly accountId: AccountId,
 	readonly playerTgoId: TgoId,
 	readonly username: string,
-	readonly password: string,
+	readonly clientSaltedPassword: string,
 	readonly tokens: Token[],
 };
 
@@ -61,15 +61,15 @@ export default (state: AccountType, action: AnyAction): AccountType => {
 			return {
 				...state,
 				username: action.payload.username,
-				password: action.payload.password,
+				clientSaltedPassword: action.payload.password,
 			};
 		case getType(accountActions.changePassword):
-			if (state.password !== action.payload.oldPassword) {
+			if (state.clientSaltedPassword !== action.payload.oldPassword) {
 				return state;
 			}
 			return {
 				...state,
-				password: action.payload.password,
+				clientSaltedPassword: action.payload.password,
 			};
 		default:
 			return state;

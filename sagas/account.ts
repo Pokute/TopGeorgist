@@ -21,7 +21,7 @@ const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, u
 	}
 
 	const addAccountAction = accountsActions.add({
-		password,
+		clientSaltedPassword: password,
 		playerTgoId: '',
 		username,
 		tokens: [],
@@ -45,12 +45,12 @@ const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, u
 	socket.sendAction(setAccountId(newAccountId, createTokenAction.payload.token));
 };
 
-const handleAccountLogin = function* ({ payload: { clientId, username, password }}: WithClient<ActionType<typeof accountCommActions.login>>) {
+const handleAccountLogin = function* ({ payload: { clientId, username, clientSaltedPassword }}: WithClient<ActionType<typeof accountCommActions.loginClientSalted>>) {
 	if (!global.isServer) return;
-	if (!username || !password) return;
+	if (!username || !clientSaltedPassword) return;
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
-	const foundAccount = Object.values(state.accounts).find(account => account.username === username && account.password === password);
+	const foundAccount = Object.values(state.accounts).find(account => account.username === username && account.clientSaltedPassword === clientSaltedPassword);
 
 	if (!foundAccount) return;
 
@@ -92,7 +92,7 @@ const handleAccountLoginWithToken = function* ({ payload: { clientId, token }}: 
 	socket.sendAction(setPlayerTgoId(foundAccount.playerTgoId));
 }
 
-const handleAccountCreateWithToken = function* ({ payload: { username, password, token }}: ActionType<typeof accountCommActions.createAccountWithToken>) {
+const handleAccountCreateWithToken = function* ({ payload: { username, clientSaltedPassword, token }}: ActionType<typeof accountCommActions.createAccountWithTokenClientSalted>) {
 	if (!global.isServer) return;
 	console.log('Received handleAccountCreateWithToken ', username);
 	const state: ReturnType<typeof topGeorgist> = yield select();
@@ -110,22 +110,22 @@ const handleAccountCreateWithToken = function* ({ payload: { username, password,
 			.some(({ username: searchUsername }: AccountType) => searchUsername === username);
 		if (hasNameConflict) return;
 	}
-	if (!password) {
+	if (!clientSaltedPassword) {
 		return;
 	}
 
 	yield put(accountActions.upgradeAccount({
 		accountId: foundAccount.accountId,
 		username,
-		password,
+		clientSaltedPassword: clientSaltedPassword,
 	}));
 }
 
 const playerListener = function* () {
 	yield takeEvery(getType(accountsActions.accountRequestWithClient), handleAccountCreateRequestWithClient);
-	yield takeEvery(`${getType(accountCommActions.login)}_WITH_CLIENT`, handleAccountLogin);
+	yield takeEvery(`${getType(accountCommActions.loginClientSalted)}_WITH_CLIENT`, handleAccountLogin);
 	yield takeEvery(`${getType(accountCommActions.loginWithToken)}_WITH_CLIENT`, handleAccountLoginWithToken);
-	yield takeEvery(getType(accountCommActions.createAccountWithToken), handleAccountCreateWithToken);
+	yield takeEvery(getType(accountCommActions.createAccountWithTokenClientSalted), handleAccountCreateWithToken);
 };
 
 export default playerListener;
