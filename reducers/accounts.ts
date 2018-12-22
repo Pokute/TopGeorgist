@@ -19,6 +19,8 @@ type AccountsAction = ActionType<typeof accountsActions>;
 
 export default (state: AccountsState = initialState, action: AccountAction | AccountsAction) => {
 	switch (action.type) {
+		case getType(accountsActions.setAll):
+			return action.payload.accounts;
 		case getType(accountsActions.add):
 			return {
 				...state,

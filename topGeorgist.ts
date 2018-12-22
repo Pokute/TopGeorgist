@@ -5,6 +5,7 @@ import WebSocketWrapper from 'ws-wrapper';
 import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
+import * as accountsActions from './actions/accounts';
 import * as viewActions from './actions/view';
 import * as mapActions from './actions/map';
 import * as tileSetsActions from './actions/tileSets';
@@ -22,6 +23,7 @@ const init = () => {
 			if (newState.map) store.dispatch(mapActions.set(newState.map));
 			if (newState.tileSets) store.dispatch(tileSetsActions.set(newState.tileSets));
 			if (newState.tgos) store.dispatch(tgosActions.setAll(newState.tgos));
+			if (newState.accounts) store.dispatch(accountsActions.setAll(newState.accounts));
 		} else if (data && data.action &&
 			['DEFAULTS_SET_PLAYER', 'DEFAULTS_SET_ACCOUNT'].includes(data.action.type)) {
 			store.dispatch(data.action);
@@ -34,6 +36,9 @@ const init = () => {
 						{ x: 0, y: 0 }
 					)));
 				}
+			}
+			if (data.action.type === 'DEFAULTS_SET_ACCOUNT') {
+				window.localStorage.setItem('AccountToken', data.action.payload.token);
 			}
 		}
 	});

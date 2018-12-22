@@ -6,6 +6,7 @@ import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
 import initialObjectActions from './initialObjects';
+import * as accountCommActions from './actions/accountComm';
 import * as accountsActions from './actions/accounts';
 import * as tgoActions from './actions/tgo';
 import * as playerActions from './actions/player';
@@ -17,6 +18,7 @@ import { getType } from 'typesafe-actions';
 import { TgoActionList } from './reducers/tgo';
 import { AnyAction } from 'redux';
 import { extendedSocket } from './reducers/client';
+import { withClient } from './actions/withClient';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -78,6 +80,10 @@ try {
 								...data.action.payload,
 								clientId,
 							}));
+							break;
+						case getType(accountCommActions.login):
+						case getType(accountCommActions.loginWithToken):
+							store.dispatch(withClient(data.action, clientId));
 							break;
 						case getType(tgoActions.setMoveTarget):
 						case 'CONSUMABLE_CONSUME':

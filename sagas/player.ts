@@ -1,6 +1,7 @@
 import { put, select, takeEvery, take } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
+import * as accountActions from '../actions/account';
 import * as accountsActions from '../actions/accounts';
 import { set as allSet } from '../actions/allSet';
 import * as defaultsActions from '../actions/defaults';
@@ -46,6 +47,11 @@ const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, l
 		},
 	};
 	yield put(newPlayerAction);
+
+	yield put(accountActions.setPlayerTgoId({
+		accountId,
+		playerTgoId: newPlayerAction.payload.tgo.tgoId,
+	}));
 
 	const socket = state.clients[clientId].socket;
 	socket.sendAction(allSet({

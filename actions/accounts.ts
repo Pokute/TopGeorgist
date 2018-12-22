@@ -2,6 +2,13 @@ import { createAction } from 'typesafe-actions';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AccountId, AccountTypePartial } from '../reducers/account';
+import { AccountsState } from '../reducers/accounts';
+
+export const setAll = createAction('ACCOUNT_SET', (resolve) => {
+	return (accounts: AccountsState) => resolve({
+		accounts,
+	});
+});
 
 export const add = createAction('ACCOUNT_ADD', (resolve) => {
 	return (account: AccountTypePartial) => resolve({
