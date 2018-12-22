@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AccountId, Token } from '../reducers/account';
+import { AccountId, Token, AccountType } from '../reducers/account';
 import { TgoId } from '../reducers/tgo';
 
 export const setPlayerTgoId = createAction('ACCOUNT_SET_PLAYER_TGO_ID', resolve => {
@@ -22,5 +22,21 @@ export const deleteToken = createAction('ACCOUNT_DELETE_TOKEN', resolve => {
 	return ({ accountId, token }: { accountId: AccountId, token: Token }) => resolve({
 		accountId,
 		token,
+	});
+});
+
+export const upgradeAccount = createAction('ACCOUNT_UPGRADE', resolve => {
+	return ({ accountId, username, password }: { accountId: AccountId, username: AccountType['username'], password: AccountType['password'] }) => resolve({
+		accountId,
+		username,
+		password,
+	});
+});
+
+export const changePassword = createAction('ACCOUNT_CHANGE_PASSWORD', resolve => {
+	return ({ accountId, password, oldPassword }: { accountId: AccountId, password: AccountType['password'], oldPassword: AccountType['password'] }) => resolve({
+		accountId,
+		password,
+		oldPassword,
 	});
 });

@@ -1,34 +1,35 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import * as accountCommActions from '../actions/accountComm';
 import * as netActions from '../actions/net';
 import { RootStateType } from '../reducers';
-import { AccountType } from '../reducers/account';
+import { AccountType, Token } from '../reducers/account';
 
-const AccountInfo = ({ account, onTokenSubmit }: ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => {
+const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithToken }: ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => {
+	useEffect(() => {
+		const accountToken = window.localStorage.getItem('AccountToken');
+		if (accountToken) {
+			loginWithToken(accountToken);
+		}
+	}, []);
 	const [ accountFieldsVisible, setAccountFieldsVisible ] = useState(false);
+	const token = window.localStorage.getItem('AccountToken');
+	const clearToken = () => {
+		window.localStorage.removeItem('AccountToken');
+		window.location.reload(true);
+	};
 
 	if (!account) {
 		return (
 			<div>
-				<form onSubmit={onTokenSubmit}>
-					<label htmlFor={'accountToken'}>Token: </label>
-					<input id={'accountToken'} name={'token'} /><br />
-					<button
-						type={'submit'}
-						onClick={() => setAccountFieldsVisible(false)}
-					>
-						Login with token
-					</button>
-				</form>
 				{accountFieldsVisible
-					? (<form>
+					? (<form onSubmit={onLoginSubmit}>
 						<label htmlFor={'accountLoginUsername'}>Username: </label>
-						<input id={'accountLoginUsername'} /><br />
+						<input id={'accountLoginUsername'} name={'username'} /><br />
 						<label htmlFor={'accountLoginPassword'}>Password: </label>
-						<input id={'accountLoginPassword'} /><br />
+						<input id={'accountLoginPassword'} type={'password'} name={'password'} /><br />
 						<button>Log in</button>
 						<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
 					</form>)
@@ -41,19 +42,28 @@ const AccountInfo = ({ account, onTokenSubmit }: ReturnType<typeof mapStoreToPro
 	return (
 		<div>
 			<h3>Account information</h3>
+			<button onClick={clearToken}>Clear token</button>
 			{account.username
-				? (<button>Log out</button>)
-				: (
-					accountFieldsVisible
-						? <form>
+				? (<div>
+					Username: {account.username}<br />
+					<button disabled>Change password</button>
+				</div>
+				)
+				: (<div>
+					Temporary account.<br />
+					{accountFieldsVisible && (token !== null)
+						? <form onSubmit={onCreateAccountSubmit}>
 							<label htmlFor={'accountCreationUsername'}>Username: </label>
-							<input id={'accountCreationUsername'} /><br />
+							<input id={'accountCreationUsername'} name={'username'} /><br />
 							<label htmlFor={'accountCreationPassword'}>Password: </label>
-							<input id={'accountCreationPassword'} /><br />
+							<input id={'accountCreationPassword'} type={'password'} name={'password'} /><br />
+							<input type={'hidden'} name={'token'} value={token} />
 							<button>Create account</button>
 							<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
 						</form>
 						: <button onClick={() => setAccountFieldsVisible(true)}>Create an account</button>
+					}
+					</div>
 				)
 			}
 		</div>
@@ -61,14 +71,29 @@ const AccountInfo = ({ account, onTokenSubmit }: ReturnType<typeof mapStoreToPro
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-	onTokenSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+	onCreateAccountSubmit: (event: React.FormEvent<HTMLFormElement>) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
+		const username = data.get('username');
+		const password = data.get('password');
 		const token = data.get('token');
-		if (typeof token === 'string') {
-			dispatch(netActions.send(accountCommActions.loginWithToken({ token })));
+		if (username && password && token && (typeof username === 'string') && (typeof password === 'string') && (typeof token === 'string')) {
+			dispatch(netActions.send(accountCommActions.createAccountWithToken({ username, password, token })));
 		}
+	},
+	onLoginSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+		event.stopPropagation();
+		event.preventDefault();
+		const data = new FormData(event.currentTarget);
+		const username = data.get('username');
+		const password = data.get('password');
+		if (username && password && (typeof username === 'string') && (typeof password === 'string')) {
+			dispatch(netActions.send(accountCommActions.login({ username, password })));
+		}
+	},
+	loginWithToken: (token: Token) => {
+		dispatch(netActions.send(accountCommActions.loginWithToken({ token })));
 	},
 });
 

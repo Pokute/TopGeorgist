@@ -25,6 +25,8 @@ export const accountActionList = [
 	accountActions.setPlayerTgoId,
 	accountActions.createToken,
 	accountActions.deleteToken,
+	accountActions.upgradeAccount,
+	accountActions.changePassword,
 ];
 
 type AccountAction = ActionType<typeof accountActions>;
@@ -50,6 +52,24 @@ export default (state: AccountType, action: AnyAction): AccountType => {
 			return {
 				...state,
 				tokens: state.tokens.filter(token => token !== action.payload.token)
+			};
+		case getType(accountActions.upgradeAccount):
+			if (state.username !== '') {
+				// Already upgraded.
+				return state;
+			}
+			return {
+				...state,
+				username: action.payload.username,
+				password: action.payload.password,
+			};
+		case getType(accountActions.changePassword):
+			if (state.password !== action.payload.oldPassword) {
+				return state;
+			}
+			return {
+				...state,
+				password: action.payload.password,
 			};
 		default:
 			return state;

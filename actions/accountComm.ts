@@ -14,3 +14,11 @@ export const loginWithToken = createAction('ACCOUNT_LOGIN_WITH_TOKEN', resolve =
 		token,
 	});
 });
+
+export const createAccountWithToken = createAction('ACCOUNT_CREATE_WITH_TOKEN', resolve => {
+	return ({ username, password, token }: { username: AccountType['username'], password: AccountType['password'], token: Token }) => resolve({
+		username,
+		password,
+		token,
+	});
+});
