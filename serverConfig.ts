@@ -1,3 +1,7 @@
-global.isServer = true;
+const serverConfig = global.isServer
+	? {
+		serverSalt: 'TGSSalt-'
+	}
+	: {};
 
-export default {};
+export default serverConfig;

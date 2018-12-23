@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Server as WSS } from 'ws';
 
-import './serverConfig';
+import './serverInit';
 import config from './config';
 import { store } from './store';
 import createItemTypes from './types';

@@ -1,0 +1,1 @@
+global.isServer = true;

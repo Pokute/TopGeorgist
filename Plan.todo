@@ -94,9 +94,9 @@ Milestone 3:
 	☐ Client automatic reconnect.
 	✔ Client resume player name. @done(18-12-22 11:20)
 	✔ Client side token persistence. @done(18-12-22 11:20)
-	☐ Password salting.
+	✔ Password salting. @done(18-12-23 03:55)
 		✔ Client-side. @done(18-12-22 23:15)
-		☐ Server-side.
+		✔ Server-side. @done(18-12-23 03:55)
 	☐ Hot reload?
 	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
 	☐ Eslint to support class arrow methods.
@@ -130,6 +130,8 @@ Milestone 4:
 	☐ Server hosting.
 		☐ Where?
 	☐ Password changing.
+	☐ Save serverside password salt more securely.
+	☐ Consider using dotenv https://github.com/motdotla/dotenv
 
 Stories:
 

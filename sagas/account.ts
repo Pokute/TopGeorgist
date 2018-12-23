@@ -21,7 +21,7 @@ const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, u
 	}
 
 	const addAccountAction = accountsActions.add({
-		clientSaltedPassword: password,
+		clientAndServerSaltedPassword: password,
 		playerTgoId: '',
 		username,
 		tokens: [],
@@ -50,7 +50,10 @@ const handleAccountLogin = function* ({ payload: { clientId, username, clientSal
 	if (!username || !clientSaltedPassword) return;
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
-	const foundAccount = Object.values(state.accounts).find(account => account.username === username && account.clientSaltedPassword === clientSaltedPassword);
+	const foundAccount = Object.values(state.accounts)
+		.find(account =>
+			account.username === username
+			&& account.clientAndServerSaltedPassword === accountActions.serverSaltPassword(username, clientSaltedPassword));
 
 	if (!foundAccount) return;
 
@@ -117,7 +120,26 @@ const handleAccountCreateWithToken = function* ({ payload: { username, clientSal
 	yield put(accountActions.upgradeAccount({
 		accountId: foundAccount.accountId,
 		username,
-		clientSaltedPassword: clientSaltedPassword,
+		clientSaltedPassword,
+	}));
+}
+
+// This method practically only finds the accountId for the reducer.
+const handleRequestChangePasswordClientSalted = function* ({ payload: { username, clientSaltedPassword, clientSaltedOldPassword }}: ActionType<typeof accountCommActions.requestChangePasswordClientSalted>) {
+	if (!global.isServer) return;
+
+	const state: ReturnType<typeof topGeorgist> = yield select();
+	const foundAccount = Object.values(state.accounts).find(account => account.username === username);
+
+	if (!foundAccount) {
+		return;
+	}
+
+	yield put(accountActions.changePassword({
+		accountId: foundAccount.accountId,
+		username,
+		clientSaltedPassword,
+		clientSaltedOldPassword,
 	}));
 }
 
@@ -126,6 +148,7 @@ const playerListener = function* () {
 	yield takeEvery(`${getType(accountCommActions.loginClientSalted)}_WITH_CLIENT`, handleAccountLogin);
 	yield takeEvery(`${getType(accountCommActions.loginWithToken)}_WITH_CLIENT`, handleAccountLoginWithToken);
 	yield takeEvery(getType(accountCommActions.createAccountWithTokenClientSalted), handleAccountCreateWithToken);
+	yield takeEvery(getType(accountCommActions.requestChangePasswordClientSalted), handleRequestChangePasswordClientSalted);
 };
 
 export default playerListener;
