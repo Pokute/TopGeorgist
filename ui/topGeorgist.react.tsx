@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';
-import topGeorgist, { RootStateType } from '../reducers';
+import { RootStateType } from '../reducers';
+import AccountInfo from './AccountInfo';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>
@@ -14,12 +15,7 @@ const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 				key={v.viewId}
 			/>
 		))}
-		<button
-			onClick={() => { console.log('Arr!'); }}
-			type={'button'}
-		>
-			{'Arr!'}
-		</button>
+		<AccountInfo />
 		<PlayerContainer />
 		<Inventory ownerTgoId={props.defaultPlayerTgoId} />
 	</div>

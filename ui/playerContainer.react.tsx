@@ -5,17 +5,23 @@ import CurrentPlayerInfo from './currentPlayerInfo.react';
 import CreatePlayerForm from './createPlayerForm.react';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
+import Category from './Category';
 
 export interface propTypes {
 	defaultPlayerTgoId: TgoId,
 }
 
 const PlayerContainer = (props: propTypes) => {
-	if (props.defaultPlayerTgoId) {
-		return <CurrentPlayerInfo />;
-	}
-
-	return <CreatePlayerForm />;
+	return (
+		<Category
+			title={'Player'}
+		>
+			{props.defaultPlayerTgoId
+				? <CurrentPlayerInfo />
+				: <CreatePlayerForm />
+			}
+		</Category>
+	);
 };
 
 const mapStoreToProps = (store: RootStateType) => ({
