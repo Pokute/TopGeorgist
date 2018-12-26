@@ -8,6 +8,7 @@ import { ViewType } from '../reducers/view';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType } from '../reducers/map';
+import Category from './Category';
 
 export interface Type {
 	view: ViewType,
@@ -35,8 +36,9 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 					props.map,
 				)}
 			/>
-			<div>
-				{`Player calories: ${displayedCalories}`}
+			<Category
+				title={'Visitables'}
+			>
 				{props.visitables.map(v => (
 					<VisitableUI
 						key={v.label}
@@ -44,7 +46,7 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 						visitor={props.player}
 					/>
 				))}
-			</div>
+			</Category>
 		</div>
 	);
 };

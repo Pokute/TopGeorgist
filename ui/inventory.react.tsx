@@ -8,6 +8,7 @@ import { InventoryItem } from '../reducers/inventory';
 import { ItemTypesState } from '../reducers/itemTypes';
 import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
+import Category from './Category';
 
 export interface Type {
 	// inventory: ReadonlyArray<InventoryItem>,
@@ -18,7 +19,9 @@ export interface Type {
 
 const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => props.ownerTgoId && props.inventory ?
 (
-	<>
+	<Category
+		title={'Inventory'}
+	>
 		{props.inventory.map(i => (
 			<div
 				key={i.typeId}
@@ -56,7 +59,7 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 				}
 			</div>
 		))}
-	</>
+	</Category>
 )
 : null;
 
