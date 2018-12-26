@@ -43,7 +43,6 @@ const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithT
 	} else {
 		innerContent = (
 			<div>
-				<h3>Account information</h3>
 				<button onClick={clearToken}>Clear token</button>
 				{account.username
 					? (<div>
