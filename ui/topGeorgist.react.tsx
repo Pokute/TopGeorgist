@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+
+import AccountInfo from './AccountInfo';
+import ConnectionInfo from './ConnectionInfo';
 import PlayerContainer from './playerContainer.react';
 import View from './view.react';
 import Inventory from './inventory.react';
 import { RootStateType } from '../reducers';
-import AccountInfo from './AccountInfo';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>
@@ -15,6 +17,7 @@ const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 				key={v.viewId}
 			/>
 		))}
+		<ConnectionInfo />
 		<AccountInfo />
 		<PlayerContainer />
 		<Inventory ownerTgoId={props.defaultPlayerTgoId} />

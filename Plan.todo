@@ -190,9 +190,15 @@ Tasks vs Goals:
 	Alternative:
 		Have ONLY goals.
 
-Clients, accounts , players and controlleds
+Connections, Clients, accounts , players and controlleds
+
+	Connection
+		Websocket connection from client to server.
+		Created as needed
+		Creates new when disconnected (reconnect)
 
 	Clients
+		Web browser with localstorage.
 		Saves an account token locally on browser.
 		(Later) Remembers current Controlled since those can be switched.
 

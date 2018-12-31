@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import accounts, { AccountsState } from './accounts';
+import connection, { ConnectionStateType } from './connection';
 import clients, { ClientsState } from './clients';
 import defaults, { type as DefaultsType } from './defaults';
 import frame, { FrameStateType } from './frame';
@@ -13,6 +14,7 @@ import views, { ViewsState } from './views';
 
 export interface RootStateType {
 	accounts: AccountsState,
+	connection: ConnectionStateType,
 	clients: ClientsState,
 	defaults: DefaultsType,
 	frame: FrameStateType,
@@ -27,6 +29,7 @@ export interface RootStateType {
 
 const topGeorgist = combineReducers({
 	accounts,
+	connection,
 	clients,
 	defaults,
 	frame,
