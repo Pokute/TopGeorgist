@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Category from "./Category";
 import { RootStateType } from "../reducers";
 
-const ConnectionInfo = ({ connection }: ReturnType<typeof mapStoreToProps>) => (
+const ConnectionInfo = ({ serverConnection: connection }: ReturnType<typeof mapStoreToProps>) => (
 	<Category
 		title={'Connection'}
 	>
@@ -19,7 +19,7 @@ const ConnectionInfo = ({ connection }: ReturnType<typeof mapStoreToProps>) => (
 );
 
 const mapStoreToProps = (store: RootStateType) => ({
-	connection: store.connection,
+	serverConnection: store.serverConnection,
 });
 
 export default connect(mapStoreToProps)(ConnectionInfo);

@@ -11,7 +11,7 @@ import * as tgoActions from '../actions/tgo';
 import * as tgosActions from '../actions/tgos';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
-	const clienToServerSocket = ((yield select()) as RootStateType).connection.websocket;
+	const clienToServerSocket = ((yield select()) as RootStateType).serverConnection.websocket;
 	if (!clienToServerSocket) {
 		return;
 	}

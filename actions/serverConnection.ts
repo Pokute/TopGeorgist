@@ -1,13 +1,13 @@
 import { createAction } from 'typesafe-actions';
 
-import { ConnectionStateType } from '../reducers/connection';
+import { ServerConnectionStateType } from '../reducers/serverConnection';
 
 export const createWebsocket = createAction('CONNECTION_CREATE_WEBSOCKET', (resolve) => {
 	return () => resolve({ });
 });
 
 export const setWebsocket = createAction('CONNECTION_SET_WEBSOCKET', (resolve) => {
-	return (websocket: ConnectionStateType['websocket']) => resolve({
+	return (websocket: ServerConnectionStateType['websocket']) => resolve({
 		websocket,
 	});
 });

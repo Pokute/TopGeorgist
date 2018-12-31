@@ -3,7 +3,7 @@ import { takeEvery, put, select, call, take } from 'redux-saga/effects';
 import WebSocketWrapper from 'ws-wrapper';
 
 import config from '../config';
-import * as connectionActions from '../actions/connection';
+import * as connectionActions from '../actions/serverConnection';
 import * as netActions from '../actions/net';
 import { RootStateType } from '../reducers';
 import { eventChannel, END } from 'redux-saga';
@@ -14,9 +14,9 @@ const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions
 
 	const state: RootStateType = yield select();
 
-	if (state.connection.websocket) {
+	if (state.serverConnection.websocket) {
 		// Disconnect old.
-		state.connection.websocket.disconnect();
+		state.serverConnection.websocket.disconnect();
 	}
 
 	yield put(connectionActions.setWebsocket(clientToServerWS));
@@ -47,7 +47,8 @@ const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<type
 			yield put(foo)
 		}
 	} finally {
-
+		yield put(connectionActions.setWebsocket(undefined));
+		yield put(connectionActions.createWebsocket());
 	}
 };
 

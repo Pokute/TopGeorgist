@@ -2,7 +2,7 @@ import account from './account';
 import buildingGovernment from './buildings/government';
 import buildingRentOffice from './buildings/rentOffice';
 import client from './client';
-import connection from './connection';
+import serverConnection from './ServerConnection';
 import consumable from './consumable';
 import frame from './frame';
 import net from './net';
@@ -18,7 +18,7 @@ const rootSaga = function* () {
 	yield* buildingGovernment();
 	yield* buildingRentOffice();
 	yield* client();
-	yield* connection();
+	yield* serverConnection();
 	yield* consumable();
 	yield* frame();
 	yield* net();
