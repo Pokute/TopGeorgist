@@ -14,12 +14,6 @@ const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 				key={v.viewId}
 			/>
 		))}
-		<button
-			onClick={() => { console.log('Arr!'); }}
-			type={'button'}
-		>
-			{'Arr!'}
-		</button>
 		<PlayerContainer />
 		<Inventory ownerTgoId={props.defaultPlayerTgoId} />
 	</div>
