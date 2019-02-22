@@ -84,10 +84,8 @@
   "scripts": {
     "compile-local": "./node_modules/typescript/bin/tsc --esModuleInterop",
     "build": "webpack --display-error-details --config webpack.config.js",
-    "butler-push": "& $env:APPDATA\\itch\\bin\\butler.exe push dist pickled_pokute/top-georgist",
-    "server": "npm run compile-local && supervisor -e js,mjs -i node_modules,ui --inspect-brk -- -r esm  --experimental-modules compiled/server.js",
-    "server-min": "npm run compile-local && node --inspect -r esm -r ts-node/register compiled/server.js",
-    "express": "npm run compile-local && node -r esm compiled/expressServer.js",
+    "server-min": "node -r esm -r ts-node/register server.ts",
+    "webserver-min": "node -r esm -r ts-node/register expressServer.ts",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
