@@ -149,6 +149,24 @@ const GameRenderer: React.SFC<Props> = ({
 }) => {
 	const canvas = useRef<HTMLCanvasElement>();
 
+	const onMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+		if (event.button == 2) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	}
+
+	const onMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
+		if (event.button == 2) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	}
+
+	const onContextMenu = (event: React.MouseEvent<HTMLCanvasElement>) => {
+		event.preventDefault();
+	}
+
 	if (canvas.current) {
 		renderCanvas({
 			minTile: minTile,
@@ -167,6 +185,9 @@ const GameRenderer: React.SFC<Props> = ({
 			width={1000}
 			height={600}
 			onClick={onClick}
+			onMouseDown={onMouseDown}
+			onMouseUp={onMouseUp}
+			onContextMenu={onContextMenu}
 		/>
 	);
 };
