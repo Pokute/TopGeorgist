@@ -36,8 +36,23 @@ export const hasComponentGovernmentBuilding = (tgo: TgoNone & Partial<ComponentG
 	tgo && (tgo.governmentBuilding !== undefined && tgo.governmentBuilding === true)
 
 export interface ComponentLeaderBoard {
-	readonly leaderBoard: true
+	readonly leaderBoard: true,
 }
 
 export const hasComponentLeaderBoard = (tgo: TgoNone & Partial<ComponentLeaderBoard>) : tgo is TgoNone & ComponentLeaderBoard =>
 	tgo && (tgo.leaderBoard !== undefined && tgo.leaderBoard === true)
+
+export interface ComponentMapGridOccipier {
+	readonly mapGridOccupier: true,
+}
+
+export const hasComponentMapGridOccipier = (tgo: TgoNone & Partial<ComponentMapGridOccipier>) : tgo is TgoNone & ComponentMapGridOccipier =>
+	tgo && (tgo.mapGridOccupier !== undefined && tgo.mapGridOccupier === true)
+
+export interface ComponentPlayer {
+		readonly player: true,
+	}
+	
+	export const hasComponentPlayer = (tgo: TgoNone & Partial<ComponentPlayer>) : tgo is TgoNone & ComponentPlayer =>
+		tgo && (tgo.player !== undefined && tgo.player === true)
+	

@@ -7,7 +7,7 @@ import { transaction } from '../actions/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
-import { hasComponentPosition } from '../components_new';
+import { hasComponentPosition, hasComponentMapGridOccipier } from '../components_new';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();
@@ -18,12 +18,11 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 		return false;
 	const plantPosition = actorTgo.position;
 
-	const freePlot = !Object.values(s.tgos)
+	const freePlot = Object.values(s.tgos)
 		.filter(tgo => (
 			hasComponentPosition(tgo) && tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y)
 		))
-		.map(tgo => s.itemTypes[tgo.typeId])
-		.some(type => type.building !== undefined && type.building);
+		.every(tgo => !hasComponentMapGridOccipier(tgo))
 	if (!freePlot) return false;
 
 	const transactionResult = yield put(transaction({
@@ -41,7 +40,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 	if (!plantableType.growsIntoTypeId) return false;
 
 	const planting = tgosActions.add({
-		typeId: 'plant',
+		mapGridOccupier: true,
 		position: plantPosition,
 		color: 'orange',
 		plantTypeId: plantableType.growsIntoTypeId,

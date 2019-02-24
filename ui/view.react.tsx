@@ -61,7 +61,6 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 			Object.values(state.tgos)
 				.filter(tgo => hasComponentPosition(tgo) && (tgo.position.x === player.position.x)
 					&& (tgo.position.y === player.position.y))
-				.map(tgo => ({ ...tgo, type: state.itemTypes[tgo.typeId] }))
 				.filter(tgo => tgo.visitable)
 			: [],
 		center: (followedTgo && hasComponentPosition(followedTgo))

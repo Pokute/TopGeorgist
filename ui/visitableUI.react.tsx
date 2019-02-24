@@ -9,7 +9,7 @@ import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
 import { Action } from '../components';
 import ActionUI from './action';
-import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding } from '../components_new';
+import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer } from '../components_new';
 
 export interface Type {
 	visitable: TgoType,
@@ -62,7 +62,7 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 	return ({
 		leaderBoard: hasComponentLeaderBoard(passedProps.visitable)
 			? Object.values(state.tgos)
-				.filter(tgo => tgo.typeId === 'player')
+				.filter(hasComponentPlayer)
 				.map(tgo => ({
 					label: tgo.label,
 					money: getMoney(tgo),

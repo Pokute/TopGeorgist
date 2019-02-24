@@ -14,13 +14,14 @@ import { TgoType } from '../reducers/tgo';
 import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
 import { setPosition } from '../actions/tgo';
+import { hasComponentPlayer } from '../components_new';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!global.isServer) return;
 	console.log('Received playerCreateRequest ', label);
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	const hasNameConflict = Object.values(state.tgos)
-		.some((tgo: TgoType) => (tgo.typeId === 'player') && (tgo.label === label));
+		.some((tgo: TgoType) => (hasComponentPlayer(tgo) && (tgo.label === label)));
 	if (hasNameConflict) return;
 
 	if (!state.accounts[accountId]) {

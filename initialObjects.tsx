@@ -3,7 +3,7 @@ import { add as tileSetAdd } from './actions/tileSets';
 import { Parameter } from './ui/paramInput';
 
 export const createPlayerAction = () => tgosActions.add({
-	typeId: 'player',
+	player: true,
 	components: [
 		'selfMoving',
 		['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
@@ -30,7 +30,7 @@ export const createPlayerAction = () => tgosActions.add({
 
 export const storeGeneralAction = () => tgosActions.add({
 	label: 'General Store',
-	typeId: 'building',
+	mapGridOccupier: true,
 	position: { x: 12, y: 12 },
 	color: 'pink',
 	inventory: [
@@ -85,7 +85,7 @@ export const storeGeneralAction = () => tgosActions.add({
 export const rentOfficeAction = () => tgosActions.add({
 	label: 'Rent office',
 	rentOffice: true,
-	typeId: 'building',
+	mapGridOccupier: true,
 	position: { x: 9, y: 8 },
 	color: 'pink',
 	inventory: [
@@ -122,7 +122,7 @@ export const rentOfficeAction = () => tgosActions.add({
 export const GovernmentAction = () => tgosActions.add({
 	label: 'Government',
 	governmentBuilding: true,
-	typeId: 'building',
+	mapGridOccupier: true,
 	position: { x: 7, y: 11 },
 	color: 'pink',
 	inventory: [
@@ -151,7 +151,7 @@ export const GovernmentAction = () => tgosActions.add({
 });
 
 export const leaderBoardAction = () => tgosActions.add({
-	typeId: 'building',
+	mapGridOccupier: true,
 	label: 'Leaderboard',
 	leaderBoard: true,
 	position: { x: 4, y: 5 },

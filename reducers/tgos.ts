@@ -7,6 +7,7 @@ import * as inventoryActions from '../actions/inventory';
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
 import { InventoryActionType } from './inventory';
+import { hasComponentPlayer } from '../components_new';
 
 export type TgosState = {
 	[extraProps: string]: TgoType;
@@ -29,7 +30,7 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 			return {
 				...state,
 				[action.payload.tgo.tgoId]: {
-					...(action.payload.tgo.typeId === 'player' ? playerInitialState : {}),
+					...(hasComponentPlayer(action.payload.tgo) ? playerInitialState : {}),
 					...tgoInitialState,
 					...action.payload.tgo,
 				},
