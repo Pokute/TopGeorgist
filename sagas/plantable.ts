@@ -7,17 +7,20 @@ import { transaction } from '../actions/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
+import { hasComponentPosition } from '../components_new';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
 	const plantableType = s.itemTypes[targetTypeId];
 
+	if (!hasComponentPosition(actorTgo))
+		return false;
 	const plantPosition = actorTgo.position;
 
 	const freePlot = !Object.values(s.tgos)
 		.filter(tgo => (
-			tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y)
+			hasComponentPosition(tgo) && tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y)
 		))
 		.map(tgo => s.itemTypes[tgo.typeId])
 		.some(type => type.building !== undefined && type.building);
@@ -84,6 +87,8 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
 	const visitableTgo = s.tgos[targetTgoId];
+	if (!hasComponentPosition(actorTgo) || (!hasComponentPosition(visitableTgo)))
+		return false;
 
 	if (!actorTgo || !visitableTgo.inventory || !visitableTgo.plantTypeId) return false;
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;

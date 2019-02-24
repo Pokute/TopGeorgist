@@ -6,11 +6,14 @@ import * as inventoryActions from '../../actions/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
+import { hasComponentPosition } from '../../components_new';
 
 const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
+	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
+		return false;
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
@@ -28,6 +31,8 @@ const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
+	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
+		return false;
 
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 

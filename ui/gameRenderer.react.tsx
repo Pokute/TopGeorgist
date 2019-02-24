@@ -9,6 +9,8 @@ import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
 import { MapType } from '../reducers/map';
+import { hasComponentPosition, ComponentPosition } from '../components_new';
+import { TgoType } from '../reducers/tgo';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number }, tile: TileType, tileSize: number) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
@@ -73,13 +75,13 @@ const renderCanvasMap = ({
 const renderCanvasTgos = ({
 	minTile,
 	maxTile,
-	tgos,
+	tgosState: TgosState,
 	canvas,
 	tileSize,
 }:{
 	minTile: { x: number, y: number },
 	maxTile: { x: number, y: number },
-	tgos: TgosState,
+	tgosState: TgosState,
 	canvas: HTMLCanvasElement,
 	tileSize: number,
 }) => {
@@ -90,7 +92,9 @@ const renderCanvasTgos = ({
 	if (!tryCanvas) return;
 	const ctx = tryCanvas as CanvasRenderingContext2D;
 
-	Object.values(tgos).forEach((tgo) => {
+	const onlyTgosWithPosition = (TgosState: TgoType[]): (TgoType & ComponentPosition)[] => TgosState.filter(hasComponentPosition) as (TgoType & ComponentPosition)[];
+
+	onlyTgosWithPosition(Object.values(TgosState)).forEach((tgo) => {
 		const pos = {
 			x: (tgo.position.x - minTile.x + 0.5)*tileSize,
 			y: (tgo.position.y - minTile.y + 0.5)*tileSize,
@@ -110,14 +114,14 @@ const renderCanvas = ({
 	minTile,
 	maxTile,
 	map,
-	tgos,
+	tgosState,
 	tileSet,
 	canvas,
 }:{
 	minTile: { x: number, y: number },
 	maxTile: { x: number, y: number },
 	map: MapType,
-	tgos: TgosState,
+	tgosState: TgosState,
 	tileSet: TileSetType,
 	canvas: HTMLCanvasElement,
 }) => {
@@ -126,7 +130,7 @@ const renderCanvas = ({
 
 	const ctx = canvas.getContext('2d');
 	renderCanvasMap({ minTile, maxTile, map, tileSet, canvas });
-	renderCanvasTgos({ minTile, maxTile, tgos, canvas, tileSize: map.tileSize });
+	renderCanvasTgos({ minTile, maxTile, tgosState, canvas, tileSize: map.tileSize });
 };
 
 export interface Type {
@@ -143,7 +147,7 @@ const GameRenderer: React.SFC<Props> = ({
 	map,
 	minTile,
 	maxTile,
-	tgos,
+	tgosState,
 	tileSet,
 	onClick,
 }) => {
@@ -172,7 +176,7 @@ const GameRenderer: React.SFC<Props> = ({
 			minTile: minTile,
 			maxTile: maxTile,
 			map: map,
-			tgos: tgos,
+			tgosState,
 			tileSet: tileSet,
 			canvas: canvas.current
 		});
@@ -193,7 +197,7 @@ const GameRenderer: React.SFC<Props> = ({
 };
 
 const mapStoreToProps = (store: RootStateType) => ({
-	tgos: store.tgos,
+	tgosState: store.tgos,
 	tileSet: store.tileSets[store.map.tileSetId],
 });
 

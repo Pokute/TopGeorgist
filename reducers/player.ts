@@ -2,9 +2,10 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as playerActions from '../actions/player'
 import { TgoInitialType } from './tgo';
+import { ComponentMoveTarget } from '../components_new';
 
 export interface PlayerType {
-	moveTarget?: TgoInitialType['position'],
+	moveTarget?: ComponentMoveTarget['moveTarget'],
 };
 
 export const initialState: PlayerType = {

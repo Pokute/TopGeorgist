@@ -6,6 +6,7 @@ import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueTy
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
+import { TgoNone, ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard } from '../components_new';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -30,11 +31,16 @@ export type ComponentProps = {
 };
 export type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
 
-export interface TgoInitialType {
-	readonly position: {
-		readonly x: number,
-		readonly y: number,
-	},
+export type TgoAll = TgoNone & (
+	{}
+	| ComponentPosition
+	| ComponentMoveTarget // Removeme
+	| ComponentRentOffice
+	| ComponentGovernmentBuilding
+	| ComponentLeaderBoard
+)
+
+export interface TgoInitialTypes {
 	readonly label?: string,
 	readonly color: string,
 	readonly renderer?: any,
@@ -47,12 +53,16 @@ export interface TgoInitialType {
 		label: string,
 		actions?: Action[],
 	},
-	readonly [extraProp: string]: any,
-};
+}
 
-export interface TgoType extends TgoInitialType {
+export type TgoInitialType = TgoAll & TgoInitialTypes;
+
+export type TgoType = TgoInitialType & {
 	readonly tgoId: TgoId,
 };
+// export interface TgoAll extends TgoNone, ComponentPosition {
+
+// }
 
 export const initialState:TgoType = {
 	tgoId: '',
