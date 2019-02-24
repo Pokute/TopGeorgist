@@ -15,3 +15,11 @@ export const setWebsocket = createAction('CONNECTION_SET_WEBSOCKET', (resolve) =
 export const message = createAction('CONNECTION_MESSAGE', (resolve) => {
 	return (message: { data: any, event: MessageEvent }) => resolve(message);
 });
+
+export const resetReconnectionDelay = createAction('CONNECTION_DELAY_RESET', (resolve) => {
+	return () => resolve();
+});
+
+export const doubleReconnectionDelay = createAction('CONNECTION_DELAY_DOUBLE', (resolve) => {
+	return () => resolve();
+});

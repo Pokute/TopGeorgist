@@ -132,6 +132,7 @@ Milestone 4:
 	☐ Password changing.
 	☐ Save serverside password salt more securely.
 	☐ Consider using dotenv https://github.com/motdotla/dotenv
+	☐ Reset reconnection timer on window focus / click event.
 
 Stories:
 

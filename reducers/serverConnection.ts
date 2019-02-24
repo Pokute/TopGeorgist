@@ -7,9 +7,11 @@ import * as serverConnectionActions from '../actions/serverConnection';
 
 export interface ServerConnectionStateType {
 	websocket?: WebSocketWrapper,
+	reconnectionDelay: number,
 };
 
 const initialState: ServerConnectionStateType = {
+	reconnectionDelay: 125,
 };
 
 export type ServerConnectionActionType = ActionType<typeof serverConnectionActions>;
@@ -20,6 +22,16 @@ export default (state: ServerConnectionStateType = initialState, action: ServerC
 			return {
 				...state,
 				websocket: action.payload.websocket
+			};
+		case getType(serverConnectionActions.resetReconnectionDelay):
+			return {
+				...state,
+				reconnectionDelay: initialState.reconnectionDelay,
+			};
+		case getType(serverConnectionActions.doubleReconnectionDelay):
+			return {
+				...state,
+				reconnectionDelay: state.reconnectionDelay * 2,
 			};
 		default:
 			return state;

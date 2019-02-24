@@ -1,12 +1,12 @@
 import { ActionType, getType } from 'typesafe-actions';
-import { takeEvery, put, select, call, take } from 'redux-saga/effects';
+import { eventChannel, END, delay } from 'redux-saga';
+import { takeEvery, put, select, call, take, fork } from 'redux-saga/effects';
 import WebSocketWrapper from 'ws-wrapper';
 
 import config from '../config';
 import * as connectionActions from '../actions/serverConnection';
 import * as netActions from '../actions/net';
 import { RootStateType } from '../reducers';
-import { eventChannel, END } from 'redux-saga';
 
 const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions.createWebsocket>) {
 	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);
@@ -32,7 +32,15 @@ const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<type
 			emitter(connectionActions.message({ data, event }));
 		});
 
+		websocket.on('open', () => {
+			console.log('Opened conection');
+		})
+
 		websocket.on('close', () => {
+			emitter(END);
+		});
+
+		websocket.on('error', () => {
 			emitter(END);
 		});
 
@@ -48,7 +56,6 @@ const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<type
 		}
 	} finally {
 		yield put(connectionActions.setWebsocket(undefined));
-		yield put(connectionActions.createWebsocket());
 	}
 };
 
@@ -56,15 +63,36 @@ const listenMessage = function* ({ payload: { data: jsonData } }: ActionType<typ
 	const data = JSON.parse(jsonData);
 
 	yield put(netActions.receiveMessage(data));
-}
+};
 
-const netListener = function* () {
+const reconnectionSaga = function* () {
+	yield put(connectionActions.createWebsocket());
+
+	while (true) {
+		// const wsOrDelayTimeout = yield race({
+		// 	take(getType(connectionActions.setWebsocket)),
+		// 	delay(currentDelay);
+		// });
+		const ws = yield take(getType(connectionActions.setWebsocket));
+		if (ws.payload.websocket) {
+			yield put(connectionActions.resetReconnectionDelay());
+		} else {
+			yield put(connectionActions.createWebsocket());
+			const currentDelay = ((yield select()) as RootStateType).serverConnection.reconnectionDelay;
+			yield delay(currentDelay);
+			yield put(connectionActions.doubleReconnectionDelay());
+		}
+	}
+};
+
+const serverConnectionListener = function* () {
 	yield takeEvery(getType(connectionActions.createWebsocket), listenCreateWebsocket);
 	yield takeEvery(getType(connectionActions.setWebsocket), listenSetWebsocket);
 	yield takeEvery(getType(connectionActions.message), listenMessage);
 	if (!global.isServer) {
-		yield put(connectionActions.createWebsocket());
+		yield fork(reconnectionSaga);
+		// yield put(connectionActions.createWebsocket());
 	}
 };
 
-export default netListener;
+export default serverConnectionListener;
