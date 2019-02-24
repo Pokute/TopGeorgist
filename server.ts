@@ -1,4 +1,5 @@
 /// <reference path="./global.d.ts" />
+/// <reference path="./ws-wrapper.d.ts" />
 import { v4 as uuidv4 } from 'uuid';
 import { Server as WSS } from 'ws';
 
