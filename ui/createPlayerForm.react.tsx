@@ -2,14 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import * as playerActions from '../actions/player';
-import * as netActions from '../actions/net';
 import { Dispatch } from 'redux';
 
 const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => (
 	<form
 		onSubmit={onSubmit}
 	>
+		<label htmlFor={'playerCreationName'}>Name: </label>
 		<input
+			id={'playerCreationName'}
 			type="text"
 			name="playerLabel"
 		/>

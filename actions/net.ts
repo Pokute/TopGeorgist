@@ -6,3 +6,9 @@ export const send = createAction('NET_SEND', resolve => {
 		sendAction,
 	});
 });
+
+export const receiveMessage = createAction('NET_MESSAGE', resolve => {
+	return (messageData: any) => resolve({
+		messageData,
+	});
+});

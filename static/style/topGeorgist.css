@@ -1,3 +1,12 @@
+.category {
+	border-style: solid;
+	border-color: black;
+}
+
+.category .category-title {
+	font-size: 1.5em;
+}
+
 .progressBar {
 	display: flex;
 	flex-direction: row;

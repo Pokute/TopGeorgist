@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import * as accountCommActions from '../actions/accountComm';
+import Category from './Category';
 import * as netActions from '../actions/net';
 import { RootStateType } from '../reducers';
 import { Token } from '../reducers/account';
@@ -21,8 +22,10 @@ const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithT
 		window.location.reload(true);
 	};
 
+	let innerContent;
+
 	if (!account) {
-		return (
+		innerContent = (
 			<div>
 				{accountFieldsVisible
 					? (<form onSubmit={onLoginSubmit}>
@@ -37,36 +40,43 @@ const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithT
 				}
 			</div>
 		);
+	} else {
+		innerContent = (
+			<div>
+				<button onClick={clearToken}>Clear token</button>
+				{account.username
+					? (<div>
+						Username: {account.username}<br />
+						<button disabled>Change password</button>
+					</div>
+					)
+					: (<div>
+						Temporary account.<br />
+						{accountFieldsVisible && (token !== null)
+							? <form onSubmit={onCreateAccountSubmit}>
+								<label htmlFor={'accountCreationUsername'}>Username: </label>
+								<input id={'accountCreationUsername'} name={'username'} /><br />
+								<label htmlFor={'accountCreationPassword'}>Password: </label>
+								<input id={'accountCreationPassword'} type={'password'} name={'password'} /><br />
+								<input type={'hidden'} name={'token'} value={token} />
+								<button>Create account</button>
+								<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
+							</form>
+							: <button onClick={() => setAccountFieldsVisible(true)}>Create an account</button>
+						}
+						</div>
+					)
+				}
+			</div>
+		);
 	}
 
 	return (
-		<div>
-			<h3>Account information</h3>
-			<button onClick={clearToken}>Clear token</button>
-			{account.username
-				? (<div>
-					Username: {account.username}<br />
-					<button disabled>Change password</button>
-				</div>
-				)
-				: (<div>
-					Temporary account.<br />
-					{accountFieldsVisible && (token !== null)
-						? <form onSubmit={onCreateAccountSubmit}>
-							<label htmlFor={'accountCreationUsername'}>Username: </label>
-							<input id={'accountCreationUsername'} name={'username'} /><br />
-							<label htmlFor={'accountCreationPassword'}>Password: </label>
-							<input id={'accountCreationPassword'} type={'password'} name={'password'} /><br />
-							<input type={'hidden'} name={'token'} value={token} />
-							<button>Create account</button>
-							<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
-						</form>
-						: <button onClick={() => setAccountFieldsVisible(true)}>Create an account</button>
-					}
-					</div>
-				)
-			}
-		</div>
+		<Category
+			title={'Account'}
+		>
+			{innerContent}
+		</Category>
 	);
 };
 

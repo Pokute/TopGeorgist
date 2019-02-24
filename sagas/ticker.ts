@@ -7,7 +7,6 @@ import components, { ComponentTicker } from '../components';
 import { set as allSet } from '../actions/allSet';
 import { RootStateType } from '../reducers';
 import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo';
-import { resolveCname } from 'dns';
 import { AnyAction } from 'redux';
 
 const tickerSaga = function* () {
@@ -28,7 +27,7 @@ const tick = function* () {
 
 	const newActions: AnyAction[] = (Object.values(oldState.tgos)
 		.filter(tgo => tgo.components) as TgoTypeWithComponents[])
- 		.map(tgo => (tgo.components
+		.map(tgo => (tgo.components
 			.map(cId => (
 				typeof cId === 'string'
 					? [cId, undefined]

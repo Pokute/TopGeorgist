@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import accounts, { AccountsState } from './accounts';
+import serverConnection, { ServerConnectionStateType } from './serverConnection';
 import clients, { ClientsState } from './clients';
 import defaults, { type as DefaultsType } from './defaults';
 import frame, { FrameStateType } from './frame';
@@ -19,6 +20,7 @@ export interface RootStateType {
 	government: GovernmentStateType,
 	itemTypes: ItemTypesState,
 	map: MapType,
+	serverConnection: ServerConnectionStateType,
 	tgos: TgosState,
 	ticker: TickerStateType,
 	tileSets: TileSetsState,
@@ -27,6 +29,7 @@ export interface RootStateType {
 
 const topGeorgist = combineReducers({
 	accounts,
+	serverConnection,
 	clients,
 	defaults,
 	frame,
