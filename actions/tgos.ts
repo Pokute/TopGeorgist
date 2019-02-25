@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createAction } from 'typesafe-actions';
 
 import { TgosState } from '../reducers/tgos';
-import { TgoInitialType, TgoId } from '../reducers/tgo';
+import { TgoPartials, TgoId } from '../reducers/tgo';
 
 export const setAll = createAction('TGOS_SET', (resolve) => {
 	return (tgos: TgosState) => resolve({
@@ -11,7 +11,7 @@ export const setAll = createAction('TGOS_SET', (resolve) => {
 });
 
 export const add = createAction('TGO_ADD', (resolve) => {
-	return (tgo: TgoInitialType) => resolve({
+	return (tgo: TgoPartials) => resolve({
 		tgo: {
 			...tgo,
 			tgoId: uuidv4(),

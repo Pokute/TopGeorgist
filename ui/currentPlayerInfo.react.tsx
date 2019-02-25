@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import ProgressBar from './progressBar';
 import { RootStateType } from '../reducers';
 import { TaskType } from '../reducers/taskQueue';
+import { hasComponentLabel, ComponentLabel } from '../components_new';
+import { TgoType } from '../reducers/tgo';
 
 const costMapper = (task: TaskType) => {
 	if (!task.cost) return () => 0;
@@ -37,7 +39,7 @@ const CurrentPlayerInfo = (props: ReturnType<typeof mapStoreToProps>) => (props.
 : null;
 
 const mapStoreToProps = (store: RootStateType) => ({
-	player: store.defaults.playerTgoId ? store.tgos[store.defaults.playerTgoId] : undefined,
+	player: (store.defaults.playerTgoId && hasComponentLabel(store.tgos[store.defaults.playerTgoId])) ? store.tgos[store.defaults.playerTgoId] as (TgoType & ComponentLabel) : undefined,
 });
 
 export default connect(mapStoreToProps)(CurrentPlayerInfo);

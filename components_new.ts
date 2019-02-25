@@ -1,5 +1,5 @@
-export interface TgoNone {
-}
+import { Action } from "./components";
+import { TgoPartials, TgoInitialType, TgoType } from "./reducers/tgo";
 
 export interface ComponentPosition {
 	readonly position: {
@@ -8,7 +8,7 @@ export interface ComponentPosition {
 	},
 }
 
-export const hasComponentPosition = (tgo: TgoNone & Partial<ComponentPosition>) : tgo is TgoNone & ComponentPosition =>
+export const hasComponentPosition = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPosition>) =>
 	tgo && (tgo.position !== undefined) && (tgo.position.x !== undefined) && (tgo.position.y != undefined)
 
 export type ComponentMoveTarget =
@@ -24,7 +24,7 @@ export type ComponentRentOffice =
 	readonly rentOffice: true,
 }
 
-export const hasComponentRentOffice = (tgo: TgoNone & Partial<ComponentRentOffice>) : tgo is TgoNone & ComponentRentOffice =>
+export const hasComponentRentOffice = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentRentOffice>) =>
 	tgo && (tgo.rentOffice !== undefined && tgo.rentOffice === true)
 
 export type ComponentGovernmentBuilding = 
@@ -32,27 +32,43 @@ export type ComponentGovernmentBuilding =
 	readonly governmentBuilding: true,
 }
 
-export const hasComponentGovernmentBuilding = (tgo: TgoNone & Partial<ComponentGovernmentBuilding>) : tgo is TgoNone & ComponentGovernmentBuilding =>
+export const hasComponentGovernmentBuilding = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGovernmentBuilding>) =>
 	tgo && (tgo.governmentBuilding !== undefined && tgo.governmentBuilding === true)
 
 export interface ComponentLeaderBoard {
 	readonly leaderBoard: true,
 }
 
-export const hasComponentLeaderBoard = (tgo: TgoNone & Partial<ComponentLeaderBoard>) : tgo is TgoNone & ComponentLeaderBoard =>
+export const hasComponentLeaderBoard = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLeaderBoard>) =>
 	tgo && (tgo.leaderBoard !== undefined && tgo.leaderBoard === true)
 
 export interface ComponentMapGridOccipier {
 	readonly mapGridOccupier: true,
 }
 
-export const hasComponentMapGridOccipier = (tgo: TgoNone & Partial<ComponentMapGridOccipier>) : tgo is TgoNone & ComponentMapGridOccipier =>
+export const hasComponentMapGridOccipier = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentMapGridOccipier>) =>
 	tgo && (tgo.mapGridOccupier !== undefined && tgo.mapGridOccupier === true)
 
 export interface ComponentPlayer {
-		readonly player: true,
-	}
+	readonly player: true,
+}
 	
-	export const hasComponentPlayer = (tgo: TgoNone & Partial<ComponentPlayer>) : tgo is TgoNone & ComponentPlayer =>
-		tgo && (tgo.player !== undefined && tgo.player === true)
-	
+export const hasComponentPlayer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPlayer>) =>
+	tgo && (tgo.player !== undefined && tgo.player === true)
+
+export interface ComponentVisitable {
+	readonly visitable?: {
+		readonly label: string,
+		readonly actions?: Action[],
+	},
+}
+
+export const hasComponentVisitable = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentVisitable>) =>
+	tgo && (tgo.visitable !== undefined)
+
+export interface ComponentLabel {
+	readonly label: string,
+}
+
+export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLabel>) =>
+	typeof tgo.label !== undefined

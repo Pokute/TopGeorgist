@@ -9,7 +9,7 @@ import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
 import { MapType } from '../reducers/map';
-import { hasComponentPosition, ComponentPosition } from '../components_new';
+import { hasComponentPosition, ComponentPosition, hasComponentLabel } from '../components_new';
 import { TgoType } from '../reducers/tgo';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number }, tile: TileType, tileSize: number) => {
@@ -102,7 +102,7 @@ const renderCanvasTgos = ({
 		drawCross(ctx,
 			pos,
 			undefined, tgo.color);
-		if (tgo.label) {
+		if (hasComponentLabel(tgo)) {
 			ctx.fillStyle = 'black';
 			ctx.textAlign = 'center';
 			ctx.fillText(tgo.label, pos.x, pos.y - 10);

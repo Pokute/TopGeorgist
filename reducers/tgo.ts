@@ -6,7 +6,7 @@ import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueTy
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { TgoNone, ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer } from '../components_new';
+import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel } from '../components_new';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -31,39 +31,28 @@ export type ComponentProps = {
 };
 export type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
 
-export type TgoAll = TgoNone & (
-	{}
-	| ComponentPosition
-	| ComponentMoveTarget // Removeme
-	| ComponentRentOffice
-	| ComponentGovernmentBuilding
-	| ComponentLeaderBoard
-	| ComponentMapGridOccipier
-	| ComponentPlayer
-)
+export type TgoPartials = TgoInitialType & (Partial<ComponentPosition>
+	& Partial<ComponentMoveTarget> // Removeme
+	& Partial<ComponentRentOffice>
+	& Partial<ComponentGovernmentBuilding>
+	& Partial<ComponentLeaderBoard>
+	& Partial<ComponentMapGridOccipier>
+	& Partial<ComponentPlayer>
+	& Partial<ComponentVisitable>
+	& Partial<ComponentLabel>)
 
-export interface TgoInitialTypes {
-	readonly label?: string,
+export interface TgoInitialType {
 	readonly color: string,
 	readonly renderer?: any,
 	readonly inventory?: ReadonlyArray<InventoryItem>,
 	readonly taskQueue?: TaskQueueType,
 	readonly components?: ReadonlyArray<ComponentType>,
 	readonly plantTypeId?: TypeId,
-	readonly visitable?: {
-		label: string,
-		actions?: Action[],
-	},
 }
 
-export type TgoInitialType = TgoAll & TgoInitialTypes;
-
-export type TgoType = TgoInitialType & {
+export type TgoType = TgoPartials & {
 	readonly tgoId: TgoId,
 };
-// export interface TgoAll extends TgoNone, ComponentPosition {
-
-// }
 
 export const initialState:TgoType = {
 	tgoId: '',

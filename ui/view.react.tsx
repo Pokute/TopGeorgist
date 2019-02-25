@@ -9,7 +9,7 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType } from '../reducers/map';
 import Category from './Category';
-import { hasComponentPosition } from '../components_new';
+import { hasComponentPosition, hasComponentVisitable, hasComponentLabel } from '../components_new';
 
 export interface Type {
 	view: ViewType,
@@ -53,6 +53,11 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 };
 
 const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
+	const tgos = Object.values(state.tgos);
+	const labeled = tgos
+		.filter(hasComponentLabel)
+	labeled.map(l => l.label)
+
 	const player = state.defaults.playerTgoId ? state.tgos[state.defaults.playerTgoId] : undefined;
 	const followedTgo = passedProps.view.followTgoId && state.tgos[passedProps.view.followTgoId];
 	return {
@@ -61,7 +66,8 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 			Object.values(state.tgos)
 				.filter(tgo => hasComponentPosition(tgo) && (tgo.position.x === player.position.x)
 					&& (tgo.position.y === player.position.y))
-				.filter(tgo => tgo.visitable)
+				.filter(hasComponentVisitable)
+				.filter(hasComponentLabel)
 			: [],
 		center: (followedTgo && hasComponentPosition(followedTgo))
 			? followedTgo.position
