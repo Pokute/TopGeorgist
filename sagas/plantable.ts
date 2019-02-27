@@ -7,7 +7,7 @@ import { transaction } from '../actions/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
-import { hasComponentPosition, hasComponentMapGridOccipier } from '../components_new';
+import { hasComponentPosition, hasComponentMapGridOccipier, hasComponentInventory } from '../components_new';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();
@@ -42,8 +42,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 	const planting = tgosActions.add({
 		mapGridOccupier: true,
 		position: plantPosition,
-		color: 'orange',
-		plantTypeId: plantableType.growsIntoTypeId,
+		presentation: { color: 'orange' },
 		visitable: {
 			label: `Growing here: ${plantableType.label}`,
 			actions: [
@@ -51,6 +50,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 					label: 'Harvest',
 					onClick: {
 						type: 'HARVEST',
+						plantTypeId: plantableType.growsIntoTypeId,
 					},
 				},
 			],
@@ -82,30 +82,30 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 	return true;
 };
 
-const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targetTgoId }}: ActionType<typeof plantableActions.harvest>) {
+const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targetTgoId, plantTypeId }}: ActionType<typeof plantableActions.harvest>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
 	const visitableTgo = s.tgos[targetTgoId];
 	if (!hasComponentPosition(actorTgo) || (!hasComponentPosition(visitableTgo)))
 		return false;
 
-	if (!actorTgo || !visitableTgo.inventory || !visitableTgo.plantTypeId) return false;
+	if (!actorTgo || !hasComponentInventory(visitableTgo) || !plantTypeId) return false;
 	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
 
-	const visitableItems = visitableTgo.inventory.find(i => i.typeId === visitableTgo.plantTypeId);
+	const visitableItems = visitableTgo.inventory.find(i => i.typeId === plantTypeId);
 	if (!visitableItems) return false;
 
 	const transactionResult = transaction({
 		tgoId: actorTgoId,
 		items: [
 			{
-				typeId: visitableTgo.plantTypeId,
+				typeId: plantTypeId,
 				count: visitableItems.count || 0,
 			},
 		],
 	});
 	console.log('transactionResult: ', transactionResult);
-	const plantType = (yield select()).itemTypes[visitableTgo.plantTypeId];
+	const plantType = (yield select()).itemTypes[plantTypeId];
 
 	const remove = {
 		type: 'TGO_REMOVE',

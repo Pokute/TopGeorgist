@@ -9,7 +9,7 @@ import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
 import { Action } from '../components';
 import ActionUI from './action';
-import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer, ComponentVisitable, ComponentLabel, hasComponentLabel } from '../components_new';
+import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer, ComponentVisitable, ComponentLabel, hasComponentLabel, hasComponentInventory } from '../components_new';
 
 export interface Type {
 	visitable: TgoType & ComponentLabel & ComponentVisitable,
@@ -54,7 +54,7 @@ const VisitableUI = (props: Type & ReturnType<typeof mapStoreToProps>) => (
 
 const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 	const getMoney = (tgo: TgoType) => {
-		if (!tgo.inventory) return 0;
+		if (!hasComponentInventory(tgo)) return 0;
 		const moneyItem = tgo.inventory.find(it => it.typeId === 'money');
 		return moneyItem ? moneyItem.count : 0;
 	};

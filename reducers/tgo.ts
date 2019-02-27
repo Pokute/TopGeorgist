@@ -6,7 +6,7 @@ import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueTy
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel } from '../components_new';
+import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentInventory, ComponentTaskQueue, ComponentPresentation, ComponentComponents } from '../components_new';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -31,7 +31,7 @@ export type ComponentProps = {
 };
 export type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
 
-export type TgoPartials = TgoInitialType & (Partial<ComponentPosition>
+export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentMoveTarget> // Removeme
 	& Partial<ComponentRentOffice>
 	& Partial<ComponentGovernmentBuilding>
@@ -39,16 +39,12 @@ export type TgoPartials = TgoInitialType & (Partial<ComponentPosition>
 	& Partial<ComponentMapGridOccipier>
 	& Partial<ComponentPlayer>
 	& Partial<ComponentVisitable>
-	& Partial<ComponentLabel>)
-
-export interface TgoInitialType {
-	readonly color: string,
-	readonly renderer?: any,
-	readonly inventory?: ReadonlyArray<InventoryItem>,
-	readonly taskQueue?: TaskQueueType,
-	readonly components?: ReadonlyArray<ComponentType>,
-	readonly plantTypeId?: TypeId,
-}
+	& Partial<ComponentLabel>
+	& Partial<ComponentInventory>
+	& Partial<ComponentTaskQueue>
+	& Partial<ComponentPresentation>
+	& Partial<ComponentComponents>
+);
 
 export type TgoType = TgoPartials & {
 	readonly tgoId: TgoId,
@@ -60,8 +56,9 @@ export const initialState:TgoType = {
 		x: 0,
 		y: 0,
 	},
-	color: 'red',
-	renderer: undefined,
+	presentation: {
+		color: 'red',
+	},
 };
 
 export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType) : TgoType => {
@@ -79,7 +76,7 @@ export default (state: TgoType, action: TgoActionType | InventoryActionType | Ta
 		case getType(tgoActions.setColor):
 			return {
 				...state,
-				color: action.payload.color,
+				presentation: { ...state.presentation, color: action.payload.color },
 			};
 		default: {
 			let usedState = state;

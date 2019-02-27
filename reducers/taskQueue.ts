@@ -30,7 +30,7 @@ export const checkTaskCompletion = (task: TaskType): boolean => {
 	}
 };
 
-export type TaskQueueType = TaskType[];
+export type TaskQueueType = ReadonlyArray<TaskType>;
 
 export const initialState = [];
 

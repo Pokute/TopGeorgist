@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
-import { TgoId, TgoInitialType } from '../reducers/tgo';
-import { ComponentPosition, ComponentMoveTarget } from '../components_new';
+import { TgoId } from '../reducers/tgo';
+import { ComponentPosition, ComponentMoveTarget, ComponentPresentation } from '../components_new';
 
 interface TgoAction {
 	tgoId: TgoId,
@@ -24,7 +24,7 @@ export const setMoveTarget = createAction('TGO_SET_MOVE_TARGET', (resolve) => {
 });
 
 export const setColor = createAction('TGO_SET_COLOR', (resolve) => {
-	return (tgoId: TgoId, color: TgoInitialType['color']) => resolve({
+	return (tgoId: TgoId, color: ComponentPresentation['presentation']['color']) => resolve({
 		tgoId,
 		color,
 	});

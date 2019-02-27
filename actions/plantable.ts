@@ -10,8 +10,9 @@ export const plant = createAction('PLANT', resolve => {
 });
 
 export const harvest = createAction('HARVEST', resolve => {
-	return (tgoId: TgoId, visitableTgoId: TgoId) => resolve({
+	return (tgoId: TgoId, visitableTgoId: TgoId, plantTypeId: TypeId) => resolve({
 		tgoId,
 		visitableTgoId,
+		plantTypeId,
 	});
 });

@@ -30,7 +30,7 @@ const handleQueueForOwner = function* (owner: TgoType) {
 			{ completed: [], remaining: [], continueCompleting: true },
 		);
 
-	const [topTask, ...restOfTaskQueue]: TaskType & TaskType[] = owner.taskQueue;
+	const [topTask, ...restOfTaskQueue]: TaskType & ReadonlyArray<TaskType> = owner.taskQueue;
 
 	const advanceTask = (task: TaskType): TaskType => ({
 		...task,

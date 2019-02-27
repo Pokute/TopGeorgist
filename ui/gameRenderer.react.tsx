@@ -9,7 +9,7 @@ import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
 import { MapType } from '../reducers/map';
-import { hasComponentPosition, ComponentPosition, hasComponentLabel } from '../components_new';
+import { hasComponentPosition, hasComponentLabel, hasComponentPresentation } from '../components_new';
 import { TgoType } from '../reducers/tgo';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number }, tile: TileType, tileSize: number) => {
@@ -75,7 +75,7 @@ const renderCanvasMap = ({
 const renderCanvasTgos = ({
 	minTile,
 	maxTile,
-	tgosState: TgosState,
+	tgosState,
 	canvas,
 	tileSize,
 }:{
@@ -92,16 +92,16 @@ const renderCanvasTgos = ({
 	if (!tryCanvas) return;
 	const ctx = tryCanvas as CanvasRenderingContext2D;
 
-	const onlyTgosWithPosition = (TgosState: TgoType[]): (TgoType & ComponentPosition)[] => TgosState.filter(hasComponentPosition) as (TgoType & ComponentPosition)[];
+	const onlyTgosWithPosition = (tgosState: TgoType[]) => tgosState.filter(hasComponentPosition).filter(hasComponentPresentation);
 
-	onlyTgosWithPosition(Object.values(TgosState)).forEach((tgo) => {
+	onlyTgosWithPosition(Object.values(tgosState)).forEach((tgo) => {
 		const pos = {
 			x: (tgo.position.x - minTile.x + 0.5)*tileSize,
 			y: (tgo.position.y - minTile.y + 0.5)*tileSize,
 		};
 		drawCross(ctx,
 			pos,
-			undefined, tgo.color);
+			undefined, tgo.presentation.color);
 		if (hasComponentLabel(tgo)) {
 			ctx.fillStyle = 'black';
 			ctx.textAlign = 'center';

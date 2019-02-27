@@ -14,7 +14,7 @@ export interface InitialItemType {
 	components?: ComponentArray,
 };
 
-export interface ItemType extends InitialItemType {
+export interface ItemType extends Readonly<InitialItemType> {
 	readonly typeId: TypeId,
 };
 

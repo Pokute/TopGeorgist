@@ -9,7 +9,7 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType } from '../reducers/map';
 import Category from './Category';
-import { hasComponentPosition, hasComponentVisitable, hasComponentLabel } from '../components_new';
+import { hasComponentPosition, hasComponentVisitable, hasComponentLabel, hasComponentInventory } from '../components_new';
 
 export interface Type {
 	view: ViewType,
@@ -22,7 +22,7 @@ export interface Type {
 const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 	if (!props.view.canvasId) return null;
 	let displayedCalories = 0;
-	if (props.player && props.player.inventory) {
+	if (props.player && hasComponentInventory(props.player)) {
 		const caloriesItem = props.player.inventory.find(i => i.typeId === 'calories');
 		if (caloriesItem) displayedCalories = caloriesItem.count;
 	}

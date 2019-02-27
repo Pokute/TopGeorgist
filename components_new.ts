@@ -1,5 +1,7 @@
 import { Action } from "./components";
-import { TgoPartials, TgoInitialType, TgoType } from "./reducers/tgo";
+import { TgoType, ComponentType } from "./reducers/tgo";
+import { InventoryItem } from "./reducers/inventory";
+import { TaskQueueType } from "./reducers/taskQueue";
 
 export interface ComponentPosition {
 	readonly position: {
@@ -72,3 +74,33 @@ export interface ComponentLabel {
 
 export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLabel>) =>
 	typeof tgo.label !== undefined
+
+export interface ComponentInventory {
+	readonly inventory: ReadonlyArray<InventoryItem>,
+}
+
+export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
+	typeof tgo.inventory !== undefined
+
+export interface ComponentTaskQueue {
+	readonly taskQueue: TaskQueueType,
+}
+
+export const hasComponentTaskQueue = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentTaskQueue>) =>
+	typeof tgo.taskQueue !== undefined
+
+export interface ComponentPresentation {
+	readonly presentation: {
+		readonly color: string
+	},
+}
+
+export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPresentation>) =>
+	typeof tgo.presentation !== 'undefined'
+
+export interface ComponentComponents {
+	readonly components?: ReadonlyArray<ComponentType>,
+}
+	
+export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
+	Array.isArray(tgo.components)

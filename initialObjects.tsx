@@ -11,7 +11,7 @@ export const createPlayerAction = () => tgosActions.add({
 		'player',
 	],
 	position: { x: 5, y: 5 },
-	color: 'red',
+	presentation: { color: 'red' },
 	inventory: [
 		{
 			typeId: 'calories',
@@ -32,7 +32,7 @@ export const storeGeneralAction = () => tgosActions.add({
 	label: 'General Store',
 	mapGridOccupier: true,
 	position: { x: 12, y: 12 },
-	color: 'pink',
+	presentation: { color: 'pink' },
 	inventory: [
 		{
 			typeId: 'money',
@@ -87,7 +87,7 @@ export const rentOfficeAction = () => tgosActions.add({
 	rentOffice: true,
 	mapGridOccupier: true,
 	position: { x: 9, y: 8 },
-	color: 'pink',
+	presentation: { color: 'pink' },
 	inventory: [
 		{
 			typeId: 'money',
@@ -124,7 +124,7 @@ export const GovernmentAction = () => tgosActions.add({
 	governmentBuilding: true,
 	mapGridOccupier: true,
 	position: { x: 7, y: 11 },
-	color: 'pink',
+	presentation: { color: 'pink' },
 	inventory: [
 		{
 			typeId: 'money',
@@ -155,7 +155,7 @@ export const leaderBoardAction = () => tgosActions.add({
 	label: 'Leaderboard',
 	leaderBoard: true,
 	position: { x: 4, y: 5 },
-	color: 'yellow',
+	presentation: { color: 'yellow' },
 	visitable: {
 		label: 'Leaderboard',
 	},

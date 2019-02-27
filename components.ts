@@ -4,6 +4,7 @@ import { AnyAction } from 'redux';
 
 import { Parameter } from './ui/paramInput';
 import { TypeId } from './reducers/itemType';
+import { hasComponentInventory } from './components_new';
 
 export interface Action {
 	label: string,
@@ -14,6 +15,7 @@ export interface Action {
 			typeId: TypeId,
 			count: number,
 		}>,
+		[extra: string]: any,
 	}
 }
 
@@ -76,7 +78,7 @@ const components: ComponentList = {
 	inventoryChange: {
 		tick: (tgo: TgoType, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];
-			if (tgo.inventory) {
+			if (hasComponentInventory(tgo)) {
 				// const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
 				// if (cals && cals.count > 0) {
 				actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));

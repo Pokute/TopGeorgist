@@ -6,7 +6,7 @@ import * as inventoryActions from '../../actions/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
-import { hasComponentPosition } from '../../components_new';
+import { hasComponentPosition, hasComponentInventory } from '../../components_new';
 
 const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
 	const s: RootStateType = yield select();
@@ -42,7 +42,7 @@ const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
 	const citizenClaims = s.government.claims.filter(c => c.tgoId === tgoId);
 	for (const claim of citizenClaims) {
 		const currentRentDebt = claim.rentDebt;
-		const moneyItem = actorTgo.inventory ? actorTgo.inventory.find(it => it.typeId === 'money') : { count: 0 };
+		const moneyItem = hasComponentInventory(actorTgo) ? actorTgo.inventory.find(it => it.typeId === 'money') : { count: 0 };
 		const currentMoney = moneyItem ? moneyItem.count : 0;
 		const change = Math.max(Math.min(currentRentDebt, currentMoney), 0);
 		yield put(governmentActions.addRentDebt(tgoId, claim.position, -change));
