@@ -3,17 +3,17 @@ import { TgoId } from "./tgo";
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = {
-	x: number,
-	y: number,
+	readonly x: number,
+	readonly y: number,
 };
 
 export type RequirementDeliveryTarget = RequirementDeliveryTargetPosition | RequirementDeliveryTargetTgoId;
 
 export type RequirementDelivery = {
-	type: 'RequirementDelivery',
-	targetPosition: RequirementDeliveryTarget,
-	tgoIds: Array<TgoId>,
-	inventoryItems: Array<InventoryItem>,
+	readonly type: 'RequirementDelivery',
+	readonly targetPosition: RequirementDeliveryTarget,
+	readonly tgoIds: ReadonlyArray<TgoId>,
+	readonly inventoryItems: ReadonlyArray<InventoryItem>,
 };
 
 export type Requirement =
@@ -29,7 +29,7 @@ export function isRequirementDelivery(requirement: Requirement): requirement is 
 };
 
 export type Goal = {
-	title?: string,
-	requirements: Array<Requirement>,
-	progress: number,
+	readonly title?: string,
+	readonly requirements: ReadonlyArray<Requirement>,
+	readonly progress: number,
 };
