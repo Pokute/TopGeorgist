@@ -12,15 +12,15 @@ import ActionUI from './action';
 import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer, ComponentVisitable, ComponentLabel, hasComponentLabel, hasComponentInventory } from '../components_new';
 
 export interface Type {
-	visitable: TgoType & ComponentLabel & ComponentVisitable,
-	visitor?: TgoType,
+	readonly visitable: TgoType & ComponentLabel & ComponentVisitable,
+	readonly visitor?: TgoType,
 };
 
 const VisitableUI = (props: Type & ReturnType<typeof mapStoreToProps>) => (
 	<div>
 		<p>{props.visitable.label}</p>
 		{props.visitable.visitable
-			? ((props.visitable.visitable.actions || []) as Action[])
+			? ((props.visitable.visitable.actions || []) as ReadonlyArray<Action>)
 			.map(va => (
 				<ActionUI
 					key={va.label}

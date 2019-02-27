@@ -4,7 +4,7 @@ import { ClientId, ClientType, default as clientReducer} from './client';
 import * as clientActions from '../actions/client'; 
 
 export type ClientsState = {
-	[extraProps: string]: ClientType;
+	readonly [extraProps: string]: ClientType;
 };
 
 const initialState: ClientsState = {};

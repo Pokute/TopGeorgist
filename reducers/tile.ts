@@ -4,8 +4,8 @@ import { AnyAction } from "redux";
 export type TileId = string;
 
 export interface TileType {
-	tileId: TileId,
-	fillStyle: Color,
+	readonly tileId: TileId,
+	readonly fillStyle: Color,
 }
 
 const initialState = {

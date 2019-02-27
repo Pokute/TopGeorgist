@@ -7,7 +7,7 @@ import viewReducer, { ViewType, viewActionList } from './view';
 import view from './view';
 
 export type ViewsState = {
-	[extraProps: string]: ViewType;
+	readonly [extraProps: string]: ViewType;
 };
 
 const initialState: ViewsState = {};

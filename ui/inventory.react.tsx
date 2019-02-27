@@ -11,10 +11,10 @@ import { Dispatch } from 'redux';
 import Category from './Category';
 
 export interface Type {
-	// inventory: ReadonlyArray<InventoryItem>,
-	// itemTypes: ItemTypesState,
-	ownerTgoId?: TgoId,
-	// onComponentActionClick(action: Action, typeId: TypeId): () => void,
+	// readonly inventory: ReadonlyArray<InventoryItem>,
+	// readonly itemTypes: ItemTypesState,
+	readonly ownerTgoId?: TgoId,
+	// readonly onComponentActionClick(action: Action, typeId: TypeId): () => void,
 };
 
 const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => props.ownerTgoId && props.inventory ?

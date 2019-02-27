@@ -6,9 +6,9 @@ import * as governmentActions from '../actions/government';
 import { TgoId } from "./tgo";
 
 export interface GovernmentStateType {
-	citizens: CitizensStateType,
-	claims: ClaimStateType[],
-	rentModulus: number,
+	readonly citizens: CitizensStateType,
+	readonly claims: ReadonlyArray<ClaimStateType>,
+	readonly rentModulus: number,
 };
 
 const initialState = {
@@ -18,12 +18,12 @@ const initialState = {
 };
 
 export interface CitizenStateType {
-	tgoId: TgoId,
-	stipend: number,
+	readonly tgoId: TgoId,
+	readonly stipend: number,
 };
 
 export interface CitizensStateType {
-	[extraProps: string]: CitizenStateType;
+	readonly [extraProps: string]: CitizenStateType;
 };
 
 const initialCitizenState = {
@@ -32,12 +32,12 @@ const initialCitizenState = {
 };
 
 export interface ClaimStateType {
-	tgoId: TgoId,
-	position: {
-		x: number,
-		y: number,
+	readonly tgoId: TgoId,
+	readonly position: {
+		readonly x: number,
+		readonly y: number,
 	},
-	rentDebt: number,
+	readonly rentDebt: number,
 };
 
 const initialClaimState = {

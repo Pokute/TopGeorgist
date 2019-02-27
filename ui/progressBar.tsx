@@ -11,18 +11,18 @@ import { RootStateType } from '../reducers';
 type Segment = any;
 
 interface Type {
-	costMapping?: (segment: Segment) => number,
-	perFrameIncrease?: boolean,
-	progress?: number,
-	segments?: Array<Segment>,
+	readonly costMapping?: (segment: Segment) => number,
+	readonly perFrameIncrease?: boolean,
+	readonly progress?: number,
+	readonly segments?: Array<Segment>,
 };
 
 type Props = Type & ReturnType<typeof mapStoreToProps>;
 
 interface ProgressBarSegmentProps {
-	progressFraction: number,
-	cost: number,
-	title?: string
+	readonly progressFraction: number,
+	readonly cost: number,
+	readonly title?: string
 };
 
 const ProgressBarSegment: React.SFC<ProgressBarSegmentProps> = ({
@@ -80,7 +80,7 @@ const ProgressBar: React.SFC<Props> = ({
 	const tickPlusTimeProgress = calcTickPlusTimeProgress();
 	return (
 		<div className='progressBar'>
-			{segments!.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
+			{segments!.reduce(({components, costAcc}: { components: ReadonlyArray<JSX.Element>, costAcc: number }, segment, i) => {
 				const segmentProgress = Math.max(0, Math.min((tickPlusTimeProgress - costAcc) / costMapping!(segment), 1))
 				return {
 					components: [...components, (

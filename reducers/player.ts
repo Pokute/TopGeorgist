@@ -4,7 +4,7 @@ import * as playerActions from '../actions/player'
 import { ComponentMoveTarget } from '../components_new';
 
 export interface PlayerType {
-	moveTarget?: ComponentMoveTarget['moveTarget'],
+	readonly moveTarget?: ComponentMoveTarget['moveTarget'],
 };
 
 export const initialState: PlayerType = {

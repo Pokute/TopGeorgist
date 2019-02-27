@@ -18,22 +18,22 @@ export const viewActionList = [
 type ViewAction = ActionType<typeof viewActions>;
 
 export interface ViewInitialType {
-	canvas?: HTMLCanvasElement,
-	canvasId?: string,
-	followTgoId?: TgoId,
-	position: {
-		x: number,
-		y: number,
+	readonly canvas?: HTMLCanvasElement,
+	readonly canvasId?: string,
+	readonly followTgoId?: TgoId,
+	readonly position: {
+		readonly x: number,
+		readonly y: number,
 	},
-	size: {
-		x: number,
-		y: number,
+	readonly size: {
+		readonly x: number,
+		readonly y: number,
 	},
-	clickActionStack: any[],
+	readonly clickActionStack: ReadonlyArray<any>,
 };
 
 export interface ViewType extends ViewInitialType {
-	viewId: ViewId,
+	readonly viewId: ViewId,
 };
 
 export const initialState: ViewInitialType = {

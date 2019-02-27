@@ -6,13 +6,13 @@ import * as defaultActions from '../actions/defaults';
 import { TgoId } from './tgo';
 import { ViewId } from './view';
 
-export interface type {
+export interface Type {
 	readonly accountId: AccountId,
 	readonly playerTgoId?: TgoId,
 	readonly viewId?: ViewId,
 };
 
-const initialState: type = {
+const initialState: Type = {
 	accountId: '',
 	playerTgoId: '',
 	viewId: '',
@@ -20,7 +20,7 @@ const initialState: type = {
 
 export type DefaultsActionType = ActionType<typeof defaultActions>;
 
-export default (state: type = initialState, action: DefaultsActionType): type => {
+export default (state: Type = initialState, action: DefaultsActionType): Type => {
 	switch (action.type) {
 		case getType(defaultActions.setAccountId):
 			return {

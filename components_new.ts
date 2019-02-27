@@ -61,7 +61,7 @@ export const hasComponentPlayer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (
 export interface ComponentVisitable {
 	readonly visitable?: {
 		readonly label: string,
-		readonly actions?: Action[],
+		readonly actions?: ReadonlyArray<Action>,
 	},
 }
 

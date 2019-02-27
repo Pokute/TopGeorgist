@@ -10,7 +10,7 @@ const defaultType = {
 };
 
 export type InitialItemTypesState = {
-	[extraProps: string]: InitialItemType;
+	readonly [extraProps: string]: InitialItemType;
 };
 
 const items: InitialItemTypesState = {

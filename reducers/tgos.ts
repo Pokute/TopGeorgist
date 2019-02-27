@@ -10,7 +10,7 @@ import { InventoryActionType } from './inventory';
 import { hasComponentPlayer } from '../components_new';
 
 export type TgosState = {
-	[extraProps: string]: TgoType;
+	readonly [extraProps: string]: TgoType;
 };
 
 const initialState: TgosState = {};

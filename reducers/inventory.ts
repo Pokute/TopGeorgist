@@ -4,8 +4,8 @@ import { TypeId } from "./itemType";
 import * as inventoryActions from '../actions/inventory'
 
 export interface InventoryItem {
-	typeId: TypeId,
-	count: number,
+	readonly typeId: TypeId,
+	readonly count: number,
 };
 
 const initialState: ReadonlyArray<InventoryItem> = [];

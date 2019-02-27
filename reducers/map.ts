@@ -5,16 +5,16 @@ import * as mapActions from '../actions/map';
 type TileDataType = number;
 
 export interface MapType {
-	seed: number,
-	size: {
-		x: number,
-		y: number,
+	readonly seed: number,
+	readonly size: {
+		readonly x: number,
+		readonly y: number,
 	},
-	tileSize: number,
-	tileSetId: string,
-	data: TileDataType[],
-	minTileId?: number,
-	maxTileId?: number,
+	readonly tileSize: number,
+	readonly tileSetId: string,
+	readonly data: ReadonlyArray<TileDataType>,
+	readonly minTileId?: number,
+	readonly maxTileId?: number,
 };
 import { ActionType, getType } from 'typesafe-actions';
 
@@ -29,13 +29,13 @@ const initialState = {
 };
 
 export interface MapSettings {
-	size: {
-		x: number,
-		y: number,
+	readonly size: {
+		readonly x: number,
+		readonly y: number,
 	},
-	minTileId?: number,
-	maxTileId?: number,
-	seed?: number,
+	readonly minTileId?: number,
+	readonly maxTileId?: number,
+	readonly seed?: number,
 };
 
 const defaultSettings = {

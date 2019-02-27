@@ -4,14 +4,14 @@ import * as tileSetActions from '../actions/tileSet';
 import { TileType } from './tile';
 
 export type TilesType = {
-	[extraProps: string]: TileType;
+	readonly [extraProps: string]: TileType;
 };
 
 export type TileSetId = keyof TilesType;
 
 export interface TileSetType {
-	tileSetId: TileSetId,
-	tiles: TilesType,
+	readonly tileSetId: TileSetId,
+	readonly tiles: TilesType,
 };
 
 const initialState: TileSetType = {

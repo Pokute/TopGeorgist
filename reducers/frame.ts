@@ -3,8 +3,8 @@ import { ActionType, getType } from "typesafe-actions";
 import * as frameActions from '../actions/frame';
 
 export interface FrameStateType {
-	current: number,
-	frameTime: number, 
+	readonly current: number,
+	readonly frameTime: number, 
 };
 
 const initialState: FrameStateType = {

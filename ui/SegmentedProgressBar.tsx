@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import { RootStateType } from '../reducers';
 
 interface Segment {
-	cost: number,
-	progress: number,
-	title: string,
+	readonly cost: number,
+	readonly progress: number,
+	readonly title: string,
 }
 
 interface Type {
-	segments: Array<Segment>,
-	costMapping?: (segment: Segment) => number,
+	readonly segments: Array<Segment>,
+	readonly costMapping?: (segment: Segment) => number,
 };
 
 type InternalType = Required<Type>;
@@ -52,7 +52,7 @@ const SegmentedProgressBar: React.SFC<Props> = ({ segments, costMapping }) => {
 	const totalCost = segments.reduce((cost, segment) => cost+costMapping!(segment), 0);
 	return (
 		<div className='progressBar'>
-			{segments!.reduce(({components, costAcc}: { components: JSX.Element[], costAcc: number }, segment, i) => {
+			{segments!.reduce(({components, costAcc}: { components: ReadonlyArray<JSX.Element>, costAcc: number }, segment, i) => {
 				const segmentProgress = clampedSegmentProgress(mappedSegment(segment)) / segment.cost;
 				return {
 					components: [...components, (

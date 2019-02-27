@@ -7,8 +7,8 @@ import ParamInput, { packParam } from './paramInput';
 import { Action } from '../components';
 
 export interface Type {
-	action: Action,
-	additionalSentData: any,
+	readonly action: Action,
+	readonly additionalSentData: any,
 	onSubmit?(action: Type['action']): () => void,
 }
 

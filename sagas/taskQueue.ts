@@ -14,7 +14,7 @@ const handleQueueForOwner = function* (owner: TgoType) {
 	console.log('TaskQueue: ', owner.taskQueue);
 	const getCompletedTasks = (tasksQueue: TaskQueueType) => tasksQueue
 		.reduce(
-			({ completed, remaining, continueCompleting }: { completed: TaskType[], remaining: TaskType[], continueCompleting: boolean}, task) => (
+			({ completed, remaining, continueCompleting }: { completed: ReadonlyArray<TaskType>, remaining: ReadonlyArray<TaskType>, continueCompleting: boolean}, task) => (
 				(continueCompleting && checkTaskCompletion(task))
 					? {
 						completed: [...completed, task],

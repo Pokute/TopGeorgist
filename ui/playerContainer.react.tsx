@@ -8,7 +8,7 @@ import { RootStateType } from '../reducers';
 import Category from './Category';
 
 export interface propTypes {
-	defaultPlayerTgoId: TgoId,
+	readonly defaultPlayerTgoId: TgoId,
 }
 
 const PlayerContainer = (props: propTypes) => {

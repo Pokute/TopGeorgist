@@ -17,7 +17,7 @@ const TgoOtherReducers = [
 	{ reducer: inventoryReducer, actions: InventoryActionList },
 	{ reducer: taskQueueReducer, actions: TaskQueueActionList },
 ];
-const TgoOthersActionList = TgoOtherReducers.reduce((actions: any[], reducer) => [ ...actions, ...reducer.actions ], []);
+const TgoOthersActionList = TgoOtherReducers.reduce((actions: ReadonlyArray<any>, reducer) => [ ...actions, ...reducer.actions ], []);
 export const TgoActionList = [
 	...TgoOwnActionList,
 	...TgoOthersActionList,

@@ -5,7 +5,7 @@ import * as accountActions from '../actions/account';
 import * as accountsActions from '../actions/accounts'; 
 
 export type AccountsState = {
-	[extraProps: string]: AccountType;
+	readonly [extraProps: string]: AccountType;
 };
 
 const initialState: AccountsState = {};

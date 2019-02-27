@@ -6,8 +6,8 @@ import WebSocketWrapper from 'ws-wrapper';
 import * as serverConnectionActions from '../actions/serverConnection';
 
 export interface ServerConnectionStateType {
-	websocket?: WebSocketWrapper,
-	reconnectionDelay: number,
+	readonly websocket?: WebSocketWrapper,
+	readonly reconnectionDelay: number,
 };
 
 const initialState: ServerConnectionStateType = {

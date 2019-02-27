@@ -4,16 +4,16 @@ import * as taskQueueActions from '../actions/taskQueue';
 import { AnyAction } from 'redux';
 
 export type TaskCost = {
-	time?: number,
-	[additionalCostItems: string]: any
+	readonly time?: number,
+	readonly [additionalCostItems: string]: any
 };
 
 export type TaskType = {
-	title?: string,
-	cost?: TaskCost,
-	progress?: TaskCost,
-	completionAction?: AnyAction,
-	advanceActions?: AnyAction[],
+	readonly title?: string,
+	readonly cost?: TaskCost,
+	readonly progress?: TaskCost,
+	readonly completionAction?: AnyAction,
+	readonly advanceActions?: ReadonlyArray<AnyAction>,
 };
 
 export const checkTaskCompletion = (task: TaskType): boolean => {
@@ -32,7 +32,7 @@ export const checkTaskCompletion = (task: TaskType): boolean => {
 
 export type TaskQueueType = ReadonlyArray<TaskType>;
 
-export const initialState = [];
+export const initialState: TaskQueueType = [];
 
 export type TaskQueueActionType = ActionType<typeof taskQueueActions>
 export const TaskQueueActionList = [

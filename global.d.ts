@@ -1,6 +1,6 @@
 declare namespace NodeJS {
 	export interface Global {
 		isServer: boolean,
-		ws: import('ws-wrapper'),
+		readonly ws: import('ws-wrapper'),
 	}
 }

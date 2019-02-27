@@ -5,7 +5,7 @@ import * as tileSetsActions from '../actions/tileSets';
 import tileSetReducer, { TileSetType } from './tileSet';
 
 export type TileSetsState = {
-	[extraProps: string]: TileSetType;
+	readonly [extraProps: string]: TileSetType;
 };
 
 const initialState = {};

@@ -92,7 +92,7 @@ const renderCanvasTgos = ({
 	if (!tryCanvas) return;
 	const ctx = tryCanvas as CanvasRenderingContext2D;
 
-	const onlyTgosWithPosition = (tgosState: TgoType[]) => tgosState.filter(hasComponentPosition).filter(hasComponentPresentation);
+	const onlyTgosWithPosition = (tgosState: ReadonlyArray<TgoType>) => tgosState.filter(hasComponentPosition).filter(hasComponentPresentation);
 
 	onlyTgosWithPosition(Object.values(tgosState)).forEach((tgo) => {
 		const pos = {
@@ -134,10 +134,10 @@ const renderCanvas = ({
 };
 
 export interface Type {
-	view: ViewType,
-	map: MapType,
-	minTile: { x: number, y: number },
-	maxTile: { x: number, y: number },
+	readonly view: ViewType,
+	readonly map: MapType,
+	readonly minTile: { x: number, y: number },
+	readonly maxTile: { x: number, y: number },
 }
 
 type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;

@@ -4,10 +4,10 @@ import * as tickerActions from '../actions/ticker';
 import * as allSetActions from '../actions/allSet';
 
 export interface TickerStateType {
-	currentTick: number,
-	tickInterval: number,
-	tickTime: number,
-	running: boolean,
+	readonly currentTick: number,
+	readonly tickInterval: number,
+	readonly tickTime: number,
+	readonly running: boolean,
 };
 
 const initialState = {

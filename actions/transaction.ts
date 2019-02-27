@@ -10,7 +10,7 @@ export const transaction = createAction('TRANSACTION', (resolve) => {
 });
 
 export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST', (resolve) => {
-	return (tgoId: TgoId, visitableTgoId: TgoId, items: TransactionItem[]) => resolve({
+	return (tgoId: TgoId, visitableTgoId: TgoId, items: ReadonlyArray<TransactionItem>) => resolve({
 		tgoId,
 		visitableTgoId,
 		items,

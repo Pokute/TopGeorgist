@@ -1,10 +1,10 @@
 import React from 'react';
 
 export interface Parameter {
-	name: string,
-	label: string,
-	type: keyof TypeMap,
-	required?: boolean,
+	readonly name: string,
+	readonly label: string,
+	readonly type: keyof TypeMap,
+	readonly required?: boolean,
 };
 
 const ParamInputPosition = ({ parameter }: { parameter: Parameter}) => (
@@ -26,12 +26,12 @@ const paramInputPositionPack = (parameter: Parameter, formData: FormData) => ({
 export interface ParamType {
 	render({ parameter }: { parameter: Parameter}): JSX.Element,
 	pack(parameter: Parameter, formData: FormData): {
-		[name: string]: any,
+		readonly [name: string]: any,
 	},
 };
 
 export interface TypeMap {
-	[typeName: string]: ParamType,
+	readonly [typeName: string]: ParamType,
 };
 
 const typeMap: TypeMap = {
@@ -39,7 +39,7 @@ const typeMap: TypeMap = {
 };
 
 export interface Type {
-	parameter: Parameter,
+	readonly parameter: Parameter,
 };
 
 const ParamInput = (props: Type) => typeMap[props.parameter.type].render(props);

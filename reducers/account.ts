@@ -18,7 +18,7 @@ export interface AccountType {
 	readonly playerTgoId: TgoId,
 	readonly username: string,
 	readonly clientAndServerSaltedPassword: string,
-	readonly tokens: Token[],
+	readonly tokens: ReadonlyArray<Token>,
 };
 
 export const accountActionList = [

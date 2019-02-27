@@ -2,8 +2,8 @@ import * as React from 'react';
 import { SFC } from 'react';
 
 interface CategoryType {
-	title: string,
-	children?: React.ReactNode,
+	readonly title: string,
+	readonly children?: React.ReactNode,
 };
 
 const Category: SFC<CategoryType> = ({ title, children }) => {

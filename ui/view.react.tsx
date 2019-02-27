@@ -12,11 +12,11 @@ import Category from './Category';
 import { hasComponentPosition, hasComponentVisitable, hasComponentLabel, hasComponentInventory } from '../components_new';
 
 export interface Type {
-	view: ViewType,
-	map: MapType,
-	followTgoId?: TgoId,
-	position?: { x: number, y: number },
-	size?: { x: number, y: number },
+	readonly view: ViewType,
+	readonly map: MapType,
+	readonly followTgoId?: TgoId,
+	readonly position?: { x: number, y: number },
+	readonly size?: { x: number, y: number },
 };
 
 const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {

@@ -7,24 +7,24 @@ import { TypeId } from './reducers/itemType';
 import { hasComponentInventory } from './components_new';
 
 export interface Action {
-	label: string,
-	parameters?: Parameter[],
-	onClick: {
-		type: string,
-		items?: Array<{
-			typeId: TypeId,
-			count: number,
+	readonly label: string,
+	readonly parameters?: ReadonlyArray<Parameter>,
+	readonly onClick: {
+		readonly type: string,
+		readonly items?: ReadonlyArray<{
+			readonly typeId: TypeId,
+			readonly count: number,
 		}>,
-		[extra: string]: any,
+		readonly [extra: string]: any,
 	}
 }
 
 export interface ComponentTicker {
-	tick: (tgo: TgoType, options: any) => AnyAction[] | void,
+	readonly tick: (tgo: TgoType, options: any) => ReadonlyArray<AnyAction> | void,
 }
 
 export interface ComponentActionable {
-	actions: Array<Action>,
+	readonly actions: Array<Action>,
 }
 
 export interface ComponentEmpty {
@@ -33,7 +33,7 @@ export interface ComponentEmpty {
 type Component = ComponentEmpty | ComponentTicker | ComponentActionable;
 
 export interface ComponentList {
-	[componentName: string]: Component,
+	readonly [componentName: string]: Component,
 }
 
 type ComponentWithParams = [

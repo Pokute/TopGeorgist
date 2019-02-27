@@ -10,23 +10,23 @@ import { TgosState } from '../reducers/tgos';
 import { ItemTypesState } from '../reducers/itemTypes';
 
 export interface TransactionItem {
-	typeId: TypeId,
-	count: number,
+	readonly typeId: TypeId,
+	readonly count: number,
 };
 
 export interface TransactionItemWithInfo extends TransactionItem {
-	type: ItemType,
-	ownerCount: number,
+	readonly type: ItemType,
+	readonly ownerCount: number,
 };
 
 export interface TransactionParticipant {
-	tgoId: TgoId,
-	items: TransactionItem[]
+	readonly tgoId: TgoId,
+	readonly items: ReadonlyArray<TransactionItem>
 };
 
 export interface TransactionParticipantWithInfo {
-	tgoId: TgoId,
-	items: TransactionItemWithInfo[]
+	readonly tgoId: TgoId,
+	readonly items: ReadonlyArray<TransactionItemWithInfo>
 };
 
 export type TransactionActionType = ActionType<typeof transactionActions>;
@@ -45,7 +45,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	}
 	// Items shape: { typeId, count };
 
-	const participantsWithInfo: TransactionParticipantWithInfo[] = yield participants.map(function* (p) {
+	const participantsWithInfo: ReadonlyArray<TransactionParticipantWithInfo> = yield participants.map(function* (p) {
 		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
 		const newItems: TransactionItemWithInfo = yield p.items.map(function* (i) {
 			return {
@@ -70,8 +70,8 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	);
 	if (!allPraticipantsHaveItems) return false; // There's not enough items to satisfy transaction.
 
-	const actions: ReturnType<typeof inventoryActions.add>[] = participantsWithInfo.reduce(
-		(total: ReturnType<typeof inventoryActions.add>[], p) => [
+	const actions: ReadonlyArray<ReturnType<typeof inventoryActions.add>> = participantsWithInfo.reduce(
+		(total: ReadonlyArray<ReturnType<typeof inventoryActions.add>>, p) => [
 			...total,
 			...p.items.map(i => inventoryActions.add(p.tgoId, i.typeId, i.count)),
 		],

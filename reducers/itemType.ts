@@ -5,13 +5,13 @@ import { ComponentList, ComponentArray } from "../components";
 export type TypeId = string;
 
 export interface InitialItemType {
-	label?: string,
-	stackable?: boolean,
-	positiveOnly?: boolean,
-	isInteger?: boolean,
-	building?: boolean,
-	growsIntoTypeId?: TypeId,
-	components?: ComponentArray,
+	readonly label?: string,
+	readonly stackable?: boolean,
+	readonly positiveOnly?: boolean,
+	readonly isInteger?: boolean,
+	readonly building?: boolean,
+	readonly growsIntoTypeId?: TypeId,
+	readonly components?: ComponentArray,
 };
 
 export interface ItemType extends Readonly<InitialItemType> {

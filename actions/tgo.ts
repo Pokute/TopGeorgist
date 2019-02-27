@@ -4,7 +4,7 @@ import { TgoId } from '../reducers/tgo';
 import { ComponentPosition, ComponentMoveTarget, ComponentPresentation } from '../components_new';
 
 interface TgoAction {
-	tgoId: TgoId,
+	readonly tgoId: TgoId,
 };
 
 // const resolveTgoAction = (payload: TgoAction, meta: any) => (resolve: any) => resolve(payload, meta);
