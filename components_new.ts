@@ -2,6 +2,7 @@ import { Action } from "./components";
 import { TgoType, ComponentType } from "./reducers/tgo";
 import { InventoryItem } from "./reducers/inventory";
 import { TaskQueueType } from "./reducers/taskQueue";
+import { Goal } from "./reducers/goal";
 
 export interface ComponentPosition {
 	readonly position: {
@@ -99,8 +100,15 @@ export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tg
 	typeof tgo.presentation !== 'undefined'
 
 export interface ComponentComponents {
-	readonly components?: ReadonlyArray<ComponentType>,
+	readonly components: ReadonlyArray<ComponentType>,
 }
 	
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
 	Array.isArray(tgo.components)
+
+export interface ComponentGoals {
+	readonly goals: ReadonlyArray<Goal>,
+}
+	
+export const hasComponentGoals = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoals>) =>
+	Array.isArray(tgo.goals)

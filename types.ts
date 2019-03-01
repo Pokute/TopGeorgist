@@ -7,6 +7,7 @@ const defaultType = {
 	isInteger: true,
 	positiveOnly: true,
 	building: false,
+	isStorable: true,
 };
 
 export type InitialItemTypesState = {
@@ -56,6 +57,14 @@ const items: InitialItemTypesState = {
 		isInteger: true,
 		building: true,
 	},
+	tick: {
+		label: 'Tick',
+		isStorable: false,
+	},
+	position: {
+		label: 'Position',
+		isStorable: false,
+	}
 };
 
 const createItemTypes = (dispatch: Dispatch) => {

@@ -2,8 +2,10 @@ import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
 import playerReducer, { initialState as playerInitialState, PlayerActionType } from './player';
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType } from './tgo';
+import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
 import * as inventoryActions from '../actions/inventory'; 
+import * as goalsActions from '../actions/goals'; 
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
 import { InventoryActionType } from './inventory';
@@ -49,6 +51,8 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				|| isActionOf(inventoryActions.add, action)
 				|| isActionOf(taskQueueActions.addTaskQueue, action)
 				|| isActionOf(taskQueueActions.setTaskQueue, action)
+				|| isActionOf(goalsActions.addGoals, action)
+				|| isActionOf(goalsActions.setGoals, action)
 			) {
 				const newTgoState = tgoReducer(state[action.payload.tgoId], action);
 				if (newTgoState !== state[action.payload.tgoId]) {

@@ -37,7 +37,7 @@ export const initialState: TaskQueueType = [];
 export type TaskQueueActionType = ActionType<typeof taskQueueActions>
 export const TaskQueueActionList = [
 	taskQueueActions.setTaskQueue,
-	taskQueueActions.setTaskQueue,
+	taskQueueActions.addTaskQueue,
 ];
 
 export default (state: TaskQueueType = initialState, action: TaskQueueActionType): TaskQueueType => {

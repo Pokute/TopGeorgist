@@ -12,6 +12,7 @@ export interface InitialItemType {
 	readonly building?: boolean,
 	readonly growsIntoTypeId?: TypeId,
 	readonly components?: ComponentArray,
+	readonly isStorable?: boolean,
 };
 
 export interface ItemType extends Readonly<InitialItemType> {

@@ -19,6 +19,7 @@ import { getType } from 'typesafe-actions';
 import { AnyAction } from 'redux';
 import { extendedSocket } from './reducers/client';
 import { withClient } from './actions/withClient';
+import { setGoals } from './actions/goals';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -87,6 +88,7 @@ try {
 							break;
 						case getType(accountCommActions.createAccountWithTokenClientSalted):
 						case getType(tgoActions.setMoveTarget):
+						case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':
 						case 'TRANSACTION':
