@@ -133,6 +133,7 @@ Milestone 4:
 	☐ Save serverside password salt more securely.
 	☐ Consider using dotenv https://github.com/motdotla/dotenv
 	☐ Reset reconnection timer on window focus / click event.
+	☐ Investigate µWebSockets. https://github.com/uNetworking/uWebSockets.js
 
 Stories:
 
