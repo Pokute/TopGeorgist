@@ -12,3 +12,7 @@
 
 // };
 // export default reducer;
+
+const initialState = {}; 
+
+export const reducer = (state = initialState)
