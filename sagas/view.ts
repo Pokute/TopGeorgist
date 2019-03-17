@@ -11,14 +11,18 @@ const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: Actio
 	if (!Array.isArray(view.clickActionStack) || (view.clickActionStack.length === 0)) return false;
 	const topAction = view.clickActionStack[view.clickActionStack.length - 1];
 
-	yield put({
-		...topAction,
-		payload: {
-			...topAction.payload,
-			position: mapPosition,
-		},
-		viewId,
-	});
+	if (topAction.function) {
+		topAction.function({position: mapPosition})
+	} else {
+		yield put({
+			...topAction,
+			payload: {
+				...topAction.payload,
+				position: mapPosition,
+			},
+			viewId,
+		});
+	}
 
 	if (topAction.popOnClick) {
 		yield put(viewActions.clickActionStack.pop());

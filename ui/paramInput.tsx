@@ -1,4 +1,6 @@
 import React from 'react';
+import ParamInputPosition, { paramInputPositionPack, ParamInputPositionReact } from './ParamInputPosition';
+import { connect } from 'react-redux';
 
 export interface Parameter {
 	readonly name: string,
@@ -7,24 +9,12 @@ export interface Parameter {
 	readonly required?: boolean,
 };
 
-const ParamInputPosition = ({ parameter }: { parameter: Parameter}) => (
-	<div style={{ display: 'inline-block' }}>
-		<label htmlFor={`param-${parameter.name}-x`}>{`${parameter.label} x:`}</label>
-		<input id={`param-${parameter.name}-x`} type="text" name={`${parameter.name}-x`} required />
-		<label htmlFor={`param-${parameter.name}-y`}>{`${parameter.label} y:`}</label>
-		<input id={`param-${parameter.name}-y`} type="text" name={`${parameter.name}-y`} required />
-	</div>
-);
-
-const paramInputPositionPack = (parameter: Parameter, formData: FormData) => ({
-	[parameter.name]: {
-		x: formData.get(`${parameter.name}-x`),
-		y: formData.get(`${parameter.name}-y`),
-	},
-});
+export type ReactParam = ({ parameter }: { parameter: Parameter}) => JSX.Element;
+// Todo: ReturnType<typeof connect> is too permissive.
+export type ReactReduxParam = ReturnType<typeof connect>;
 
 export interface ParamType {
-	render({ parameter }: { parameter: Parameter}): JSX.Element,
+	render: ReactParam | ReactReduxParam,
 	pack(parameter: Parameter, formData: FormData): {
 		readonly [name: string]: any,
 	},
@@ -35,14 +25,19 @@ export interface TypeMap {
 };
 
 const typeMap: TypeMap = {
-	position: { render: ParamInputPosition, pack: paramInputPositionPack } ,
+	// positionOld: { render: ParamInputPositionReact, pack: paramInputPositionPack } ,
+	position: { render: ((props) => (<ParamInputPosition {...props} />)), pack: paramInputPositionPack } ,
 };
 
-export interface Type {
+export interface TypeProps {
 	readonly parameter: Parameter,
 };
 
-const ParamInput = (props: Type) => typeMap[props.parameter.type].render(props);
+const ParamInput = (props: TypeProps) => {
+	// const C = typeMap[props.parameter.type].render;
+	return (<ParamInputPosition {...props} />);
+	// return typeMap[props.parameter.type].render(props);
+}
 
 export const packParam = (parameter: Parameter, formData: FormData) => typeMap[parameter.type].pack(parameter, formData);
 

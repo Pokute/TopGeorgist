@@ -81,7 +81,7 @@ Milestone 3:
 		☐ Progress can be seen
 		☐ Pineapples grow edible, but calories doesn't increase after certain point.
 	✔ View click handling generification. @done(18-04-03 22:12)
-		☐ UI mouse selection of positions in UI paramInput.
+		✔ UI mouse selection of positions in UI paramInput. @done(19-03-17 20:25)
 		✔ New code for movement target. @done(18-04-03 23:08)
 	✔ Simplify gameRender. @done(18-04-01 05:19)
 	☐ Economy
@@ -99,7 +99,8 @@ Milestone 3:
 		✔ Server-side. @done(18-12-23 03:55)
 	☐ Hot reload?
 	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
-	☐ Eslint to support class arrow methods.
+	✘ Eslint to support class arrow methods.
+		- Not using classes anymore
 	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
 	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
@@ -118,6 +119,7 @@ Milestone 4:
 	☐ Buildings
 		☐ Barracks
 			☐ Has beds that cost to use
+	☐ UI mouse selection stack can override cursor shape.
 	☐ Better map generation.
 	☐ Refactor client init/mainloop code.
 	☐ Refactor server init/mainloop code.
