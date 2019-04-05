@@ -3,6 +3,9 @@
     "parserOptions": {
         "sourceType": "module"
     },
+    "plugins": [
+        "react-hooks"
+    ],
     "rules": {
         "func-names":"off",
         "import/extensions": "off",
@@ -28,7 +31,9 @@
         }],
         "react/jsx-indent": ["error", "tab"],
         "react/jsx-indent-props": ["error", "tab"],
-        "react/jsx-filename-extension": ["off"]
+        "react/jsx-filename-extension": ["off"],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     },
     "settings": {
         "import/resolver": {
