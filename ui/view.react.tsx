@@ -7,7 +7,7 @@ import { getMinMax } from '../utils/view';
 import { ViewType } from '../reducers/view';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
-import { MapType } from '../reducers/map';
+import { MapType, MapSize, MapPosition } from '../reducers/map';
 import Category from './Category';
 import { hasComponentPosition, hasComponentVisitable, hasComponentLabel, hasComponentInventory } from '../components_new';
 
@@ -15,8 +15,8 @@ export interface Type {
 	readonly view: ViewType,
 	readonly map: MapType,
 	readonly followTgoId?: TgoId,
-	readonly position?: { x: number, y: number },
-	readonly size?: { x: number, y: number },
+	readonly position?: MapPosition,
+	readonly size?: MapSize,
 };
 
 const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {

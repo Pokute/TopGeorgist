@@ -1,6 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo';
+import { MapPosition } from '../reducers/map';
 
 export const addCitizen = createAction('CITIZEN_ADD', (resolve) => {
 	return (tgoId: TgoId) => resolve(tgoId);
@@ -25,7 +26,7 @@ export const addDebt = createAction('GOVERNMENT_DEBT_ADD', (resolve) => {
 });
 
 export const addRentDebt = createAction('GOVERNMENT_CLAIM_DEBT_ADD', (resolve) => {
-	return (tgoId: TgoId, position: {x: number, y: number}, amount: number) => resolve({
+	return (tgoId: TgoId, position: MapPosition, amount: number) => resolve({
 		tgoId,
 		position,
 		amount,
@@ -41,7 +42,7 @@ export const addRentModulus = createAction('GOVERNMENT_ADD_RENT_MODULUS', (resol
 });
 
 export const rent = createAction('GOVERNMENT_RENT_LAND', (resolve) => {
-	return (tgoId: TgoId, position: {x: number, y: number}) => resolve({
+	return (tgoId: TgoId, position: MapPosition) => resolve({
 		tgoId,
 		position,
 	});

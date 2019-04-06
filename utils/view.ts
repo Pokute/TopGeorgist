@@ -1,6 +1,6 @@
-import { MapType } from "../reducers/map";
+import { MapPosition, MapType } from "../reducers/map";
 
-const getMinMax = (canvasElement?: HTMLCanvasElement, center?: { x: number, y: number}, map?: MapType) => {
+const getMinMax = (canvasElement?: HTMLCanvasElement, center?: MapPosition, map?: MapType) => {
 	// if (!canvasElement) throw new TypeError('Undefined canvasElement');
 	// if (!center || !center.x || !center.y) throw new TypeError('Undefined/bad center');
 	if (!canvasElement || !map) return { minTile: { x: 0, y: 0}, maxTile: { x: 0, y: 0}, };

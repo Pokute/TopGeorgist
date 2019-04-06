@@ -4,6 +4,7 @@ import * as allSetActions from '../actions/allSet';
 import * as tickerActions from '../actions/ticker';
 import * as governmentActions from '../actions/government';
 import { TgoId } from "./tgo";
+import { MapPosition } from '../reducers/map';
 
 export interface GovernmentStateType {
 	readonly citizens: CitizensStateType,
@@ -33,10 +34,7 @@ const initialCitizenState = {
 
 export interface ClaimStateType {
 	readonly tgoId: TgoId,
-	readonly position: {
-		readonly x: number,
-		readonly y: number,
-	},
+	readonly position: MapPosition,
 	readonly rentDebt: number,
 };
 

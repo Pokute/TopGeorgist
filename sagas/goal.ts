@@ -12,6 +12,7 @@ import { TransactionActionType } from "./transaction";
 import { setPosition } from "../actions/tgo";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
+import { MapPosition } from "../reducers/map";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -82,7 +83,7 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, { targetPosition
 		return false;
 	}
 
-	type Position = Readonly<{x: number, y: number}>
+	type Position = Readonly<MapPosition>
 	const positionsMatch = (a: Position, b: Position) => (a.x == b.x) && (a.y == b.y);
 	const tgoPositionMatches = function* (tgoId: TgoId, b: Position) {
 		return positionsMatch(((yield select()) as RootStateType).tgos[tgoId]!.position!, b);

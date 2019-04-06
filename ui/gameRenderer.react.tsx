@@ -8,11 +8,11 @@ import { RootStateType } from '../reducers';
 import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
-import { MapType } from '../reducers/map';
+import { MapType, MapPosition } from '../reducers/map';
 import { hasComponentPosition, hasComponentLabel, hasComponentPresentation } from '../components_new';
 import { TgoType } from '../reducers/tgo';
 
-const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number }, tile: TileType, tileSize: number) => {
+const drawTile = (ctx: CanvasRenderingContext2D , pos: MapPosition, tile: TileType, tileSize: number) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';
 	// ctx.fillStyle = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 	ctx.fillRect(
@@ -22,7 +22,7 @@ const drawTile = (ctx: CanvasRenderingContext2D , pos: { x: number, y: number },
 	);
 };
 
-const drawCross = (ctx: CanvasRenderingContext2D, pos: { x: number, y: number }, size = {x: 10, y: 10}, strokeStyle = 'black') => {
+const drawCross = (ctx: CanvasRenderingContext2D, pos: MapPosition, size = {x: 10, y: 10}, strokeStyle = 'black') => {
 	ctx.beginPath();
 	ctx.strokeStyle = strokeStyle;
 	ctx.moveTo(pos.x - size.x/2, pos.y - size.y/2);
@@ -40,8 +40,8 @@ const renderCanvasMap = ({
 	tileSet,
 	canvas,
 }:{
-	minTile: { x: number, y: number },
-	maxTile: { x: number, y: number },
+	minTile: MapPosition,
+	maxTile: MapPosition,
 	map: MapType,
 	tileSet: TileSetType,
 	canvas: HTMLCanvasElement,
@@ -79,8 +79,8 @@ const renderCanvasTgos = ({
 	canvas,
 	tileSize,
 }:{
-	minTile: { x: number, y: number },
-	maxTile: { x: number, y: number },
+	minTile: MapPosition,
+	maxTile: MapPosition,
 	tgosState: TgosState,
 	canvas: HTMLCanvasElement,
 	tileSize: number,
@@ -118,8 +118,8 @@ const renderCanvas = ({
 	tileSet,
 	canvas,
 }:{
-	minTile: { x: number, y: number },
-	maxTile: { x: number, y: number },
+	minTile: MapPosition,
+	maxTile: MapPosition,
 	map: MapType,
 	tgosState: TgosState,
 	tileSet: TileSetType,
@@ -136,8 +136,8 @@ const renderCanvas = ({
 export interface Type {
 	readonly view: ViewType,
 	readonly map: MapType,
-	readonly minTile: { x: number, y: number },
-	readonly maxTile: { x: number, y: number },
+	readonly minTile: MapPosition,
+	readonly maxTile: MapPosition,
 }
 
 type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;

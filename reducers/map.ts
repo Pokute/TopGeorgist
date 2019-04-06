@@ -1,22 +1,54 @@
 import { engines as randomEngines, integer as randomInteger } from 'random-js';
 
 import * as mapActions from '../actions/map'; 
+import { ActionType, getType } from 'typesafe-actions';
+
+export interface MapPosition {
+	readonly x: number,
+	readonly y: number,
+};
+
+export interface MapSize {
+	readonly x: number,
+	readonly y: number,
+};
+
+type PositionDistanceEuclidean = { distance: number };
+type PositionDistanceManhattan = { distanceManhattan: number };
+type PositionDistance = PositionDistanceEuclidean | PositionDistanceManhattan;
+const isDistanceEuclidean = (distance: PositionDistance): distance is PositionDistanceEuclidean =>
+	distance.hasOwnProperty('distance');
+
+const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition => ({
+	x: a.x - b.x,
+	y: a.y - b.y,
+});
+const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
+	const offset = getPositionOffset(a, b)
+	return {
+		x: Math.abs(offset.x),
+		y: Math.abs(offset.y),
+	}
+};
+
+export const positionMatches = (a: MapPosition, b: MapPosition, distance: PositionDistance = { distanceManhattan: 0 }) => {
+	const distanceManhattan = getPositionDistanceManhattan(a, b);
+	return isDistanceEuclidean(distance)
+		? Math.sqrt(Math.pow(distanceManhattan.x, 2) + Math.pow(distanceManhattan.y, 2))
+		: distanceManhattan.x + distanceManhattan.y
+};
 
 type TileDataType = number;
 
 export interface MapType {
 	readonly seed: number,
-	readonly size: {
-		readonly x: number,
-		readonly y: number,
-	},
+	readonly size: MapPosition,
 	readonly tileSize: number,
 	readonly tileSetId: string,
 	readonly data: ReadonlyArray<TileDataType>,
 	readonly minTileId?: number,
 	readonly maxTileId?: number,
 };
-import { ActionType, getType } from 'typesafe-actions';
 
 const initialState = {
 	seed: 0,
@@ -29,10 +61,7 @@ const initialState = {
 };
 
 export interface MapSettings {
-	readonly size: {
-		readonly x: number,
-		readonly y: number,
-	},
+	readonly size: MapSize,
 	readonly minTileId?: number,
 	readonly maxTileId?: number,
 	readonly seed?: number,

@@ -1,11 +1,9 @@
 import { InventoryItem } from "./inventory";
 import { TgoId } from "./tgo";
+import { MapPosition } from "../reducers/map";
 
 export type RequirementDeliveryTargetTgoId = TgoId;
-export type RequirementDeliveryTargetPosition = {
-	readonly x: number,
-	readonly y: number,
-};
+export type RequirementDeliveryTargetPosition = MapPosition;
 
 export type RequirementDeliveryTarget = RequirementDeliveryTargetPosition | RequirementDeliveryTargetTgoId;
 

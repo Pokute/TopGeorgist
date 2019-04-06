@@ -4,6 +4,7 @@ import { clickActionStack } from "../actions/view";
 
 import { ViewsState } from './views';
 import * as viewActions from '../actions/view';
+import { MapPosition, MapSize } from "./map";
 
 export type ViewId = keyof ViewsState;
 
@@ -21,14 +22,8 @@ export interface ViewInitialType {
 	readonly canvas?: HTMLCanvasElement,
 	readonly canvasId?: string,
 	readonly followTgoId?: TgoId,
-	readonly position: {
-		readonly x: number,
-		readonly y: number,
-	},
-	readonly size: {
-		readonly x: number,
-		readonly y: number,
-	},
+	readonly position: MapPosition,
+	readonly size: MapSize,
 	readonly clickActionStack: ReadonlyArray<any>,
 };
 
