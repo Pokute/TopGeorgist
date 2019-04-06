@@ -2,6 +2,7 @@ import { put, select, takeEvery, take } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
 import * as accountActions from '../actions/account';
+import isServer from '../isServer'
 import * as accountsActions from '../actions/accounts';
 import { set as allSet } from '../actions/allSet';
 import * as defaultsActions from '../actions/defaults';
@@ -17,7 +18,7 @@ import { setPosition } from '../actions/tgo';
 import { hasComponentPlayer, hasComponentLabel } from '../components_new';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 	console.log('Received playerCreateRequest ', label);
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	const hasNameConflict = Object.values(state.tgos)
@@ -64,7 +65,7 @@ const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, l
 };
 
 const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<typeof playerActions.playerRequest>) {
-	if (global.isServer) return; // Client only
+	if (isServer) return; // Client only
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	let accountId;
@@ -87,7 +88,7 @@ const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<ty
 };
 
 // const handlePlayerCreateResponse = function* (action) {
-// 	if (global.isServer) return;
+// 	if (isServer) return;
 // 	yield put(setPlayerTgoId(action.playerTgoId));
 // };
 

@@ -16,7 +16,6 @@ export const GoalsActionList = [
 export default (state: GoalsType = initialState, action: GoalsActionType): GoalsType => {
 	switch (action.type) {
 		case (getType(goalsActions.setGoals)):
-			debugger;
 			console.log('setting task queue: ',  action.payload)
 			return Array.isArray(action.payload.goals) ? action.payload.goals : [action.payload.goals];
 		case (getType(goalsActions.addGoals)):

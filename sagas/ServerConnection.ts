@@ -1,8 +1,9 @@
 import { ActionType, getType } from 'typesafe-actions';
-import { eventChannel, END, delay } from 'redux-saga';
-import { takeEvery, put, select, call, take, fork } from 'redux-saga/effects';
+import { eventChannel, END } from 'redux-saga';
+import { takeEvery, put, select, call, take, fork, delay } from 'redux-saga/effects';
 import WebSocketWrapper from 'ws-wrapper';
 
+import isServer from '../isServer'
 import config from '../config';
 import * as connectionActions from '../actions/serverConnection';
 import * as netActions from '../actions/net';
@@ -89,7 +90,7 @@ const serverConnectionListener = function* () {
 	yield takeEvery(getType(connectionActions.createWebsocket), listenCreateWebsocket);
 	yield takeEvery(getType(connectionActions.setWebsocket), listenSetWebsocket);
 	yield takeEvery(getType(connectionActions.message), listenMessage);
-	if (!global.isServer) {
+	if (!isServer) {
 		yield fork(reconnectionSaga);
 		// yield put(connectionActions.createWebsocket());
 	}

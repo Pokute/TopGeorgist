@@ -13,7 +13,6 @@ export interface propTypes {
 }
 
 const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
-	if (!defaultPlayerTgoId) return null;
 	return (
 		<Category
 			title={'Player'}
@@ -22,7 +21,7 @@ const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
 				? <CurrentPlayerInfo />
 				: <CreatePlayerForm />
 			}
-			<button
+			{ defaultPlayerTgoId && (<button
 				onClick={() => {
 					const delivery:RequirementDelivery = {
 						tgoIds: [defaultPlayerTgoId],
@@ -37,6 +36,7 @@ const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
 			>
 				Create Delivery Goal
 			</button>
+			)}
 		</Category>
 	);
 };

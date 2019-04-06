@@ -1,7 +1,8 @@
 import { call, fork, put, select, take, takeEvery } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { delay } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
+import isServer from '../isServer'
 import * as tickerActions from '../actions/ticker';
 import components, { ComponentTicker } from '../components';
 import { set as allSet } from '../actions/allSet';
@@ -58,7 +59,7 @@ const tick = function* () {
 };
 
 const tickerRootSaga = function* () {
-	if (global.isServer) yield fork(tickerSaga);
+	if (isServer) yield fork(tickerSaga);
 	yield takeEvery(getType(tickerActions.tick), tick);
 };
 

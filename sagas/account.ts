@@ -1,6 +1,7 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
+import isServer from '../isServer'
 import { set as allSet } from '../actions/allSet';
 import * as accountActions from '../actions/account';
 import * as accountCommActions from '../actions/accountComm';
@@ -11,7 +12,7 @@ import { setAccountId, setPlayerTgoId } from '../actions/defaults';
 import { WithClient } from '../actions/withClient';
 
 const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, username, password }}: ActionType<typeof accountsActions.accountRequestWithClient>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 	console.log('Received accountCreateRequest ', username);
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	if (username) {
@@ -46,7 +47,7 @@ const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, u
 };
 
 const handleAccountLogin = function* ({ payload: { clientId, username, clientSaltedPassword }}: WithClient<ActionType<typeof accountCommActions.loginClientSalted>>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 	if (!username || !clientSaltedPassword) return;
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
@@ -75,7 +76,7 @@ const handleAccountLogin = function* ({ payload: { clientId, username, clientSal
 }
 
 const handleAccountLoginWithToken = function* ({ payload: { clientId, token }}: WithClient<ActionType<typeof accountCommActions.loginWithToken>>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 	if (!token) return;
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
@@ -96,7 +97,7 @@ const handleAccountLoginWithToken = function* ({ payload: { clientId, token }}: 
 }
 
 const handleAccountCreateWithToken = function* ({ payload: { username, clientSaltedPassword, token }}: ActionType<typeof accountCommActions.createAccountWithTokenClientSalted>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 	console.log('Received handleAccountCreateWithToken ', username);
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	const foundAccount = Object.values(state.accounts).find(account => account.tokens.includes(token));
@@ -126,7 +127,7 @@ const handleAccountCreateWithToken = function* ({ payload: { username, clientSal
 
 // This method practically only finds the accountId for the reducer.
 const handleRequestChangePasswordClientSalted = function* ({ payload: { username, clientSaltedPassword, clientSaltedOldPassword }}: ActionType<typeof accountCommActions.requestChangePasswordClientSalted>) {
-	if (!global.isServer) return;
+	if (!isServer) return;
 
 	const state: ReturnType<typeof topGeorgist> = yield select();
 	const foundAccount = Object.values(state.accounts).find(account => account.username === username);

@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { batchedSubscribe, NotifyFunction } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
+import isServer from './isServer'
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 // AsyncNodeStorage is not included in browser.
 // import { AsyncNodeStorage } from 'redux-persist-node-storage';
@@ -17,7 +18,7 @@ let enhancer;
 let letStore;
 let letPersistor;
 
-if (global.isServer) {
+if (isServer) {
 	// Server
 	enhancer = compose(middleWares);
 	const persistReducers = persistReducer(

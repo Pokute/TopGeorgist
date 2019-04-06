@@ -1,9 +1,8 @@
-/// <reference path="./global.d.ts" />
-/// <reference path="./ws-wrapper.d.ts" />
+/// <reference path="./typings/global.d.ts" />
+/// <reference path="./typings/ws-wrapper.d.ts" />
 import { v4 as uuidv4 } from 'uuid';
 import { Server as WSS } from 'ws';
 
-import './serverInit';
 import config from './config';
 import { store } from './store';
 import createItemTypes from './types';
