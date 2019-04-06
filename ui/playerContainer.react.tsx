@@ -9,22 +9,23 @@ import Category from './Category';
 import { RequirementDelivery } from '../reducers/goal';
 
 export interface propTypes {
-	readonly defaultPlayerTgoId: TgoId,
+	readonly defaultPlayerTgoId?: TgoId,
 }
 
-const PlayerContainer = (props: propTypes) => {
+const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
+	if (!defaultPlayerTgoId) return null;
 	return (
 		<Category
 			title={'Player'}
 		>
-			{props.defaultPlayerTgoId
+			{defaultPlayerTgoId
 				? <CurrentPlayerInfo />
 				: <CreatePlayerForm />
 			}
 			<button
 				onClick={() => {
 					const delivery:RequirementDelivery = {
-						tgoIds: [props.defaultPlayerTgoId],
+						tgoIds: [defaultPlayerTgoId],
 						targetPosition: {
 							x: 20,
 							y: 20

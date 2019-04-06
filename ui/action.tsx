@@ -9,7 +9,7 @@ import { Action } from '../components';
 export interface Type {
 	readonly action: Action,
 	readonly additionalSentData: any,
-	onSubmit?(action: Type['action']): () => void,
+	onSubmit?(action: Type['action']): (event: React.FormEvent<HTMLFormElement>) => void,
 }
 
 const Action = (props: Type & ReturnType<typeof mapDispatchToProps>) => (

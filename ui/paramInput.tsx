@@ -26,7 +26,7 @@ export interface TypeMap {
 
 const typeMap: TypeMap = {
 	// positionOld: { render: ParamInputPositionReact, pack: paramInputPositionPack } ,
-	position: { render: ((props) => (<ParamInputPosition {...props} />)), pack: paramInputPositionPack } ,
+	position: { render: ((props: any) => (<ParamInputPosition {...props} />)), pack: paramInputPositionPack } ,
 };
 
 export interface TypeProps {

@@ -151,7 +151,7 @@ const GameRenderer: React.SFC<Props> = ({
 	tileSet,
 	onClick,
 }) => {
-	const canvas = useRef<HTMLCanvasElement>();
+	const canvas = useRef<HTMLCanvasElement | null>(null);
 
 	const onMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
 		if (event.button == 2) {
