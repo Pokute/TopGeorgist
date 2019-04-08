@@ -12,7 +12,7 @@ import { TransactionActionType } from "./transaction";
 import { setPosition } from "../actions/tgo";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
-import { MapPosition } from "../reducers/map";
+import { MapPosition, positionMatches, getPositionOffset } from "../reducers/map";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -83,13 +83,9 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, { targetPosition
 		return false;
 	}
 
-	type Position = Readonly<MapPosition>
-	const positionsMatch = (a: Position, b: Position) => (a.x == b.x) && (a.y == b.y);
-	const tgoPositionMatches = function* (tgoId: TgoId, b: Position) {
-		return positionsMatch(((yield select()) as RootStateType).tgos[tgoId]!.position!, b);
-	}
 	let failed = false;
-	while (!tgoPositionMatches(actorTgoId, targetPosition) || failed) {
+	let positionOffset: MapPosition;
+	while (positionOffset = getPositionOffset(actorTgo.position, targetPosition), (positionOffset.x + positionOffset.y >= 0) || failed) {
 		const res: (ReturnType<typeof transaction> | false) = yield* completeWork(actorTgoId, moveWork);
 		if (res !== false) {
 			// Move a step.
@@ -99,8 +95,8 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, { targetPosition
 			}
 			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
 			const change = {
-				x: Math.sign(targetPosition.x - currentPos.x),
-				y: Math.sign(targetPosition.y - currentPos.y),
+				x: Math.sign(positionOffset.x),
+				y: Math.sign(positionOffset.y),
 			};
 			yield put(res);
 			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
@@ -125,7 +121,6 @@ const handleGoal = function* (actorTgoId: TgoId, goal: Goal) {
 	if (goal.requirements.length !== 1) {
 		return false;
 	}
-	debugger;
 	yield* handleGoalRequirement(actorTgoId, goal.requirements[0]);
 	return true;
 };

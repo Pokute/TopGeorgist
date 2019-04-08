@@ -1,6 +1,7 @@
 import { Work } from './reducers/work';
 
 export const moveWork = {
+	type: 'move',
 	inputs: [
 		{
 			typeId: 'calories',

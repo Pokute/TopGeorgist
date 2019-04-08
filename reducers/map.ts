@@ -19,7 +19,7 @@ type PositionDistance = PositionDistanceEuclidean | PositionDistanceManhattan;
 const isDistanceEuclidean = (distance: PositionDistance): distance is PositionDistanceEuclidean =>
 	distance.hasOwnProperty('distance');
 
-const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition => ({
+export const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition => ({
 	x: a.x - b.x,
 	y: a.y - b.y,
 });
