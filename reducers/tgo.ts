@@ -7,7 +7,7 @@ import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentInventory, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentGoals } from '../components_new';
+import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentInventory, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer } from '../components_new';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -46,7 +46,10 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentTaskQueue>
 	& Partial<ComponentPresentation>
 	& Partial<ComponentComponents>
-	& Partial<ComponentGoals>
+	& Partial<ComponentGoal>
+	& Partial<ComponentWork>
+	& Partial<ComponentGoalDoer>
+	& Partial<ComponentWorkDoer>
 );
 
 export type TgoType = TgoPartials & {
@@ -87,8 +90,8 @@ export default (state: TgoType, action: TgoActionType | InventoryActionType | Ta
 			if (newInventory !== usedState.inventory) usedState = { ...usedState, inventory: newInventory };
 			const newTaskQueue = taskQueueReducer(state.taskQueue, action as TaskQueueActionType);
 			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, taskQueue: newTaskQueue };
-			const newGoals = goalsReducer(state.goals, action as GoalsActionType);
-			if (newGoals !== usedState.goals) usedState = { ...usedState, goals: newGoals };
+			// const newGoals = goalsReducer(state.activeGoals, action as GoalsActionType);
+			// if (newGoals !== usedState.activeGoals) usedState = { ...usedState, activeGoals: newGoals };
 
 			return usedState;
 		}

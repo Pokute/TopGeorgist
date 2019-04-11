@@ -12,3 +12,12 @@ export const add = createAction('TGO_INVENTORY_ADD', (resolve) => {
 		},
 	});
 });
+
+export const addTgoId = createAction('TGO_INVENTORY_ADD_TGO_ID', (resolve) => {
+	return (ownerTgoId: TgoId, tgoId: TgoId) => resolve({
+		tgoId: ownerTgoId,
+		item: {
+			tgoId,
+		},
+	});
+});

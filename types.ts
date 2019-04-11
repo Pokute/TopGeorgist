@@ -8,6 +8,7 @@ const defaultType = {
 	positiveOnly: true,
 	building: false,
 	isStorable: true,
+	redeemable: true,
 };
 
 export type InitialItemTypesState = {
@@ -64,6 +65,16 @@ const items: InitialItemTypesState = {
 	position: {
 		label: 'Position',
 		isStorable: false,
+	},
+	work: {
+		label: 'Work',
+		stackable: false,
+		isTgoId: true,
+	},
+	tgoId: {
+		label: 'TgoId',
+		stackable: false,
+		isTgoId: true,
 	}
 };
 

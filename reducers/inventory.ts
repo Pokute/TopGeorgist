@@ -1,11 +1,13 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import { TypeId } from "./itemType";
+import { TgoId } from './tgo';
 import * as inventoryActions from '../actions/inventory'
 
 export interface InventoryItem {
 	readonly typeId: TypeId,
 	readonly count: number,
+	readonly tgoId? : TgoId,
 };
 
 export type Inventory = ReadonlyArray<InventoryItem>;
@@ -28,6 +30,16 @@ export default (state: Inventory = initialState, action: InventoryActionType): I
 					...action.payload.item,
 					count: action.payload.item.count + existingCount,
 				},
+			];
+		}
+		case getType(inventoryActions.addTgoId): {
+			return [
+				...state,
+				{
+					typeId: 'tgoId',
+					count: 1,
+					tgoId: action.payload.item.tgoId,
+				}
 			];
 		}
 		default:

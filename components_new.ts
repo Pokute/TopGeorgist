@@ -1,5 +1,5 @@
 import { Action } from "./components";
-import { TgoType, ComponentType } from "./reducers/tgo";
+import { TgoType, ComponentType, TgoId } from "./reducers/tgo";
 import { Inventory } from "./reducers/inventory";
 import { TaskQueueType } from "./reducers/taskQueue";
 import { Goal } from "./reducers/goal";
@@ -97,13 +97,34 @@ export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tg
 export interface ComponentComponents {
 	readonly components: ReadonlyArray<ComponentType>,
 }
-	
+
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
 	Array.isArray(tgo.components)
 
-export interface ComponentGoals {
-	readonly goals: ReadonlyArray<Goal>,
+export interface ComponentWork {
+	isWork: true,
 }
-	
-export const hasComponentGoals = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoals>) =>
-	Array.isArray(tgo.goals)
+
+export const isComponentWork = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
+	tgo.isWork == true
+
+export interface ComponentGoal {
+	goal: Goal,
+}
+
+export const isComponentGoal = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
+	typeof tgo.goal !== undefined
+
+export interface ComponentWorkDoer {
+	isWorkDoer: true,
+}
+
+export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
+	tgo.isWorkDoer == true
+
+export interface ComponentGoalDoer {
+	readonly activeGoals: ReadonlyArray<TgoId>,
+}
+
+export const hasComponentGoalDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoalDoer>) =>
+	Array.isArray(tgo.activeGoals)

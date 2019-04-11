@@ -13,6 +13,8 @@ export interface InitialItemType {
 	readonly growsIntoTypeId?: TypeId,
 	readonly components?: ComponentArray,
 	readonly isStorable?: boolean,
+	readonly isTgoId?: boolean,
+	readonly redeemable?: boolean,
 };
 
 export interface ItemType extends Readonly<InitialItemType> {
@@ -22,6 +24,7 @@ export interface ItemType extends Readonly<InitialItemType> {
 const initialState: ItemType = {
 	typeId: '',
 	stackable: true,
+	redeemable: true,
 };
 
 // Itemtypes should not be modifiable during runtime.

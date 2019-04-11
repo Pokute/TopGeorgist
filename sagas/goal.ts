@@ -1,8 +1,8 @@
-import { select, put, takeEvery, call } from "redux-saga/effects";
+import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
 import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove } from "../reducers/goal";
 import { RootStateType } from "../reducers";
-import { hasComponentPosition, hasComponentInventory, ComponentGoals, hasComponentGoals } from "../components_new";
+import { hasComponentPosition, hasComponentInventory, ComponentGoalDoer, hasComponentGoalDoer, ComponentInventory, isComponentGoal } from "../components_new";
 import { TgoId, TgoType } from "../reducers/tgo";
 import { moveWork } from "../works";
 import { InventoryItem } from "../reducers/inventory";
@@ -117,19 +117,46 @@ const handleGoalRequirement = function* (actorTgoId: TgoId, requirement: Require
 	}
 };
 
-const handleGoal = function* (actorTgoId: TgoId, goal: Goal) {
-	if (goal.requirements.length !== 1) {
+const handleGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
+	const s: RootStateType = yield select();
+	const goalTgo = s.tgos[goalTgoId];
+	if (!isComponentGoal(goalTgo)) return false;
+	if (goalTgo.goal.requirements.length !== 1) {
 		return false;
 	}
-	yield* handleGoalRequirement(actorTgoId, goal.requirements[0]);
+	yield* handleGoalRequirement(actorTgoId, goalTgo.goal.requirements[0]);
 	return true;
 };
 
-const handleGoalsForOwner = function* (owner: TgoType & ComponentGoals) {
-	if (owner.goals.length !== 1) {
+const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
+	const s: RootStateType = yield select();
+	const actorTgo = s.tgos[actorTgoId];
+	const goalTgo = s.tgos[goalTgoId];
+	if (!isComponentGoal(goalTgo)) return false;
+
+	const redeem = (to: TgoType & ComponentInventory, from: TgoType & ComponentInventory) => {
+		const redeemableInventoryItems = from.inventory.filter(ii => s.itemTypes[ii.typeId].redeemable)
+		return transaction({
+			tgoId: from.tgoId,
+			items: redeemableInventoryItems.map(ii => ({...ii, count: ii.count * -1})),
+		},
+		{
+			tgoId: to.tgoId,
+			items: redeemableInventoryItems,
+		});
+	};
+
+	if (!hasComponentInventory(goalTgo) || !hasComponentInventory(actorTgo)) return false;
+	const redeemedWorksAction = goalTgo.goal.workInstances.map(workInstanceTgoId => s.tgos[workInstanceTgoId]).filter(hasComponentInventory).map(workIntanceTgo => redeem(actorTgo, workIntanceTgo));
+	yield all(redeemedWorksAction.map(a => put(a)))
+	yield put(redeem(actorTgo, goalTgo));
+}
+
+const handleGoalsForOwner = function* (owner: TgoType & ComponentGoalDoer & ComponentInventory) {
+	if (owner.activeGoals.length !== 1) {
 		return false;
 	}
-	yield* handleGoal(owner.tgoId, owner.goals[0]);
+	yield* handleGoal(owner.tgoId, owner.activeGoals[0]);
 	return true;
 }
 
@@ -137,7 +164,8 @@ const handleGoalTick = function* () {
 	const s: RootStateType = yield select();
 	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
 	const goalOwners = Object.values(s.tgos)
-		.filter(hasComponentGoals);
+		.filter(hasComponentGoalDoer)
+		.filter(hasComponentInventory);
 
 	for (const goalOwner of goalOwners) yield call(handleGoalsForOwner, goalOwner);
 };

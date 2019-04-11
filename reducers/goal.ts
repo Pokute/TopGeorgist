@@ -44,5 +44,5 @@ export const isRequirementMove = (requirement: Requirement): requirement is Requ
 export type Goal = {
 	readonly title?: string,
 	readonly requirements: ReadonlyArray<Requirement>,
-	readonly progress: number,
+	readonly workInstances: ReadonlyArray<TgoId>,
 };
