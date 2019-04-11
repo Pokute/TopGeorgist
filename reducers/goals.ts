@@ -16,10 +16,10 @@ export const GoalsActionList = [
 export default (state: GoalsType = initialState, action: GoalsActionType): GoalsType => {
 	switch (action.type) {
 		case (getType(goalsActions.setGoals)):
-			console.log('setting task queue: ',  action.payload)
+			console.log('setting goal queue: ',  action.payload)
 			return Array.isArray(action.payload.goals) ? action.payload.goals : [action.payload.goals];
 		case (getType(goalsActions.addGoals)):
-			console.log('adding to task queue: ',  action.payload)
+			console.log('adding to goal queue: ',  action.payload)
 			return [
 				...state,
 				...(Array.isArray(action.payload.goals) ? action.payload.goals : [action.payload.goals]),

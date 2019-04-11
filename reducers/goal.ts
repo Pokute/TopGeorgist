@@ -1,4 +1,4 @@
-import { InventoryItem } from "./inventory";
+import { Inventory } from "./inventory";
 import { TgoId } from "./tgo";
 import { MapPosition } from "../reducers/map";
 
@@ -11,12 +11,12 @@ export interface RequirementDelivery {
 	readonly type: 'RequirementDelivery',
 	readonly targetPosition: RequirementDeliveryTarget,
 	readonly tgoIds: ReadonlyArray<TgoId>,
-	readonly inventoryItems: ReadonlyArray<InventoryItem>,
+	readonly inventoryItems: Inventory,
 };
 
 export interface RequirementIntentoryItems {
 	readonly type: 'RequirementInventoryItems',
-	readonly inventoryItems: ReadonlyArray<InventoryItem>,
+	readonly inventoryItems: Inventory,
 }
 
 export interface RequirementMove {

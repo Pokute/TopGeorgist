@@ -1,6 +1,6 @@
 import { Work } from './reducers/work';
 
-export const moveWork = {
+export const moveWork: Work = {
 	type: 'move',
 	inputs: [
 		{

@@ -1,6 +1,6 @@
 import { Action } from "./components";
 import { TgoType, ComponentType } from "./reducers/tgo";
-import { InventoryItem } from "./reducers/inventory";
+import { Inventory } from "./reducers/inventory";
 import { TaskQueueType } from "./reducers/taskQueue";
 import { Goal } from "./reducers/goal";
 import { MapPosition } from "./reducers/map";
@@ -72,7 +72,7 @@ export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (B
 	typeof tgo.label !== undefined
 
 export interface ComponentInventory {
-	readonly inventory: ReadonlyArray<InventoryItem>,
+	readonly inventory: Inventory,
 }
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>

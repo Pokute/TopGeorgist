@@ -8,14 +8,16 @@ export interface InventoryItem {
 	readonly count: number,
 };
 
-const initialState: ReadonlyArray<InventoryItem> = [];
+export type Inventory = ReadonlyArray<InventoryItem>;
+
+const initialState: Inventory = [];
 
 export type InventoryActionType = ActionType<typeof inventoryActions>;
 export const InventoryActionList = [
 	inventoryActions.add,
 ];
 
-export default (state: ReadonlyArray<InventoryItem> = initialState, action: InventoryActionType): ReadonlyArray<InventoryItem> => {
+export default (state: Inventory = initialState, action: InventoryActionType): Inventory => {
 	switch (action.type) {
 		case getType(inventoryActions.add): {
 			const existingItem = state.find(ii => ii.typeId === action.payload.item.typeId);

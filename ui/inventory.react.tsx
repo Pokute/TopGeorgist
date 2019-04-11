@@ -4,8 +4,6 @@ import components, { ComponentActionable, Action } from '../components';
 import * as netActions from '../actions/net';
 import { TypeId } from '../reducers/itemType';
 import { TgoId } from '../reducers/tgo';
-import { InventoryItem } from '../reducers/inventory';
-import { ItemTypesState } from '../reducers/itemTypes';
 import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
 import Category from './Category';

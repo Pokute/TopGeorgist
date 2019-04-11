@@ -1,7 +1,7 @@
-import { InventoryItem } from "./inventory";
+import { Inventory } from "./inventory";
 
 export type Work = {
 	readonly type: string,
-	readonly inputs: ReadonlyArray<InventoryItem>,
-	readonly outputs: ReadonlyArray<InventoryItem>,
+	readonly inputs: Inventory,
+	readonly outputs: Inventory,
 };

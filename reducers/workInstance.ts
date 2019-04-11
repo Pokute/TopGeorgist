@@ -1,10 +1,10 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as workInstanceActions from '../actions/workInstance';
-import { InventoryItem } from './inventory';
+import { Inventory } from './inventory';
 
 export interface WorkInstance {
-	readonly inputProgress: ReadonlyArray<InventoryItem>,
+	readonly inputProgress: Inventory,
 };
 
 export const initialState: WorkInstance = {
