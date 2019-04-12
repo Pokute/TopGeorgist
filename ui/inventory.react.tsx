@@ -22,7 +22,7 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 	>
 		{props.inventory.map(i => (
 			<div
-				key={i.typeId}
+				key={i.tgoId || i.typeId}
 			>
 				<span>{`${i.typeId} : ${i.count}`}</span>
 				{/* {((props.itemTypes[i.typeId] || {}) // Find the itemType

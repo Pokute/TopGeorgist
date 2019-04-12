@@ -1,4 +1,4 @@
-import { call, fork, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, select, take, takeEvery, all } from 'redux-saga/effects';
 import { delay } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
@@ -52,7 +52,7 @@ const tick = function* () {
 		}),
 	));
 	try {
-		yield calls;
+		yield all(calls);
 	} catch (ex) {
 		console.log(ex);
 	}

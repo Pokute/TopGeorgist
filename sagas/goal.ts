@@ -113,8 +113,8 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
 			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
 			const change = {
-				x: Math.sign(positionOffset.x),
-				y: Math.sign(positionOffset.y),
+				x: -1 * Math.sign(positionOffset.x),
+				y: -1 * Math.sign(positionOffset.y),
 			};
 			// yield put(res);
 			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
