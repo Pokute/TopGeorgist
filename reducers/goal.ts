@@ -1,6 +1,10 @@
+import { AnyAction } from "redux";
+import { getType, ActionType } from "typesafe-actions";
+
 import { Inventory } from "./inventory";
 import { TgoId } from "./tgo";
 import { MapPosition } from "../reducers/map";
+import * as goalActions from '../actions/goal';
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = MapPosition;
@@ -45,4 +49,23 @@ export type Goal = {
 	readonly title?: string,
 	readonly requirements: ReadonlyArray<Requirement>,
 	readonly workInstances: ReadonlyArray<TgoId>,
+};
+
+export type GoalActionType = ActionType<typeof goalActions>
+
+export default (state: Goal, action: AnyAction): Goal => {
+	switch (action.type) {
+		case getType(goalActions.addWorkInstance):
+			return {
+				...state,
+				workInstances: [...state.workInstances, action.payload.workInstance]
+			};
+		case getType(goalActions.removeWorkInstance):
+			return {
+				...state,
+				workInstances: state.workInstances.filter(wi => wi !== action.payload.workInstance),
+			};
+		default:
+			return state;
+	}
 };

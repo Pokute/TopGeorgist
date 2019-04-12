@@ -10,6 +10,7 @@ export const createPlayerAction = () => tgosActions.add({
 		'consumer',
 		'player',
 	],
+	activeGoals: [],
 	position: { x: 5, y: 5 },
 	presentation: { color: 'red' },
 	inventory: [

@@ -23,7 +23,7 @@ export const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition =
 	x: a.x - b.x,
 	y: a.y - b.y,
 });
-const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
+export const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
 	const offset = getPositionOffset(a, b)
 	return {
 		x: Math.abs(offset.x),
@@ -33,9 +33,10 @@ const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
 
 export const positionMatches = (a: MapPosition, b: MapPosition, distance: PositionDistance = { distanceManhattan: 0 }) => {
 	const distanceManhattan = getPositionDistanceManhattan(a, b);
-	return isDistanceEuclidean(distance)
+	const usedDistance = isDistanceEuclidean(distance)
 		? Math.sqrt(Math.pow(distanceManhattan.x, 2) + Math.pow(distanceManhattan.y, 2))
-		: distanceManhattan.x + distanceManhattan.y
+		: distanceManhattan.x + distanceManhattan.y;
+	return (usedDistance == 0);
 };
 
 type TileDataType = number;

@@ -1,4 +1,4 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery, all, call } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as inventoryActions from '../actions/inventory';
@@ -45,7 +45,27 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	}
 	// Items shape: { typeId, count };
 
-	const participantsWithInfo: ReadonlyArray<TransactionParticipantWithInfo> = yield participants.map(function* (p) {
+	const getParticipantWithInfo = function*(p: TransactionParticipant) {
+		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
+		const newItems: TransactionItemWithInfo = yield all(p.items.map((item) => call(function* (i) {
+			return {
+				...i,
+				type: yield select((state: { itemTypes: ItemTypesState }) => state.itemTypes[i.typeId]),
+				ownerCount: {
+					count: 0,
+					...(pTgo.inventory || []).find((ii : { typeId: TypeId }) => ii.typeId === i.typeId),
+				}.count || 0,
+			};
+		}, item)));
+		return {
+			...p,
+			items: newItems,
+		};
+	}
+
+	const participantsWithInfo: ReadonlyArray<TransactionParticipantWithInfo> = yield all(participants.map(p => call(getParticipantWithInfo, p)));
+
+	const participantsWithInfo2: ReadonlyArray<TransactionParticipantWithInfo> = yield* (participants.map(function* (p) {
 		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
 		const newItems: TransactionItemWithInfo = yield p.items.map(function* (i) {
 			return {
@@ -61,7 +81,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 			...p,
 			items: newItems,
 		};
-	});
+	}));
 
 	const allPraticipantsHaveItems = participantsWithInfo.every((p) =>
 		p.items.every(i =>
@@ -78,7 +98,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 		[],
 	);
 
-	yield actions.map(function* (a) { yield put(a); });
+	yield all(actions.map(a => put(a)));
 	return true;
 };
 

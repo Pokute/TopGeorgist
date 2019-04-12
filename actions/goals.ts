@@ -1,11 +1,11 @@
 import { createAction } from 'typesafe-actions';
 
 import { TgoId } from "../reducers/tgo";
-import { GoalsType } from '../reducers/goals';
+import { GoalTgosType } from '../reducers/goals';
 import { RequirementMove } from '../reducers/goal';
 
 export const setGoals = createAction('TGO_GOALS_SET', (resolve) => {
-	return (tgoId: TgoId, goals: GoalsType) => resolve({
+	return (tgoId: TgoId, goals: GoalTgosType) => resolve({
 		tgoId,
 		goals,
 	});
@@ -30,7 +30,7 @@ export const setGoals = createAction('TGO_GOALS_SET', (resolve) => {
 // });
 
 export const addGoals = createAction('TGO_GOALS_ADD', (resolve) => {
-	return (tgoId: TgoId, goals: GoalsType) => resolve({
+	return (tgoId: TgoId, goals: GoalTgosType) => resolve({
 		tgoId,
 		goals,
 	});

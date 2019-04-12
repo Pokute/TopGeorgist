@@ -4,10 +4,13 @@ import * as tgoActions from '../actions/tgo';
 import inventoryReducer, { InventoryActionList, InventoryActionType, InventoryItem } from './inventory';
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
+import goalReducer from './goal';
+import workInstanceReducer, { WorkInstanceActionType } from './workInstance';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentInventory, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer } from '../components_new';
+import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentInventory, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal } from '../components_new';
+import { GoalActionType } from './goal';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -58,6 +61,7 @@ export type TgoType = TgoPartials & {
 
 export const initialState:TgoType = {
 	tgoId: '',
+	// TODO: Remove below
 	position: {
 		x: 0,
 		y: 0,
@@ -67,7 +71,7 @@ export const initialState:TgoType = {
 	},
 };
 
-export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType) : TgoType => {
+export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType | GoalActionType | WorkInstanceActionType) : TgoType => {
 	switch (action.type) {
 		case getType(tgoActions.setMoveTarget):
 			return {
@@ -90,9 +94,18 @@ export default (state: TgoType, action: TgoActionType | InventoryActionType | Ta
 			if (newInventory !== usedState.inventory) usedState = { ...usedState, inventory: newInventory };
 			const newTaskQueue = taskQueueReducer(state.taskQueue, action as TaskQueueActionType);
 			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, taskQueue: newTaskQueue };
-			// const newGoals = goalsReducer(state.activeGoals, action as GoalsActionType);
-			// if (newGoals !== usedState.activeGoals) usedState = { ...usedState, activeGoals: newGoals };
-
+			if (hasComponentGoalDoer(state)) {
+				const newGoals = goalsReducer(state.activeGoals, action as GoalsActionType);
+				if (newGoals !== usedState.activeGoals) usedState = { ...usedState, activeGoals: newGoals };
+			}
+			if (isComponentGoal(state)) {
+				const newGoal = goalReducer(state.goal, action as GoalActionType);
+				if (newGoal !== usedState.goal) usedState = { ...usedState, goal: newGoal };
+			}
+			// if (isComponentWork(state)) {
+			// 	const newWorkInstance = workInstanceReducer(state.work, action as WorkInstanceActionType);
+			// 	if (newWorkInstance !== usedState.work) usedState = { ...usedState, work: newWorkInstance };
+			// }
 			return usedState;
 		}
 	}

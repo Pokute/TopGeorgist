@@ -2,17 +2,19 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
 import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove } from "../reducers/goal";
 import { RootStateType } from "../reducers";
-import { hasComponentPosition, hasComponentInventory, ComponentGoalDoer, hasComponentGoalDoer, ComponentInventory, isComponentGoal } from "../components_new";
+import { hasComponentPosition, hasComponentInventory, ComponentGoalDoer, hasComponentGoalDoer, ComponentInventory, isComponentGoal, isComponentWork } from "../components_new";
 import { TgoId, TgoType } from "../reducers/tgo";
 import { moveWork } from "../works";
-import { InventoryItem } from "../reducers/inventory";
+import { Inventory, InventoryItem } from "../reducers/inventory";
 import { transaction } from "../actions/transaction";
 import { Work } from "../reducers/work";
 import { TransactionActionType } from "./transaction";
 import { setPosition } from "../actions/tgo";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
-import { MapPosition, positionMatches, getPositionOffset } from "../reducers/map";
+import { MapPosition, positionMatches, getPositionOffset, getPositionDistanceManhattan } from "../reducers/map";
+import { createWorkInstance } from "../actions/workInstance";
+import { handleWorkInstance } from "./work";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -76,44 +78,58 @@ const completeWork = function* (actorTgoId: TgoId, work: Work) {
 	return false;
 };
 
-const handleGoalRequirementMove = function* (actorTgoId: TgoId, { targetPosition }: RequirementMove) {
+const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId,  { targetPosition }: RequirementMove) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
+	const goalTgo = s.tgos[goalTgoId];
+	if (!isComponentGoal(goalTgo)) return false;
 	if (!actorTgo || !hasComponentPosition(actorTgo)) {
 		return false;
 	}
 
-	let failed = false;
-	let positionOffset: MapPosition;
-	while (positionOffset = getPositionOffset(actorTgo.position, targetPosition), (positionOffset.x + positionOffset.y >= 0) || failed) {
-		const res: (ReturnType<typeof transaction> | false) = yield* completeWork(actorTgoId, moveWork);
-		if (res !== false) {
-			// Move a step.
-			const posChange = res.payload.participants[0].items.find(i => i.typeId === 'position');
-			if (!posChange) {
-				return false;
-			}
+	if (positionMatches(actorTgo.position, targetPosition)) {
+		// The goal requirement completed.
+		return true
+	}
+
+	// Check goal if there's active work
+	if (goalTgo.goal.workInstances.length == 0) {
+		const foundWork = moveWork;
+		if (foundWork) {
+			yield put(createWorkInstance({goalTgoId, work: moveWork}));
+			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
+		} else {
+			// give up.
+
+		}
+	}
+	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
+	if (!isComponentWork(workInstanceTgo)) return false;
+
+	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorTgoId, goalTgoId, workInstanceTgo.tgoId);
+	if (workOutput) {
+		// Move the steps towards goal.
+		for (let positionChange = 0; positionChange < (workOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
+			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
 			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
 			const change = {
 				x: Math.sign(positionOffset.x),
 				y: Math.sign(positionOffset.y),
 			};
-			yield put(res);
+			// yield put(res);
 			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
-		} else {
-			// We failed requirements!
-			return false;
+			if (positionMatches(actorTgo.position, targetPosition)) return true;
 		}
 	}
-	return true;
+	return false;
 };
 
-const handleGoalRequirement = function* (actorTgoId: TgoId, requirement: Requirement) {
+const handleGoalRequirement = function* (actorTgoId: TgoId, goalTgoId: TgoId, requirement: Requirement) {
 	if (isRequirementDelivery(requirement)) {
 		// return handleGoalRequirementDelivery(actorTgoId, requirement);
 	}
 	if (isRequirementMove(requirement)) {
-		return handleGoalRequirementMove(actorTgoId, requirement);
+		yield* handleGoalRequirementMove(actorTgoId, goalTgoId, requirement);
 	}
 };
 
@@ -124,7 +140,7 @@ const handleGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 	if (goalTgo.goal.requirements.length !== 1) {
 		return false;
 	}
-	yield* handleGoalRequirement(actorTgoId, goalTgo.goal.requirements[0]);
+	yield* handleGoalRequirement(actorTgoId, goalTgo.tgoId, goalTgo.goal.requirements[0]);
 	return true;
 };
 
@@ -153,8 +169,8 @@ const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 }
 
 const handleGoalsForOwner = function* (owner: TgoType & ComponentGoalDoer & ComponentInventory) {
-	if (owner.activeGoals.length !== 1) {
-		return false;
+	if (owner.activeGoals.length <= 0) {
+	 	return false;
 	}
 	yield* handleGoal(owner.tgoId, owner.activeGoals[0]);
 	return true;

@@ -9,7 +9,7 @@ import * as mapActions from '../actions/map';
 import * as tileSetsActions from '../actions/tileSets';
 import * as tgoActions from '../actions/tgo';
 import * as tgosActions from '../actions/tgos';
-import { setGoals } from '../actions/goals';
+import { moveGoal } from '../actions/moveGoal';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
 	const clienToServerSocket = ((yield select()) as RootStateType).serverConnection.websocket;
@@ -41,29 +41,11 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 			const defaultPlayerTgoId = ((yield select()) as RootStateType).defaults.playerTgoId;
 			if (defaultPlayerTgoId) {
 				yield put(viewActions.setFollowTarget('main', defaultPlayerTgoId));
-				// yield put(viewActions.clickActionStack.push('main', tgoActions.setMoveTarget(
-				// 	defaultPlayerTgoId,
-				// 	{ x: 0, y: 0 }
-				// )));
-				yield put(viewActions.clickActionStack.push('main', setGoals(
+
+				yield put(viewActions.clickActionStack.push('main', moveGoal(
 					defaultPlayerTgoId,
-					[
-						{
-							title: 'Moovin!',
-							progress: 0,
-							requirements: [
-								{
-									type: "RequirementMove",
-									targetPosition: { x: 0, y: 0 }
-								},
-							],
-						},
-					]
-				)));
-				// yield put(viewActions.clickActionStack.push('main', setMoveGoal(
-				// 	defaultPlayerTgoId,
-				// 	{ x: 0, y: 0 },
-				// )));
+					{ x: 0, y: 0 },
+				)))
 			}
 			break;
 		case 'DEFAULTS_SET_ACCOUNT':

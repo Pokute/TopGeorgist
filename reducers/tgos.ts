@@ -6,10 +6,13 @@ import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
 import * as inventoryActions from '../actions/inventory'; 
 import * as goalsActions from '../actions/goals'; 
+import * as goalActions from '../actions/goal'; 
+import * as workActions from '../actions/workInstance'; 
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
 import { InventoryActionType } from './inventory';
 import { hasComponentPlayer } from '../components_new';
+import { GoalActionType } from './goal';
 
 export type TgosState = {
 	readonly [extraProps: string]: TgoType;
@@ -23,7 +26,7 @@ const singleTgoReducer = (state: TgosState = initialState, action: TgoActionType
 	return state;
 }
 
-export default (state: TgosState = initialState, action: TgosAction | TgoActionType | PlayerActionType | InventoryActionType): TgosState => {
+export default (state: TgosState = initialState, action: TgosAction | TgoActionType | PlayerActionType | InventoryActionType | GoalActionType | GoalsActionType): TgosState => {
 	if (isActionOf(tgoActions.setColor, action)) {
 		return singleTgoReducer(state, action);
 	}
@@ -49,10 +52,13 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				|| isActionOf(tgoActions.setColor, action)
 				|| isActionOf(tgoActions.setPosition, action)
 				|| isActionOf(inventoryActions.add, action)
+				|| isActionOf(inventoryActions.addTgoId, action)
 				|| isActionOf(taskQueueActions.addTaskQueue, action)
 				|| isActionOf(taskQueueActions.setTaskQueue, action)
 				|| isActionOf(goalsActions.addGoals, action)
 				|| isActionOf(goalsActions.setGoals, action)
+				|| isActionOf(goalActions.addWorkInstance, action)
+				|| isActionOf(goalActions.removeWorkInstance, action)
 			) {
 				const newTgoState = tgoReducer(state[action.payload.tgoId], action);
 				if (newTgoState !== state[action.payload.tgoId]) {

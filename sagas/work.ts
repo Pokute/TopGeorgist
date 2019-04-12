@@ -1,10 +1,17 @@
+import { select, put, all, takeEvery } from 'redux-saga/effects';
+import { ActionType, getType } from 'typesafe-actions';
+
 import { WorkInstance } from '../reducers/workInstance';
-import { InventoryItem } from '../reducers/inventory';
+import { Inventory } from '../reducers/inventory';
 import { TgoId, TgoType } from '../reducers/tgo';
-import { select, put, all } from 'redux-saga/effects';
-import { isComponentGoal, ComponentInventory, hasComponentInventory, isComponentWork } from '../components_new';
+import { isComponentGoal, ComponentInventory, hasComponentInventory, isComponentWork, hasComponentGoalDoer } from '../components_new';
 import { transaction } from '../actions/transaction';
 import { RootStateType } from '../reducers';
+import { createWorkInstance } from '../actions/workInstance';
+import { addTgoId as inventoryAddTgoId } from '../actions/inventory';
+import { add as addTgo } from "../actions/tgos";
+import { addWorkInstance as goalAddWorkInstance, removeWorkInstance as goalRemoveWorkInstance } from '../actions/goal';
+import isServer from '../isServer';
 
 // Start with work that only requires ticks.
 
@@ -68,6 +75,66 @@ import { RootStateType } from '../reducers';
 // 	}
 // }
 
+const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
+	const s: RootStateType = yield select();
+	const workTgo = s.tgos[workTgoId];
+	if (!isComponentWork(workTgo)) return undefined; // Fail
+	if (workTgo.work.inputs.length == 0) return true;
+	if (!hasComponentInventory(workTgo)) return false;
+
+	return (workTgo.work.inputs.every(input => {
+		const foundProgressItem = workTgo.inventory.find(progress => progress.typeId === input.typeId);
+		return ((foundProgressItem !== undefined) && (foundProgressItem.count >= input.count));
+	}));
+}
+
+export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId, workTgoId: TgoId) {
+	const s: RootStateType = yield select();
+	const actorTgo = s.tgos[actorTgoId];
+	const goalTgo = s.tgos[goalTgoId];
+	const workTgo = s.tgos[workTgoId];
+	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo)) return undefined; // Fail
+
+	const actorItemsForWork = hasComponentInventory(actorTgo)
+		? workTgo.work.inputs.map(input => {
+				const actorItem = actorTgo.inventory.find(ii => ii.typeId === input.typeId)
+				if (!actorItem) return undefined;
+				return {
+					typeId: actorItem.typeId,
+					count: Math.min(actorItem.count, input.count)
+				};
+			})
+			.filter(input => input) as Inventory
+		: [];
+	const workTransaction = transaction(
+		{
+			tgoId: actorTgoId,
+			items: actorItemsForWork.map(ii => ({...ii, count: ii.count * -1}))
+		},
+		{
+			tgoId: workTgoId,
+			items: [
+				...actorItemsForWork,
+				...(workTgo.work.inputs.some(input => input.typeId === 'tick')
+					? [{
+						typeId: 'tick',
+						count: 1,
+					}]
+					: []
+				)
+			]
+		}
+	);
+
+	yield put(workTransaction);
+
+	if (yield* checkWorkInstanceCompletion(workTgoId)) {
+		yield put(goalRemoveWorkInstance(goalTgoId, workTgoId));
+		return workTgo.work.outputs;
+	}
+	return undefined;
+}
+
 const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
@@ -89,3 +156,31 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 	if (!hasComponentInventory(workTgo) || !hasComponentInventory(actorTgo)) return false;
 	yield put(redeem(actorTgo, workTgo));
 }
+
+const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work }}: ActionType<typeof createWorkInstance>) {
+	const s: RootStateType = yield select();
+	const goalTgo = s.tgos[goalTgoId];
+	if (!isComponentGoal(goalTgo)) return;
+
+	// Add a Work TgoId
+	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
+		work,
+		inventory: [],
+	}));
+
+	// Add the WorkTgoId to Goal inventory
+	yield put(inventoryAddTgoId(
+		goalTgoId,
+		newWorkAction.payload.tgo.tgoId
+	));
+
+	// Add the WorkTgoId as a goal workInstance.
+	yield put(goalAddWorkInstance(goalTgoId, newWorkAction.payload.tgo.tgoId));
+}
+
+const workRootSaga = function* () {
+	if (!isServer) return;
+	yield takeEvery(getType(createWorkInstance), handleCreateWorkInstance);
+};
+
+export default workRootSaga;

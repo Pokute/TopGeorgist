@@ -4,6 +4,7 @@ import { Inventory } from "./reducers/inventory";
 import { TaskQueueType } from "./reducers/taskQueue";
 import { Goal } from "./reducers/goal";
 import { MapPosition } from "./reducers/map";
+import { Work } from "./reducers/work";
 
 export interface ComponentPosition {
 	readonly position: MapPosition,
@@ -102,21 +103,21 @@ export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo 
 	Array.isArray(tgo.components)
 
 export interface ComponentWork {
-	isWork: true,
+	readonly work: Work,
 }
 
 export const isComponentWork = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
-	tgo.isWork == true
+	typeof tgo.work !== undefined
 
 export interface ComponentGoal {
-	goal: Goal,
+	readonly goal: Goal,
 }
 
 export const isComponentGoal = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
 	typeof tgo.goal !== undefined
 
 export interface ComponentWorkDoer {
-	isWorkDoer: true,
+	readonly isWorkDoer: true,
 }
 
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
