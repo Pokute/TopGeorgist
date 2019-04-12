@@ -10,11 +10,13 @@ import { transaction } from "../actions/transaction";
 import { Work } from "../reducers/work";
 import { TransactionActionType } from "./transaction";
 import { setPosition } from "../actions/tgo";
+import { remove as tgosRemove } from "../actions/tgos";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
 import { MapPosition, positionMatches, getPositionOffset, getPositionDistanceManhattan } from "../reducers/map";
 import { createWorkInstance } from "../actions/workInstance";
 import { handleWorkInstance } from "./work";
+import { removeGoals } from "../actions/goals";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -87,8 +89,16 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 		return false;
 	}
 
+	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
+		yield put(removeGoals(actorTgoId, [goalTgoId]))
+
+		// Remove Tgo from tgos
+		yield put(tgosRemove(goalTgoId))
+	}
+
 	if (positionMatches(actorTgo.position, targetPosition)) {
 		// The goal requirement completed.
+		yield* goalComplete(actorTgoId, goalTgoId);
 		return true
 	}
 
@@ -96,7 +106,7 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	if (goalTgo.goal.workInstances.length == 0) {
 		const foundWork = moveWork;
 		if (foundWork) {
-			yield put(createWorkInstance({goalTgoId, work: moveWork}));
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: moveWork}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -118,7 +128,10 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 			};
 			// yield put(res);
 			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
-			if (positionMatches(actorTgo.position, targetPosition)) return true;
+			if (positionMatches(actorTgo.position, targetPosition)) {
+				yield* goalComplete(actorTgoId, goalTgoId);
+				return true;
+			}
 		}
 	}
 	return false;

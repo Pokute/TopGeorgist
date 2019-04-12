@@ -41,7 +41,7 @@ const tick = function* () {
 		)
 		.reduce((acc: ReadonlyArray<ReadonlyArray<AnyAction>>, action) => [...acc, ...action], []) // Flatten one level
 		.reduce((acc: ReadonlyArray<AnyAction>, action) => [...acc, ...action], []);
-	yield newActions.map(a => put(a));
+	yield all(newActions.map(a => put(a)));
 
 	const newState: RootStateType = yield select();
 	const calls = Object.values(newState.clients).map(c => call(

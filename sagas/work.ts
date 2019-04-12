@@ -93,10 +93,15 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	const actorTgo = s.tgos[actorTgoId];
 	const goalTgo = s.tgos[goalTgoId];
 	const workTgo = s.tgos[workTgoId];
-	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo)) return undefined; // Fail
+	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo) || !hasComponentInventory(workTgo)) return undefined; // Fail
+
+	const missingItems = workTgo.work.inputs
+		.filter(ii => ii.tgoId === undefined)
+		.map(ii => ({ ...ii, count: ii.count - (workTgo.inventory.find(wi => wi.typeId == ii.typeId) || { count: 0 }).count}))
+		.filter(ii => ii.count > 0)
 
 	const actorItemsForWork = hasComponentInventory(actorTgo)
-		? workTgo.work.inputs.map(input => {
+		? missingItems.map(input => {
 				const actorItem = actorTgo.inventory.find(ii => ii.typeId === input.typeId)
 				if (!actorItem) return undefined;
 				return {

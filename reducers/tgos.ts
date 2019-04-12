@@ -57,6 +57,7 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				|| isActionOf(taskQueueActions.setTaskQueue, action)
 				|| isActionOf(goalsActions.addGoals, action)
 				|| isActionOf(goalsActions.setGoals, action)
+				|| isActionOf(goalsActions.removeGoals, action)
 				|| isActionOf(goalActions.addWorkInstance, action)
 				|| isActionOf(goalActions.removeWorkInstance, action)
 			) {

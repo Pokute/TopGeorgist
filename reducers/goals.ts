@@ -24,6 +24,8 @@ export default (state: GoalTgosType = initialState, action: GoalsActionType): Go
 				...state,
 				...(Array.isArray(action.payload.goals) ? action.payload.goals : [action.payload.goals]),
 			];
+		case (getType(goalsActions.removeGoals)):
+			return state.filter(goal => !action.payload.goals.includes(goal));
 		default:
 			return state;
 	}
