@@ -13,6 +13,7 @@ import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, I
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position';
 import { ComponentPlayer } from '../components/player';
 import { ComponentLabel } from '../components/label';
+import { ComponentUniqueLabel } from '../components/uniqueLabel';
 import { GoalActionType } from './goal';
 
 export type TgoActionType = ActionType<typeof tgoActions>
@@ -47,6 +48,7 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentPlayer>
 	& Partial<ComponentVisitable>
 	& Partial<ComponentLabel>
+	& Partial<ComponentUniqueLabel>
 	& Partial<ComponentInventory>
 	& Partial<ComponentTaskQueue>
 	& Partial<ComponentPresentation>
