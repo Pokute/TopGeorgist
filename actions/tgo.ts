@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo';
-import { ComponentPosition, ComponentMoveTarget, ComponentPresentation } from '../components_new';
+import { ComponentPosition, ComponentPresentation } from '../components_new';
 
 interface TgoAction {
 	readonly tgoId: TgoId,
@@ -11,13 +11,6 @@ interface TgoAction {
 
 export const setPosition = createAction('TGO_SET_POSITION', (resolve) => {
 	return (tgoId: TgoId, position: ComponentPosition['position']) => resolve({
-		tgoId,
-		position,
-	});
-});
-
-export const setMoveTarget = createAction('TGO_SET_MOVE_TARGET', (resolve) => {
-	return (tgoId: TgoId, position: ComponentMoveTarget['moveTarget']) => resolve({
 		tgoId,
 		position,
 	});

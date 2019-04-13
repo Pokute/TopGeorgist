@@ -1,10 +1,8 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as playerActions from '../actions/player'
-import { ComponentMoveTarget } from '../components_new';
 
 export interface PlayerType {
-	readonly moveTarget?: ComponentMoveTarget['moveTarget'],
 };
 
 export const initialState: PlayerType = {

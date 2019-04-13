@@ -48,8 +48,7 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 		case getType(tgosActions.setAll):
 			return action.payload.tgos;
 		default:
-			if (isActionOf(tgoActions.setMoveTarget, action)
-				|| isActionOf(tgoActions.setColor, action)
+			if (isActionOf(tgoActions.setColor, action)
 				|| isActionOf(tgoActions.setPosition, action)
 				|| isActionOf(inventoryActions.add, action)
 				|| isActionOf(inventoryActions.addTgoId, action)

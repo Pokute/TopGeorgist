@@ -13,11 +13,6 @@ export interface ComponentPosition {
 export const hasComponentPosition = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPosition>) =>
 	tgo && (tgo.position !== undefined) && (tgo.position.x !== undefined) && (tgo.position.y != undefined);
 
-export type ComponentMoveTarget =
-	ComponentPosition & {
-	readonly moveTarget: MapPosition,
-};
-
 export type ComponentRentOffice = 
 	ComponentPosition & {
 	readonly rentOffice: true,

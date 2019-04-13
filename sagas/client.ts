@@ -7,7 +7,12 @@ import * as netActions from '../actions/net';
 import { setGoals } from '../actions/goals';
 import { moveGoal } from '../actions/moveGoal';
 
-const sendAction = function* (action: ActionType<typeof tgoActions.setMoveTarget>) {
+const sentTypes = {
+	setGoals,
+	moveGoal,
+};
+
+const sendAction = function* (action: ActionType<typeof sentTypes>) {
 	yield put(netActions.send(action));
 };
 
@@ -17,7 +22,6 @@ const clientListener = function* () {
 	// This will send all following actions to the server
 	yield takeEvery(
 		[
-			getType(tgoActions.setMoveTarget),
 			getType(setGoals),
 			getType(moveGoal),
 		],

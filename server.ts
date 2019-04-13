@@ -87,7 +87,6 @@ try {
 							store.dispatch(withClient(data.action, clientId));
 							break;
 						case getType(accountCommActions.createAccountWithTokenClientSalted):
-						case getType(tgoActions.setMoveTarget):
 						case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':

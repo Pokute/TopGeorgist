@@ -8,7 +8,7 @@ import workInstanceReducer, { WorkInstanceActionType } from './workInstance';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { ComponentPosition, ComponentMoveTarget, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal } from '../components_new';
+import { ComponentPosition, ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentPlayer, ComponentVisitable, ComponentLabel, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal } from '../components_new';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType, InventoryItem } from "../components/inventory";
 import { GoalActionType } from './goal';
 
@@ -37,7 +37,6 @@ export type ComponentProps = {
 export type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
 
 export type TgoPartials = (Partial<ComponentPosition>
-	& Partial<ComponentMoveTarget> // Removeme
 	& Partial<ComponentRentOffice>
 	& Partial<ComponentGovernmentBuilding>
 	& Partial<ComponentLeaderBoard>
@@ -73,11 +72,6 @@ export const initialState:TgoType = {
 
 export default (state: TgoType, action: TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType | GoalActionType | WorkInstanceActionType) : TgoType => {
 	switch (action.type) {
-		case getType(tgoActions.setMoveTarget):
-			return {
-				...state,
-				moveTarget: action.payload.position,
-			};
 		case getType(tgoActions.setPosition):
 			return {
 				...state,
