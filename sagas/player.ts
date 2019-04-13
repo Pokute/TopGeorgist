@@ -15,7 +15,8 @@ import { TgoType } from '../reducers/tgo';
 import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
 import { setPosition } from '../actions/tgo';
-import { hasComponentPlayer, hasComponentLabel } from '../components_new';
+import { hasComponentPlayer } from '../components/player';
+import { hasComponentLabel } from '../components_new';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;
@@ -92,23 +93,10 @@ const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<ty
 // 	yield put(setPlayerTgoId(action.playerTgoId));
 // };
 
-const handlePlayerMoveTowards = function* ({ tgoId }: any) {
-	const tgo = (yield select()).tgos[tgoId];
-	if (!tgo) return false;
-	yield put(setPosition(tgo.tgoId,
-		{
-			x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
-			y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
-		},
-	));
-	return true;
-};
-
 const playerListener = function* () {
 	yield takeEvery(getType(playerActions.playerRequestServer), handlePlayerCreateRequest);
 	yield takeEvery(getType(playerActions.clientPlayerCreate), handleClientPlayerCreate);
 	// yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
-	yield takeEvery('PLAYER_MOVE_TOWARDS', handlePlayerMoveTowards);
 };
 
 export default playerListener;

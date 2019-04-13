@@ -45,37 +45,6 @@ type ComponentWithParams = [
 export type ComponentArray = ReadonlyArray<string | ComponentWithParams>;
 
 const components: ComponentList = {
-	selfMoving: {
-		// tick: (tgo) => {
-		// 	const actions = [];
-		// 	if (tgo.moveTarget) {
-		// 		if ((tgo.moveTarget.x === tgo.position.x) &&
-		// 			(tgo.moveTarget.y === tgo.position.y)) {
-		// 			actions.push({
-		// 				type: 'PLAYER_SET_MOVE_TARGET',
-		// 				tgoId: tgo.tgoId,
-		// 				moveTarget: undefined,
-		// 			});
-		// 		} else {
-		// 			if (!tgo.inventory) return [];
-
-		// 			const cals = tgo.inventory.find(ii => ii.typeId === 'calories');
-		// 			if (cals && cals.count > 0) {
-		// 				actions.push({
-		// 					type: 'TGO_SET_POSITION',
-		// 					tgoId: tgo.tgoId,
-		// 					position: {
-		// 						x: tgo.position.x + Math.sign(tgo.moveTarget.x - tgo.position.x),
-		// 						y: tgo.position.y + Math.sign(tgo.moveTarget.y - tgo.position.y),
-		// 					},
-		// 				});
-		// 				actions.push(inventoryActions.add(tgo.tgoId, 'calories', -10));
-		// 			}
-		// 		}
-		// 	}
-		// 	return actions;
-		// },
-	},
 	inventoryChange: {
 		tick: (tgo: TgoType, options = { typeId: 'calories', perTick: -1 }) => {
 			const actions = [];

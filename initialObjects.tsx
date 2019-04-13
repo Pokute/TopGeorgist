@@ -5,7 +5,6 @@ import { Parameter } from './ui/paramInput';
 export const createPlayerAction = () => tgosActions.add({
 	player: true,
 	components: [
-		'selfMoving',
 		['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
 		'consumer',
 		'player',
