@@ -4,13 +4,13 @@ import playerReducer, { initialState as playerInitialState, PlayerActionType } f
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType } from './tgo';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
-import * as inventoryActions from '../actions/inventory'; 
+import { inventoryActions } from '../components/inventory';
 import * as goalsActions from '../actions/goals'; 
 import * as goalActions from '../actions/goal'; 
 import * as workActions from '../actions/workInstance'; 
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
-import { InventoryActionType } from './inventory';
+import { InventoryActionType } from '../components/inventory';
 import { hasComponentPlayer } from '../components_new';
 import { GoalActionType } from './goal';
 

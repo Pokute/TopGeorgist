@@ -1,7 +1,7 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as workInstanceActions from '../actions/workInstance';
-import { Inventory } from './inventory';
+import { Inventory } from '../components/inventory';
 import { Work } from './work';
 
 interface WorkInstanceInitialType {

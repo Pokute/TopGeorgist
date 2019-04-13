@@ -1,7 +1,7 @@
 import { AnyAction } from "redux";
 import { getType, ActionType } from "typesafe-actions";
 
-import { Inventory } from "./inventory";
+import { Inventory } from "../components/inventory";
 import { TgoId } from "./tgo";
 import { MapPosition } from "../reducers/map";
 import * as goalActions from '../actions/goal';

@@ -1,6 +1,6 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import * as governmentActions from '../../actions/government';
-import * as inventoryActions from '../../actions/inventory';
+import { inventoryActions } from '../../components/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';

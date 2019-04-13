@@ -2,13 +2,12 @@ import { select, put, all, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import { WorkInstance } from '../reducers/workInstance';
-import { Inventory } from '../reducers/inventory';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory } from '../components/inventory';
 import { TgoId, TgoType } from '../reducers/tgo';
-import { isComponentGoal, ComponentInventory, hasComponentInventory, isComponentWork, hasComponentGoalDoer } from '../components_new';
+import { isComponentGoal, isComponentWork, hasComponentGoalDoer } from '../components_new';
 import { transaction } from '../actions/transaction';
 import { RootStateType } from '../reducers';
 import { createWorkInstance } from '../actions/workInstance';
-import { addTgoId as inventoryAddTgoId } from '../actions/inventory';
 import { add as addTgo } from "../actions/tgos";
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance as goalRemoveWorkInstance } from '../actions/goal';
 import isServer from '../isServer';

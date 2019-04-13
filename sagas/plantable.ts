@@ -1,5 +1,5 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import * as inventoryActions from '../actions/inventory';
+import { inventoryActions } from '../components/inventory';
 import * as plantableActions from '../actions/plantable';
 import * as tgosActions from '../actions/tgos';
 import * as taskQueueActions from '../actions/taskQueue';
@@ -7,7 +7,8 @@ import { transaction } from '../actions/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
-import { hasComponentPosition, hasComponentMapGridOccipier, hasComponentInventory } from '../components_new';
+import { hasComponentPosition, hasComponentMapGridOccipier } from '../components_new';
+import { hasComponentInventory } from '../components/inventory';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();

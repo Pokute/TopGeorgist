@@ -5,7 +5,7 @@ import { getType, ActionType } from "typesafe-actions";
 import { RootStateType } from "../reducers";
 import { add as addTgo } from "../actions/tgos";
 import { RequirementMove } from "../reducers/goal";
-import * as inventoryActions from '../actions/inventory';
+import * as inventoryActions from '../components/inventory';
 import { addGoals } from '../actions/goals'
 import { TgoId } from "../reducers/tgo";
 import isServer from '../isServer';

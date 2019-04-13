@@ -1,10 +1,10 @@
 import { Action } from "./components";
 import { TgoType, ComponentType, TgoId } from "./reducers/tgo";
-import { Inventory } from "./reducers/inventory";
 import { TaskQueueType } from "./reducers/taskQueue";
 import { Goal } from "./reducers/goal";
 import { MapPosition } from "./reducers/map";
 import { Work } from "./reducers/work";
+import { ComponentInventory } from "./components/inventory";
 
 export interface ComponentPosition {
 	readonly position: MapPosition,
@@ -71,13 +71,6 @@ export interface ComponentLabel {
 
 export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLabel>) =>
 	typeof tgo.label !== undefined
-
-export interface ComponentInventory {
-	readonly inventory: Inventory,
-}
-
-export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
-	typeof tgo.inventory !== undefined
 
 export interface ComponentTaskQueue {
 	readonly taskQueue: TaskQueueType,

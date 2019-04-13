@@ -1,7 +1,7 @@
 import { put, select, takeEvery, all, call } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as inventoryActions from '../actions/inventory';
+import { inventoryActions } from '../components/inventory';
 import * as transactionActions from '../actions/transaction';
 import * as taskQueueActions from '../actions/taskQueue';
 import { TgoId, TgoType } from '../reducers/tgo';

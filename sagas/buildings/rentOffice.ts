@@ -2,11 +2,12 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as governmentActions from '../../actions/government';
-import * as inventoryActions from '../../actions/inventory';
+import { inventoryActions } from '../../components/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
-import { hasComponentPosition, hasComponentInventory } from '../../components_new';
+import { hasComponentPosition } from '../../components_new';
+import { hasComponentInventory } from '../../components/inventory';
 
 const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
 	const s: RootStateType = yield select();

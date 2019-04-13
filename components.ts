@@ -1,10 +1,11 @@
-import * as inventoryActions from './actions/inventory';
-import { TgoType } from './reducers/tgo';
 import { AnyAction } from 'redux';
+
+import { inventoryActions } from './components/inventory';
+import { TgoType } from './reducers/tgo';
 
 import { Parameter } from './ui/paramInput';
 import { TypeId } from './reducers/itemType';
-import { hasComponentInventory } from './components_new';
+import { hasComponentInventory } from './components/inventory';
 
 export interface Action {
 	readonly label: string,

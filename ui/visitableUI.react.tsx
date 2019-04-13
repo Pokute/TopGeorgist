@@ -9,7 +9,8 @@ import { RootStateType } from '../reducers';
 import { Dispatch } from 'redux';
 import { Action } from '../components';
 import ActionUI from './action';
-import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer, ComponentVisitable, ComponentLabel, hasComponentLabel, hasComponentInventory } from '../components_new';
+import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, hasComponentPlayer, ComponentVisitable, ComponentLabel, hasComponentLabel } from '../components_new';
+import { hasComponentInventory } from '../components/inventory';
 
 export interface Type {
 	readonly visitable: TgoType & ComponentLabel & ComponentVisitable,
