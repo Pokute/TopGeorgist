@@ -1,5 +1,5 @@
 import { TgoType } from "../reducers/tgo";
-import { ComponentPosition } from "../components_new";
+import { ComponentPosition } from '../components/position';
 
 export const checkOnVisitableLocation = (actorTgo: ComponentPosition , visitableTgo: ComponentPosition) => {
 	if (!actorTgo.position || !visitableTgo.position ||

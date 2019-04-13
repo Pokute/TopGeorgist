@@ -6,7 +6,7 @@ import { inventoryActions } from '../../components/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
-import { hasComponentPosition } from '../../components_new';
+import { hasComponentPosition } from '../../components/position';
 import { hasComponentInventory } from '../../components/inventory';
 
 const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {

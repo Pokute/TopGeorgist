@@ -2,16 +2,8 @@ import { Action } from "./components";
 import { TgoType, ComponentType, TgoId } from "./reducers/tgo";
 import { TaskQueueType } from "./reducers/taskQueue";
 import { Goal } from "./reducers/goal";
-import { MapPosition } from "./reducers/map";
 import { Work } from "./reducers/work";
-import { ComponentInventory } from "./components/inventory";
-
-export interface ComponentPosition {
-	readonly position: MapPosition,
-};
-
-export const hasComponentPosition = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPosition>) =>
-	tgo && (tgo.position !== undefined) && (tgo.position.x !== undefined) && (tgo.position.y != undefined);
+import { ComponentPosition } from './components/position';
 
 export type ComponentRentOffice = 
 	ComponentPosition & {

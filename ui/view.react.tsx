@@ -9,8 +9,9 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType, MapSize, MapPosition } from '../reducers/map';
 import Category from './Category';
-import { hasComponentPosition, hasComponentVisitable, hasComponentLabel } from '../components_new';
+import { hasComponentVisitable, hasComponentLabel } from '../components_new';
 import { hasComponentInventory } from '../components/inventory';
+import { hasComponentPosition } from '../components/position';
 
 export interface Type {
 	readonly view: ViewType,

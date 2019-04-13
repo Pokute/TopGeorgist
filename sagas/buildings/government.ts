@@ -4,7 +4,7 @@ import { inventoryActions } from '../../components/inventory';
 import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
-import { hasComponentPosition } from '../../components_new';
+import { hasComponentPosition } from '../../components/position';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s: RootStateType = yield select();

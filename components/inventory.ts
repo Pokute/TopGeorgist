@@ -1,6 +1,6 @@
 import { ActionType, getType, createAction } from "typesafe-actions";
 
-import { TgoId, TgoType } from "../reducers/tgo";
+import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { TypeId } from "../reducers/itemType";
 
 export const add = createAction('TGO_INVENTORY_ADD', (resolve) => {
@@ -70,9 +70,9 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 	}
 };
 
-export interface ComponentInventory {
+export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,
-}
+};
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
 	typeof tgo.inventory !== undefined

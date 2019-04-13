@@ -9,7 +9,8 @@ import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
 import { MapType, MapPosition } from '../reducers/map';
-import { hasComponentPosition, hasComponentLabel, hasComponentPresentation } from '../components_new';
+import { hasComponentLabel, hasComponentPresentation } from '../components_new';
+import { hasComponentPosition } from '../components/position';
 import { TgoType } from '../reducers/tgo';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: MapPosition, tile: TileType, tileSize: number) => {

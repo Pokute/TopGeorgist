@@ -14,7 +14,7 @@ import { createPlayerAction } from '../initialObjects';
 import { TgoType } from '../reducers/tgo';
 import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
-import { setPosition } from '../actions/tgo';
+import { setPosition } from '../components/position';
 import { hasComponentPlayer } from '../components/player';
 import { hasComponentLabel } from '../components_new';
 
