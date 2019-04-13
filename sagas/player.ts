@@ -88,15 +88,9 @@ const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<ty
 	yield take(getType(defaultsActions.setPlayerTgoId));
 };
 
-// const handlePlayerCreateResponse = function* (action) {
-// 	if (isServer) return;
-// 	yield put(setPlayerTgoId(action.playerTgoId));
-// };
-
 const playerListener = function* () {
 	yield takeEvery(getType(playerActions.playerRequestServer), handlePlayerCreateRequest);
 	yield takeEvery(getType(playerActions.clientPlayerCreate), handleClientPlayerCreate);
-	// yield takeEvery('PLAYER_CREATE_RESPONSE', handlePlayerCreateResponse);
 };
 
 export default playerListener;

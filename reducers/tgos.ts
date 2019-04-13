@@ -1,6 +1,5 @@
 import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
-import playerReducer, { initialState as playerInitialState, PlayerActionType } from './player';
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType } from './tgo';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
@@ -11,7 +10,7 @@ import * as workActions from '../actions/workInstance';
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
 import { InventoryActionType } from '../components/inventory';
-import { hasComponentPlayer } from '../components_new';
+import { hasComponentPlayer } from '../components/player';
 import { GoalActionType } from './goal';
 
 export type TgosState = {
@@ -22,11 +21,11 @@ const initialState: TgosState = {};
 
 type TgosAction = ActionType<typeof tgosActions>;
 
-const singleTgoReducer = (state: TgosState = initialState, action: TgoActionType | PlayerActionType | InventoryActionType): TgosState => {
+const singleTgoReducer = (state: TgosState = initialState, action: TgoActionType | InventoryActionType): TgosState => {
 	return state;
 }
 
-export default (state: TgosState = initialState, action: TgosAction | TgoActionType | PlayerActionType | InventoryActionType | GoalActionType | GoalsActionType): TgosState => {
+export default (state: TgosState = initialState, action: TgosAction | TgoActionType | InventoryActionType | GoalActionType | GoalsActionType): TgosState => {
 	if (isActionOf(tgoActions.setColor, action)) {
 		return singleTgoReducer(state, action);
 	}
@@ -35,7 +34,6 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 			return {
 				...state,
 				[action.payload.tgo.tgoId]: {
-					...(hasComponentPlayer(action.payload.tgo) ? playerInitialState : {}),
 					...tgoInitialState,
 					...action.payload.tgo,
 				},

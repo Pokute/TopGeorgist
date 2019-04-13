@@ -43,13 +43,6 @@ export interface ComponentMapGridOccipier {
 export const hasComponentMapGridOccipier = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentMapGridOccipier>) =>
 	tgo && (tgo.mapGridOccupier !== undefined && tgo.mapGridOccupier === true)
 
-export interface ComponentPlayer {
-	readonly player: true,
-}
-	
-export const hasComponentPlayer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPlayer>) =>
-	tgo && (tgo.player !== undefined && tgo.player === true)
-
 export interface ComponentVisitable {
 	readonly visitable?: {
 		readonly label: string,

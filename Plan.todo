@@ -116,6 +116,7 @@ Milestone 4:
 			☐ Can be done anywhere.
 			☐ Regenerates energy
 			☐ Sleeping in a bed regenerates more energy.
+		☐ Move unique name feature from players to a ComponentUniqueLabel.
 	☐ Buildings
 		☐ Barracks
 			☐ Has beds that cost to use
