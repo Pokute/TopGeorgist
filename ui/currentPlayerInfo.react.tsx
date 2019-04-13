@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ProgressBar from './progressBar';
 import { RootStateType } from '../reducers';
 import { TaskType } from '../reducers/taskQueue';
-import { hasComponentLabel, ComponentLabel } from '../components_new';
+import { ComponentLabel, hasComponentLabel } from '../components/label';
 import { TgoType } from '../reducers/tgo';
 
 const costMapper = (task: TaskType) => {

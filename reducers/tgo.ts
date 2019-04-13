@@ -8,10 +8,11 @@ import workInstanceReducer, { WorkInstanceActionType } from './workInstance';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList, Action } from '../components';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentLabel, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal } from '../components_new';
+import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal } from '../components_new';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType, InventoryItem } from "../components/inventory";
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position';
 import { ComponentPlayer } from '../components/player';
+import { ComponentLabel } from '../components/label';
 import { GoalActionType } from './goal';
 
 export type TgoActionType = ActionType<typeof tgoActions>

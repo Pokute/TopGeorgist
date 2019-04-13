@@ -16,7 +16,7 @@ import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
 import { setPosition } from '../components/position';
 import { hasComponentPlayer } from '../components/player';
-import { hasComponentLabel } from '../components_new';
+import { hasComponentLabel } from '../components/label';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;

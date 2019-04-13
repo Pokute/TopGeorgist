@@ -45,13 +45,6 @@ export interface ComponentVisitable {
 export const hasComponentVisitable = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentVisitable>) =>
 	tgo && (tgo.visitable !== undefined)
 
-export interface ComponentLabel {
-	readonly label: string,
-}
-
-export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLabel>) =>
-	typeof tgo.label !== undefined
-
 export interface ComponentTaskQueue {
 	readonly taskQueue: TaskQueueType,
 }
