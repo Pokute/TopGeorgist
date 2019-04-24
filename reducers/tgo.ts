@@ -68,10 +68,6 @@ export type TgoType = TgoRoot & TgoPartials;
 export const initialState:TgoType = {
 	tgoId: '',
 	// TODO: Remove below
-	position: {
-		x: 0,
-		y: 0,
-	},
 	presentation: {
 		color: 'red',
 	},
