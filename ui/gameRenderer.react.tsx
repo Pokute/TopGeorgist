@@ -9,7 +9,7 @@ import { TgosState } from '../reducers/tgos';
 import { TileType } from '../reducers/tile';
 import { TileSetType } from '../reducers/tileSet';
 import { MapType, MapPosition } from '../reducers/map';
-import { hasComponentPresentation } from '../components_new';
+import { hasComponentPresentation } from '../data/components_new';
 import { hasComponentPosition } from '../components/position';
 import { hasComponentLabel } from '../components/label';
 import { TgoType } from '../reducers/tgo';

@@ -2,11 +2,11 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
 import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove } from "../reducers/goal";
 import { RootStateType } from "../reducers";
-import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork } from "../components_new";
+import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork } from "../data/components_new";
 import { hasComponentInventory, ComponentInventory } from "../components/inventory";
 import { hasComponentPosition } from '../components/position';
 import { TgoId, TgoType } from "../reducers/tgo";
-import { moveWork } from "../works";
+import { moveWork } from "../data/works";
 import { Inventory, InventoryItem } from "../components/inventory";
 import { transaction } from "../actions/transaction";
 import { Work } from "../reducers/work";

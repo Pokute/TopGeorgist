@@ -10,7 +10,7 @@ import * as netActions from '../actions/net';
 import * as taskQueueActions from '../actions/taskQueue';
 import * as tgoActions from '../actions/tgo';
 import * as playerActions from '../actions/player';
-import { createPlayerAction } from '../initialObjects';
+import { createPlayerAction } from '../data/initialObjects';
 import { TgoType } from '../reducers/tgo';
 import topGeorgist from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';

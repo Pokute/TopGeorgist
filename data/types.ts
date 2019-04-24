@@ -1,6 +1,6 @@
-import { add } from './actions/itemTypes';
-import { Dispatch } from './node_modules/redux';
-import { InitialItemType } from './reducers/itemType';
+import { add } from '../actions/itemTypes';
+import { Dispatch } from '../node_modules/redux';
+import { InitialItemType } from '../reducers/itemType';
 
 const defaultType = {
 	stackable: true,

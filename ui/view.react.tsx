@@ -9,7 +9,7 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import { MapType, MapSize, MapPosition } from '../reducers/map';
 import Category from './Category';
-import { hasComponentVisitable } from '../components_new';
+import { hasComponentVisitable } from '../data/components_new';
 import { hasComponentInventory } from '../components/inventory';
 import { hasComponentPosition } from '../components/position';
 import { hasComponentLabel } from '../components/label';

@@ -4,7 +4,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import { WorkInstance } from '../reducers/workInstance';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory } from '../components/inventory';
 import { TgoId, TgoType } from '../reducers/tgo';
-import { isComponentGoal, isComponentWork, hasComponentGoalDoer } from '../components_new';
+import { isComponentGoal, isComponentWork, hasComponentGoalDoer } from '../data/components_new';
 import { transaction } from '../actions/transaction';
 import { RootStateType } from '../reducers';
 import { createWorkInstance } from '../actions/workInstance';

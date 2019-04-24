@@ -1,9 +1,9 @@
 import { Action } from "./components";
-import { TgoType, ComponentType, TgoId } from "./reducers/tgo";
-import { TaskQueueType } from "./reducers/taskQueue";
-import { Goal } from "./reducers/goal";
-import { Work } from "./reducers/work";
-import { ComponentPosition } from './components/position';
+import { TgoType, ComponentType, TgoId } from "../reducers/tgo";
+import { TaskQueueType } from "../reducers/taskQueue";
+import { Goal } from "../reducers/goal";
+import { Work } from "../reducers/work";
+import { ComponentPosition } from '../components/position';
 
 export type ComponentRentOffice = 
 	ComponentPosition & {

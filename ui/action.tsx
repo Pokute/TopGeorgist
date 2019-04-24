@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 
 import * as netActions from '../actions/net';
 import ParamInput, { packParam } from './paramInput';
-import { Action } from '../components';
+import { Action } from '../data/components';
 
 export interface Type {
 	readonly action: Action,

@@ -1,6 +1,6 @@
-import * as tgosActions from './actions/tgos';
-import { add as tileSetAdd } from './actions/tileSets';
-import { Parameter } from './ui/paramInput';
+import * as tgosActions from '../actions/tgos';
+import { add as tileSetAdd } from '../actions/tileSets';
+import { Parameter } from '../ui/paramInput';
 
 export const createPlayerAction = () => tgosActions.add({
 	player: true,

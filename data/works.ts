@@ -1,4 +1,4 @@
-import { Work } from './reducers/work';
+import { Work } from '../reducers/work';
 
 export const moveWork: Work = {
 	type: 'move',

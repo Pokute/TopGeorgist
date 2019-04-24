@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import components, { ComponentActionable, Action } from '../components';
+import components, { ComponentActionable, Action } from '../data/components';
 import * as netActions from '../actions/net';
 import { TypeId } from '../reducers/itemType';
 import { TgoId } from '../reducers/tgo';

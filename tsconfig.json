@@ -23,7 +23,8 @@
 		"sagas/**/*",
 		"stories/**/*",
 		"ui/**/*",
-		"utils/**/*"
+		"utils/**/*",
+		"data/**/*"
 	],
 	"exclude": [
 		"node_modules"

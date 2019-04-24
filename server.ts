@@ -5,8 +5,8 @@ import { Server as WSS } from 'ws';
 
 import config from './config';
 import { store } from './store';
-import createItemTypes from './types';
-import initialObjectActions from './initialObjects';
+import createItemTypes from './data/types';
+import initialObjectActions from './data/initialObjects';
 import * as accountCommActions from './actions/accountComm';
 import * as accountsActions from './actions/accounts';
 import * as tgoActions from './actions/tgo';

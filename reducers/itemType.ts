@@ -1,5 +1,5 @@
 import { ItemTypesState } from "./itemTypes";
-import { ComponentList, ComponentArray } from "../components";
+import { ComponentList, ComponentArray } from "../data/components";
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = string;

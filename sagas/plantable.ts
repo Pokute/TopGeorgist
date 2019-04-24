@@ -7,7 +7,7 @@ import { transaction } from '../actions/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';
-import { hasComponentMapGridOccipier } from '../components_new';
+import { hasComponentMapGridOccipier } from '../data/components_new';
 import { hasComponentInventory } from '../components/inventory';
 import { hasComponentPosition } from '../components/position';
 

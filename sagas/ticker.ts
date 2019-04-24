@@ -4,7 +4,7 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import isServer from '../isServer'
 import * as tickerActions from '../actions/ticker';
-import components, { ComponentTicker } from '../components';
+import components, { ComponentTicker } from '../data/components';
 import { set as allSet } from '../actions/allSet';
 import { RootStateType } from '../reducers';
 import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo';
