@@ -1,6 +1,8 @@
 import { TgoType } from "../reducers/tgo";
+import { ComponentLabel } from "./label";
+import { ComponentUniqueLabel } from "./uniqueLabel";
 
-export interface ComponentPlayer {
+export type ComponentPlayer = ComponentLabel & ComponentUniqueLabel & {
 	readonly player: true,
 }
 
