@@ -4,10 +4,10 @@ import commonConfig from './webpack.common.config';
 
 const config: webpack.Configuration = {
 	mode: 'development',
-	entry: [
+	// entry: [
 		// './topGeorgist'
-		'./reduxIndex',
-	],
+		// './reduxIndex',
+	// ],
 	target: 'web',
 	output: {
 		filename: 'static/topGeorgist.bundle.js',
