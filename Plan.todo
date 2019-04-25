@@ -63,50 +63,57 @@ Milestone 3:
 		✔ Pineapple eat @done(18-03-25 08:08)
 		✔ Pineapple make into shoots @done(18-03-25 08:27)
 		✔ Plant pineapple shoots @done(18-03-25 08:27)
-	☐ Tasks vs. Goals. Decide whether to have
-	☐ Time sinks
-		☐ Doing most actions should require ticks to complete.
-			☐ Movement
+	✔ Tasks vs. Goals. Decide whether to have
+	✔ Time sinks
+		✔ Doing most actions should require ticks to complete.
+			✔ Movement
 			✔ Eating @done(18-04-01 03:41)
 			✔ Planting @done(18-04-01 14:03)
 			✔ Harvesting @done(18-04-01 18:53)
 			✔ Extracting seeds @done(18-04-01 13:55)
 			✔ Trading @done(18-04-01 19:01)
-			☐ Government/Rent office bureucracy
-		☐ Most actions can be paused
 	✔ UI progress bar. @done(18-03-25 06:45)
 		✔ Segmented by ticks, but progress 0 -> 1 is linear in progress bar @done(18-03-25 06:45)
 		- Above means that for most tasks, the start parts take long time and don't produce much, but later parts take less time and produce more.
-	☐ Farming overhaul
-		☐ Progress can be seen
-		☐ Pineapples grow edible, but calories doesn't increase after certain point.
 	✔ View click handling generification. @done(18-04-03 22:12)
 		✔ UI mouse selection of positions in UI paramInput. @done(19-03-17 20:25)
 		✔ New code for movement target. @done(18-04-03 23:08)
 	✔ Simplify gameRender. @done(18-04-01 05:19)
-	☐ Economy
-		☐ More sinks
 	✔ redux store array accessor shorthand functions / utility. @done(18-03-25 06:44)
-	☐ Rendering overhaul
-		✔ 60fps support @done(18-03-25 06:50)
-	☐ Add graphics for most items.
+	✔ Rendering - 60fps support @done(18-03-25 06:50)
 	✔ Rehydrate - server side. @done(18-04-01 03:38)
-	☐ Client automatic reconnect.
 	✔ Client resume player name. @done(18-12-22 11:20)
 	✔ Client side token persistence. @done(18-12-22 11:20)
 	✔ Password salting. @done(18-12-23 03:55)
 		✔ Client-side. @done(18-12-22 23:15)
 		✔ Server-side. @done(18-12-23 03:55)
-	☐ Hot reload?
 	✔ Eslint integration, rules and first pass. @done(18-04-01 03:34)
 	✘ Eslint to support class arrow methods.
 		- Not using classes anymore
 	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
 	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
-	☐ Progressbar Storybook tests.
-	
+	☐ Fix eating, planting, buying, selling for new goals.
+		☐ New consuming goal / requirement.
+
 Milestone 4:
+
+	☐ Farming overhaul
+		☐ Progress can be seen
+		☐ Pineapples grow edible, but calories doesn't increase after certain point.
+	☐ Government/Rent office bureucracy
+	☐ Goals pausing and canceling.
+	☐ Economy
+		☐ More sinks
+	☐ Rendering overhaul - support for custom renderers for items.
+		☐ Add graphics for most items.
+	☐ Client automatic reconnect.
+	☐ Hot reload?
+	☐ Progressbar Storybook tests.
+	☐ React-Redux -> 7.1
+		☐ Convert to redux hooks.
+
+Milestone 5:
 
 	☐ Player
 		☐ New "energy" stat.
