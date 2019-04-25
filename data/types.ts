@@ -32,6 +32,12 @@ const items: InitialItemTypesState = {
 		components: [
 			'consumable',
 		],
+		inventory: [
+			{
+				typeId: 'Calories',
+				count: 500,
+			},
+		],
 	},
 	pineAppleShoot: {
 		components: [

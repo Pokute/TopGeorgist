@@ -19,3 +19,23 @@ export const moveWork: Work = {
 		}
 	],
 };
+
+export const consumeWork: Work = {
+	type: 'consume',
+	inputs: [
+		{
+			typeId: 'calories',
+			count: 100,
+		},
+		{
+			typeId: 'tick',
+			count: 2,
+		},
+	],
+	outputs: [
+		{
+			typeId: 'calories',
+			count: 100,
+		}
+	],
+};

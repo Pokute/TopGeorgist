@@ -45,18 +45,6 @@ type ComponentWithParams = [
 export type ComponentArray = ReadonlyArray<string | ComponentWithParams>;
 
 const components: ComponentList = {
-	inventoryChange: {
-		tick: (tgo: TgoType, options = { typeId: 'calories', perTick: -1 }) => {
-			const actions = [];
-			if (hasComponentInventory(tgo)) {
-				// const cals = tgo.inventory.find(ii => ii.typeId === options.typeId);
-				// if (cals && cals.count > 0) {
-				actions.push(inventoryActions.add(tgo.tgoId, options.typeId, options.perTick));
-				// }
-			}
-			return actions;
-		},
-	},
 	consumable: {
 		actions: [
 			{

@@ -1,12 +1,12 @@
 import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
-import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove } from "../reducers/goal";
+import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
 import { RootStateType } from "../reducers";
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork } from "../data/components_new";
 import { hasComponentInventory, ComponentInventory } from "../components/inventory";
 import { hasComponentPosition } from '../components/position';
 import { TgoId, TgoType } from "../reducers/tgo";
-import { moveWork } from "../data/works";
+import { moveWork, consumeWork } from "../data/works";
 import { Inventory, InventoryItem } from "../components/inventory";
 import { transaction } from "../actions/transaction";
 import { Work } from "../reducers/work";
@@ -82,6 +82,71 @@ const completeWork = function* (actorTgoId: TgoId, work: Work) {
 	return false;
 };
 
+const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgoId: TgoId,  { consumableTypeId, count }: RequirementConsumeTypeId) {
+	if (count <= 0) {
+		return true;
+	}
+	
+	const s: RootStateType = yield select();
+	const actorTgo = s.tgos[actorTgoId];
+	const goalTgo = s.tgos[goalTgoId];
+	if (!isComponentGoal(goalTgo)) return false;
+	if (!actorTgo || !hasComponentPosition(actorTgo)) {
+		return false;
+	}
+
+	// Check goal if there's active work
+	if (goalTgo.goal.workInstances.length == 0) {
+		const foundWork = consumeWork;
+		if (foundWork) {
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: moveWork}));
+			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
+		} else {
+			// give up.
+
+		}
+	}
+
+	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
+	if (!isComponentWork(workInstanceTgo)) return false;
+
+	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorTgoId, goalTgoId, workInstanceTgo.tgoId);
+	if (workOutput) {
+		// Move the steps towards goal.
+		for (let positionChange = 0; positionChange < (workOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
+			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
+			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
+			const change = {
+				x: -1 * Math.sign(positionOffset.x),
+				y: -1 * Math.sign(positionOffset.y),
+			};
+			// yield put(res);
+			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
+			if (positionMatches(actorTgo.position, targetPosition)) {
+				yield* goalComplete(actorTgoId, goalTgoId);
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+const handleGoalRequirementConsumeTgoId = function* (actorTgoId: TgoId, goalTgoId: TgoId,  { consumableTgoId }: RequirementConsumeTgoId) {
+	throw new Error('Not implemented.');
+	return null;
+};
+
+const handleGoalRequirementConsume = function* (actorTgoId: TgoId, goalTgoId: TgoId,  requirement: RequirementConsume) {
+	switch (requirement.type) {
+		case 'RequirementConsumeTypeId':
+			yield* handleGoalRequirementConsumeTypeId(actorTgoId, goalTgoId, requirement);
+			return;
+		case 'RequirementConsumeTgoId':
+			yield* handleGoalRequirementConsumeTgoId(actorTgoId, goalTgoId, requirement);
+			return;
+	}
+};
+
 const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId,  { targetPosition }: RequirementMove) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
@@ -145,6 +210,9 @@ const handleGoalRequirement = function* (actorTgoId: TgoId, goalTgoId: TgoId, re
 	}
 	if (isRequirementMove(requirement)) {
 		yield* handleGoalRequirementMove(actorTgoId, goalTgoId, requirement);
+	}
+	if (isRequirementConsume(requirement)) {
+		yield* handleGoalRequirementConsume(actorTgoId, goalTgoId, requirement);
 	}
 };
 

@@ -1,5 +1,6 @@
 import { ItemTypesState } from "./itemTypes";
 import { ComponentList, ComponentArray } from "../data/components";
+import { Inventory } from "../components/inventory";
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = string;
@@ -15,6 +16,7 @@ export interface InitialItemType {
 	readonly isStorable?: boolean,
 	readonly isTgoId?: boolean,
 	readonly redeemable?: boolean,
+	readonly inventory?: Inventory,
 };
 
 export interface ItemType extends Readonly<InitialItemType> {

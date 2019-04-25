@@ -94,6 +94,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	const workTgo = s.tgos[workTgoId];
 	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo) || !hasComponentInventory(workTgo)) return undefined; // Fail
 
+	// Find out what part of work is not yet done.
 	const missingItems = workTgo.work.inputs
 		.filter(ii => ii.tgoId === undefined)
 		.map(ii => ({ ...ii, count: ii.count - (workTgo.inventory.find(wi => wi.typeId == ii.typeId) || { count: 0 }).count}))
