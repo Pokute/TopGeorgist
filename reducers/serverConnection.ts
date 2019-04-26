@@ -1,3 +1,5 @@
+/// <reference path="../typings/ws-wrapper.d.ts" />
+
 // Only from client to server
 
 import { getType, ActionType } from 'typesafe-actions';

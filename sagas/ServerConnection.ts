@@ -1,3 +1,5 @@
+/// <reference path="../typings/ws-wrapper.d.ts" />
+
 import { ActionType, getType } from 'typesafe-actions';
 import { eventChannel, END } from 'redux-saga';
 import { takeEvery, put, select, call, take, fork, delay } from 'redux-saga/effects';
