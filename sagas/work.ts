@@ -78,10 +78,10 @@ const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
 	const s: RootStateType = yield select();
 	const workTgo = s.tgos[workTgoId];
 	if (!isComponentWork(workTgo)) return undefined; // Fail
-	if (workTgo.work.inputs.length == 0) return true;
+	if (workTgo.work.actorItemChanges.length == 0) return true;
 	if (!hasComponentInventory(workTgo)) return false;
 
-	return (workTgo.work.inputs.every(input => {
+	return (workTgo.work.actorItemChanges.every(input => {
 		const foundProgressItem = workTgo.inventory.find(progress => progress.typeId === input.typeId);
 		return ((foundProgressItem !== undefined) && (foundProgressItem.count >= input.count));
 	}));
@@ -94,8 +94,10 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	const workTgo = s.tgos[workTgoId];
 	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo) || !hasComponentInventory(workTgo)) return undefined; // Fail
 
+	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes.
+
 	// Find out what part of work is not yet done.
-	const missingItems = workTgo.work.inputs
+	const missingItems = workTgo.work.actorItemChanges
 		.filter(ii => ii.tgoId === undefined)
 		.map(ii => ({ ...ii, count: ii.count - (workTgo.inventory.find(wi => wi.typeId == ii.typeId) || { count: 0 }).count}))
 		.filter(ii => ii.count > 0)
@@ -120,7 +122,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 			tgoId: workTgoId,
 			items: [
 				...actorItemsForWork,
-				...(workTgo.work.inputs.some(input => input.typeId === 'tick')
+				...(workTgo.work.actorItemChanges.some(input => input.typeId === 'tick')
 					? [{
 						typeId: 'tick',
 						count: 1,
@@ -135,7 +137,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 
 	if (yield* checkWorkInstanceCompletion(workTgoId)) {
 		yield put(goalRemoveWorkInstance(goalTgoId, workTgoId));
-		return workTgo.work.outputs;
+		return workTgo.work.targetItemChanges;
 	}
 	return undefined;
 }

@@ -6,6 +6,7 @@ import * as tgoActions from '../actions/tgo';
 import * as netActions from '../actions/net';
 import { setGoals } from '../actions/goals';
 import { moveGoal } from '../actions/moveGoal';
+import { consumeGoal } from '../actions/consumeGoal';
 
 const sentTypes = {
 	setGoals,
@@ -24,6 +25,7 @@ const clientListener = function* () {
 		[
 			getType(setGoals),
 			getType(moveGoal),
+			getType(consumeGoal),
 		],
 		sendAction,
 	);

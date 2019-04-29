@@ -75,7 +75,7 @@ const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
 			type: action.onClick.type,
 			payload: {
 				...action.onClick,
-				actorTgoId: passedProps.ownerTgoId,
+				tgoId: passedProps.ownerTgoId,
 				targetTypeId,
 			},
 		}))

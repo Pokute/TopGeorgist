@@ -48,7 +48,7 @@ export type Requirement =
 	RequirementIntentoryItems // We need to acquire items to complete
 	| RequirementDelivery // We must deliver something somewhere
 	| RequirementMove // Simplified requirement for testing
-	| RequirementConsume
+	| RequirementConsume // Requirement of consuming item/items.
 ;
 
 export function isRequirementDelivery(requirement: Requirement): requirement is RequirementDelivery {

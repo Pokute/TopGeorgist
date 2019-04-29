@@ -3,7 +3,7 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 import { Goal, Requirement, isRequirementDelivery, RequirementDelivery, RequirementDeliveryTargetPosition, RequirementDeliveryTargetTgoId, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
 import { RootStateType } from "../reducers";
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork } from "../data/components_new";
-import { hasComponentInventory, ComponentInventory } from "../components/inventory";
+import { hasComponentInventory, ComponentInventory, inventoryActions } from "../components/inventory";
 import { hasComponentPosition } from '../components/position';
 import { TgoId, TgoType } from "../reducers/tgo";
 import { moveWork, consumeWork } from "../data/works";
@@ -71,12 +71,12 @@ const completeWorkInput = function* (actorTgoId: TgoId, input: InventoryItem) {
 }
 
 const completeWork = function* (actorTgoId: TgoId, work: Work) {
-	const inputs = work.inputs.map(work => completeWorkInput(actorTgoId, work));
+	const inputs = work.actorItemChanges.map(work => completeWorkInput(actorTgoId, work));
 	const results: ReadonlyArray<boolean> = yield* inputs;
 	if (results.every(i => i)) {
 		return transaction({
 			tgoId: actorTgoId,
-			items: [...work.inputs, ...work.outputs],
+			items: [...work.actorItemChanges, ...work.targetItemChanges],
 		});
 	}
 	return false;
@@ -86,6 +86,8 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 	if (count <= 0) {
 		return true;
 	}
+	if (count !== 1)
+		throw new Error('handleGoalRequirementConsumeTypeId with count !== 1 is unimplemented.');
 	
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
@@ -95,11 +97,38 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 		return false;
 	}
 
+	if (!hasComponentInventory(goalTgo)) return false;
+
+	if (goalTgo.inventory.length === 0) {
+		const type = s.itemTypes[consumableTypeId];
+		if (!type) return false;
+		if (!type.inventory) return false;
+		if (!hasComponentInventory(actorTgo)) return false;
+
+		// Check if enough items for actor.
+		if (!actorTgo.inventory.find(ii => ii.typeId === consumableTypeId && ii.count >= count)) {
+			return false;
+		}
+
+		yield put(inventoryActions.add(actorTgoId, consumableTypeId, count * -1));
+
+		for (const ii of Object.values(type.inventory)) {
+			yield put(inventoryActions.add(goalTgoId, ii.typeId, ii.count));
+		}
+	}
+
+	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
+		yield put(removeGoals(actorTgoId, [goalTgoId]))
+
+		// Remove Tgo from tgos
+		yield put(tgosRemove(goalTgoId))
+	}
+
 	// Check goal if there's active work
 	if (goalTgo.goal.workInstances.length == 0) {
 		const foundWork = consumeWork;
 		if (foundWork) {
-			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: moveWork}));
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: foundWork}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -112,21 +141,8 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 
 	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorTgoId, goalTgoId, workInstanceTgo.tgoId);
 	if (workOutput) {
-		// Move the steps towards goal.
-		for (let positionChange = 0; positionChange < (workOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
-			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
-			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
-			const change = {
-				x: -1 * Math.sign(positionOffset.x),
-				y: -1 * Math.sign(positionOffset.y),
-			};
-			// yield put(res);
-			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
-			if (positionMatches(actorTgo.position, targetPosition)) {
-				yield* goalComplete(actorTgoId, goalTgoId);
-				return true;
-			}
-		}
+		yield put(transaction({ tgoId: actorTgoId, items: workOutput }));
+		return false;
 	}
 	return false;
 };
@@ -173,7 +189,7 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	if (goalTgo.goal.workInstances.length == 0) {
 		const foundWork = moveWork;
 		if (foundWork) {
-			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: moveWork}));
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: foundWork}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.

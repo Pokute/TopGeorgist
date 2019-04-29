@@ -51,7 +51,8 @@ const components: ComponentList = {
 				consume: {
 					label: 'Eat it',
 					onClick: {
-						type: 'CONSUMABLE_CONSUME',
+						// type: 'CONSUMABLE_CONSUME',
+						type: 'TGO_GOAL_CREATE_CONSUME',
 					},
 					actorRequirements: {
 						components: [

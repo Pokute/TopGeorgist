@@ -20,6 +20,7 @@ import { extendedSocket } from './reducers/client';
 import { withClient } from './actions/withClient';
 import { setGoals } from './actions/goals';
 import { moveGoal } from './actions/moveGoal';
+import { consumeGoal } from './actions/consumeGoal';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -99,6 +100,7 @@ try {
 						case 'RENT_OFFICE_CLAIM_LAND':
 						case 'RENT_OFFICE_PAY_RENT':
 						case getType(moveGoal):
+						case getType(consumeGoal):
 							store.dispatch(data.action);
 							break;
 						default:

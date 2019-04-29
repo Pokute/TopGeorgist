@@ -1,7 +1,7 @@
 import { put, select, takeEvery, all, call } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { inventoryActions } from '../components/inventory';
+import { inventoryActions, InventoryItem, Inventory } from '../components/inventory';
 import * as transactionActions from '../actions/transaction';
 import * as taskQueueActions from '../actions/taskQueue';
 import { TgoId, TgoType } from '../reducers/tgo';
@@ -9,24 +9,9 @@ import { TypeId, ItemType } from '../reducers/itemType';
 import { TgosState } from '../reducers/tgos';
 import { ItemTypesState } from '../reducers/itemTypes';
 
-export interface TransactionItem {
-	readonly typeId: TypeId,
-	readonly count: number,
-};
-
-export interface TransactionItemWithInfo extends TransactionItem {
-	readonly type: ItemType,
-	readonly ownerCount: number,
-};
-
 export interface TransactionParticipant {
 	readonly tgoId: TgoId,
-	readonly items: ReadonlyArray<TransactionItem>
-};
-
-export interface TransactionParticipantWithInfo {
-	readonly tgoId: TgoId,
-	readonly items: ReadonlyArray<TransactionItemWithInfo>
+	readonly items: Inventory
 };
 
 export type TransactionActionType = ActionType<typeof transactionActions>;
@@ -45,9 +30,19 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	}
 	// Items shape: { typeId, count };
 
+	interface InventoryItemWithInfo extends InventoryItem {
+		readonly type: ItemType,
+		readonly ownerCount: number,
+	};
+	
+	interface TransactionParticipantWithInfo {
+		readonly tgoId: TgoId,
+		readonly items: ReadonlyArray<InventoryItemWithInfo>
+	};
+	
 	const getParticipantWithInfo = function*(p: TransactionParticipant) {
 		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
-		const newItems: TransactionItemWithInfo = yield all(p.items.map((item) => call(function* (i) {
+		const newItems: InventoryItemWithInfo = yield all(p.items.map((item) => call(function* (i) {
 			return {
 				...i,
 				type: yield select((state: { itemTypes: ItemTypesState }) => state.itemTypes[i.typeId]),
@@ -67,7 +62,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 
 	const participantsWithInfo2: ReadonlyArray<TransactionParticipantWithInfo> = yield* (participants.map(function* (p) {
 		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
-		const newItems: TransactionItemWithInfo = yield p.items.map(function* (i) {
+		const newItems: InventoryItemWithInfo = yield p.items.map(function* (i) {
 			return {
 				...i,
 				type: yield select((state: { itemTypes: ItemTypesState }) => state.itemTypes[i.typeId]),
