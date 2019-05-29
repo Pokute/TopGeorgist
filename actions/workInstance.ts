@@ -10,8 +10,9 @@ export const createFromWork = createAction('WORK_INSTANCE_CREATE_FROM_WORK', res
 });
 
 export const createWorkInstance = createAction('WORK_INSTANCE_CREATE', resolve => {
-	return ({ goalTgoId, work }: { goalTgoId: TgoId, work: Work }) => resolve({
+	return ({ goalTgoId, work, targetTgoId }: { goalTgoId: TgoId, work: Work, targetTgoId?: TgoId }) => resolve({
 			goalTgoId,
 			work,
+			targetTgoId,
 	});
 });
