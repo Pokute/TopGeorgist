@@ -12,7 +12,7 @@ export interface Type {
 	readonly viewId?: ViewId,
 };
 
-const initialState: Type = {
+export const initialState: Type = {
 	accountId: '',
 	playerTgoId: '',
 	viewId: '',

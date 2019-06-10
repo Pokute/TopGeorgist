@@ -2,14 +2,14 @@ import { select, put, all, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import { WorkInstance } from '../reducers/workInstance';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory } from '../components/inventory';
-import { TgoId, TgoType } from '../reducers/tgo';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId } from '../components/inventory';
+import { TgoId, TgoType, TgoActionList } from '../reducers/tgo';
 import { isComponentGoal, isComponentWork, hasComponentGoalDoer } from '../data/components_new';
 import { transaction } from '../actions/transaction';
 import { RootStateType } from '../reducers';
 import { createWorkInstance } from '../actions/workInstance';
-import { add as addTgo } from "../actions/tgos";
-import { addWorkInstance as goalAddWorkInstance, removeWorkInstance as goalRemoveWorkInstance } from '../actions/goal';
+import { add as addTgo, remove as removeTgo } from "../actions/tgos";
+import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
 import isServer from '../isServer';
 
 // Start with work that only requires ticks.
@@ -87,8 +87,8 @@ const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
 	}));
 }
 
-export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId, workTgoId: TgoId) {
-	const s: RootStateType = yield select();
+export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId, workTgoId: TgoId, is?: RootStateType) {
+	const s: RootStateType = is || (yield select());
 	const actorTgo = s.tgos[actorTgoId];
 	const goalTgo = s.tgos[goalTgoId];
 	const workTgo = s.tgos[workTgoId];
@@ -103,17 +103,21 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 
 	const participantsWithWorkInfo = participants
 		.map((participant, index) => {
-			const committedItemsTgoId = index == 0 ? workTgo.workActorFulfilledItemsTgoId : workTgo.workTargetCommittedItemsTgoId;
-				return {
+			const committedItemsTgoId = index == 0 ? workTgo.workActorCommittedItemsTgoId : workTgo.workTargetCommittedItemsTgoId;
+			return {
 				...participant,
+				requiredItemCommitTgoId: committedItemsTgoId,
 				itemsChange: index == 0 ? workTgo.work.actorItemChanges : workTgo.work.targetItemChanges,
 				committedItems: (committedItemsTgoId ? s.tgos[committedItemsTgoId].inventory : undefined) || [],
 			};
 		})
 		.map((participant) => ({
 			...participant,
-			requiredItems: participant.itemsChange.filter(({ count }) => count <= 0),
-			awardItems: participant.itemsChange.filter(({ count }) => count > 0),
+			requiredItems: participant.itemsChange
+				.map(ii => ({ ...ii, count: ii.count * -1}))
+				.filter(({ count }) => count >= 0),
+			awardItems: participant.itemsChange
+				.filter(({ count }) => count > 0),
 			committedRequiredItems: participant.committedItems.filter(({ count }) => count <= 0),
 			committedAwardItems: participant.committedItems.filter(({ count }) => count > 0),
 		}))
@@ -121,11 +125,11 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 			...participant,
 			missingRequiredItems: participant.requiredItems.map(({ typeId, count }) => ({
 				typeId,
-				count: count + (participant.committedItems.find(({ typeId: committedTypeId }) => committedTypeId == typeId) || { count: 0 }).count,
+				count: count - (-1 * (participant.committedItems.find(({ typeId: committedTypeId }) => committedTypeId == typeId) || { count: 0 }).count),
 			})),
-			missingAwardItems: participant.requiredItems.map(({ typeId, count }) => ({
+			missingAwardItems: participant.awardItems.map(({ typeId, count }) => ({
 				typeId,
-				count: count - (participant.committedItems.find(({ typeId: committedTypeId }) => committedTypeId == typeId) || { count: 0 }).count,
+				count: count - (participant.committedAwardItems.find(({ typeId: awardTypeId }) => awardTypeId == typeId) || { count: 0 }).count,
 			})),
 		}));
 
@@ -134,7 +138,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	);
 
 	const rewardOutputActions = (participants: typeof participantsWithWorkInfo) => all(
-			participants.map(participant => ({
+		participants.map(participant => ({
 			tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
 		}))
 		.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
@@ -160,6 +164,11 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 				}
 			)))
 		));
+		return participantsWithWorkInfo
+			.map(participant => ({
+				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+			}))
+			.filter(({ awardItems }) => awardItems.length > 0);
 	}
 
 	const participantsWithCommitables = participantsWithWorkInfo
@@ -176,22 +185,23 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 		}))
 		.map(participant => ({
 			...participant,
-			commitableRequiredItems: [
+			committableRequiredItems: [
 				...participant
 					.committableRequiredInventoryTypes.map(typeId => ({
 						typeId,
 						count: Math.min(
-							(participant.requiredItems.find(ri => ri.typeId === typeId) || { count: 0 }).count,
+							(participant.missingRequiredItems.find(ri => ri.typeId === typeId) || { count: 0 }).count,
 							((participant.tgo.inventory || []).find(ii => ii.typeId === typeId) || { count: 0 }).count
 						)
 					})),
+				// MOVE THIS, every participant shouldn't be able to commit ticks!
 				// Add a tick if required
 				...(participant.requiredItems.some(ri => ri.typeId === 'tick'))
 					? [{
 						typeId: 'tick',
 						count: Math.min(
 							1,
-							(participant.requiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
+							(participant.missingRequiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
 						),
 					}]
 					: []
@@ -202,21 +212,25 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 
 	const reqTransaction = transaction(
 		...participantsWithCommitables
-			.filter(participant => participant.commitableRequiredItems.length > 0)
-			.map(p => ({
-				tgoId: p.tgo.tgoId,
-				items: [
-					...p.missingRequiredItems,
-				]
-			})),
-		
-	)
+			.filter(participant => participant.committableRequiredItems.length > 0)
+			.map(p => [
+				{
+					tgoId: p.tgo.tgoId,
+					items: p.committableRequiredItems
+						.filter(ri => ri.typeId !== 'tick')
+						.map(ii => ({ ...ii, count: -1 * ii.count })),
+				},
+				{
+					tgoId: p.requiredItemCommitTgoId,
+					items: p.committableRequiredItems
+						.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
+				},
+			]).flat(),
+	);
 
-	// TODO: Create transaction actions to fulfill missing requirements.
-	const fulfillMissingTransactionActions = participantsWithWorkInfo
-		.map(p => p.missingRequiredItems)
-		.flat(1)
+	yield put(reqTransaction);
 
+/*
 	// Find out what part of work is not yet done.
 	const missingItems = workTgo.work.actorItemChanges
 		// .filter(ii => ii.tgoId === undefined)
@@ -260,7 +274,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 	if (yield* checkWorkInstanceCompletion(workTgoId)) {
 		yield put(goalRemoveWorkInstance(goalTgoId, workTgoId));
 		return workTgo.work.targetItemChanges;
-	}
+	}*/
 	return undefined;
 }
 
@@ -291,11 +305,30 @@ const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, target
 	const goalTgo = s.tgos[goalTgoId];
 	if (!isComponentGoal(goalTgo)) return;
 
+	const workActorCommittedItemsTgoAction = work.actorItemChanges.length > 0
+		? addTgo({
+			inventory: [],
+			inventoryVirtual: true,
+		})
+		: undefined;
+	if (workActorCommittedItemsTgoAction)
+		yield put(workActorCommittedItemsTgoAction)
+	const workTargetCommittedItemsTgo = work.targetItemChanges.length > 0
+		? addTgo({
+			inventory: [],
+			inventoryVirtual: true,
+		})
+		: undefined;
+	if (workTargetCommittedItemsTgo)
+		yield put(workTargetCommittedItemsTgo)
+
 	// Add a Work TgoId
 	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
 		work,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
+		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction ? workActorCommittedItemsTgoAction.payload.tgo.tgoId : undefined,
+		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgo ? workTargetCommittedItemsTgo.payload.tgo.tgoId : undefined,
 		// inventory: [],
 	}));
 
@@ -309,9 +342,23 @@ const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, target
 	yield put(goalAddWorkInstance(goalTgoId, newWorkAction.payload.tgo.tgoId));
 }
 
+const handleRemoveWorkInstance = function* ({ payload: { tgoId, workInstanceTgoId }}: ActionType<typeof removeWorkInstance>) {
+	const s: RootStateType = yield select();
+	const workInstance = s.tgos[workInstanceTgoId];
+	
+	if (workInstance.workActorCommittedItemsTgoId)
+		yield put(removeTgo(workInstance.workActorCommittedItemsTgoId));
+	if (workInstance.workTargetCommittedItemsTgoId)
+		yield put(removeTgo(workInstance.workTargetCommittedItemsTgoId));
+	yield put(removeTgo(workInstanceTgoId));
+	yield put(removeTgoId(tgoId, workInstanceTgoId));
+}
+
+
 const workRootSaga = function* () {
 	if (!isServer) return;
 	yield takeEvery(getType(createWorkInstance), handleCreateWorkInstance);
+	yield takeEvery(getType(removeWorkInstance), handleRemoveWorkInstance);
 };
 
 export default workRootSaga;

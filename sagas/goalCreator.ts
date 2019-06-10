@@ -10,6 +10,7 @@ import { addGoals } from '../actions/goals'
 import { TgoId } from "../reducers/tgo";
 import isServer from '../isServer';
 import { consumeGoal } from "../actions/consumeGoal";
+import { setWorkTargetTgoId } from "../actions/goal";
 
 const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType<typeof moveGoal>) {
 	const s: RootStateType = yield select();

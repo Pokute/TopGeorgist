@@ -1,7 +1,7 @@
 import { put, select, takeEvery, all, call } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { inventoryActions, InventoryItem, Inventory } from '../components/inventory';
+import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from '../components/inventory';
 import * as transactionActions from '../actions/transaction';
 import * as taskQueueActions from '../actions/taskQueue';
 import { TgoId, TgoType } from '../reducers/tgo';
@@ -38,6 +38,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	interface TransactionParticipantWithInfo {
 		readonly tgoId: TgoId,
 		readonly items: ReadonlyArray<InventoryItemWithInfo>
+		readonly inventoryVirtual?: ComponentInventory['inventoryVirtual'],
 	};
 	
 	const getParticipantWithInfo = function*(p: TransactionParticipant) {
@@ -55,6 +56,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 		return {
 			...p,
 			items: newItems,
+			inventoryVirtual: pTgo.inventoryVirtual,
 		};
 	}
 
@@ -79,6 +81,7 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	}));
 
 	const allPraticipantsHaveItems = participantsWithInfo.every((p) =>
+		(p.inventoryVirtual == true) ||
 		p.items.every(i =>
 			(((i.ownerCount + i.count) >= 0) || !i.type.positiveOnly),
 		),
@@ -88,7 +91,8 @@ const transactionSaga = function* (action: ReturnType<typeof transactionActions.
 	const actions: ReadonlyArray<ReturnType<typeof inventoryActions.add>> = participantsWithInfo.reduce(
 		(total: ReadonlyArray<ReturnType<typeof inventoryActions.add>>, p) => [
 			...total,
-			...p.items.map(i => inventoryActions.add(p.tgoId, i.typeId, i.count)),
+			...p.items
+				.map(i => inventoryActions.add(p.tgoId, i.typeId, i.count)),
 		],
 		[],
 	);

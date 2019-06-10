@@ -3,6 +3,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import * as workInstanceActions from '../actions/workInstance';
 import { Inventory } from '../components/inventory';
 import { Work } from './work';
+import { TgoId } from './tgo';
 
 interface WorkInstanceInitialType {
 	readonly inputProgress: Inventory,
@@ -10,6 +11,7 @@ interface WorkInstanceInitialType {
 
 export interface WorkInstance {
 	readonly work: Work,
+	readonly targetTgoId?: TgoId,
 	readonly inputProgress: Inventory,
 };
 

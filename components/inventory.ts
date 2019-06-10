@@ -22,9 +22,19 @@ export const addTgoId = createAction('TGO_INVENTORY_ADD_TGO_ID', (resolve) => {
 	});
 });
 
+export const removeTgoId = createAction('TGO_INVENTORY_REMOVE_TGO_ID', (resolve) => {
+	return (ownerTgoId: TgoId, tgoId: TgoId) => resolve({
+		tgoId: ownerTgoId,
+		item: {
+			tgoId,
+		},
+	});
+});
+
 export const inventoryActions = {
 	add,
 	addTgoId,
+	removeTgoId,
 };
 
 export interface InventoryItem {
@@ -65,6 +75,10 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 				}
 			];
 		}
+		case getType(removeTgoId): {
+			const [ removedTgoId, ...stateWithoutRemovedTgoId ] = state;
+			return stateWithoutRemovedTgoId;
+		}
 		default:
 			return state;
 	}
@@ -72,6 +86,7 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 
 export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,
+	readonly inventoryVirtual?: boolean, // Allows having negative count of any type.
 };
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>

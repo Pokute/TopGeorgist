@@ -19,6 +19,7 @@ import { MapPosition, positionMatches, getPositionOffset, getPositionDistanceMan
 import { createWorkInstance } from "../actions/workInstance";
 import { handleWorkInstance } from "./work";
 import { removeGoals } from "../actions/goals";
+import { removeWorkInstance } from "../actions/goal";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -88,7 +89,7 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 	}
 	if (count !== 1)
 		throw new Error('handleGoalRequirementConsumeTypeId with count !== 1 is unimplemented.');
-	
+
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[actorTgoId];
 	const goalTgo = s.tgos[goalTgoId];
@@ -99,6 +100,7 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 
 	if (!hasComponentInventory(goalTgo)) return false;
 
+	// Convert an item to something temporary that has an inventory of contents.
 	if (goalTgo.inventory.length === 0) {
 		const type = s.itemTypes[consumableTypeId];
 		if (!type) return false;
@@ -110,11 +112,12 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 			return false;
 		}
 
+		// Remove item from actor's inventory
 		yield put(inventoryActions.add(actorTgoId, consumableTypeId, count * -1));
 
-		for (const ii of Object.values(type.inventory)) {
-			yield put(inventoryActions.add(goalTgoId, ii.typeId, ii.count));
-		}
+		yield all(type.inventory.map(ii =>
+			put(inventoryActions.add(goalTgoId, ii.typeId, ii.count))
+		));
 	}
 
 	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
@@ -128,7 +131,7 @@ const handleGoalRequirementConsumeTypeId = function* (actorTgoId: TgoId, goalTgo
 	if (goalTgo.goal.workInstances.length == 0) {
 		const foundWork = consumeWork;
 		if (foundWork) {
-			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: foundWork}));
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId, work: foundWork, targetTgoId: goalTgoId}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -197,12 +200,15 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 		}
 	}
 	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
-	if (!isComponentWork(workInstanceTgo)) return false;
+	if (!workInstanceTgo || !isComponentWork(workInstanceTgo)) return false;
 
-	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorTgoId, goalTgoId, workInstanceTgo.tgoId);
+	const workOutput: { tgoId: TgoId, awardItems: Inventory }[] | undefined = yield* handleWorkInstance(actorTgoId, goalTgoId, workInstanceTgo.tgoId);
 	if (workOutput) {
 		// Move the steps towards goal.
-		for (let positionChange = 0; positionChange < (workOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
+		if (workOutput.length == 0)
+			return false;
+		const actorWorkOutput = workOutput[0].awardItems;
+		for (let positionChange = 0; positionChange < (actorWorkOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
 			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
 			const currentPos = ((yield select()) as RootStateType).tgos[actorTgoId]!.position!;
 			const change = {
@@ -213,8 +219,13 @@ const handleGoalRequirementMove = function* (actorTgoId: TgoId, goalTgoId: TgoId
 			yield put(setPosition(actorTgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
 			if (positionMatches(actorTgo.position, targetPosition)) {
 				yield* goalComplete(actorTgoId, goalTgoId);
-				return true;
+				break;
 			}
+		}
+		yield put(removeWorkInstance(goalTgoId, workInstanceTgo.tgoId));
+		if (positionMatches(actorTgo.position, targetPosition)) {
+			yield* goalComplete(actorTgoId, goalTgoId);
+			return true;
 		}
 	}
 	return false;

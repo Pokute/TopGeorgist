@@ -83,7 +83,7 @@ export default (state: Goal, action: AnyAction): Goal => {
 		case getType(goalActions.removeWorkInstance):
 			return {
 				...state,
-				workInstances: state.workInstances.filter(wi => wi !== action.payload.workInstance),
+				workInstances: state.workInstances.filter(wi => wi !== action.payload.workInstanceTgoId),
 			};
 		default:
 			return state;

@@ -10,7 +10,7 @@ export interface TickerStateType {
 	readonly running: boolean,
 };
 
-const initialState = {
+export const initialState = {
 	currentTick: 0,
 	tickInterval: 250,
 	tickTime: Date.now(),

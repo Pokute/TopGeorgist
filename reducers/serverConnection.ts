@@ -12,7 +12,7 @@ export interface ServerConnectionStateType {
 	readonly reconnectionDelay: number,
 };
 
-const initialState: ServerConnectionStateType = {
+export const initialState: ServerConnectionStateType = {
 	reconnectionDelay: 125,
 };
 

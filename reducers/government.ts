@@ -12,7 +12,7 @@ export interface GovernmentStateType {
 	readonly rentModulus: number,
 };
 
-const initialState = {
+export const initialState = {
 	citizens: {},
 	claims: [],
 	rentModulus: 0,

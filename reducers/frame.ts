@@ -7,7 +7,7 @@ export interface FrameStateType {
 	readonly frameTime: number, 
 };
 
-const initialState: FrameStateType = {
+export const initialState: FrameStateType = {
 	current: 0,
 	frameTime: Date.now(),
 };

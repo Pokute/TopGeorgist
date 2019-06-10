@@ -51,7 +51,7 @@ export interface MapType {
 	readonly maxTileId?: number,
 };
 
-const initialState = {
+export const initialState = {
 	seed: 0,
 	size: { x: 0, y: 0 },
 	tileSize: 40,

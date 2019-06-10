@@ -10,8 +10,15 @@ export const addWorkInstance = createAction('GOAL_ADD_WORK_INSTANCE', (resolve) 
 });
 
 export const removeWorkInstance = createAction('GOAL_REMOVE_WORK_INSTANCE', (resolve) => {
-	return (tgoId: TgoId, workInstance: TgoId) => resolve({
+	return (tgoId: TgoId, workInstanceTgoId: TgoId) => resolve({
 		tgoId,
-		workInstance,
+		workInstanceTgoId,
 	});
 });
+
+export const setWorkTargetTgoId = createAction('GOAL_SET_TARGET_TGO_ID', (resolve) =>
+	(tgoId: TgoId, workTargetTgoId: TgoId) => resolve({
+		tgoId,
+		workTargetTgoId,
+	})
+);
