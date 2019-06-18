@@ -1,10 +1,9 @@
 import { Action } from "./components";
-import { TgoType, ComponentType, TgoId } from "../reducers/tgo";
+import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
 import { TaskQueueType } from "../reducers/taskQueue";
 import { Goal } from "../reducers/goal";
 import { Work } from "../reducers/work";
 import { ComponentPosition } from '../components/position';
-import { Inventory } from "../components/inventory";
 
 export type ComponentRentOffice = 
 	ComponentPosition & {
@@ -22,21 +21,24 @@ export type ComponentGovernmentBuilding =
 export const hasComponentGovernmentBuilding = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGovernmentBuilding>) =>
 	tgo && (tgo.governmentBuilding !== undefined && tgo.governmentBuilding === true);
 
-export interface ComponentLeaderBoard {
+export type ComponentLeaderBoard = 
+TgoRoot & {
 	readonly leaderBoard: true,
 };
 
 export const hasComponentLeaderBoard = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLeaderBoard>) =>
 	tgo && (tgo.leaderBoard !== undefined && tgo.leaderBoard === true);
 
-export interface ComponentMapGridOccipier {
+export type ComponentMapGridOccipier = 
+TgoRoot &  {
 	readonly mapGridOccupier: true,
 };
 
 export const hasComponentMapGridOccipier = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentMapGridOccipier>) =>
 	tgo && (tgo.mapGridOccupier !== undefined && tgo.mapGridOccupier === true);
 
-export interface ComponentVisitable {
+export type ComponentVisitable = 
+TgoRoot & {
 	readonly visitable?: {
 		readonly label: string,
 		readonly actions?: ReadonlyArray<Action>,
@@ -46,14 +48,16 @@ export interface ComponentVisitable {
 export const hasComponentVisitable = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentVisitable>) =>
 	tgo && (tgo.visitable !== undefined);
 
-export interface ComponentTaskQueue {
+export type ComponentTaskQueue = 
+TgoRoot & {
 	readonly taskQueue: TaskQueueType,
 };
 
 export const hasComponentTaskQueue = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentTaskQueue>) =>
 	typeof tgo.taskQueue !== undefined;
 
-export interface ComponentPresentation {
+export type ComponentPresentation = 
+TgoRoot & {
 	readonly presentation: {
 		readonly color: string
 	},
@@ -62,14 +66,16 @@ export interface ComponentPresentation {
 export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPresentation>) =>
 	typeof tgo.presentation !== 'undefined';
 
-export interface ComponentComponents {
+export type ComponentComponents = 
+TgoRoot & {
 	readonly components: ReadonlyArray<ComponentType>,
 };
 
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
 	Array.isArray(tgo.components);
 
-export interface ComponentWork {
+export type ComponentWork = 
+TgoRoot & {
 	readonly work: Work,
 	// readonly actorTgoId: TgoId,
 	readonly workTargetTgoId?: TgoId,
@@ -80,21 +86,24 @@ export interface ComponentWork {
 export const isComponentWork = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
 	typeof tgo.work !== undefined;
 
-export interface ComponentGoal {
+export type ComponentGoal = 
+TgoRoot & {
 	readonly goal: Goal,
 };
 
 export const isComponentGoal = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
 	typeof tgo.goal !== undefined;
 
-export interface ComponentWorkDoer {
+export type ComponentWorkDoer = 
+TgoRoot & {
 	readonly isWorkDoer: true,
 };
 
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
 	tgo.isWorkDoer == true;
 
-export interface ComponentGoalDoer {
+export type ComponentGoalDoer = 
+TgoRoot & {
 	readonly activeGoals: ReadonlyArray<TgoId>,
 };
 
