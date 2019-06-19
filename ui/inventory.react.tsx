@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+
 import components, { ComponentActionable, Action } from '../data/components';
 import * as netActions from '../actions/net';
 import { TypeId } from '../reducers/itemType';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
-import { Dispatch } from 'redux';
 import Category from './Category';
+import InventoryTgo from './InventoryTgo';
 
 export interface Type {
 	// readonly inventory: ReadonlyArray<InventoryItem>,
@@ -24,7 +26,10 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 			<div
 				key={i.tgoId || i.typeId}
 			>
-				<span>{`${i.typeId} : ${i.count}`}</span>
+				{(i.typeId === 'tgoId')
+					? (<InventoryTgo i={i} />)
+					: (<span>{`${i.typeId} : ${i.count}`}</span>)
+				}
 				{/* {((props.itemTypes[i.typeId] || {}) // Find the itemType
 					.actions || []) // and with it's actions...
 					.map(a =>
