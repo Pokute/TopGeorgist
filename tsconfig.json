@@ -24,7 +24,8 @@
 		"stories/**/*",
 		"ui/**/*",
 		"utils/**/*",
-		"data/**/*"
+		"data/**/*",
+		"tests/**/*"
 	],
 	"exclude": [
 		"node_modules"

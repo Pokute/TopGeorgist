@@ -4,31 +4,40 @@ import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { TypeId } from "../reducers/itemType";
 
 export const add = createAction('TGO_INVENTORY_ADD', (resolve) => {
-	return (ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => resolve({
-		tgoId: ownerTgoId,
-		item: {
-			typeId,
-			count,
-		},
-	});
+	return (ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => {
+		if (!typeId) throw new Error('inventory.add can\'t have empty typeId');
+		return resolve({
+			tgoId: ownerTgoId,
+			item: {
+				typeId,
+				count,
+			},
+		})
+	};
 });
 
 export const addTgoId = createAction('TGO_INVENTORY_ADD_TGO_ID', (resolve) => {
-	return (ownerTgoId: TgoId, tgoId: TgoId) => resolve({
-		tgoId: ownerTgoId,
-		item: {
-			tgoId,
-		},
-	});
+	return (ownerTgoId: TgoId, tgoId: TgoId) => {
+		if (!tgoId) throw new Error('inventory.addTgoId can\'t have empty item.tgoId');
+		return resolve({
+			tgoId: ownerTgoId,
+			item: {
+				tgoId,
+			},
+		});
+	}
 });
 
 export const removeTgoId = createAction('TGO_INVENTORY_REMOVE_TGO_ID', (resolve) => {
-	return (ownerTgoId: TgoId, tgoId: TgoId) => resolve({
-		tgoId: ownerTgoId,
-		item: {
-			tgoId,
-		},
-	});
+	return (ownerTgoId: TgoId, tgoId: TgoId) => {
+		if (!tgoId) throw new Error('inventory.removeTgoId can\'t have empty item.tgoId');
+		return resolve({
+			tgoId: ownerTgoId,
+			item: {
+				tgoId,
+			},
+		});
+	}
 });
 
 export const inventoryActions = {
@@ -66,6 +75,13 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 			];
 		}
 		case getType(addTgoId): {
+			if (state.some(({ typeId, tgoId }) => (
+					typeId == 'tgoId' 
+					&& tgoId == action.payload.item.tgoId
+				)
+			)) {
+				throw new Error(`Trying to add an already existing tgoId ${action.payload.item.tgoId} to inventory of ${action.payload.tgoId}`);
+			}
 			return [
 				...state,
 				{
@@ -76,7 +92,13 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 			];
 		}
 		case getType(removeTgoId): {
-			const [ removedTgoId, ...stateWithoutRemovedTgoId ] = state;
+			const stateWithoutRemovedTgoId = state.filter(({ typeId, tgoId }) => (
+				typeId == 'tgoId' 
+				&& tgoId == action.payload.item.tgoId
+			) == false);
+			if (stateWithoutRemovedTgoId.length == state.length) {
+				throw new Error(`Trying to add an remove non-existing tgoId ${action.payload.item.tgoId} from inventory of ${action.payload.tgoId}`);
+			}
 			return stateWithoutRemovedTgoId;
 		}
 		default:
@@ -90,4 +112,4 @@ export type ComponentInventory = TgoRoot & {
 };
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
-	typeof tgo.inventory !== undefined
+	typeof tgo.inventory !== undefined && Array.isArray(tgo.inventory);
