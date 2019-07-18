@@ -83,7 +83,7 @@ TgoRoot & {
 	readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from participant's inventory, but can be redeemed.
 };
 
-export const isComponentWork = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
+export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
 	typeof tgo.work !== undefined;
 
 export type ComponentGoal = 
@@ -91,7 +91,7 @@ TgoRoot & {
 	readonly goal: Goal,
 };
 
-export const isComponentGoal = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
+export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
 	typeof tgo.goal !== undefined;
 
 export type ComponentWorkDoer = 
@@ -107,5 +107,5 @@ TgoRoot & {
 	readonly activeGoals: ReadonlyArray<TgoId>,
 };
 
-export const hasComponentGoalDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoalDoer>) =>
+export const hasComponentGoalDoer = <BaseT extends TgoType | ComponentGoalDoer>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoalDoer>) =>
 	Array.isArray(tgo.activeGoals);
