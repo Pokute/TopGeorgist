@@ -5,9 +5,10 @@ import * as viewActions from '../actions/view';
 import * as viewsActions from '../actions/views';
 import viewReducer, { ViewType, viewActionList } from './view';
 import view from './view';
+import { AnyAction } from 'redux';
 
 export type ViewsState = {
-	readonly [extraProps: string]: ViewType;
+	readonly [viewId: string]: ViewType;
 };
 
 const initialState: ViewsState = {};
@@ -20,7 +21,7 @@ const listActions = [
 ].map(a => getType(a));
 
 export default (state: ViewsState = initialState, action: ViewAction | ViewsAction) => {
-	// Handle single view changes here.
+		// Handle single view changes here.
 /* 	if (listActions.some(a => a === action.type)) {
 		const viewAction = action as ViewAction;
 		const newSubObject = viewReducer(state[viewAction.payload.viewId], viewAction);

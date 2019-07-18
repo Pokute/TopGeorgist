@@ -4,6 +4,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import * as taskQueueActions from '../actions/taskQueue';
 import { transaction } from '../actions/transaction';
 import * as consumableActions from '../actions/consumable';
+import { TypeId } from '../reducers/itemType';
 
 const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.consume>) {
 	const actorTgo = (yield select()).tgos[actorTgoId];
@@ -25,7 +26,7 @@ const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType
 				tgoId: actorTgoId,
 				items: [
 					{
-						typeId: 'calories',
+						typeId: 'calories' as TypeId,
 						count: +500,
 					},
 					{
@@ -55,7 +56,7 @@ const intoSeeds = function* ({ payload: { actorTgoId, targetTypeId } }: ActionTy
 				tgoId: actorTgoId,
 				items: [
 					{
-						typeId: 'pineAppleShoot',
+						typeId: 'pineAppleShoot' as TypeId,
 						count: +2,
 					},
 					{

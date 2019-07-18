@@ -2,16 +2,17 @@ import { engines as randomEngines, integer as randomInteger } from 'random-js';
 
 import * as mapActions from '../actions/map'; 
 import { ActionType, getType } from 'typesafe-actions';
+import { Opaque } from '../typings/global.d';
 
-export interface MapPosition {
+export type MapPosition = Opaque<{
 	readonly x: number,
 	readonly y: number,
-};
+}, 'MapPosition'>;
 
-export interface MapSize {
+export type MapSize = Opaque<{
 	readonly x: number,
 	readonly y: number,
-};
+}, 'MapSize'>;
 
 type PositionDistanceEuclidean = { distance: number };
 type PositionDistanceManhattan = { distanceManhattan: number };
@@ -22,7 +23,7 @@ const isDistanceEuclidean = (distance: PositionDistance): distance is PositionDi
 export const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition => ({
 	x: a.x - b.x,
 	y: a.y - b.y,
-});
+} as MapPosition);
 export const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
 	const offset = getPositionOffset(a, b)
 	return {
@@ -43,7 +44,7 @@ type TileDataType = number;
 
 export interface MapType {
 	readonly seed: number,
-	readonly size: MapPosition,
+	readonly size: MapSize,
 	readonly tileSize: number,
 	readonly tileSetId: string,
 	readonly data: ReadonlyArray<TileDataType>,
@@ -51,9 +52,9 @@ export interface MapType {
 	readonly maxTileId?: number,
 };
 
-export const initialState = {
+export const initialState: MapType = {
 	seed: 0,
-	size: { x: 0, y: 0 },
+	size: { x: 0, y: 0 } as MapSize,
 	tileSize: 40,
 	tileSetId: 'basic',
 	// minTileId: 0,

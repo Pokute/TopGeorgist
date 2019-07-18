@@ -7,6 +7,7 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import Category from './Category';
 import { RequirementDelivery } from '../reducers/goal';
+import { MapPosition } from '../reducers/map';
 
 export interface propTypes {
 	readonly defaultPlayerTgoId?: TgoId,
@@ -28,7 +29,7 @@ const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
 						targetPosition: {
 							x: 20,
 							y: 20
-						},
+						} as MapPosition,
 						type: "RequirementDelivery",
 						inventoryItems: [],
 					}

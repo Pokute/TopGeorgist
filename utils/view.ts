@@ -3,7 +3,10 @@ import { MapPosition, MapType } from "../reducers/map";
 const getMinMax = (canvasElement?: HTMLCanvasElement, center?: MapPosition, map?: MapType) => {
 	// if (!canvasElement) throw new TypeError('Undefined canvasElement');
 	// if (!center || !center.x || !center.y) throw new TypeError('Undefined/bad center');
-	if (!canvasElement || !map) return { minTile: { x: 0, y: 0}, maxTile: { x: 0, y: 0}, };
+	if (!canvasElement || !map) return {
+		minTile: { x: 0, y: 0 } as MapPosition,
+		maxTile: { x: 0, y: 0 } as MapPosition,
+	};
 	if (!center || center.x === undefined || center.y === undefined) throw new TypeError('Undefined/bad center');
 	const c = canvasElement!;
 	const size = {
@@ -22,16 +25,16 @@ const getMinMax = (canvasElement?: HTMLCanvasElement, center?: MapPosition, map?
 	const minTile = {
 		x: center.x - ((sizeInTiles.x - paddingTile.x) / 2),
 		y: center.y - ((sizeInTiles.y - paddingTile.y) / 2),
-	};
+	} as MapPosition;
 	const maxTile = {
 		x: center.x + (sizeInTiles.x - paddingTile.x),
 		y: center.y + (sizeInTiles.y - paddingTile.y),
-	};
+	} as MapPosition;
 
 	return {
 		minTile,
 		maxTile,
-	};
+	}
 };
 
 export { getMinMax };

@@ -11,6 +11,7 @@ import { createWorkInstance } from '../actions/workInstance';
 import { add as addTgo, remove as removeTgo } from "../actions/tgos";
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
 import isServer from '../isServer';
+import { TypeId } from '../reducers/itemType';
 
 // Start with work that only requires ticks.
 
@@ -119,7 +120,7 @@ export const handleWorkInstance = function* (
 				...participant,
 				requiredItemCommitTgoId: committedItemsTgoId,
 				itemsChange: index == 0 ? workTgo.work.actorItemChanges : workTgo.work.targetItemChanges,
-				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || {}).inventory : undefined) || [],
+				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || { inventory: [] }).inventory : undefined) || [],
 			};
 		})
 		.map((participant) => ({
@@ -209,7 +210,7 @@ export const handleWorkInstance = function* (
 				// Add a tick if required
 				...(participant.requiredItems.some(ri => ri.typeId === 'tick'))
 					? [{
-						typeId: 'tick',
+						typeId: 'tick' as TypeId,
 						count: Math.min(
 							1,
 							(participant.missingRequiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
@@ -227,15 +228,16 @@ export const handleWorkInstance = function* (
 			.map(p => [
 				{
 					tgoId: p.tgo.tgoId,
-					items: p.committableRequiredItems
-						.filter(ri => ri.typeId !== 'tick')
-						.map(ii => ({ ...ii, count: -1 * ii.count })),
+					items: p.committableRequiredItems,
+					// items: p.committableRequiredItems
+					// 	.filter(ri => ri.typeId !== 'tick')
+					// 	.map(ii => ({ ...ii, count: -1 * ii.count })),
 				},
-				{
-					tgoId: p.requiredItemCommitTgoId,
-					items: p.committableRequiredItems
-						.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
-				},
+				// {
+				// 	tgoId: p.requiredItemCommitTgoId,
+				// 	items: p.committableRequiredItems
+				// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
+				// },
 			]).flat(),
 	);
 

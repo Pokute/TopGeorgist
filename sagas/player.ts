@@ -22,7 +22,7 @@ const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, l
 	if (!isServer) return;
 	console.log('Received playerCreateRequest ', label);
 	const state: ReturnType<typeof topGeorgist> = yield select();
-	const hasNameConflict = Object.values(state.tgos)
+	const hasNameConflict = (Object.values(state.tgos) as ReadonlyArray<TgoType>)
 		.some((tgo: TgoType) => (hasComponentPlayer(tgo) && hasComponentLabel(tgo) && (tgo.label === label)));
 	if (hasNameConflict) return;
 

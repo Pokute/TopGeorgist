@@ -5,6 +5,7 @@ import React, { useState, useMemo } from "react";
 import { Parameter, ReactReduxParam, TypeProps } from "./paramInput";
 import * as viewActions from '../actions/view';
 import { MapPosition } from "../reducers/map";
+import { ViewId } from "../reducers/view";
 
 export const paramInputPositionPack = (parameter: Parameter, formData: FormData) => ({
 	[parameter.name]: {
@@ -69,7 +70,7 @@ type SetPosType = ({ x, y }: MapPosition) => void;
 
 const mapDispatchToProps = (dispatch: Dispatch, passedProps: TypeProps) => ({
 	onPositionSelect: (setPos: SetPosType) => () => dispatch(viewActions.clickActionStack.push(
-		'main',
+		'main' as ViewId,
 		{
 			function: ({ position }: { position: MapPosition}) => setPos(position),
 			popOnClick: true,

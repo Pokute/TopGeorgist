@@ -14,7 +14,7 @@ export const add = createAction('ACCOUNT_ADD', (resolve) => {
 	return (account: AccountTypePartial) => resolve({
 		account: {
 			...account,
-			accountId: uuidv4(),
+			accountId: uuidv4() as AccountId,
 		},
 	});
 });

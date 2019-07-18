@@ -6,8 +6,9 @@ import { AccountsState } from "./accounts";
 import { TgoId } from "./tgo";
 import { Omit } from "react-redux";
 import { getType, ActionType } from "typesafe-actions";
+import { Opaque } from "../typings/global.d";
 
-export type AccountId = keyof AccountsState;
+export type AccountId = Opaque<string, 'AccountId'>;
 export type Token = string;
 export interface extendedSocket extends WebSocket {
 	sendAction(action:AnyAction): void,

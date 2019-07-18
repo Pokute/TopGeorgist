@@ -1,18 +1,19 @@
 import { Work } from '../reducers/work';
+import { TypeId } from '../reducers/itemType';
 
 export const moveWork: Work = {
 	type: 'move',
 	actorItemChanges: [
 		{
-			typeId: 'calories',
+			typeId: 'calories' as TypeId,
 			count: -20,
 		},
 		{
-			typeId: 'tick',
+			typeId: 'tick' as TypeId,
 			count: -3,
 		},
 		{
-			typeId: 'position',
+			typeId: 'position' as TypeId,
 			count: 1,
 		},
 	],
@@ -23,17 +24,17 @@ export const consumeWork: Work = {
 	type: 'consume',
 	actorItemChanges: [
 		{
-			typeId: 'calories',
+			typeId: 'calories' as TypeId,
 			count: 100,
 		},
 		{
-			typeId: 'tick',
+			typeId: 'tick' as TypeId,
 			count: -2,
 		},
 	],
 	targetItemChanges: [
 		{
-			typeId: 'calories',
+			typeId: 'calories' as TypeId,
 			count: -100,
 		},
 	],
@@ -43,17 +44,17 @@ export const harvestWork: Work = {
 	type: 'harvest',
 	actorItemChanges: [
 		{
-			typeId: 'berry',
+			typeId: 'berry' as TypeId,
 			count: 10,
 		},
 		{
-			typeId: 'tick',
+			typeId: 'tick' as TypeId,
 			count: -1,
 		},
 	],
 	targetItemChanges: [
 		{
-			typeId: 'berry',
+			typeId: 'berry' as TypeId,
 			count: -10,
 		}
 	],
@@ -63,21 +64,21 @@ export const smeltWork: Work = {
 	type: 'smelt',
 	actorItemChanges: [
 		{
-			typeId: 'ironOre',
+			typeId: 'ironOre' as TypeId,
 			count: -4,
 		},
 		{
-			typeId: 'tick',
+			typeId: 'tick' as TypeId,
 			count: -2,
 		},
 		{
-			typeId: 'ironIngot',
+			typeId: 'ironIngot' as TypeId,
 			count: 2,
 		},
 	],
 	targetItemChanges: [
 		{
-			typeId: 'smeltingWork', // Non-storeable
+			typeId: 'smeltingWork' as TypeId, // Non-storeable
 			count: -5,
 		},
 	],
@@ -87,7 +88,7 @@ export const tradeWork: Work = {
 	type: 'trade',
 	actorItemChanges: [
 		{
-			typeId: 'calculation',
+			typeId: 'calculation' as TypeId,
 			count: -10,
 		}
 	],

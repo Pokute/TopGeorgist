@@ -1,29 +1,31 @@
 import { createAction } from 'typesafe-actions';
 import { ViewId } from '../reducers/view';
+import { MapPosition, MapSize } from '../reducers/map';
+import { TgoId } from '../reducers/tgo';
 
 export const setPosition = createAction('VIEW_SET_POSITION', (resolve) => {
-	return (viewId: ViewId, position) => resolve({
+	return (viewId: ViewId, position: MapPosition) => resolve({
 		viewId,
 		position,
 	});
 });
 
 export const setSize = createAction('VIEW_SET_SIZE', (resolve) => {
-	return (viewId: ViewId, size) => resolve({
+	return (viewId: ViewId, size: MapSize) => resolve({
 		viewId,
 		size,
 	});
 });
 
 export const rawClick = createAction('VIEW_RAW_CLICK', (resolve) => {
-	return (viewId: ViewId, mapPosition) => resolve({
+	return (viewId: ViewId, mapPosition: MapPosition) => resolve({
 		viewId,
 		mapPosition,
 	});
 });
 
 export const setFollowTarget = createAction('VIEW_SET_FOLLOW_TARGET', (resolve) => {
-	return (viewId: ViewId, tgoId) => resolve({
+	return (viewId: ViewId, tgoId: TgoId) => resolve({
 		viewId,
 		tgoId,
 	});

@@ -13,9 +13,9 @@ export interface Type {
 };
 
 export const initialState: Type = {
-	accountId: '',
-	playerTgoId: '',
-	viewId: '',
+	accountId: '' as AccountId,
+	playerTgoId: '' as TgoId,
+	viewId: '' as ViewId,
 };
 
 export type DefaultsActionType = ActionType<typeof defaultActions>;

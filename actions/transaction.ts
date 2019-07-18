@@ -5,9 +5,13 @@ import { TgoId } from '../reducers/tgo';
 import { InventoryItem } from '../components/inventory';
 
 export const transaction = createAction('TRANSACTION', (resolve) => {
-	return (...participants: TransactionParticipant[]) => resolve({
-		participants,
-	});
+	return (...participants: TransactionParticipant[]) => {
+		if (participants.length == 0) throw new Error('Can\'t create a transaction with no participants');
+		if (participants.some(p => !p.tgoId)) throw new Error('Transaction participant has no tgoId!');
+		return resolve({
+			participants,
+		});
+	};
 });
 
 export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST', (resolve) => {

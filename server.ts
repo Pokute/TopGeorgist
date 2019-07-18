@@ -21,6 +21,8 @@ import { withClient } from './actions/withClient';
 import { setGoals } from './actions/goals';
 import { moveGoal } from './actions/moveGoal';
 import { consumeGoal } from './actions/consumeGoal';
+import { MapSize } from './reducers/map';
+import { RootStateType } from './reducers';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -68,7 +70,7 @@ try {
 								allSet({
 									...store.getState(),
 									clients: {},
-								}),
+								} as RootStateType),
 							);
 							break;
 						case getType(accountsActions.accountRequest):
@@ -135,7 +137,7 @@ const init = () => {
 	createItemTypes(store.dispatch);
 	initialObjectActions().forEach(o => store.dispatch(o));
 
-	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 }, seed: 1233321 }));
+	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 } as MapSize, seed: 1233321 }));
 };
 
 init();

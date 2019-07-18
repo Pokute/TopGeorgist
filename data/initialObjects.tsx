@@ -1,6 +1,8 @@
 import * as tgosActions from '../actions/tgos';
 import { add as tileSetAdd } from '../actions/tileSets';
 import { Parameter } from '../ui/paramInput';
+import { MapPosition } from '../reducers/map';
+import { TypeId } from '../reducers/itemType';
 
 export const createPlayerAction = () => tgosActions.add({
 	player: true,
@@ -10,19 +12,19 @@ export const createPlayerAction = () => tgosActions.add({
 		'player',
 	],
 	activeGoals: [],
-	position: { x: 5, y: 5 },
+	position: { x: 5, y: 5 } as MapPosition,
 	presentation: { color: 'red' },
 	inventory: [
 		{
-			typeId: 'calories',
+			typeId: 'calories' as TypeId,
 			count: 2000,
 		},
 		{
-			typeId: 'money',
+			typeId: 'money' as TypeId,
 			count: 500,
 		},
 		{
-			typeId: 'pineApple',
+			typeId: 'pineApple' as TypeId,
 			count: 10,
 		},
 	],
@@ -31,15 +33,15 @@ export const createPlayerAction = () => tgosActions.add({
 export const storeGeneralAction = () => tgosActions.add({
 	label: 'General Store',
 	mapGridOccupier: true,
-	position: { x: 12, y: 12 },
+	position: { x: 12, y: 12 } as MapPosition,
 	presentation: { color: 'pink' },
 	inventory: [
 		{
-			typeId: 'money',
+			typeId: 'money' as TypeId,
 			count: 5000,
 		},
 		{
-			typeId: 'pineApple',
+			typeId: 'pineApple' as TypeId,
 			count: 100,
 		},
 	],
@@ -52,11 +54,11 @@ export const storeGeneralAction = () => tgosActions.add({
 					type: 'STORE_TRANSACTION_REQUEST',
 					items: [
 						{
-							typeId: 'pineApple',
+							typeId: 'pineApple' as TypeId,
 							count: +1,
 						},
 						{
-							typeId: 'money',
+							typeId: 'money' as TypeId,
 							count: -20,
 						},
 					],
@@ -68,11 +70,11 @@ export const storeGeneralAction = () => tgosActions.add({
 					type: 'STORE_TRANSACTION_REQUEST',
 					items: [
 						{
-							typeId: 'pineApple',
+							typeId: 'pineApple' as TypeId,
 							count: -1,
 						},
 						{
-							typeId: 'money',
+							typeId: 'money' as TypeId,
 							count: 10,
 						},
 					],
@@ -86,11 +88,11 @@ export const rentOfficeAction = () => tgosActions.add({
 	label: 'Rent office',
 	rentOffice: true,
 	mapGridOccupier: true,
-	position: { x: 9, y: 8 },
+	position: { x: 9, y: 8 } as MapPosition,
 	presentation: { color: 'pink' },
 	inventory: [
 		{
-			typeId: 'money',
+			typeId: 'money' as TypeId,
 			count: 25000,
 		},
 	],
@@ -123,11 +125,11 @@ export const GovernmentAction = () => tgosActions.add({
 	label: 'Government',
 	governmentBuilding: true,
 	mapGridOccupier: true,
-	position: { x: 7, y: 11 },
+	position: { x: 7, y: 11 } as MapPosition,
 	presentation: { color: 'pink' },
 	inventory: [
 		{
-			typeId: 'money',
+			typeId: 'money' as TypeId,
 			count: 1000000,
 		},
 	],
@@ -154,7 +156,7 @@ export const leaderBoardAction = () => tgosActions.add({
 	mapGridOccupier: true,
 	label: 'Leaderboard',
 	leaderBoard: true,
-	position: { x: 4, y: 5 },
+	position: { x: 4, y: 5 } as MapPosition,
 	presentation: { color: 'yellow' },
 	visitable: {
 		label: 'Leaderboard',

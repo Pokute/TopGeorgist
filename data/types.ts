@@ -1,6 +1,6 @@
 import { add } from '../actions/itemTypes';
 import { Dispatch } from '../node_modules/redux';
-import { InitialItemType } from '../reducers/itemType';
+import { InitialItemType, TypeId } from '../reducers/itemType';
 
 const defaultType = {
 	stackable: true,
@@ -34,7 +34,7 @@ const items: InitialItemTypesState = {
 		],
 		inventory: [
 			{
-				typeId: 'Calories',
+				typeId: 'Calories' as TypeId,
 				count: 500,
 			},
 		],
@@ -47,7 +47,7 @@ const items: InitialItemTypesState = {
 		stackable: true,
 		isInteger: true,
 		building: true,
-		growsIntoTypeId: 'pineApple',
+		growsIntoTypeId: 'pineApple' as TypeId,
 	},
 	player: {
 		label: 'Player',
@@ -86,7 +86,7 @@ const items: InitialItemTypesState = {
 
 const createItemTypes = (dispatch: Dispatch) => {
 	const actions = Object.entries(items)
-		.map(([key, val]) => ({ ...val, typeId: key }))
+		.map(([key, val]) => ({ ...val, typeId: key as TypeId }))
 		.map(i => ({ ...defaultType, ...i }))
 		.map(add);
 	actions.forEach(a => dispatch(a));

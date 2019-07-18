@@ -67,7 +67,7 @@ const renderCanvasMap = ({
 				{
 					x: map.tileSize * (x - minTile.x + 0.5),
 					y: map.tileSize * (y - minTile.y + 0.5)
-				},
+				} as MapPosition,
 				tile,
 				map.tileSize,
 			);
@@ -100,7 +100,7 @@ const renderCanvasTgos = ({
 		const pos = {
 			x: (tgo.position.x - minTile.x + 0.5)*tileSize,
 			y: (tgo.position.y - minTile.y + 0.5)*tileSize,
-		};
+		} as MapPosition;
 		drawCross(ctx,
 			pos,
 			undefined, tgo.presentation.color);
@@ -215,7 +215,7 @@ const mapDispatchToProps = (dispatch: Dispatch, { view: v, map, minTile }: Type)
 		const mappedCoords = {
 			x: Math.trunc((canvasCoords.x / map.tileSize) + minTile.x),
 			y: Math.trunc((canvasCoords.y / map.tileSize) + minTile.y),
-		};
+		} as MapPosition;
 		dispatch(viewActions.rawClick(v.viewId, mappedCoords));
 	},
 });

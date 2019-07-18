@@ -27,7 +27,7 @@ export const initialState:{ position: MapPosition } = {
 	position: {
 		x: 0,
 		y: 0,
-	},
+	} as MapPosition,
 };
 
 export const reducer = (state: ComponentPosition, action: PositionActionType) : ComponentPosition => {

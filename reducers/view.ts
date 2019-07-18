@@ -5,8 +5,9 @@ import { clickActionStack } from "../actions/view";
 import { ViewsState } from './views';
 import * as viewActions from '../actions/view';
 import { MapPosition, MapSize } from "./map";
+import { Opaque } from "../typings/global.d";
 
-export type ViewId = keyof ViewsState;
+export type ViewId = Opaque<string, 'ViewId'>;
 
 export const viewActionList = [
 	viewActions.setPosition,
@@ -37,11 +38,11 @@ export const initialState: ViewInitialType = {
 	position: {
 		x: 0,
 		y: 0,
-	},
+	} as MapPosition,
 	size: {
 		x: 100,
 		y: 100,
-	},
+	} as MapSize,
 	clickActionStack: [],
 };
 

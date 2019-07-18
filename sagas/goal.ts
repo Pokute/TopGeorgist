@@ -14,7 +14,7 @@ import { setPosition } from "../components/position";
 import { remove as tgosRemove } from "../actions/tgos";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
-import { positionMatches, getPositionOffset, getPositionDistanceManhattan } from "../reducers/map";
+import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from "../reducers/map";
 import { createWorkInstance } from "../actions/workInstance";
 import { handleWorkInstance } from "./work";
 import { removeGoals } from "../actions/goals";
@@ -215,7 +215,7 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 				y: -1 * Math.sign(positionOffset.y),
 			};
 			// yield put(res);
-			yield put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y }));
+			yield put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y } as MapPosition));
 			if (positionMatches(actorTgo.position, targetPosition)) {
 				yield* goalComplete(actorTgo.tgoId, goalTgo.tgoId);
 				break;

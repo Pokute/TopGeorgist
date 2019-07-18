@@ -44,7 +44,9 @@ type ComponentWithParams = [
 
 export type ComponentArray = ReadonlyArray<string | ComponentWithParams>;
 
-const components: ComponentList = {
+const components: {
+	[componentName: string]: any,
+} = {
 	consumable: {
 		actions: [
 			{
@@ -52,7 +54,7 @@ const components: ComponentList = {
 					label: 'Eat it',
 					onClick: {
 						// type: 'CONSUMABLE_CONSUME',
-						type: 'TGO_GOAL_CREATE_CONSUME',
+						type: 'TGO_GOAL_CREATE_CONSUME' as TypeId,
 					},
 					actorRequirements: {
 						components: [

@@ -10,6 +10,8 @@ import * as tileSetsActions from '../actions/tileSets';
 import * as tgoActions from '../actions/tgo';
 import * as tgosActions from '../actions/tgos';
 import { moveGoal } from '../actions/moveGoal';
+import { MapPosition } from '../reducers/map';
+import { ViewId } from '../reducers/view';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
 	const clienToServerSocket = ((yield select()) as RootStateType).serverConnection.websocket;
@@ -40,11 +42,11 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 		case 'DEFAULTS_SET_PLAYER':
 			const defaultPlayerTgoId = ((yield select()) as RootStateType).defaults.playerTgoId;
 			if (defaultPlayerTgoId) {
-				yield put(viewActions.setFollowTarget('main', defaultPlayerTgoId));
+				yield put(viewActions.setFollowTarget('main' as ViewId, defaultPlayerTgoId));
 
-				yield put(viewActions.clickActionStack.push('main', moveGoal(
+				yield put(viewActions.clickActionStack.push('main' as ViewId, moveGoal(
 					defaultPlayerTgoId,
-					{ x: 0, y: 0 },
+					{ x: 0, y: 0 } as MapPosition,
 				)))
 			}
 			break;

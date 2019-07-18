@@ -14,7 +14,7 @@ export const add = createAction('TGO_ADD', (resolve) => {
 	return (tgo: TgoPartials) => resolve({
 		tgo: {
 			...tgo,
-			tgoId: uuidv4(),
+			tgoId: uuidv4() as TgoId,
 		},
 	});
 });

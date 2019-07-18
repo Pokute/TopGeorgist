@@ -5,6 +5,7 @@ import { transaction } from '../../actions/transaction';
 import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
 import { hasComponentPosition } from '../../components/position';
+import { TypeId } from '../../reducers/itemType';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s: RootStateType = yield select();
@@ -38,7 +39,7 @@ const claimStipend = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	if (!citizen) return false;
 	const accruedStipend = citizen.stipend;
 	yield put(governmentActions.addStipend(tgoId, -accruedStipend));
-	yield put(inventoryActions.add(tgoId, 'money', accruedStipend));
+	yield put(inventoryActions.add(tgoId, 'money' as TypeId, accruedStipend));
 	return true;
 };
 

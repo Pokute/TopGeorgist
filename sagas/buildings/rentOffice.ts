@@ -8,6 +8,7 @@ import { checkOnVisitableLocation } from '../../utils/visitable';
 import { RootStateType } from '../../reducers';
 import { hasComponentPosition } from '../../components/position';
 import { hasComponentInventory } from '../../components/inventory';
+import { TypeId } from '../../reducers/itemType';
 
 const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
 	const s: RootStateType = yield select();
@@ -47,7 +48,7 @@ const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
 		const currentMoney = moneyItem ? moneyItem.count : 0;
 		const change = Math.max(Math.min(currentRentDebt, currentMoney), 0);
 		yield put(governmentActions.addRentDebt(tgoId, claim.position, -change));
-		yield put(inventoryActions.add(tgoId, 'money', -change));
+		yield put(inventoryActions.add(tgoId, 'money' as TypeId, -change));
 		yield put(governmentActions.distribute(change));
 	}
 	return true;
