@@ -6,3 +6,5 @@
 // }
 
 declare let isServer: boolean;
+
+export type Opaque<T, K> = T & {__TYPE__: K};

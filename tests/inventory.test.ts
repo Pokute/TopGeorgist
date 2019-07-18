@@ -1,19 +1,14 @@
 import test from 'ava';
-import { Action } from 'redux'
 
+import { omitType } from './utils';
 import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../components/inventory';
-
-// We don't care about the type strings of actions.
-// createAction also adds meta and error fields. Can't care about them either.
-const omitType = <T extends Action & { meta?: any, error?: any }>(action: T) => {
-	const { type, meta, error, ...withoutType }: { type: Action['type'], meta?: any, error?: any } = action;
-	return withoutType as Omit<T, 'type'>;
-}
+import { TgoId } from '../reducers/tgo';
+import { TypeId } from '../reducers/itemType';
 
 // Action creators
 
 test('./components/inventory.ts: add - action creator', (t) => {
-	const action = add('testTgoId', 'testType', 1);
+	const action = add('testTgoId' as TgoId, 'testType' as TypeId, 1);
 	const omitted = omitType(action);
 	t.deepEqual(omitted, { payload: {
 		tgoId: 'testTgoId',
@@ -22,42 +17,42 @@ test('./components/inventory.ts: add - action creator', (t) => {
 });
 
 test('./components/inventory.ts: add - throw on empty typeId', (t) => {
-	t.throws(() => add('testTgoId', '', 1));
+	t.throws(() => add('testTgoId' as TgoId, '' as TypeId, 1));
 });
 
 test('./components/inventory.ts: addTgoId - action creator', (t) => {
-	const action = addTgoId('testTgoId', 'testChildTgoId');
+	const action = addTgoId('testTgoId' as TgoId, 'testChildTgoId' as TgoId);
 	const omitted = omitType(action);
 	t.deepEqual(omitted, { payload: {
 		tgoId: 'testTgoId',
-		item: { tgoId: 'testChildTgoId' },
+		item: { tgoId: 'testChildTgoId' as TgoId },
 	} });
 });
 
 test('./components/inventory.ts: addTgoId - throw on empty typeId', (t) => {
-	t.throws(() => addTgoId('testTgoId', ''));
+	t.throws(() => addTgoId('testTgoId' as TgoId, '' as TgoId));
 });
 
 test('./components/inventory.ts: removeTgoId - action creator', (t) => {
-	const action = removeTgoId('testTgoId', 'testChildTgoId');
+	const action = removeTgoId('testTgoId' as TgoId, 'testChildTgoId' as TgoId);
 	const omitted = omitType(action);
 	t.deepEqual(omitted, { payload: {
-		tgoId: 'testTgoId',
-		item: { tgoId: 'testChildTgoId' },
+		tgoId: 'testTgoId' as TgoId,
+		item: { tgoId: 'testChildTgoId' as TgoId },
 	} });
 });
 
 test('./components/inventory.ts: removeTgoId - throw on empty typeId', (t) => {
-	t.throws(() => removeTgoId('testTgoId', ''));
+	t.throws(() => removeTgoId('testTgoId' as TgoId, '' as TgoId));
 });
 
 // Reducer
 
 test('./components/inventory.ts: reducer:add - creates an inventory', (t) => {
 	t.deepEqual(
-		reducer(undefined, add('targetTgoId', 'typeId', 1)),
+		reducer(undefined, add('targetTgoId' as TgoId, 'typeId' as TypeId, 1)),
 		[{
-			typeId: 'typeId',
+			typeId: 'typeId' as TypeId,
 			count: 1,
 		}]
 	);
@@ -67,21 +62,21 @@ test('./components/inventory.ts: reducer:add - changes count, adds to existing l
 	t.deepEqual(
 		reducer([
 				{
-					typeId: 'typeId',
+					typeId: 'typeId' as TypeId,
 					count: 4,
 				}, {
-					typeId: 'secondTypeId',
+					typeId: 'secondTypeId' as TypeId,
 					count: 3,
 				}
 			],
-			add('targetTgoId', 'typeId', -2)),
+			add('targetTgoId' as TgoId, 'typeId' as TypeId, -2)),
 		[
 			{
-				typeId: 'secondTypeId',
+				typeId: 'secondTypeId' as TypeId,
 				count: 3,
 			},
 			{
-			typeId: 'typeId',
+			typeId: 'typeId' as TypeId,
 			count: 2,
 			},
 		]
@@ -90,10 +85,10 @@ test('./components/inventory.ts: reducer:add - changes count, adds to existing l
 
 test('./components/inventory.ts: reducer:addTgoId - creates an inventory', (t) => {
 	t.deepEqual(
-		reducer(undefined, addTgoId('targetTgoId', 'ownedTgoId')),
+		reducer(undefined, addTgoId('targetTgoId' as TgoId, 'ownedTgoId' as TgoId)),
 		[{
-			typeId: 'tgoId',
-			tgoId: 'ownedTgoId',
+			typeId: 'tgoId' as TypeId,
+			tgoId: 'ownedTgoId' as TgoId,
 			count: 1,
 		}]
 	);
@@ -102,10 +97,10 @@ test('./components/inventory.ts: reducer:addTgoId - creates an inventory', (t) =
 test('./components/inventory.ts: reducer:addTgoId - throws if tgoId already in inventory', (t) => {
 	t.throws(() =>
 		reducer([{
-			typeId: 'tgoId',
-			tgoId: 'ownedTgoId',
+			typeId: 'tgoId' as TypeId,
+			tgoId: 'ownedTgoId' as TgoId,
 			count: 1,
-		}], addTgoId('targetTgoId', 'ownedTgoId'))
+		}], addTgoId('targetTgoId' as TgoId, 'ownedTgoId' as TgoId))
 	);
 });
 
@@ -113,16 +108,16 @@ test('./components/inventory.ts: reducer:removeTgoId', (t) => {
 	t.deepEqual(
 		reducer([
 			{
-				typeId: 'tgoId',
-				tgoId: 'ownedTgoId',
+				typeId: 'tgoId' as TypeId,
+				tgoId: 'ownedTgoId' as TgoId,
 				count: 1,
 			}, {
-				typeId: 'secondTypeId',
+				typeId: 'secondTypeId' as TypeId,
 				count: 3,
 			}
-		], removeTgoId('targetTgoId', 'ownedTgoId')),
+		], removeTgoId('targetTgoId' as TgoId, 'ownedTgoId' as TgoId)),
 		[{
-			typeId: 'secondTypeId',
+			typeId: 'secondTypeId' as TypeId,
 			count: 3,
 		}]
 	);
@@ -130,17 +125,17 @@ test('./components/inventory.ts: reducer:removeTgoId', (t) => {
 
 test('./components/inventory.ts: reducer:removeTgoId - throws if tgoId not in inventory', (t) => {
 	t.throws(() =>
-		reducer([], removeTgoId('targetTgoId', 'ownedTgoId'))
+		reducer([], removeTgoId('targetTgoId' as TgoId, 'ownedTgoId' as TgoId))
 	);
 });
 
 // Type inference
 
 test('./components/inventory.ts: hasComponentInventory passes', (t) => {
-	t.true(hasComponentInventory({ tgoId: 'testTgoId', inventory: [] }));
+	t.true(hasComponentInventory({ tgoId: 'testTgoId' as TgoId, inventory: [] }));
 });
 
 test('./components/inventory.ts: hasComponentInventory fails', (t) => {
 	// Typescript actually handles most of this already.
-	t.false(hasComponentInventory({ tgoId: 'testTgoId', notInventory: [] } as unknown as ComponentInventory));
+	t.false(hasComponentInventory({ tgoId: 'testTgoId' as TgoId, notInventory: [] } as unknown as ComponentInventory));
 });

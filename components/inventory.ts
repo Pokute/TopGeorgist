@@ -85,7 +85,7 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 			return [
 				...state,
 				{
-					typeId: 'tgoId',
+					typeId: 'tgoId' as TypeId,
 					count: 1,
 					tgoId: action.payload.item.tgoId,
 				}

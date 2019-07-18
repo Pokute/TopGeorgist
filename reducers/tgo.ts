@@ -15,6 +15,7 @@ import { ComponentPlayer } from '../components/player';
 import { ComponentLabel } from '../components/label';
 import { ComponentUniqueLabel } from '../components/uniqueLabel';
 import { GoalActionType } from './goal';
+import { Opaque } from '../typings/global.d';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -32,7 +33,7 @@ export const TgoActionList = [
 	...TgoOthersActionList,
 ];
 
-export type TgoId = keyof TgosState;
+export type TgoId = Opaque<string, 'TgoId'>;
 
 export type ComponentId = keyof ComponentList;
 export type ComponentProps = {
@@ -66,7 +67,7 @@ export interface TgoRoot {
 export type TgoType = TgoRoot & TgoPartials;
 
 export const initialState:TgoType = {
-	tgoId: '',
+	tgoId: '' as TgoId,
 	// TODO: Remove below
 	presentation: {
 		color: 'red',

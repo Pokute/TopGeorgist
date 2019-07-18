@@ -1,9 +1,10 @@
 import { ItemTypesState } from "./itemTypes";
 import { ComponentList, ComponentArray } from "../data/components";
 import { Inventory } from "../components/inventory";
+import { Opaque } from "../typings/global.d";
 
 // export type TypeId = keyof ItemTypesState;
-export type TypeId = string;
+export type TypeId = Opaque<string, 'TypeId'>;
 
 export interface InitialItemType {
 	readonly label?: string,
@@ -24,7 +25,7 @@ export interface ItemType extends Readonly<InitialItemType> {
 };
 
 const initialState: ItemType = {
-	typeId: '',
+	typeId: '' as TypeId,
 	stackable: true,
 	redeemable: true,
 };
