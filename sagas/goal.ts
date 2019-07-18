@@ -83,7 +83,7 @@ const completeWork = function* (actorTgoId: TgoId, work: Work) {
 };
 
 const handleGoalRequirementConsumeTypeId = function* (
-	actorTgo: ComponentInventory,
+	actorTgo: ComponentInventory & Partial<ComponentGoalDoer>,
 	goalTgo: ComponentGoal & Partial<ComponentInventory>,
 	{ consumableTypeId, count }: RequirementConsumeTypeId
 ) {
@@ -134,10 +134,15 @@ const handleGoalRequirementConsumeTypeId = function* (
 		}
 	}
 
+	const actorWithGoals = s.tgos[actorTgo.tgoId];
+	if (!hasComponentInventory(actorWithGoals) || !(hasComponentGoalDoer(actorWithGoals))) {
+		return false;
+	}
+
 	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
 	if (!isComponentWork(workInstanceTgo)) return false;
 
-	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorTgo.tgoId, goalTgo.tgoId, workInstanceTgo.tgoId);
+	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorWithGoals, goalTgo, workInstanceTgo);
 	if (workOutput) {
 		yield put(transaction({ tgoId: actorTgo.tgoId, items: workOutput }));
 		return false;
@@ -191,7 +196,12 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
 	if (!workInstanceTgo || !isComponentWork(workInstanceTgo)) return false;
 
-	const workOutput: { tgoId: TgoId, awardItems: Inventory }[] | undefined = yield* handleWorkInstance(actorTgo.tgoId, goalTgo.tgoId, workInstanceTgo.tgoId);
+	const actorWithGoals = s.tgos[actorTgo.tgoId];
+	if (!hasComponentInventory(actorWithGoals) || !(hasComponentGoalDoer(actorWithGoals))) {
+		return false;
+	}
+
+	const workOutput: { tgoId: TgoId, awardItems: Inventory }[] | undefined = yield* handleWorkInstance(actorWithGoals, goalTgo, workInstanceTgo);
 	if (workOutput) {
 		// Move the steps towards goal.
 		if (workOutput.length == 0)

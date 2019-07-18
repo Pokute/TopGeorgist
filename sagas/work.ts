@@ -4,7 +4,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import { WorkInstance } from '../reducers/workInstance';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId } from '../components/inventory';
 import { TgoId, TgoType, TgoActionList } from '../reducers/tgo';
-import { isComponentGoal, isComponentWork, hasComponentGoalDoer } from '../data/components_new';
+import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork } from '../data/components_new';
 import { transaction } from '../actions/transaction';
 import { RootStateType } from '../reducers';
 import { createWorkInstance } from '../actions/workInstance';
@@ -87,18 +87,29 @@ const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
 	}));
 }
 
-export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId, workTgoId: TgoId, is?: RootStateType) {
+export const handleWorkInstance = function* (
+	actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
+	goalTgo: ComponentGoal & Partial<ComponentInventory>,
+	workTgo: ComponentWork & Partial<ComponentInventory>,
+	is?: RootStateType
+) {
 	const s: RootStateType = is || (yield select());
-	const actorTgo = s.tgos[actorTgoId];
-	const goalTgo = s.tgos[goalTgoId];
-	const workTgo = s.tgos[workTgoId];
-	if (!hasComponentGoalDoer(actorTgo) || !isComponentGoal(goalTgo) || !isComponentWork(workTgo)) return undefined; // Fail
+	if (!hasComponentGoalDoer(actorTgo)
+		|| !isComponentGoal(goalTgo)
+		|| !isComponentWork(workTgo)){
+		return undefined; // Fail
+	}
 
 	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes.
 
+	const getTgoById = (tgoId: TgoId): TgoType | undefined => {
+		const tgo = s.tgos[tgoId];
+		return tgo;
+	};
+
 	const participants = [
 		{ tgo: actorTgo },
-		...(workTgo.work.targetTgoId ? [{ tgo: workTgo }] : [])
+		...(workTgo.workTargetTgoId ? [{ tgo: workTgo }] : [])
 	];
 
 	const participantsWithWorkInfo = participants
@@ -108,7 +119,7 @@ export const handleWorkInstance = function* (actorTgoId: TgoId, goalTgoId: TgoId
 				...participant,
 				requiredItemCommitTgoId: committedItemsTgoId,
 				itemsChange: index == 0 ? workTgo.work.actorItemChanges : workTgo.work.targetItemChanges,
-				committedItems: (committedItemsTgoId ? s.tgos[committedItemsTgoId].inventory : undefined) || [],
+				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || {}).inventory : undefined) || [],
 			};
 		})
 		.map((participant) => ({
