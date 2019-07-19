@@ -1,6 +1,6 @@
 import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
-import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType } from './tgo';
+import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
 import * as goalsActions from '../actions/goals'; 
@@ -81,3 +81,7 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 		return state;
 	}
 };
+
+export const getTgoByIdFromRootState = (tgos: TgosState) =>
+	(tgoId: TgoId): TgoType | undefined =>
+		tgos[tgoId];

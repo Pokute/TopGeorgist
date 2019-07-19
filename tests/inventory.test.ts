@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { omitType } from './utils';
+import { omitType } from '../testUtils';
 import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../components/inventory';
 import { TgoId } from '../reducers/tgo';
 import { TypeId } from '../reducers/itemType';

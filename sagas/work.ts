@@ -12,6 +12,7 @@ import { add as addTgo, remove as removeTgo } from "../actions/tgos";
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
 import isServer from '../isServer';
 import { TypeId } from '../reducers/itemType';
+import { getTgoByIdFromRootState } from '../reducers/tgos';
 
 // Start with work that only requires ticks.
 
@@ -102,11 +103,8 @@ export const handleWorkInstance = function* (
 	}
 
 	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes.
-
-	const getTgoById = (tgoId: TgoId): TgoType | undefined => {
-		const tgo = s.tgos[tgoId];
-		return tgo;
-	};
+	
+	const getTgoById = getTgoByIdFromRootState(s.tgos);
 
 	const participants = [
 		{ tgo: actorTgo },
@@ -321,7 +319,7 @@ const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, target
 	const workActorCommittedItemsTgoAction = work.actorItemChanges.length > 0
 		? addTgo({
 			inventory: [],
-			inventoryVirtual: true,
+			isInventoryVirtual: true,
 		})
 		: undefined;
 	if (workActorCommittedItemsTgoAction)
@@ -329,7 +327,7 @@ const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, target
 	const workTargetCommittedItemsTgo = work.targetItemChanges.length > 0
 		? addTgo({
 			inventory: [],
-			inventoryVirtual: true,
+			isInventoryVirtual: true,
 		})
 		: undefined;
 	if (workTargetCommittedItemsTgo)

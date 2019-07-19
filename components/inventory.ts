@@ -108,7 +108,7 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 
 export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,
-	readonly inventoryVirtual?: boolean, // Allows having negative count of any type.
+	readonly isInventoryVirtual?: boolean, // Allows having negative count of any type.
 };
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
