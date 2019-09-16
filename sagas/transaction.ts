@@ -36,12 +36,6 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 		tgoId,
 		tgo: getTgoById(tgoId),
 	})
-	const addItemType = ({ typeId, ...rest}: TransactionParticipant['items'][0]) => ({
-		...rest,
-		typeId,
-		type: itemTypes[typeId],
-	});
-
 	const participantsWithTgo = participants
 		.map(getTgoForParticipants)
 	if (participantsWithTgo.some(({ tgo }) => !tgo))
@@ -73,10 +67,16 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 			...participant,
 			itemsBalance: participant.items.map(item => ({
 				...item,
-				finalCount: getInventoryCountOfTypeId(participant.tgo.inventory, item) - item.count,
+				finalCount: getInventoryCountOfTypeId(participant.tgo.inventory, item) + item.count,
 			})),
 		}));
-	
+
+	const addItemType = ({ typeId, ...rest}: typeof participantsWithItemBalance[0]['itemsBalance'][0]) => ({
+		...rest,
+		typeId,
+		type: itemTypes[typeId],
+	});
+
 	const participantsWithItemBalanceTypes = participantsWithItemBalance.map(participant => ({
 		...participant,
 		itemsBalance: participant.itemsBalance.map(addItemType),
@@ -92,17 +92,29 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 			type: type!,
 		})),
 	}));
+	
+	type ItemBalance = typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0];
 
-	const verifyStackable = ({ count, type: { stackable } }: typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0] ) => !stackable || ( count === 0 || count === 1);
-	const verifyPositiveOnly = ({ count, type: { positiveOnly } }: typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0] ) => !positiveOnly || count >= 0;
-	const verifyIsInteger = ({ count, type: { isInteger } }: typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0] ) => !isInteger || count === Math.floor(count);
+	const verifyStackable = ({ finalCount, type: { stackable } }: ItemBalance ) => stackable || ( finalCount === 0 || finalCount === 1);
+	const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
+	const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);
+
+	console.log(JSON.stringify(participantsWithItemBalanceVerifiedTypes));
 
 	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
-		!itemsBalance.every(verifyStackable)
-		&& !itemsBalance.every(verifyPositiveOnly)
-		&& !itemsBalance.every(verifyIsInteger)
+		itemsBalance.every(verifyStackable)
 	))
-		throw new Error('Transaction requirements not met.');
+		throw new Error('Transaction requirements - stackable not met.');
+
+	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
+		itemsBalance.every(verifyPositiveOnly)
+	))
+		throw new Error('Transaction requirements - positiveOnly not met.');
+
+	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
+		itemsBalance.every(verifyIsInteger)
+	))
+		throw new Error('Transaction requirements - integer not met.');
 
 	const createInventoryAddForParticipant = ({ tgoId, items }: { tgoId: TgoId, items: Inventory }) =>
 		items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
