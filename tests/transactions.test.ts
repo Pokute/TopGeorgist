@@ -2,7 +2,7 @@ import { default as test } from 'ava';
 import sinon from 'sinon';
 import { put, select, all } from 'redux-saga/effects';
 
-import { omitType } from '../testUtils';
+import { omitMetaAndError } from '../testUtils';
 import { transaction } from '../actions/transaction';
 import { TgoId } from '../reducers/tgo';
 import { TypeId } from '../reducers/itemType';
@@ -11,6 +11,7 @@ import { RootStateType } from '../reducers';
 import { add } from '../components/inventory';
 import { ItemTypesState } from '../reducers/itemTypes';
 import { TgosState } from '../reducers/tgos';
+import { getType } from 'typesafe-actions';
 
 // Test transactions
 
@@ -20,7 +21,7 @@ import { TgosState } from '../reducers/tgos';
 // Action creator
 
 test('./actions/transaction.ts: transaction - action creator', t => {
-	t.deepEqual(omitType(transaction(...[
+	t.deepEqual(omitMetaAndError(transaction(...[
 		{
 			tgoId: 'buyer' as TgoId,
 			items: [
@@ -48,6 +49,7 @@ test('./actions/transaction.ts: transaction - action creator', t => {
 			],
 		},
 	])), {
+		type: getType(transaction),
 		payload: {
 			participants: [
 				{
