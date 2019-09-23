@@ -62,7 +62,7 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData: string }) =
 				workTgoId={wiTgoId}
 			/>	
 		))}
-	</div>
+	</Category>
 );
 
 const InventoryTgo = ({ i }: { i: InventoryItem }) => {
