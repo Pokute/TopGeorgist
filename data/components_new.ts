@@ -54,7 +54,7 @@ TgoRoot & {
 };
 
 export const hasComponentTaskQueue = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentTaskQueue>) =>
-	typeof tgo.taskQueue !== undefined;
+	tgo && typeof tgo.taskQueue !== undefined;
 
 export type ComponentPresentation = 
 TgoRoot & {
@@ -64,7 +64,7 @@ TgoRoot & {
 };
 
 export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPresentation>) =>
-	typeof tgo.presentation !== 'undefined';
+	tgo && typeof tgo.presentation !== 'undefined';
 
 export type ComponentComponents = 
 TgoRoot & {
@@ -72,7 +72,7 @@ TgoRoot & {
 };
 
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
-	Array.isArray(tgo.components);
+	tgo && Array.isArray(tgo.components);
 
 export type ComponentWork = 
 TgoRoot & {
@@ -84,7 +84,7 @@ TgoRoot & {
 };
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
-	typeof tgo.work !== undefined;
+	tgo && typeof tgo.work !== undefined;
 
 export type ComponentGoal = 
 TgoRoot & {
@@ -92,7 +92,7 @@ TgoRoot & {
 };
 
 export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
-	typeof tgo.goal !== undefined;
+	tgo && typeof tgo.goal !== undefined;
 
 export type ComponentWorkDoer = 
 TgoRoot & {
@@ -100,7 +100,7 @@ TgoRoot & {
 };
 
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
-	tgo.isWorkDoer == true;
+	tgo && tgo.isWorkDoer == true;
 
 export type ComponentGoalDoer = 
 TgoRoot & {
@@ -108,4 +108,4 @@ TgoRoot & {
 };
 
 export const hasComponentGoalDoer = <BaseT extends TgoType | ComponentGoalDoer>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoalDoer>) =>
-	Array.isArray(tgo.activeGoals);
+	tgo && Array.isArray(tgo.activeGoals);
