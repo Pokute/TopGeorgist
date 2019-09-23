@@ -19,6 +19,7 @@ import { createWorkInstance } from "../actions/workInstance";
 import { handleWorkInstance } from "./work";
 import { removeGoals } from "../actions/goals";
 import { removeWorkInstance } from "../actions/goal";
+import { TransactionParticipant } from "./transaction";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -142,9 +143,14 @@ const handleGoalRequirementConsumeTypeId = function* (
 	const workInstanceTgo = s.tgos[goalTgo.goal.workInstances[0]];
 	if (!isComponentWork(workInstanceTgo)) return false;
 
-	const workOutput: Inventory | undefined = yield* handleWorkInstance(actorWithGoals, goalTgo, workInstanceTgo);
+	const workOutput: Array<{
+		tgoId: TgoId,
+		awardItems: Inventory,
+	}> | undefined =
+		yield* handleWorkInstance(actorWithGoals, goalTgo, workInstanceTgo);
 	if (workOutput) {
-		yield put(transaction({ tgoId: actorTgo.tgoId, items: workOutput }));
+		const mapped: Array<TransactionParticipant> = workOutput.map(wo => ({ tgoId: wo.tgoId, items: wo.awardItems }));
+		yield put(all(transaction(...mapped)));
 		return false;
 	}
 	return false;

@@ -231,7 +231,7 @@ const storeTransactionRequest = function* ({ payload: { tgoId, items, visitableT
 };
 
 const transactionListener = function* () {
-	yield takeEvery('TRANSACTION', transactionSaga);
+	yield takeEvery('TRANSACTION', transactionSaga2);
 	yield takeEvery('STORE_TRANSACTION_REQUEST', storeTransactionRequest);
 };
 

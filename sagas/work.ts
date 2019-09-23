@@ -174,11 +174,12 @@ export const handleWorkInstance = function* (
 				}
 			)))
 		));
-		return participantsWithWorkInfo
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ awardItems }) => awardItems.length > 0);
+		const temp = participantsWithWorkInfo
+		.map(participant => ({
+			tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+		}))
+		.filter(({ awardItems }) => awardItems.length > 0)
+		return temp;
 	}
 
 	const participantsWithCommitables = participantsWithWorkInfo
@@ -226,10 +227,9 @@ export const handleWorkInstance = function* (
 			.map(p => [
 				{
 					tgoId: p.tgo.tgoId,
-					items: p.committableRequiredItems,
-					// items: p.committableRequiredItems
-					// 	.filter(ri => ri.typeId !== 'tick')
-					// 	.map(ii => ({ ...ii, count: -1 * ii.count })),
+					items: p.committableRequiredItems
+						.filter(ri => ri.typeId !== 'tick')
+						.map(ii => ({ ...ii, count: -1 * ii.count })),
 				},
 				// {
 				// 	tgoId: p.requiredItemCommitTgoId,
@@ -311,24 +311,23 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 	yield put(redeem(actorTgo, workTgo));
 }
 
-const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
+export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
 	const s: RootStateType = yield select();
 	const goalTgo = s.tgos[goalTgoId];
 	if (!isComponentGoal(goalTgo)) return;
 
+	const emptyVirtualInventory = {
+		inventory: [],
+		isInventoryVirtual: true,
+	};
+
 	const workActorCommittedItemsTgoAction = work.actorItemChanges.length > 0
-		? addTgo({
-			inventory: [],
-			isInventoryVirtual: true,
-		})
+		? addTgo(emptyVirtualInventory)
 		: undefined;
 	if (workActorCommittedItemsTgoAction)
-		yield put(workActorCommittedItemsTgoAction)
+		yield put(workActorCommittedItemsTgoAction);
 	const workTargetCommittedItemsTgo = work.targetItemChanges.length > 0
-		? addTgo({
-			inventory: [],
-			isInventoryVirtual: true,
-		})
+		? addTgo(emptyVirtualInventory)
 		: undefined;
 	if (workTargetCommittedItemsTgo)
 		yield put(workTargetCommittedItemsTgo)
