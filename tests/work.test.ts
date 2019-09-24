@@ -263,8 +263,5 @@ test('Work - wait 3 ticks', t => {
 		if (i == (workInstance.work.actorItemChanges[0].count * -1)) {
 			return;
 		}
-		// console.log('Transactions', i, transactions.done)
-		// console.dir(transactions.value.payload.action.payload.participants[0], { depth: 10 });
-		// console.log('wat')
 	}
 });

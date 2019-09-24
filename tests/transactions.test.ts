@@ -324,3 +324,56 @@ test('./sagas/transaction.ts: transaction - multi-participant, insufficient reso
 	
 	t.throws(() => tSaga.next(store));
 });
+
+test('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', t => {
+const tSaga = transactionSaga2(transaction(...[
+		{
+			tgoId: 'virtualInventoryHolder' as TgoId,
+			items: [
+				{
+					typeId: 'normallyPositiveOnlyType' as TypeId,
+					count: -5,
+				},
+			]
+		},
+	]));
+
+	// This would be the select.
+	t.notDeepEqual(
+		tSaga.next().value,
+		select(() => {}),
+	);
+
+	const store = {
+		itemTypes: {
+			normallyPositiveOnlyType: {
+				typeId: 'normallyPositiveOnlyType' as TypeId,
+				stackable: true,
+				positiveOnly: true,
+			},
+		} as ItemTypesState,
+		tgos: {
+			'virtualInventoryHolder': {
+				tgoId: 'virtualInventoryHolder' as TgoId,
+				isInventoryVirtual: true,
+				inventory: [
+					{
+						typeId: 'normallyPositiveOnlyType' as TypeId,
+						count: 2,
+					},
+				],
+			},
+		} as TgosState,
+	} as unknown as RootStateType;
+	
+
+	// Give the store contents.
+	const puts = tSaga.next(store).value;
+
+	t.deepEqual(
+		puts,
+		all([
+			put(add('virtualInventoryHolder' as TgoId, 'normallyPositiveOnlyType' as TypeId, -5)),
+		]),
+	);
+});

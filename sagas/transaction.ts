@@ -85,7 +85,7 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 	if (participantsWithItemBalanceTypes.some(({ itemsBalance }) => itemsBalance.some(({ type }) => !type)))
 	throw new Error('Participant item doesn\'t have a matching item type');
 			
-	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ tgo, itemsBalance, ...rest }) => ({
+	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
 		...rest,
 		itemsBalance: itemsBalance.map(({ type, ...itemsRest }) => ({
 			...itemsRest,
@@ -102,14 +102,17 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 
 	console.log(JSON.stringify(participantsWithItemBalanceVerifiedTypes));
 
+	const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
+
 	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
 		itemsBalance.every(verifyStackable)
 	))
 		throw new Error('Transaction requirements - stackable not met.');
 
-	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
-		itemsBalance.every(verifyPositiveOnly)
-	))
+	if (!participantsWithItemBalanceVerifiedTypes
+		.filter(notParticipantWithVirtualInventoryFilter).every(({ itemsBalance }) =>
+			itemsBalance.every(verifyPositiveOnly)
+		))
 		throw new Error('Transaction requirements - positiveOnly not met.');
 
 	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>

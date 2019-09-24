@@ -91,7 +91,7 @@
     "webserver-min": "node -r esm -r ts-node/register expressServer.ts",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "test": "ava"
+    "test": "ava -vs"
   },
   "files": [
     "static/topGeorgist.bundle.js"
