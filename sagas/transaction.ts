@@ -95,6 +95,7 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 	
 	type ItemBalance = typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0];
 
+	// TODO: Support virtual inventories!
 	const verifyStackable = ({ finalCount, type: { stackable } }: ItemBalance ) => stackable || ( finalCount === 0 || finalCount === 1);
 	const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
 	const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);

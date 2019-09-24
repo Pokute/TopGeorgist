@@ -67,6 +67,7 @@ const items: InitialItemTypesState = {
 	tick: {
 		label: 'Tick',
 		isStorable: false,
+		positiveOnly: false,
 	},
 	position: {
 		label: 'Position',
