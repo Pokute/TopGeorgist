@@ -1,6 +1,6 @@
-import { default as test } from 'ava';
+import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
-import { handleCreateWorkInstance } from '../sagas/work';
+import { handleCreateWorkInstance, handleWorkInstance } from '../sagas/work';
 import { createWorkInstance } from '../actions/workInstance';
 import { consumeWork } from '../data/works';
 import { TgoId } from '../reducers/tgo';
@@ -15,6 +15,7 @@ import { TgosState } from '../reducers/tgos';
 import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId } from '../components/inventory';
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
+import { ComponentWork } from '../data/components_new';
 
 // Test work
 
@@ -155,7 +156,115 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 	t.true(wSaga.next().done);
 });
 
-test('Work - empty work', t => {
-	
+const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) => (next?: any) => (expected?: Parameters<DeepEqualAssertion>[1], done: boolean = false, message?: Parameters<DeepEqualAssertion>[2]) => {
+	const genResult = gen.next(next);
+	if (expected) {
+		t.deepEqual(
+			genResult,
+			{
+				done,
+				value: expected,
+			},
+		);
+	} else {
+		t.true(genResult.done === done);
+	}
+	return genResult;
+}
 
+test('Work - empty work', t => {
+	// Create an empty work instance.
+	const workInstance: ComponentWork = {
+		tgoId: 'emptyWork instance' as TgoId,
+		work: {
+			actorItemChanges: [],
+			targetItemChanges: [],
+			type: 'emptyWork',
+		},
+	};
+
+	// Run empty work instance.
+	const hWI = handleWorkInstance(
+		{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+		workInstance,
+		);
+	// Is a generator;
+	t.truthy(hWI && hWI.next);
+	
+	const genDeepEqual = createGenDeepEqual(t, hWI);
+
+	// Start execution
+	genDeepEqual()();
+
+	// Supply the store;
+	genDeepEqual(
+		{ tgos: {
+			['Temp goal id']: {
+				tgoId: 'Temp goal id' as TgoId,
+			}
+		} as TgosState } as unknown as RootStateType as any
+	)(undefined, true);
+});
+
+test('Work - wait 3 ticks', t => {
+	const workInstanceCommittedItemsTgo = {
+		tgoId: 'waitWorkCommittedItems' as TgoId,
+		inventory: [],
+		isInventoryVirtual: true,
+	};
+
+	// Create an work instance on 3 tick wait.
+	const workInstance: ComponentWork = {
+		tgoId: 'waitWork instance' as TgoId,
+		workActorCommittedItemsTgoId: workInstanceCommittedItemsTgo.tgoId,
+		work: {
+			actorItemChanges: [{
+				typeId: 'tick' as TypeId,
+				count: -3,
+			}],
+			targetItemChanges: [],
+			type: 'waitWork',
+		},
+	};
+
+	for (let i = 0; i < 5; i++) {
+		let hWI = handleWorkInstance(
+			{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
+			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+			workInstance,
+			);
+		// Is a generator;
+		t.truthy(hWI && hWI.next);
+	
+		// Expect completion after 3 ticks.
+		const genDeepEqual = createGenDeepEqual(t, hWI);
+	
+		// Start execution
+		genDeepEqual()();
+	
+		// Supply the store;
+		let transactions;
+		transactions = genDeepEqual(
+			{ tgos: {
+				['worker']: {
+					tgoId: 'worker' as TgoId,
+				},
+				['waitWorkCommittedItems']: {
+					...workInstanceCommittedItemsTgo,
+					inventory: [{
+						typeId: 'tick' as TypeId,
+						count: -i,
+					}]
+				},
+			} as TgosState } as unknown as RootStateType as any
+		)(undefined, i == (workInstance.work.actorItemChanges[0].count * -1));
+
+		if (i == (workInstance.work.actorItemChanges[0].count * -1)) {
+			return;
+		}
+		// console.log('Transactions', i, transactions.done)
+		// console.dir(transactions.value.payload.action.payload.participants[0], { depth: 10 });
+		// console.log('wat')
+	}
 });

@@ -93,9 +93,8 @@ export const handleWorkInstance = function* (
 	actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
 	goalTgo: ComponentGoal & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
-	is?: RootStateType
 ) {
-	const s: RootStateType = is || (yield select());
+	const s: RootStateType = yield select();
 	if (!hasComponentGoalDoer(actorTgo)
 		|| !isComponentGoal(goalTgo)
 		|| !isComponentWork(workTgo)){
@@ -147,38 +146,31 @@ export const handleWorkInstance = function* (
 		participant.missingRequiredItems.every(requiredItem => requiredItem.count == 0)
 	);
 
-	const rewardOutputActions = (participants: typeof participantsWithWorkInfo) => all(
-		participants.map(participant => ({
+	const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
+		.map(participant => ({
 			tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
 		}))
 		.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
-		.map(({ tgoId, missingAwardItems }) => put(transaction(
-			{
-				tgoId,
-				items: missingAwardItems,
-			}
-		)))
-	);
+		
 
 	if (allRequirementsFulfilled) {
 		// Send the reawrd of work.
-		yield put(all(participantsWithWorkInfo
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
-			.map(({ tgoId, missingAwardItems }) => put(transaction(
+
+		const rewards = rewardOutputs(participantsWithWorkInfo);
+		if (rewards.length) {
+			yield all(rewards.map(({ tgoId, missingAwardItems }) => put(transaction(
 				{
 					tgoId,
 					items: missingAwardItems,
 				}
-			)))
-		));
+			))));
+		}
+
 		const temp = participantsWithWorkInfo
-		.map(participant => ({
-			tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-		}))
-		.filter(({ awardItems }) => awardItems.length > 0)
+			.map(participant => ({
+				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+			}))
+			.filter(({ awardItems }) => awardItems.length > 0)
 		return temp;
 	}
 
@@ -189,7 +181,8 @@ export const handleWorkInstance = function* (
 			committableRequiredInventoryTypes: participant
 				.missingRequiredItems
 				.map(requiredItem => requiredItem.typeId)
-				.filter(typeId => 
+				.filter(typeId =>
+					typeId !== 'tick' &&
 					(participant.tgo.inventory || [])
 						.some(pii => pii.typeId === typeId)
 				)
@@ -207,20 +200,21 @@ export const handleWorkInstance = function* (
 					})),
 				// MOVE THIS, every participant shouldn't be able to commit ticks!
 				// Add a tick if required
-				...(participant.requiredItems.some(ri => ri.typeId === 'tick'))
-					? [{
-						typeId: 'tick' as TypeId,
-						count: Math.min(
-							1,
-							(participant.missingRequiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
-						),
-					}]
-					: []
+				// ...(participant.requiredItems.some(ri => ri.typeId === 'tick'))
+				// 	? [{
+				// 		typeId: 'tick' as TypeId,
+				// 		count: Math.max(
+				// 			-1,
+				// 			(participant.missingRequiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
+				// 		),
+				// 	}]
+				// 	: []
 			]
 			// Don't add 0 counts to transactions.
 			.filter(items => items.count > 0)
 		}))
-
+	
+	console.log(participantsWithCommitables[0]);
 	const reqTransaction = transaction(
 		...participantsWithCommitables
 			.filter(participant => participant.committableRequiredItems.length > 0)
@@ -237,6 +231,15 @@ export const handleWorkInstance = function* (
 				// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
 				// },
 			]).flat(),
+		...(workTgo.workActorCommittedItemsTgoId && participantsWithCommitables.some(participant => participant.missingRequiredItems.some(ri => ri.typeId === 'tick' && ri.count > 0))
+			? [{
+				tgoId: workTgo.workActorCommittedItemsTgoId,
+				items: [{
+					typeId: 'tick' as TypeId,
+					count: -1,
+				}]
+			}]
+			: []),
 	);
 
 	yield put(reqTransaction);
