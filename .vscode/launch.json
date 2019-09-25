@@ -10,7 +10,8 @@
 			"name": "AVA tests",
 			"program": "${workspaceFolder}/node_modules/ava/profile.js",
 			"args": [
-				"${file}"
+				"${file}",
+				"--serial"
 			],
 			"skipFiles": [
 				"<node_internals>/**/*.js"

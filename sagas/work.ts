@@ -158,12 +158,10 @@ export const handleWorkInstance = function* (
 
 		const rewards = rewardOutputs(participantsWithWorkInfo);
 		if (rewards.length) {
-			yield all(rewards.map(({ tgoId, missingAwardItems }) => put(transaction(
-				{
-					tgoId,
-					items: missingAwardItems,
-				}
-			))));
+			yield put(transaction(...rewards.map(({ tgoId, missingAwardItems }) => ({
+				tgoId,
+				items: missingAwardItems,
+			}))));
 		}
 
 		const temp = participantsWithWorkInfo
@@ -214,23 +212,23 @@ export const handleWorkInstance = function* (
 			.filter(items => items.count > 0)
 		}))
 	
-	console.log(participantsWithCommitables[0]);
-	const reqTransaction = transaction(
+	const transactionParticipants = [
 		...participantsWithCommitables
 			.filter(participant => participant.committableRequiredItems.length > 0)
 			.map(p => [
-				{
+				{ // Remove items from the participant.
 					tgoId: p.tgo.tgoId,
 					items: p.committableRequiredItems
 						.filter(ri => ri.typeId !== 'tick')
 						.map(ii => ({ ...ii, count: -1 * ii.count })),
 				},
-				// {
-				// 	tgoId: p.requiredItemCommitTgoId,
-				// 	items: p.committableRequiredItems
-				// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
-				// },
+				{ // Add (negative) items to the committableRequiredItems.
+					tgoId: p.requiredItemCommitTgoId,
+					items: p.committableRequiredItems
+						.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
+				},
 			]).flat(),
+		// Add a tick if needed.
 		...(workTgo.workActorCommittedItemsTgoId && participantsWithCommitables.some(participant => participant.missingRequiredItems.some(ri => ri.typeId === 'tick' && ri.count > 0))
 			? [{
 				tgoId: workTgo.workActorCommittedItemsTgoId,
@@ -240,9 +238,11 @@ export const handleWorkInstance = function* (
 				}]
 			}]
 			: []),
-	);
+	];
 
-	yield put(reqTransaction);
+	if (transactionParticipants.length > 0) {
+		yield put(transaction(...transactionParticipants));
+	}
 
 /*
 	// Find out what part of work is not yet done.

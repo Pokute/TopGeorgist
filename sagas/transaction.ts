@@ -23,8 +23,7 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 		if (!p.tgoId) return false;
 		return true;
 	})) {
-		console.log('Participants are wrong!');
-		return false;
+		throw new Error('Transaction - Participant list has invalid participants.');
 	}
 
 	const { itemTypes, tgos }: RootStateType = yield select(({ itemTypes, tgos }) => ({ itemTypes, tgos }));
@@ -83,7 +82,7 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 	}));
 	
 	if (participantsWithItemBalanceTypes.some(({ itemsBalance }) => itemsBalance.some(({ type }) => !type)))
-	throw new Error('Participant item doesn\'t have a matching item type');
+		throw new Error('Participant item doesn\'t have a matching item type');
 			
 	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
 		...rest,
@@ -99,8 +98,6 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 	const verifyStackable = ({ finalCount, type: { stackable } }: ItemBalance ) => stackable || ( finalCount === 0 || finalCount === 1);
 	const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
 	const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);
-
-	console.log(JSON.stringify(participantsWithItemBalanceVerifiedTypes));
 
 	const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
 

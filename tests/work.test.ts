@@ -1,3 +1,4 @@
+import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
 import { handleCreateWorkInstance, handleWorkInstance } from '../sagas/work';
@@ -16,8 +17,11 @@ import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId } from '../components/inventory';
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
 import { ComponentWork } from '../data/components_new';
+import { transaction } from '../actions/transaction';
 
 // Test work
+
+util.inspect.defaultOptions.depth = 500;  
 
 test('Create a work instance', t => {
 	const params = {
@@ -162,8 +166,8 @@ const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) =>
 		t.deepEqual(
 			genResult,
 			{
-				done,
 				value: expected,
+				done,
 			},
 		);
 	} else {
@@ -265,3 +269,166 @@ test('Work - wait 3 ticks', t => {
 		}
 	}
 });
+
+test('Work - give reward after taking items', t => {
+	const workInstanceCommittedItemsTgo = {
+		tgoId: 'tradeWorkCommittedItems' as TgoId,
+		inventory: [],
+		isInventoryVirtual: true,
+	};
+
+	// Create an work instance on 3 tick wait.
+	const workInstance: ComponentWork = {
+		tgoId: 'tradeWork instance' as TgoId,
+		workActorCommittedItemsTgoId: workInstanceCommittedItemsTgo.tgoId,
+		work: {
+			actorItemChanges: [
+				{
+					typeId: 'nutrients' as TypeId,
+					count: -10,
+				},
+				{
+					typeId: 'apple' as TypeId,
+					count: 1,
+				},
+			],
+			targetItemChanges: [],
+			type: 'tradeWork',
+		},
+	};
+
+	const hWI = handleWorkInstance(
+		{ tgoId: 'appleTree' as TgoId, activeGoals: [], inventory: [{
+			typeId: 'nutrients' as TypeId,
+			count: 50,
+		}] },
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+		workInstance,
+		);
+	// Is a generator;
+	t.truthy(hWI && hWI.next);
+	
+	// Expect completion after 3 ticks.
+	const genDeepEqual = createGenDeepEqual(t, hWI);
+	
+	// Start execution
+	genDeepEqual()();
+	
+	// Supply the store;
+	const transactions = genDeepEqual(
+		{
+			tgos: {
+				['appleTree']: {
+					tgoId: 'appleTree' as TgoId,
+					inventory: [{
+						typeId: 'nutrients' as TypeId,
+						count: 50,
+					}]
+				},
+				['tradeWorkCommittedItems']: {
+					...workInstanceCommittedItemsTgo,
+				},
+			} as TgosState,
+			itemTypes: {
+				nutrients: {
+					typeId: 'nutrients' as TypeId,
+					stackable: true,
+					positiveOnly: true,
+				},
+				apple: {
+					typeId: 'apple' as TypeId,
+					stackable: true,
+					positiveOnly: true,
+				},
+			} as ItemTypesState,
+		} as unknown as RootStateType as any
+	)(put(transaction(
+		{
+			tgoId: 'appleTree' as TgoId,
+			items: [{
+				typeId: 'nutrients' as TypeId,
+				count: -10,
+			}]
+		},
+		{
+			tgoId: 'tradeWorkCommittedItems' as TgoId,
+			items: [{
+				typeId: 'nutrients' as TypeId,
+				count: -10,
+			}]
+		}
+	)), false);
+
+	genDeepEqual()(undefined, true);
+
+	let hWI2 = handleWorkInstance(
+		{ tgoId: 'appleTree' as TgoId, activeGoals: [], inventory: [{
+			typeId: 'nutrients' as TypeId,
+			count: 40,
+		}] },
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+		workInstance,
+		);
+	// Is a generator;
+	t.truthy(hWI2 && hWI2.next);
+	
+	// Expect completion after 3 ticks.
+	const genDeepEqual2 = createGenDeepEqual(t, hWI2);
+	
+	// Start execution
+	genDeepEqual2()();
+
+	// Supply the store;
+	const transactions2 = genDeepEqual2(
+		{
+			tgos: {
+				['appleTree']: {
+					tgoId: 'appleTree' as TgoId,
+					inventory: [{
+						typeId: 'nutrients' as TypeId,
+						count: 40,
+					}]
+				},
+				['tradeWorkCommittedItems']: {
+					...workInstanceCommittedItemsTgo,
+					inventory: [{
+						typeId: 'nutrients' as TypeId,
+						count: -10,
+					}]
+				},
+			} as TgosState,
+			itemTypes: {
+				nutrients: {
+					typeId: 'nutrients' as TypeId,
+					stackable: true,
+					positiveOnly: true,
+				},
+				apple: {
+					typeId: 'apple' as TypeId,
+					stackable: true,
+					positiveOnly: true,
+				},
+			} as ItemTypesState,
+		} as unknown as RootStateType as any
+	)(put(transaction(
+		{
+			tgoId: 'appleTree' as TgoId,
+			items: [{
+				typeId: 'apple' as TypeId,
+				count: 1,
+			}]
+		}
+	)), false);
+
+	genDeepEqual2()([{
+		tgoId: 'appleTree' as TgoId,
+		awardItems: [{
+			typeId: 'apple' as TypeId,
+			count: 1,
+		}]
+	}], true);
+});
+
+test.todo('Work - have two actors commit items');
+
+test.todo('Work - Deletes both the committedRequiredItems and committedAwerdedItems objects after completion');
