@@ -17,7 +17,7 @@ export type InitialItemTypesState = {
 
 const items: InitialItemTypesState = {
 	calories: {
-		label: 'Calories',
+		label: 'calories',
 		stackable: true,
 		isInteger: false,
 	},
@@ -34,7 +34,7 @@ const items: InitialItemTypesState = {
 		],
 		inventory: [
 			{
-				typeId: 'Calories' as TypeId,
+				typeId: 'calories' as TypeId,
 				count: 500,
 			},
 		],
