@@ -1,26 +1,45 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 
 import * as playerActions from '../actions/player';
 import { Dispatch } from 'redux';
+import uuid from 'uuid';
 
-const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => (
-	<form
-		onSubmit={onSubmit}
-	>
-		<label htmlFor={'playerCreationName'}>Name: </label>
-		<input
-			id={'playerCreationName'}
-			type="text"
-			name="playerLabel"
-		/>
-		<button
-			type="submit"
+const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => {
+	const creationName = useRef<HTMLInputElement>(null);
+	const submitButton = useRef<HTMLButtonElement>(null);
+
+	return (
+		<form
+			onSubmit={onSubmit}
 		>
-			{'Create player'}
-		</button>
-	</form>
-);
+			<label htmlFor={'playerCreationName'}>Name: </label>
+			<input
+				id={'playerCreationName'}
+				ref={creationName}
+				type="text"
+				name="playerLabel"
+			/>
+			<button
+				ref={submitButton}
+				type="submit"
+			>
+				{'Create player'}
+			</button>
+			<button
+				type="button"
+				onClick={() => {
+					if (creationName.current && submitButton.current) {
+						creationName.current.value = uuid.v4();
+						submitButton.current.click();
+					}
+				}}
+			>
+				{'Create with random name'}
+			</button>
+		</form>
+	);
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
