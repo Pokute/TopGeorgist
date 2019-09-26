@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { handleCreateWorkInstance, handleWorkInstance } from '../sagas/work';
 import { createWorkInstance } from '../actions/workInstance';
 import { consumeWork } from '../data/works';
-import { TgoId } from '../reducers/tgo';
+import { TgoId, TgoType } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';
 import { WSAEMSGSIZE } from 'constants';
 import { select, put, PutEffect, PutEffectDescriptor } from 'redux-saga/effects';
@@ -16,7 +16,7 @@ import { TgosState } from '../reducers/tgos';
 import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId } from '../components/inventory';
 import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
-import { ComponentWork } from '../data/components_new';
+import { ComponentWork, ComponentGoal } from '../data/components_new';
 import { transaction } from '../actions/transaction';
 
 // Test work
@@ -72,10 +72,16 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 		select()
 	);
 
+	const goalTgo: TgoType & ComponentGoal = {
+		tgoId: 'Temp goal id' as TgoId,
+		goal: {
+			requirements: [],
+			workInstances: [],
+		},
+	};
+
 	const wSagaAddTgoPut = wSaga.next({ tgos: {
-		['Temp goal id']: {
-			tgoId: 'Temp goal id' as TgoId,
-		}
+		[goalTgo.tgoId]: goalTgo,
 	} as TgosState } as unknown as RootStateType as any).value;
 
 	type AddTgoType = ReturnType<typeof addTgo>;
