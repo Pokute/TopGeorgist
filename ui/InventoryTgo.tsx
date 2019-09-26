@@ -18,15 +18,19 @@ const RenderWorkInstance = ({ workTgoId }: { workTgoId: TgoId }) => {
 				<div>
 					ActorCommitted:
 					<InventoryReact
-						key={wiTgo.tgoId}
 						ownerTgoId={wiTgo.workActorCommittedItemsTgoId}
 					/>
 				</div>
 				<div>
 					TargetCommitted:
 					<InventoryReact
-						key={wiTgo.tgoId}
 						ownerTgoId={wiTgo.workTargetCommittedItemsTgoId}
+					/>
+				</div>
+				<div>
+					workTarget:
+					<InventoryReact
+						ownerTgoId={wiTgo.workTargetTgoId}
 					/>
 				</div>
 			</div>

@@ -62,6 +62,7 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				||isActionOf(tgoActions.setColor, action)
 				|| isActionOf(inventoryActions.add, action)
 				|| isActionOf(inventoryActions.addTgoId, action)
+				|| isActionOf(inventoryActions.removeTgoId, action)
 				|| isActionOf(taskQueueActions.addTaskQueue, action)
 				|| isActionOf(taskQueueActions.setTaskQueue, action)
 				|| isActionOf(goalsActions.addGoals, action)

@@ -108,19 +108,37 @@ const handleGoalRequirementConsumeTypeId = function* (
 			return false;
 		}
 
-		// Remove item from actor's inventory
-		yield put(inventoryActions.add(actorTgo.tgoId, consumableTypeId, count * -1));
-
-		yield all(type.inventory.map(ii =>
-			put(inventoryActions.add(goalTgo.tgoId, ii.typeId, ii.count))
+		// Remove item from actor's inventory, add converted calories to goal's inventory
+		yield put(transaction(
+			{
+				tgoId: actorTgo.tgoId,
+				items: [{
+					typeId: consumableTypeId,
+					count: count * -1,
+				}],
+			},
+			{
+				tgoId: goalTgo.tgoId,
+				items: type.inventory.map(({ typeId, count: iiCount }) => ({
+					typeId,
+					count: count * iiCount,
+				})),
+			}
 		));
+
+		return false; // Start saga from the top again.
 	}
 
-	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
+	const cleanUpGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 		yield put(removeGoals(actorTgoId, [goalTgoId]))
 
 		// Remove Tgo from tgos
 		yield put(tgosRemove(goalTgoId))
+	}
+
+	if (goalTgo.inventory.filter(ii => ii.count !== 0).length === 0) {
+		yield* cleanUpGoal(actorTgo.tgoId, goalTgo.tgoId);
+		return true;
 	}
 
 	// Check goal if there's active work
@@ -149,8 +167,10 @@ const handleGoalRequirementConsumeTypeId = function* (
 	}> | undefined =
 		yield* handleWorkInstance(actorWithGoals, goalTgo, workInstanceTgo);
 	if (workOutput) {
-		const mapped: Array<TransactionParticipant> = workOutput.map(wo => ({ tgoId: wo.tgoId, items: wo.awardItems }));
-		yield put(all(transaction(...mapped)));
+		// const mapped: Array<TransactionParticipant> = workOutput.map(wo => ({ tgoId: wo.tgoId, items: wo.awardItems }));
+		// yield put(all(transaction(...mapped)));
+
+		yield put(removeWorkInstance(goalTgo.tgoId, workInstanceTgo.tgoId));
 		return false;
 	}
 	return false;

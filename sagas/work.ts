@@ -107,7 +107,7 @@ export const handleWorkInstance = function* (
 
 	const participants = [
 		{ tgo: actorTgo },
-		...(workTgo.workTargetTgoId ? [{ tgo: workTgo }] : [])
+		...(workTgo.workTargetTgoId ? [{ tgo: s.tgos[workTgo.workTargetTgoId] }] : [])
 	];
 
 	const participantsWithWorkInfo = participants
@@ -335,24 +335,26 @@ export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work,
 	if (workTargetCommittedItemsTgo)
 		yield put(workTargetCommittedItemsTgo)
 
-	// Add a Work TgoId
-	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
+	const workInstanceTgo = {
 		work,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
 		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction ? workActorCommittedItemsTgoAction.payload.tgo.tgoId : undefined,
 		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgo ? workTargetCommittedItemsTgo.payload.tgo.tgoId : undefined,
 		// inventory: [],
-	}));
+	} as ComponentWork;
+
+	// Add a Work TgoId
+	const { payload: {tgo: { tgoId: workInstanceTgoId }}} = (yield put(addTgo(workInstanceTgo))) as ActionType<typeof addTgo>;
 
 	// Add the WorkTgoId to Goal inventory
 	yield put(inventoryAddTgoId(
 		goalTgoId,
-		newWorkAction.payload.tgo.tgoId
+		workInstanceTgoId
 	));
 
 	// Add the WorkTgoId as a goal workInstance.
-	yield put(goalAddWorkInstance(goalTgoId, newWorkAction.payload.tgo.tgoId));
+	yield put(goalAddWorkInstance(goalTgoId, workInstanceTgoId));
 }
 
 const handleRemoveWorkInstance = function* ({ payload: { tgoId, workInstanceTgoId }}: ActionType<typeof removeWorkInstance>) {

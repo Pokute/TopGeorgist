@@ -73,12 +73,12 @@ export type Goal = {
 
 export type GoalActionType = ActionType<typeof goalActions>
 
-export default (state: Goal, action: AnyAction): Goal => {
+export default (state: Goal, action: GoalActionType): Goal => {
 	switch (action.type) {
 		case getType(goalActions.addWorkInstance):
 			return {
 				...state,
-				workInstances: [...state.workInstances, action.payload.workInstance]
+				workInstances: [...state.workInstances, action.payload.workInstanceTgoId]
 			};
 		case getType(goalActions.removeWorkInstance):
 			return {
