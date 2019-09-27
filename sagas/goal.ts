@@ -3,7 +3,7 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 import { Requirement, isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
 import { RootStateType } from "../reducers";
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal } from "../data/components_new";
-import { hasComponentInventory, ComponentInventory, inventoryActions } from "../components/inventory";
+import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId } from "../components/inventory";
 import { hasComponentPosition, ComponentPosition } from '../components/position';
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { moveWork, consumeWork } from "../data/works";
@@ -130,7 +130,8 @@ const handleGoalRequirementConsumeTypeId = function* (
 	}
 
 	const cleanUpGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
-		yield put(removeGoals(actorTgoId, [goalTgoId]))
+		yield put(removeGoals(actorTgoId, [goalTgoId]));
+		yield put(removeTgoId(actorTgoId, goalTgoId));
 
 		// Remove Tgo from tgos
 		yield put(tgosRemove(goalTgoId))
@@ -197,6 +198,7 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 
 	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 		yield put(removeGoals(actorTgoId, [goalTgoId]))
+		yield put(removeTgoId(actorTgoId, goalTgoId));
 
 		// Remove Tgo from tgos
 		yield put(tgosRemove(goalTgoId))
