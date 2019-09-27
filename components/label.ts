@@ -5,4 +5,4 @@ export interface ComponentLabel {
 }
 
 export const hasComponentLabel = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLabel>) =>
-	typeof tgo.label !== undefined
+	tgo && typeof tgo.label !== undefined
