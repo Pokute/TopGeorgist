@@ -76,7 +76,7 @@ const InventoryTgo = ({ i }: { i: InventoryItem }) => {
 
 	const tgo = useSelector((store: RootStateType) => store.tgos[i.tgoId!]);
 	if (!tgo) {
-		return (<span>Tgo not found for id ${i.tgoId}</span>);
+		return (<span>{`Tgo not found for id ${i.tgoId}`}</span>);
 	}
 
 	const tgoData = `TgoId: ${i.tgoId}. Count: ${i.count}.`;
