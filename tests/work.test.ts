@@ -265,3 +265,49 @@ test('Work - wait 3 ticks', t => {
 		}
 	}
 });
+
+test('Work - simple actor item change', t => {
+	const work = {
+		actorItemChanges: [{
+			typeId: 'coal' as TypeId,
+			count: -10,
+		}],
+		targetItemChanges: [],
+		type: 'furnace',
+	};
+
+});
+
+test('Work - simple target item change', t => {
+	const work = {
+		actorItemChanges: [],
+		targetItemChanges: [{
+			typeId: 'entropy' as TypeId,
+			count: 5,
+		}],
+		type: 'anyWork',
+	};
+
+});
+
+test('Work - same item type in actor and target', t => {
+	// This requires two inventories for workInstance.
+
+	const work = {
+		actorItemChanges: [{
+			typeId: 'stones' as TypeId,
+			count: -10,
+		}],
+		targetItemChanges: [
+			{
+				typeId: 'stones' as TypeId,
+				count: 5,
+			},
+			{
+				typeId: 'gravel' as TypeId,
+				count: 5,
+			}
+		],
+		type: 'grinderWork',
+	};
+});
