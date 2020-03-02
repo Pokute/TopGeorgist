@@ -4,7 +4,7 @@ import * as tgoActions from '../actions/tgo';
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import goalReducer from './goal';
-import workInstanceReducer, { WorkInstanceActionType } from './workInstance';
+import workReducer, { WorkActionType } from './work';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList } from '../data/components';
@@ -74,7 +74,7 @@ export const initialState:TgoType = {
 	},
 };
 
-export default (state: TgoType, action: PositionActionType | TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType | GoalActionType | WorkInstanceActionType) : TgoType => {
+export default (state: TgoType, action: PositionActionType | TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType | GoalActionType | WorkActionType) : TgoType => {
 	switch (action.type) {
 		case getType(tgoActions.setColor):
 			return {
@@ -99,8 +99,8 @@ export default (state: TgoType, action: PositionActionType | TgoActionType | Inv
 				if (newGoal !== usedState.goal) usedState = { ...usedState, goal: newGoal };
 			}
 			// if (isComponentWork(state)) {
-			// 	const newWorkInstance = workInstanceReducer(state.work, action as WorkInstanceActionType);
-			// 	if (newWorkInstance !== usedState.work) usedState = { ...usedState, work: newWorkInstance };
+			// 	const newWork = workReducer(state.work, action as WorkActionType);
+			// 	if (newWork !== usedState.work) usedState = { ...usedState, work: newWork };
 			// }
 			return usedState;
 		}

@@ -1,8 +1,8 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
-import { handleCreateWorkInstance, handleWorkInstance } from '../sagas/work';
-import { createWorkInstance } from '../actions/workInstance';
+import { handleCreateWork, handleWork } from '../sagas/work';
+import { createWork } from '../actions/work';
 import { consume } from '../data/recipes';
 import { TgoId, TgoType } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';
@@ -15,7 +15,7 @@ import { ItemTypesState } from '../reducers/itemTypes';
 import { TgosState } from '../reducers/tgos';
 import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId } from '../components/inventory';
-import { addWorkInstance as goalAddWorkInstance, removeWorkInstance } from '../actions/goal';
+import { addWork as goalAddWork, removeWork } from '../actions/goal';
 import { ComponentWork, ComponentGoal } from '../data/components_new';
 import { transaction } from '../actions/transaction';
 
@@ -23,7 +23,7 @@ import { transaction } from '../actions/transaction';
 
 util.inspect.defaultOptions.depth = 500;  
 
-test('Create a work instance', t => {
+test('Create a work', t => {
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
@@ -31,22 +31,22 @@ test('Create a work instance', t => {
 	};
 
 	t.deepEqual(
-		omitMetaAndError(createWorkInstance(params)),
+		omitMetaAndError(createWork(params)),
 		{
-			type: getType(createWorkInstance),
+			type: getType(createWork),
 			payload: params,
 		}
 	);
 });
 
-test('Test work - handleCreateWorkInstance - fail if goalTgoId not in store', t => {
+test('Test work - handleCreateWork - fail if goalTgoId not in store', t => {
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
 		recipe: consume,
 	};
 
-	const wSaga = handleCreateWorkInstance(createWorkInstance(params));
+	const wSaga = handleCreateWork(createWork(params));
 
 	t.deepEqual(
 		wSaga.next( ).value,
@@ -65,7 +65,7 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 		recipe: consume,
 	};
 
-	const wSaga = handleCreateWorkInstance(createWorkInstance(params));
+	const wSaga = handleCreateWork(createWork(params));
 
 	t.deepEqual(
 		wSaga.next().value,
@@ -76,7 +76,7 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 		tgoId: 'Temp goal id' as TgoId,
 		goal: {
 			requirements: [],
-			workInstances: [],
+			workTgoIds: [],
 		},
 	};
 
@@ -89,7 +89,7 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 	const isPutEffect = (a: any): a is PutEffect => a && a.type === 'PUT';
 	const isAddAction = (a: any): a is AddTgoType => a && a.type === getType(addTgo);
 	const isInventoryAddTgoIdAction = (a: any): a is ReturnType<typeof inventoryAddTgoId> => a && a.type === getType(inventoryAddTgoId);
-	const isGoalAddWorkInstanceAction = (a: any): a is ReturnType<typeof goalAddWorkInstance> => a && a.type === getType(goalAddWorkInstance);
+	const isGoalAddWorkAction = (a: any): a is ReturnType<typeof goalAddWork> => a && a.type === getType(goalAddWork);
 
 	// Testing internals here. :-(
 	const emptyVirtualInventory = {
@@ -154,14 +154,14 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 		inventoryAddToGoal,
 		put(inventoryAddTgoId('Temp goal id' as TgoId, inventoryAddToGoal.payload.action.payload.item.tgoId))
 	);
-	const workInstanceAdd = wSaga.next().value;
-	if (!isPutEffect(workInstanceAdd) || !isGoalAddWorkInstanceAction(workInstanceAdd.payload.action)) {
+	const workAdd = wSaga.next().value;
+	if (!isPutEffect(workAdd) || !isGoalAddWorkAction(workAdd.payload.action)) {
 		t.fail();
 		return;
 	}
 	t.deepEqual(
-		workInstanceAdd,
-		put(goalAddWorkInstance('Temp goal id' as TgoId, wSagaAddWorkTgoPut.payload.action.payload.tgo.tgoId))
+		workAdd,
+		put(goalAddWork('Temp goal id' as TgoId, wSagaAddWorkTgoPut.payload.action.payload.tgo.tgoId))
 	)
 	t.true(wSaga.next().done);
 });
@@ -183,9 +183,9 @@ const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) =>
 }
 
 test('Work - empty work', t => {
-	// Create an empty work instance.
-	const workInstance: ComponentWork = {
-		tgoId: 'emptyWork instance' as TgoId,
+	// Create an empty work.
+	const work: ComponentWork = {
+		tgoId: 'emptyWork' as TgoId,
 		workRecipe: {
 			actorItemChanges: [],
 			targetItemChanges: [],
@@ -193,11 +193,11 @@ test('Work - empty work', t => {
 		},
 	};
 
-	// Run empty work instance.
-	const hWI = handleWorkInstance(
+	// Run empty work.
+	const hWI = handleWork(
 		{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
-		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
-		workInstance,
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+		work,
 		);
 	// Is a generator;
 	t.truthy(hWI && hWI.next);
@@ -218,16 +218,16 @@ test('Work - empty work', t => {
 });
 
 test('Work - wait 3 ticks', t => {
-	const workInstanceCommittedItemsTgo = {
+	const workCommittedItemsTgo = {
 		tgoId: 'waitWorkCommittedItems' as TgoId,
 		inventory: [],
 		isInventoryVirtual: true,
 	};
 
-	// Create an work instance on 3 tick wait.
-	const workInstance: ComponentWork = {
-		tgoId: 'waitWork instance' as TgoId,
-		workActorCommittedItemsTgoId: workInstanceCommittedItemsTgo.tgoId,
+	// Create an work on 3 tick wait.
+	const work: ComponentWork = {
+		tgoId: 'waitWork' as TgoId,
+		workActorCommittedItemsTgoId: workCommittedItemsTgo.tgoId,
 		workRecipe: {
 			actorItemChanges: [{
 				typeId: 'tick' as TypeId,
@@ -239,10 +239,10 @@ test('Work - wait 3 ticks', t => {
 	};
 
 	for (let i = 0; i < 5; i++) {
-		let hWI = handleWorkInstance(
+		let hWI = handleWork(
 			{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
-			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
-			workInstance,
+			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+			work,
 			);
 		// Is a generator;
 		t.truthy(hWI && hWI.next);
@@ -261,16 +261,16 @@ test('Work - wait 3 ticks', t => {
 					tgoId: 'worker' as TgoId,
 				},
 				['waitWorkCommittedItems']: {
-					...workInstanceCommittedItemsTgo,
+					...workCommittedItemsTgo,
 					inventory: [{
 						typeId: 'tick' as TypeId,
 						count: -i,
 					}]
 				},
 			} as TgosState } as unknown as RootStateType as any
-		)(undefined, i == (workInstance.workRecipe.actorItemChanges[0].count * -1));
+		)(undefined, i == (work.workRecipe.actorItemChanges[0].count * -1));
 
-		if (i == (workInstance.workRecipe.actorItemChanges[0].count * -1)) {
+		if (i == (work.workRecipe.actorItemChanges[0].count * -1)) {
 			return;
 		}
 	}
@@ -303,12 +303,12 @@ test('Work - give reward after taking items', t => {
 		},
 	};
 
-	const hWI = handleWorkInstance(
+	const hWI = handleWork(
 		{ tgoId: 'appleTree' as TgoId, activeGoals: [], inventory: [{
 			typeId: 'nutrients' as TypeId,
 			count: 50,
 		}] },
-		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [workInstance.tgoId] }, inventory: [], },
 		workInstance,
 		);
 	// Is a generator;
@@ -366,13 +366,15 @@ test('Work - give reward after taking items', t => {
 	)), false);
 
 	genDeepEqual()(undefined, true);
+// test('Work - same item type in actor and target', t => {
+	// This requires two inventories for work.
 
-	let hWI2 = handleWorkInstance(
+	let hWI2 = handleWork(
 		{ tgoId: 'appleTree' as TgoId, activeGoals: [], inventory: [{
 			typeId: 'nutrients' as TypeId,
 			count: 40,
 		}] },
-		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workInstances: [workInstance.tgoId] }, inventory: [], },
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [workInstance.tgoId] }, inventory: [], },
 		workInstance,
 		);
 	// Is a generator;

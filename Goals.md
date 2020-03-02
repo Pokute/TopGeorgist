@@ -80,19 +80,19 @@ Pineapple has a prototype with inventory: [
 	},
 ]
 
-When starting to eat a new pineapple, a workInstance is created.
+When starting to eat a new pineapple, a work is created.
 A pineapple is removed from `actor.inventory` inventory. (? `count` pineapples are removed)
 A pineapple inventory prototype is copied to `goal` inventory.
 
-`consumeWork` workInstance is created.
-workInstance takes input from `actor.inventory.goal.inventory` and outputs to `actor.inventory`. - It shuffles items around.
+`consumeWork` work is created.
+work takes input from `actor.inventory.goal.inventory` and outputs to `actor.inventory`. - It shuffles items around.
 
 ## Harvest berries work.
 
 Actor = harvester
 Target = berrybush
 
-workInstance takes input from `target.inventory` and outputs to `actor.inventory`.
+work takes input from `target.inventory` and outputs to `actor.inventory`.
 
 Needs access to other inventories. The berry bush provides the work?
 
@@ -103,7 +103,7 @@ Work is tied to `berrybush` location.
 Actor = blacksmith
 Target = furnace
 
-workInstance inputs:
+work inputs:
 	ore from `actor.inventory` 
 	ticks from `furnace` // Prevents multiple users.
 	ticks from `actor` // Prevents actor from doing something else

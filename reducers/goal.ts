@@ -68,22 +68,22 @@ export const isRequirementConsume = (requirement: Requirement): requirement is R
 export type Goal = {
 	readonly title?: string,
 	readonly requirements: ReadonlyArray<Requirement>,
-	readonly workInstances: ReadonlyArray<TgoId>,
+	readonly workTgoIds: ReadonlyArray<TgoId>,
 };
 
 export type GoalActionType = ActionType<typeof goalActions>
 
 export default (state: Goal, action: GoalActionType): Goal => {
 	switch (action.type) {
-		case getType(goalActions.addWorkInstance):
+		case getType(goalActions.addWork):
 			return {
 				...state,
-				workInstances: [...state.workInstances, action.payload.workInstanceTgoId]
+				workTgoIds: [...state.workTgoIds, action.payload.workTgoId]
 			};
-		case getType(goalActions.removeWorkInstance):
+		case getType(goalActions.removeWork):
 			return {
 				...state,
-				workInstances: state.workInstances.filter(wi => wi !== action.payload.workInstanceTgoId),
+				workTgoIds: state.workTgoIds.filter(wi => wi !== action.payload.workTgoId),
 			};
 		default:
 			return state;
