@@ -14,7 +14,7 @@ import taskQueue from './taskQueue';
 import ticker from './ticker';
 import transaction from './transaction';
 import view from './view';
-import work from './work';
+import { workRootSaga } from '../concerns/work';
 
 const rootSaga = function* () {
 	yield* account();
@@ -33,7 +33,7 @@ const rootSaga = function* () {
 	yield* ticker();
 	yield* transaction();
 	yield* view();
-	yield* work();
+	yield* workRootSaga();
 };
 
 export default rootSaga;
