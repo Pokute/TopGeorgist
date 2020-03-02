@@ -2,7 +2,7 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as workInstanceActions from '../actions/workInstance';
 import { Inventory } from '../components/inventory';
-import { Work } from './work';
+import { Recipe } from './recipe';
 import { TgoId } from './tgo';
 
 interface WorkInstanceInitialType {
@@ -10,7 +10,7 @@ interface WorkInstanceInitialType {
 }
 
 export interface WorkInstance {
-	readonly work: Work,
+	readonly recipe: Recipe,
 	readonly targetTgoId?: TgoId,
 	readonly inputProgress: Inventory,
 };
@@ -21,15 +21,15 @@ export const initialState: WorkInstanceInitialType = {
 
 export type WorkInstanceActionType = ActionType<typeof workInstanceActions>;
 export const WorkInstanceActionList = [
-	workInstanceActions.createFromWork,
+	workInstanceActions.createFromRecipe,
 ];
 
 export default (state: WorkInstance, action: WorkInstanceActionType): WorkInstance => {
 	switch (action.type) {
-		case getType(workInstanceActions.createFromWork):
+		case getType(workInstanceActions.createFromRecipe):
 			return {
 				...initialState,
-				work: action.payload.work,
+				recipe: action.payload.recipe,
 			};
 		default:
 			return state;

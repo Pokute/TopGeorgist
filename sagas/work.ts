@@ -80,10 +80,10 @@ const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
 	const s: RootStateType = yield select();
 	const workTgo = s.tgos[workTgoId];
 	if (!isComponentWork(workTgo)) return undefined; // Fail
-	if (workTgo.work.actorItemChanges.length == 0) return true;
+	if (workTgo.workRecipe.actorItemChanges.length == 0) return true;
 	if (!hasComponentInventory(workTgo)) return false;
 
-	return (workTgo.work.actorItemChanges.every(input => {
+	return (workTgo.workRecipe.actorItemChanges.every(input => {
 		const foundProgressItem = workTgo.inventory.find(progress => progress.typeId === input.typeId);
 		return ((foundProgressItem !== undefined) && (foundProgressItem.count >= input.count));
 	}));
@@ -116,7 +116,7 @@ export const handleWorkInstance = function* (
 			return {
 				...participant,
 				requiredItemCommitTgoId: committedItemsTgoId,
-				itemsChange: index == 0 ? workTgo.work.actorItemChanges : workTgo.work.targetItemChanges,
+				itemsChange: index == 0 ? workTgo.workRecipe.actorItemChanges : workTgo.workRecipe.targetItemChanges,
 				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || { inventory: [] }).inventory : undefined) || [],
 			};
 		})
@@ -314,7 +314,7 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 	yield put(redeem(actorTgo, workTgo));
 }
 
-export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
+export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, recipe: work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
 	const s: RootStateType = yield select();
 	const goalTgo = s.tgos[goalTgoId];
 	if (!isComponentGoal(goalTgo)) return;
@@ -337,7 +337,7 @@ export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work,
 
 	// Add a Work TgoId
 	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
-		work,
+		workRecipe: work,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
 		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction ? workActorCommittedItemsTgoAction.payload.tgo.tgoId : undefined,
