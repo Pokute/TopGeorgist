@@ -21,30 +21,44 @@ Multiple parties = Multiple inventories?
 
 Social interaction like sharing locations, knowledge, prices, people while passing by could be handled by this. Or passively with goals and work.
 
+## Recipe
+
+Recipe define ways to transform some resouces to another.
+
+See `data/recipes.ts` for recipes.
+
+Recipe knowledge is global. Everyone knows about every possible recipe. At least for now.
+
+Work availability is based on inventory items. Examples `typeId`s:
+	* `tick` for recipe that take time, but can be done infinitely parallel. `tick` is a special case.
+	* `foodHeating` or `tableSaw` with `exclusiveTick` for recipe that must be done in serial. Only one food item fits in a microwave. Also a special case.
+	* `sunlight` without `exclusiveTick` for recipe that anyone present can use freely.
+
+When can recipes be executed? Some recipes definitely require tools, like a forge, table saw, screwdriver, a skill.
+
 ## Work
 
 `ComponentWork`: A tgo is a Work. Check with `isComponentWork()`.
 `ComponentWorkDoer`: A tgo can do Work related items. Check with `hasComponentWorkDoer`.
 
-Works define recipes to transform some resouces to another.
-Work is always done by a single Tgo.
+Work is an application of recipe. Work is always done by a single Tgo.
 
 Work Inventory, inputs and outputs:
 
 	* Some works are immediate and don't require their own inventory:
-		* Works that have at most one tangible & continous input&output item.
-		* These works never take longer than one tick.
+		* Their recipe have at most one tangible & continous input&output item.
+		* Their recipe never take longer than one tick.
 		* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult?
 		* Examples:
 			* A screwdriving work.
 	* Other works have their own inventory:
-		* Multiple tangible inputs so these might "buffer" to internal inventory.
-		* Multiple ticks.
+		* Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
+		* Their recipe requires multiple ticks.
 		* Items inputed might be refunded.
 		* Can't be assigned to an in-world item.
 		* Examples:
 			* Long thinking process, like deciding where to shop.
-			* Simple 
+			* Eating, requires time, inventory items and skills.
 	* Some works are actually in-world items:
 		* Examples:
 			* Building a house
@@ -52,21 +66,10 @@ Work Inventory, inputs and outputs:
 				* MORE DETAIL NEEDED
 			* Repairing a screwdriver.
 				* HOW WOULD THIS WORK?
-	* Questions:
-		* Works that have multiple contributors? Are they contracts?
+		* Q: Sounds like prime candidate for contract. This could have multiple contributors?
 
 Work can take inputs and outputs from `WorkDoer`:`inventory` and possibly `targetTgo`.`inventory`.
 
-See `data/works.ts` for recipes.
-
-Work knowledge is global. Everyone knows about every possible work. At least for now.
-
-Work availability is based on inventory items. Examples `typeId`s:
-	* `tick` for work that take time, but can be done infinitely parallel. `tick` is a special case.
-	* `foodHeating` or `tableSaw` with `exclusiveTick` for work that must be done in serial. Only one food item fits in a microwave. Also a special case.
-	* `sunlight` without `exclusiveTick` for work that anyone present can use freely.
-
-What can works be executed? Some works definitely require tools, like a forge, table saw, screwdriver, a skill, another person.
 Move work practically uses a single inventory.
 
 # Examples
