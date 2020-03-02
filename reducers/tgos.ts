@@ -5,7 +5,7 @@ import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import * as taskQueueActions from '../actions/taskQueue'; 
 import * as goalsActions from '../actions/goals'; 
 import * as goalActions from '../actions/goal'; 
-import * as workActions from '../actions/work'; 
+import { workActions } from '../concerns/work'; 
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
 import { InventoryActionType } from '../components/inventory';

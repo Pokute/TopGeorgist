@@ -1,8 +1,8 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
-import { handleCreateWork, handleWork } from '../sagas/work';
-import { createWork } from '../actions/work';
+import { handleCreateWork, handleWork } from '../concerns/work';
+import { createWork } from '../concerns/work';
 import { consume } from '../data/recipes';
 import { TgoId, TgoType } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';

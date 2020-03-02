@@ -4,7 +4,7 @@ import * as tgoActions from '../actions/tgo';
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
 import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
 import goalReducer from './goal';
-import workReducer, { WorkActionType } from './work';
+import { reducer as workReducer, WorkActionType } from '../concerns/work';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
 import { ComponentList } from '../data/components';
