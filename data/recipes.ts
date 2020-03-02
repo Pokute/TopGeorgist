@@ -1,7 +1,7 @@
-import { Work } from '../reducers/work';
+import { Recipe } from '../reducers/recipe';
 import { TypeId } from '../reducers/itemType';
 
-export const moveWork: Work = {
+export const move: Recipe = {
 	type: 'move',
 	actorItemChanges: [
 		{
@@ -20,7 +20,7 @@ export const moveWork: Work = {
 	targetItemChanges: [],
 };
 
-export const consumeWork: Work = {
+export const consume: Recipe = {
 	type: 'consume',
 	actorItemChanges: [
 		{
@@ -40,7 +40,7 @@ export const consumeWork: Work = {
 	],
 };
 
-export const harvestWork: Work = {
+export const harvest: Recipe = {
 	type: 'harvest',
 	actorItemChanges: [
 		{
@@ -60,7 +60,7 @@ export const harvestWork: Work = {
 	],
 };
 
-export const smeltWork: Work = {
+export const smelt: Recipe = {
 	type: 'smelt',
 	actorItemChanges: [
 		{
@@ -84,7 +84,7 @@ export const smeltWork: Work = {
 	],
 };
 
-export const tradeWork: Work = {
+export const trade: Recipe = {
 	type: 'trade',
 	actorItemChanges: [
 		{
@@ -94,11 +94,3 @@ export const tradeWork: Work = {
 	],
 	targetItemChanges: [],
 };
-
-export default [
-	moveWork,
-	consumeWork,
-	harvestWork,
-	smeltWork,
-	tradeWork,
-];

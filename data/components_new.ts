@@ -2,7 +2,7 @@ import { Action, ComponentTicker } from "./components";
 import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
 import { TaskQueueType } from "../reducers/taskQueue";
 import { Goal } from "../reducers/goal";
-import { Work } from "../reducers/work";
+import { Recipe } from "../reducers/recipe";
 import { ComponentPosition } from '../components/position';
 
 export type ComponentRentOffice = 
@@ -76,7 +76,7 @@ export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo 
 
 export type ComponentWork = 
 TgoRoot & {
-	readonly work: Work,
+	readonly workRecipe: Recipe,
 	// readonly actorTgoId: TgoId,
 	readonly workTargetTgoId?: TgoId,
 	readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from participant's inventory, but can be redeemed.
@@ -84,7 +84,7 @@ TgoRoot & {
 };
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
-	tgo && typeof tgo.work !== 'undefined';
+	tgo && typeof tgo.workRecipe !== 'undefined';
 
 export type ComponentGoal = 
 TgoRoot & {

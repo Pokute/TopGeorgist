@@ -13,7 +13,7 @@ const RenderWorkInstance = ({ workTgoId }: { workTgoId: TgoId }) => {
 	if (isComponentWork(wiTgo)) {
 		return (
 			<div>
-				<div>Type: {wiTgo.work.type}</div>
+				<div>Recipe: {wiTgo.workRecipe.type}</div>
 				<div>Target: {wiTgo.workTargetTgoId}</div>
 				<div>
 					ActorCommitted:

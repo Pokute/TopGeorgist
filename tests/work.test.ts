@@ -3,7 +3,7 @@ import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
 import { handleCreateWorkInstance, handleWorkInstance } from '../sagas/work';
 import { createWorkInstance } from '../actions/workInstance';
-import { consumeWork } from '../data/works';
+import { consume } from '../data/recipes';
 import { TgoId, TgoType } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';
 import { WSAEMSGSIZE } from 'constants';
@@ -27,7 +27,7 @@ test('Create a work instance', t => {
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
-		work: consumeWork,
+		recipe: consume,
 	};
 
 	t.deepEqual(
@@ -43,7 +43,7 @@ test('Test work - handleCreateWorkInstance - fail if goalTgoId not in store', t 
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
-		work: consumeWork,
+		recipe: consume,
 	};
 
 	const wSaga = handleCreateWorkInstance(createWorkInstance(params));
@@ -62,7 +62,7 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
-		work: consumeWork,
+		recipe: consume,
 	};
 
 	const wSaga = handleCreateWorkInstance(createWorkInstance(params));
@@ -133,7 +133,7 @@ test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and w
 
 	const overriddenW = overrideAddTgoActionWithId(
 		addTgo({
-			work: consumeWork,
+			workRecipe: consume,
 			workTargetTgoId: 'Target id' as TgoId,
 			workActorCommittedItemsTgoId: wSagaAddTgoPut.payload.action.payload.tgo.tgoId,
 			workTargetCommittedItemsTgoId: wSagaSecondAddTgoPut.payload.action.payload.tgo.tgoId,
@@ -186,7 +186,7 @@ test('Work - empty work', t => {
 	// Create an empty work instance.
 	const workInstance: ComponentWork = {
 		tgoId: 'emptyWork instance' as TgoId,
-		work: {
+		workRecipe: {
 			actorItemChanges: [],
 			targetItemChanges: [],
 			type: 'emptyWork',
@@ -228,7 +228,7 @@ test('Work - wait 3 ticks', t => {
 	const workInstance: ComponentWork = {
 		tgoId: 'waitWork instance' as TgoId,
 		workActorCommittedItemsTgoId: workInstanceCommittedItemsTgo.tgoId,
-		work: {
+		workRecipe: {
 			actorItemChanges: [{
 				typeId: 'tick' as TypeId,
 				count: -3,
@@ -268,9 +268,9 @@ test('Work - wait 3 ticks', t => {
 					}]
 				},
 			} as TgosState } as unknown as RootStateType as any
-		)(undefined, i == (workInstance.work.actorItemChanges[0].count * -1));
+		)(undefined, i == (workInstance.workRecipe.actorItemChanges[0].count * -1));
 
-		if (i == (workInstance.work.actorItemChanges[0].count * -1)) {
+		if (i == (workInstance.workRecipe.actorItemChanges[0].count * -1)) {
 			return;
 		}
 	}
@@ -287,7 +287,7 @@ test('Work - give reward after taking items', t => {
 	const workInstance: ComponentWork = {
 		tgoId: 'tradeWork instance' as TgoId,
 		workActorCommittedItemsTgoId: workInstanceCommittedItemsTgo.tgoId,
-		work: {
+		workRecipe: {
 			actorItemChanges: [
 				{
 					typeId: 'nutrients' as TypeId,

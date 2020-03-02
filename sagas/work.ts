@@ -80,10 +80,10 @@ const checkWorkInstanceCompletion = function* (workTgoId: TgoId) {
 	const s: RootStateType = yield select();
 	const workTgo = s.tgos[workTgoId];
 	if (!isComponentWork(workTgo)) return undefined; // Fail
-	if (workTgo.work.actorItemChanges.length == 0) return true;
+	if (workTgo.workRecipe.actorItemChanges.length == 0) return true;
 	if (!hasComponentInventory(workTgo)) return false;
 
-	return (workTgo.work.actorItemChanges.every(input => {
+	return (workTgo.workRecipe.actorItemChanges.every(input => {
 		const foundProgressItem = workTgo.inventory.find(progress => progress.typeId === input.typeId);
 		return ((foundProgressItem !== undefined) && (foundProgressItem.count >= input.count));
 	}));
@@ -116,7 +116,7 @@ export const handleWorkInstance = function* (
 			return {
 				...participant,
 				requiredItemCommitTgoId: committedItemsTgoId,
-				itemsChange: index == 0 ? workTgo.work.actorItemChanges : workTgo.work.targetItemChanges,
+				itemsChange: index == 0 ? workTgo.workRecipe.actorItemChanges : workTgo.workRecipe.targetItemChanges,
 				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || { inventory: [] }).inventory : undefined) || [],
 			};
 		})
@@ -314,7 +314,7 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 	yield put(redeem(actorTgo, workTgo));
 }
 
-export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
+export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, recipe: work, targetTgoId }}: ActionType<typeof createWorkInstance>) {
 	const s: RootStateType = yield select();
 	const goalTgo = s.tgos[goalTgoId];
 	if (!isComponentGoal(goalTgo)) return;
@@ -335,26 +335,24 @@ export const handleCreateWorkInstance = function* ({ payload: { goalTgoId, work,
 	if (workTargetCommittedItemsTgo)
 		yield put(workTargetCommittedItemsTgo)
 
-	const workInstanceTgo = {
-		work,
+	// Add a Work TgoId
+	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
+		workRecipe: work,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
 		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction ? workActorCommittedItemsTgoAction.payload.tgo.tgoId : undefined,
 		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgo ? workTargetCommittedItemsTgo.payload.tgo.tgoId : undefined,
 		// inventory: [],
-	} as ComponentWork;
-
-	// Add a Work TgoId
-	const { payload: {tgo: { tgoId: workInstanceTgoId }}} = (yield put(addTgo(workInstanceTgo))) as ActionType<typeof addTgo>;
+	}));
 
 	// Add the WorkTgoId to Goal inventory
 	yield put(inventoryAddTgoId(
 		goalTgoId,
-		workInstanceTgoId
+		newWorkAction.payload.tgo.tgoId
 	));
 
 	// Add the WorkTgoId as a goal workInstance.
-	yield put(goalAddWorkInstance(goalTgoId, workInstanceTgoId));
+	yield put(goalAddWorkInstance(goalTgoId, newWorkAction.payload.tgo.tgoId));
 }
 
 const handleRemoveWorkInstance = function* ({ payload: { tgoId, workInstanceTgoId }}: ActionType<typeof removeWorkInstance>) {

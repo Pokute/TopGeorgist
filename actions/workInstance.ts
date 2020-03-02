@@ -1,18 +1,18 @@
 import { createAction } from 'typesafe-actions';
 import { WorkInstance } from '../reducers/workInstance';
-import { Work } from '../reducers/work';
+import { Recipe } from '../reducers/recipe';
 import { TgoId } from '../reducers/tgo';
 
-export const createFromWork = createAction('WORK_INSTANCE_CREATE_FROM_WORK', resolve => {
-	return ({ work }: { work: Work }) => resolve({
-		work,
+export const createFromRecipe = createAction('WORK_INSTANCE_CREATE_FROM_WORK', resolve => {
+	return ({ recipe }: { recipe: Recipe }) => resolve({
+		recipe,
 	});
 });
 
 export const createWorkInstance = createAction('WORK_INSTANCE_CREATE', resolve => {
-	return ({ goalTgoId, work, targetTgoId }: { goalTgoId: TgoId, work: Work, targetTgoId?: TgoId }) => resolve({
+	return ({ goalTgoId, recipe, targetTgoId }: { goalTgoId: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => resolve({
 			goalTgoId,
-			work,
+			recipe,
 			targetTgoId,
 	});
 });

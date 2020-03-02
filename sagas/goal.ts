@@ -6,10 +6,10 @@ import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWo
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from "../components/inventory";
 import { hasComponentPosition, ComponentPosition } from '../components/position';
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
-import { moveWork, consumeWork } from "../data/works";
+import { move, consume } from "../data/recipes";
 import { Inventory, InventoryItem } from "../components/inventory";
 import { transaction } from "../actions/transaction";
-import { Work } from "../reducers/work";
+import { Recipe } from "../reducers/recipe";
 import { setPosition } from "../components/position";
 import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
 import { getType } from "typesafe-actions";
@@ -71,13 +71,13 @@ const completeWorkInput = function* (actorTgoId: TgoId, input: InventoryItem) {
 	}
 }
 
-const completeWork = function* (actorTgoId: TgoId, work: Work) {
-	const inputs = work.actorItemChanges.map(work => completeWorkInput(actorTgoId, work));
+const completeRecipe = function* (actorTgoId: TgoId, recipe: Recipe) {
+	const inputs = recipe.actorItemChanges.map(work => completeWorkInput(actorTgoId, work));
 	const results: ReadonlyArray<boolean> = yield* inputs;
 	if (results.every(i => i)) {
 		return transaction({
 			tgoId: actorTgoId,
-			items: [...work.actorItemChanges, ...work.targetItemChanges],
+			items: [...recipe.actorItemChanges, ...recipe.targetItemChanges],
 		});
 	}
 	return false;
@@ -166,9 +166,9 @@ const handleGoalRequirementConsumeTypeId = function* (
 
 	// Check goal if there's active work
 	if (goalTgo.goal.workInstances.length == 0) {
-		const foundWork = consumeWork;
-		if (foundWork) {
-			const workInstanceAction = yield put(createWorkInstance({goalTgoId: goalTgo.tgoId, work: foundWork, targetTgoId: goalTgo.tgoId}));
+		const foundRecipe = consume;
+		if (foundRecipe) {
+			const workInstanceAction = yield put(createWorkInstance({goalTgoId: goalTgo.tgoId, recipe: foundRecipe, targetTgoId: goalTgo.tgoId}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -226,9 +226,9 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 
 	// Check goal if there's active work
 	if (goalTgo.goal.workInstances.length == 0) {
-		const foundWork = moveWork;
-		if (foundWork) {
-			const workInstanceAction = yield put(createWorkInstance({ goalTgoId: goalTgo.tgoId, work: foundWork}));
+		const foundRecipe = move;
+		if (foundRecipe) {
+			const workInstanceAction = yield put(createWorkInstance({ goalTgoId: goalTgo.tgoId, recipe: foundRecipe}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
