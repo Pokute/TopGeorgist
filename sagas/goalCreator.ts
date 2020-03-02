@@ -21,7 +21,7 @@ const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType
 	const newGoalAction: ActionType<typeof addTgo> = yield put(addTgo({
 		goal: {
 			title: 'Move to position',
-			workInstances: [],
+			workTgoIds: [],
 			requirements: [
 				{
 					type: "RequirementMove",
@@ -50,7 +50,7 @@ const handleCreateConsumeGoal = function* ({payload: {tgoId, targetTypeId, count
 	const newGoalAction: ActionType<typeof addTgo> = yield put(addTgo({
 		goal: {
 			title: 'Eating somehting',
-			workInstances: [],
+			workTgoIds: [],
 			requirements: [
 				{
 					type: "RequirementConsumeTypeId",

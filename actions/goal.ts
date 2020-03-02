@@ -2,17 +2,17 @@ import { createAction } from 'typesafe-actions';
 
 import { TgoId } from "../reducers/tgo";
 
-export const addWorkInstance = createAction('GOAL_ADD_WORK_INSTANCE', (resolve) => {
-	return (tgoId: TgoId, workInstance: TgoId) => resolve({
+export const addWork = createAction('GOAL_ADD_WORK', (resolve) => {
+	return (tgoId: TgoId, workTgoId: TgoId) => resolve({
 		tgoId,
-		workInstance,
+		workTgoId,
 	});
 });
 
-export const removeWorkInstance = createAction('GOAL_REMOVE_WORK_INSTANCE', (resolve) => {
-	return (tgoId: TgoId, workInstanceTgoId: TgoId) => resolve({
+export const removeWork = createAction('GOAL_REMOVE_WORK', (resolve) => {
+	return (tgoId: TgoId, workTgoId: TgoId) => resolve({
 		tgoId,
-		workInstanceTgoId,
+		workTgoId,
 	});
 });
 

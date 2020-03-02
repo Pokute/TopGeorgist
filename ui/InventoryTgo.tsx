@@ -8,7 +8,7 @@ import InventoryReact from './inventory.react';
 import { TgoId } from '../reducers/tgo';
 import Category from './Category';
 
-const RenderWorkInstance = ({ workTgoId }: { workTgoId: TgoId }) => {
+const RenderWork = ({ workTgoId }: { workTgoId: TgoId }) => {
 	const wiTgo = useSelector((store: RootStateType) => store.tgos[workTgoId]);
 	if (isComponentWork(wiTgo)) {
 		return (
@@ -33,7 +33,7 @@ const RenderWorkInstance = ({ workTgoId }: { workTgoId: TgoId }) => {
 		);
 	} else {
 		return (<span>
-			NoWorkInstanceInv!
+			NoWorkInv!
 		</span>)
 	}
 };
@@ -56,8 +56,8 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData: string }) =
 					</span>);
 			}
 		})}
-		{tgo.goal.workInstances.map(wiTgoId => (
-			<RenderWorkInstance
+		{tgo.goal.workTgoIds.map(wiTgoId => (
+			<RenderWork
 				key={wiTgoId}
 				workTgoId={wiTgoId}
 			/>	
