@@ -3,10 +3,9 @@ import sinon from 'sinon';
 import { put, select, all } from 'redux-saga/effects';
 
 import { omitMetaAndError } from '../testUtils';
-import { transaction } from '../actions/transaction';
+import { TransactionParticipant, transactionSaga, transactionSaga2, transaction } from '../concerns/transaction';
 import { TgoId } from '../reducers/tgo';
 import { TypeId } from '../reducers/itemType';
-import { TransactionParticipant, transactionSaga, transactionSaga2 } from '../sagas/transaction';
 import { RootStateType } from '../reducers';
 import { add } from '../components/inventory';
 import { ItemTypesState } from '../reducers/itemTypes';
