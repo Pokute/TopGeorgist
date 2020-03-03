@@ -1,18 +1,46 @@
-import { put, select, takeEvery, all, call } from 'redux-saga/effects';
-import { ActionType, getType } from 'typesafe-actions';
+import { select, put, all, call, takeEvery } from 'redux-saga/effects';
+import { ActionType, createAction, getType } from 'typesafe-actions';
 
+import { TgoId } from '../reducers/tgo';
 import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from '../components/inventory';
-import * as transactionActions from '../actions/transaction';
 import * as taskQueueActions from '../actions/taskQueue';
-import { TgoId, TgoType } from '../reducers/tgo';
 import { TypeId, ItemType } from '../reducers/itemType';
 import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos';
 import { ItemTypesState } from '../reducers/itemTypes';
 import { RootStateType } from '../reducers';
 
+// Actions:
+
+export const transaction = createAction('TRANSACTION', (resolve) => {
+	return (...participants: TransactionParticipant[]) => {
+		if (participants.length == 0) throw new Error('Can\'t create a transaction with no participants');
+		if (participants.some(p => !p.tgoId)) throw new Error('Transaction participant has no tgoId!');
+		return resolve({
+			participants,
+		});
+	};
+});
+
+export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST', (resolve) => {
+	return (tgoId: TgoId, visitableTgoId: TgoId, items: ReadonlyArray<InventoryItem>) => resolve({
+		tgoId,
+		visitableTgoId,
+		items,
+	});
+});
+
+export const transactionActions = {
+	transaction,
+	storeTransactionRequest,
+};
+export type WorkActionType = ActionType<typeof transactionActions>;
+
+// Sagas:
+
+
 export interface TransactionParticipant {
-	readonly tgoId: TgoId,
-	readonly items: Inventory
+	readonly tgoId: TgoId;
+	readonly items: Inventory;
 };
 
 export type TransactionActionType = ActionType<typeof transactionActions>;
@@ -206,7 +234,7 @@ export const transactionSaga = function* ({ payload: { participants } }: ReturnT
 	return true;
 };
 
-const storeTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
+const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
 	yield put(taskQueueActions.addTaskQueue(
 		tgoId,
 		[{
@@ -231,9 +259,7 @@ const storeTransactionRequest = function* ({ payload: { tgoId, items, visitableT
 	));
 };
 
-const transactionListener = function* () {
+export const transactionRootSaga = function* () {
 	yield takeEvery('TRANSACTION', transactionSaga2);
-	yield takeEvery('STORE_TRANSACTION_REQUEST', storeTransactionRequest);
+	yield takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
 };
-
-export default transactionListener;

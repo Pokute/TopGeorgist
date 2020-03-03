@@ -2,7 +2,7 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue';
-import { transaction } from '../actions/transaction';
+import { transaction } from '../concerns/transaction';
 import * as consumableActions from '../actions/consumable';
 import { TypeId } from '../reducers/itemType';
 

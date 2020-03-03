@@ -8,7 +8,7 @@ import { hasComponentPosition, ComponentPosition } from '../components/position'
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { move, consume } from "../data/recipes";
 import { Inventory, InventoryItem } from "../components/inventory";
-import { transaction } from "../actions/transaction";
+import { transaction, TransactionParticipant } from "../concerns/transaction";
 import { Recipe } from "../reducers/recipe";
 import { setPosition } from "../components/position";
 import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
@@ -18,7 +18,6 @@ import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPo
 import { createWork, handleWork } from "../concerns/work";
 import { removeGoals } from "../actions/goals";
 import { removeWork } from "../actions/goal";
-import { TransactionParticipant } from "./transaction";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();

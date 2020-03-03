@@ -5,7 +5,7 @@ import { Recipe } from '../reducers/recipe';
 import { TgoId, TgoType } from '../reducers/tgo';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId } from '../components/inventory';
 import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork } from '../data/components_new';
-import { transaction } from '../actions/transaction';
+import { transaction } from '../concerns/transaction';
 import { RootStateType } from '../reducers';
 import { add as addTgo, remove as removeTgo } from "../actions/tgos";
 import { addWork as goalAddWork, removeWork } from '../actions/goal';
@@ -35,7 +35,7 @@ export const workActions = {
 };
 export type WorkActionType = ActionType<typeof workActions>;
 
-// Recucer:
+// Reducer:
 
 interface WorkType {
 	readonly inputProgress: Inventory,

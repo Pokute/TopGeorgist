@@ -3,7 +3,7 @@ import { inventoryActions } from '../components/inventory';
 import * as plantableActions from '../actions/plantable';
 import * as tgosActions from '../actions/tgos';
 import * as taskQueueActions from '../actions/taskQueue';
-import { transaction } from '../actions/transaction';
+import { transaction } from '../concerns/transaction';
 import { checkOnVisitableLocation } from '../utils/visitable';
 import { ActionType, getType } from 'typesafe-actions';
 import { RootStateType } from '../reducers';

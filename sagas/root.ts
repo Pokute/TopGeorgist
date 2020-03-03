@@ -12,7 +12,7 @@ import plant from './plantable';
 import player from './player';
 import taskQueue from './taskQueue';
 import ticker from './ticker';
-import transaction from './transaction';
+import { transactionRootSaga } from '../concerns/transaction';
 import view from './view';
 import { workRootSaga } from '../concerns/work';
 
@@ -31,7 +31,7 @@ const rootSaga = function* () {
 	yield* player();
 	yield* taskQueue();
 	yield* ticker();
-	yield* transaction();
+	yield* transactionRootSaga();
 	yield* view();
 	yield* workRootSaga();
 };
