@@ -159,7 +159,7 @@ const transactionSagaCatcher = function* (action: ReturnType<typeof transactionA
 	try {
 		yield* transactionSaga(action);
 	} catch (e) {
-		console.error('Transaction failed with ', e);
+		console.error('Transaction failed with:', e);
 	}
 }
 

@@ -11,6 +11,7 @@ import { Inventory } from '../components/inventory';
 import { TransactionParticipant, transaction } from '../concerns/transaction';
 import rootReducer from '../reducers';
 import rootSaga from '../sagas/root';
+import Sinon from 'sinon';
 
 // Test transactions
 
@@ -18,6 +19,10 @@ import rootSaga from '../sagas/root';
 //  for how to write it.
 
 // Action creator
+
+test.afterEach(() => {
+	Sinon.restore();
+})
 
 test('./actions/transaction.ts: transaction - action creator works', t => {
 	t.notThrows(() => transaction(...[
@@ -142,6 +147,9 @@ test('./sagas/transaction.ts: transaction - fail on no matching item type', asyn
 		inventory: initialInventory,
 	});
 	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+
+	const errorStub = Sinon.stub(console, 'error');
+
 	const { storeState } = await setupRedux()
 		.dispatch(createEaterTgo)
 		.dispatch(transaction(...[{
@@ -156,6 +164,8 @@ test('./sagas/transaction.ts: transaction - fail on no matching item type', asyn
 			count: 20,
 		},
 	]);
+
+	t.assert(errorStub.calledOnce);
 });
 
 test('./sagas/transaction.ts: transaction - insufficient resources', async t => {
@@ -184,6 +194,9 @@ test('./sagas/transaction.ts: transaction - insufficient resources', async t => 
 		inventory: initialInventory,
 	});
 	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+
+	const errorStub = Sinon.stub(console, 'error');
+
 	const { storeState } = await setupRedux()
 		.dispatch(addItemType(itemTypes['food']))
 		.dispatch(addItemType(itemTypes['calories']))
@@ -195,6 +208,8 @@ test('./sagas/transaction.ts: transaction - insufficient resources', async t => 
 		.run(1000);
 	
 	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, initialInventory);
+
+	t.assert(errorStub.calledOnce);
 });
 
 test('./sagas/transaction.ts: transaction - multi-participant case', async t => {
@@ -261,6 +276,9 @@ test('./sagas/transaction.ts: transaction - multi-participant, insufficient reso
 		inventory: initialReceiverInventory,
 	});
 	const { tgoId: receiverTgoId } = createReceiverTgo.payload.tgo;
+
+	const errorStub = Sinon.stub(console, 'error');
+
 	const { storeState } = await setupRedux()
 		.dispatch(addItemType(itemTypes['food']))
 		.dispatch(createGiverTgo)
@@ -285,6 +303,8 @@ test('./sagas/transaction.ts: transaction - multi-participant, insufficient reso
 	
 	t.deepEqual(selectTgo(storeState, giverTgoId).inventory, initialGiverInventory);
 	t.deepEqual(selectTgo(storeState, receiverTgoId).inventory, initialReceiverInventory);
+	
+	t.assert(errorStub.calledOnce);
 });
 
 test('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', async t => {
