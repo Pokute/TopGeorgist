@@ -68,18 +68,13 @@ test('./actions/transaction.ts: transaction - action creator - fail on no partic
 
 // Saga
 
+const setupRedux = () => expectSaga(rootSaga)
+	.withReducer(rootReducer);
+
 const itemTypes: Record<string, Partial<ItemType> & { typeId: TypeId }> = {
 	food: {	typeId: 'food' as TypeId },
 	calories: {	typeId: 'calories' as TypeId },
 } as const;
-
-const wrappedRootSaga = function* () {
-	yield* rootSaga();
-	yield takeEvery('*', function* () {});
-}
-
-const setupRedux = () => expectSaga(wrappedRootSaga)
-	.withReducer(rootReducer);
 
 test('./sagas/transaction.ts: transaction - simple case', async t => {
 	const initialInventory = [
@@ -115,7 +110,7 @@ test('./sagas/transaction.ts: transaction - simple case', async t => {
 			tgoId: eaterTgoId,
 			items: inventoryChange,
 		}]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
 		{
@@ -156,7 +151,7 @@ test('./sagas/transaction.ts: transaction - fail on no matching item type', asyn
 			tgoId: eaterTgoId,
 			items: inventoryChange,
 		}]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
 		{
@@ -205,7 +200,7 @@ test('./sagas/transaction.ts: transaction - insufficient resources', async t => 
 			tgoId: eaterTgoId,
 			items: inventoryChange,
 		}]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, initialInventory);
 
@@ -248,7 +243,7 @@ test('./sagas/transaction.ts: transaction - multi-participant case', async t => 
 				}],
 			},
 		]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, giverTgoId).inventory, [{
 		...initialGiverInventory[0],
@@ -299,7 +294,7 @@ test('./sagas/transaction.ts: transaction - multi-participant, insufficient reso
 				}],
 			},
 		]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, giverTgoId).inventory, initialGiverInventory);
 	t.deepEqual(selectTgo(storeState, receiverTgoId).inventory, initialReceiverInventory);
@@ -334,7 +329,7 @@ test('./sagas/transaction.ts: transaction - virtual inventories can have negativ
 			tgoId: eaterTgoId,
 			items: inventoryChange,
 		}]))
-		.run(1000);
+		.silentRun(0);
 	
 	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
 		{
