@@ -94,3 +94,11 @@ export const trade: Recipe = {
 	],
 	targetItemChanges: [],
 };
+
+export default {
+	move,
+	consume,
+	harvest,
+	smelt,
+	trade,
+} as const;

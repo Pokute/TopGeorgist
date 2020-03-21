@@ -23,7 +23,7 @@ import { moveGoal } from './actions/moveGoal';
 import { consumeGoal } from './actions/consumeGoal';
 import { MapSize } from './reducers/map';
 import { RootStateType } from './reducers';
-import { transaction } from './actions/transaction';
+import { transaction } from './concerns/transaction';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });

@@ -9,7 +9,7 @@ import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import Category from './Category';
 import InventoryTgo from './InventoryTgo';
-import works from '../data/works';
+import recipes from '../data/recipes';
 import { hasComponentInventory } from '../components/inventory';
 import InventoryItem from './InventoryItem.react';
 
@@ -35,7 +35,7 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 				}
 				<InventoryItem
 					ii={i}
-					possibleWorks={works}
+					possibleRecipes={Object.values(recipes)}
 				/>
 				{/* {((props.itemTypes[i.typeId] || {}) // Find the itemType
 					.actions || []) // and with it's actions...

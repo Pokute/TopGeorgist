@@ -2,14 +2,14 @@ import React from 'react';
 import { InventoryItem, ComponentInventory, Inventory } from '../components/inventory';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootStateType } from '../reducers';
-import { Work } from '../reducers/work';
+import { Recipe } from '../reducers/recipe';
 
 const InventoryItem = ({
 	ii,
-	possibleWorks
+	possibleRecipes
 }: {
 	ii: InventoryItem,
-	possibleWorks: Array<Work>
+	possibleRecipes: Array<Recipe>
 }) => {
 	const dispatch = useDispatch();
 	const iiInventory = useSelector<RootStateType, Inventory>(state => (
@@ -22,18 +22,18 @@ const InventoryItem = ({
 		return null;
 	}
 
-	const validWorks = possibleWorks
-		.filter(work => work.targetItemChanges.length > 0)
-		.filter(work => work.targetItemChanges.every(wtic => iiInventory.some(iii => (iii.typeId === wtic.typeId) && (iii.count >= wtic.count))));
+	const validRecipes = possibleRecipes
+		.filter(recipe => recipe.targetItemChanges.length > 0)
+		.filter(recipe => recipe.targetItemChanges.every(wtic => iiInventory.some(iii => (iii.typeId === wtic.typeId) && (iii.count >= wtic.count))));
 
 	return (<>
-		{validWorks.map(validWork => (
+		{validRecipes.map(validRecipe => (
 			<button
-				key={validWork.type}
+				key={validRecipe.type}
 				// onClick={props.onComponentActionClick(ca, i.typeId)}
 				onClick={() => dispatch({ type: 'FOO' })}
 			>
-				{validWork.type}
+				{validRecipe.type}
 			</button>
 		))}
 	</>);
