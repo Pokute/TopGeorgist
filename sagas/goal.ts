@@ -2,7 +2,7 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
 import { Requirement, isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
 import { RootStateType } from "../reducers";
-import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal } from "../data/components_new";
+import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from "../data/components_new";
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from "../components/inventory";
 import { hasComponentPosition, ComponentPosition } from '../components/position';
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
@@ -15,7 +15,7 @@ import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
 import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from "../reducers/map";
-import { createWork, handleWork } from "../concerns/work";
+import { createWork, handleWork, WorkOutput } from "../concerns/work";
 import { removeGoals } from "../actions/goals";
 import { removeWork } from "../actions/goal";
 
@@ -175,23 +175,24 @@ const handleGoalRequirementConsumeTypeId = function* (
 	}
 
 	const actorWithGoals = s.tgos[actorTgo.tgoId];
-	if (!hasComponentInventory(actorWithGoals) || !(hasComponentGoalDoer(actorWithGoals))) {
+	if (
+		!hasComponentInventory(actorWithGoals) 
+		|| !(hasComponentGoalDoer(actorWithGoals))
+		|| !(hasComponentWorkDoer(actorWithGoals))
+	) {
 		return false;
 	}
 
 	const workTgo = s.tgos[goalTgo.goal.workTgoIds[0]];
 	if (!isComponentWork(workTgo)) return false;
 
-	const workOutput: Array<{
-		tgoId: TgoId,
-		awardItems: Inventory,
-	}> | undefined =
-		yield* handleWork(actorWithGoals, goalTgo, workTgo);
+	const workOutput: WorkOutput =
+		yield* handleWork(actorWithGoals, workTgo, goalTgo);
 	if (workOutput) {
 		// const mapped: Array<TransactionParticipant> = workOutput.map(wo => ({ tgoId: wo.tgoId, items: wo.awardItems }));
 		// yield put(all(transaction(...mapped)));
 
-		yield put(removeWorkInstance(goalTgo.tgoId, workInstanceTgo.tgoId));
+		yield put(removeWork(goalTgo.tgoId, workTgo.tgoId));
 		return false;
 	}
 	return false;
@@ -237,11 +238,15 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 	if (!workTgo || !isComponentWork(workTgo)) return false;
 
 	const actorWithGoals = s.tgos[actorTgo.tgoId];
-	if (!hasComponentInventory(actorWithGoals) || !(hasComponentGoalDoer(actorWithGoals))) {
+	if (
+		!hasComponentInventory(actorWithGoals) 
+		|| !(hasComponentGoalDoer(actorWithGoals))
+		|| !(hasComponentWorkDoer(actorWithGoals))
+	) {
 		return false;
 	}
 
-	const workOutput: { tgoId: TgoId, awardItems: Inventory }[] | undefined = yield* handleWork(actorWithGoals, goalTgo, workTgo);
+	const workOutput: WorkOutput = yield* handleWork(actorWithGoals, workTgo, goalTgo);
 	if (workOutput) {
 		// Move the steps towards goal.
 		if (workOutput.length == 0)

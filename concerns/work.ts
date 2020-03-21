@@ -1,10 +1,10 @@
-import { select, put, all, takeEvery } from 'redux-saga/effects';
+import { select, put, all, takeEvery, call } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { Recipe } from '../reducers/recipe';
 import { TgoId, TgoType } from '../reducers/tgo';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId } from '../components/inventory';
-import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork } from '../data/components_new';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory';
+import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new';
 import { transaction } from '../concerns/transaction';
 import { RootStateType } from '../reducers';
 import { add as addTgo, remove as removeTgo } from "../actions/tgos";
@@ -12,6 +12,7 @@ import { addWork as goalAddWork, removeWork } from '../actions/goal';
 import isServer from '../isServer';
 import { TypeId } from '../reducers/itemType';
 import { getTgoByIdFromRootState } from '../reducers/tgos';
+import { tick } from '../actions/ticker';
 
 // Actions:
 
@@ -141,14 +142,20 @@ const checkWorkCompletion = function* (workTgoId: TgoId) {
 	}));
 }
 
+export type WorkOutput = Array<{
+	tgoId: TgoId,
+	awardItems: Inventory,
+}> | undefined;
+
 export const handleWork = function* (
-	actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
-	goalTgo: ComponentGoal & Partial<ComponentInventory>,
+	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
+	// actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
+	goalTgo?: ComponentGoal & Partial<ComponentInventory>,
 ) {
 	const s: RootStateType = yield select();
 	if (!hasComponentGoalDoer(actorTgo)
-		|| !isComponentGoal(goalTgo)
+		|| (goalTgo && !isComponentGoal(goalTgo))
 		|| !isComponentWork(workTgo)){
 		return undefined; // Fail
 	}
@@ -419,8 +426,41 @@ const handleRemoveWork = function* ({ payload: { tgoId, workTgoId }}: ActionType
 	yield put(removeTgoId(tgoId, workTgoId));
 }
 
+const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & ComponentInventory) {
+	const s: RootStateType = yield select();
+	if (owner.inventory.length <= 0) {
+		return false;
+	}
+
+	const works = owner.inventory
+		.filter((ii): ii is InventoryItem & { tgoId: TgoId } => ii.tgoId !== undefined)
+		.map(ii => s.tgos[ii.tgoId!])
+		.filter(isComponentWork);
+
+	const activeWork = works[0];
+	if (!activeWork)
+		return true;
+
+	if (!isComponentWork(activeWork)) return false;
+
+	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
+	yield* handleWork(owner, activeWork);
+	return true;
+}
+
+const handleWorkTick = function* () {
+	const s: RootStateType = yield select();
+	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
+	const workOwners = Object.values(s.tgos)
+		.filter(hasComponentWorkDoer)
+		.filter(hasComponentInventory);
+
+	for (const workOwner of workOwners) yield call(handleWorksForOwner, workOwner);
+};
+
 export const workRootSaga = function* () {
 	if (!isServer) return;
 	yield takeEvery(getType(createWork), handleCreateWork);
 	yield takeEvery(getType(removeWork), handleRemoveWork);
+	yield takeEvery(getType(tick), handleWorkTick);
 };

@@ -45,32 +45,51 @@ Work is an application of recipe. Work is always done by a single Tgo.
 
 Work Inventory, inputs and outputs:
 
-	* Some works are immediate and don't require their own inventory:
-		* Their recipe have at most one tangible & continous input&output item.
-		* Their recipe never take longer than one tick.
-		* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult?
-		* Examples:
-			* A screwdriving work.
-	* Other works have their own inventory:
-		* Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
-		* Their recipe requires multiple ticks.
-		* Items inputed might be refunded.
-		* Can't be assigned to an in-world item.
-		* Examples:
-			* Long thinking process, like deciding where to shop.
-			* Eating, requires time, inventory items and skills.
-	* Some works are actually in-world items:
-		* Examples:
-			* Building a house
-			* Continuing of furniture assembling:
-				* MORE DETAIL NEEDED
-			* Repairing a screwdriver.
-				* HOW WOULD THIS WORK?
-		* Q: Sounds like prime candidate for contract. This could have multiple contributors?
+* Some works are immediate and don't require their own inventory:
+	* Their recipe have at most one tangible & continous input&output item.
+	* Their recipe never take longer than one tick.
+	* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult?
+	* Examples:
+		* A screwdriving work.
+* Other works have their own inventory:
+	* Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
+	* Their recipe requires multiple ticks.
+	* Items inputed might be refunded.
+	* Can't be assigned to an in-world item.
+	* Examples:
+		* Long thinking process, like deciding where to shop.
+		* Eating, requires time, inventory items and skills.
+* Some works are actually in-world items:
+	* Examples:
+		* Building a house
+		* Continuing of furniture assembling:
+			* MORE DETAIL NEEDED
+		* Repairing a screwdriver.
+			* HOW WOULD THIS WORK?
+	* Q: Sounds like prime candidate for contract. This could have multiple contributors?
 
 Work can take inputs and outputs from `WorkDoer`:`inventory` and possibly `targetTgo`.`inventory`.
 
 Move work practically uses a single inventory.
+
+Works live in inventories:
+
+* Either in a Tgo With `ComponentWorkDoer`'s inventory, where the works are done directly.
+* Or inside GoalTgo's inventory. In this case it's the goal that activates that work.
+
+Other concerns
+
+* There could be multiple goals with same type of work.
+* What are the priorities of those?
+* Do goals run the work or do works work "by themselves"?
+* Parallel works are possible with similar inputs. How to prevent those two from double-using limited resources (like thinking power or hand dexterity)?
+	* A: Have separate workers inside the "Player" that have their own inventory/buffer of "thinking power". Player has a brain -> it generates up to 10 thinking power each tick.
+		* Easier to have a buffer that doesn't exhaust immediately. But do we need this?
+	* B: Players have separate mechanisms that fill up player's inventory with "thinking power" each tick.
+		* Can be cumbersome to set limits how much the resource can grow, how much there are reserves, etc.
+		* The resources must be pre-filled at the start of each tick.
+	* C: Make a graph/flow/reactive system?
+		* Sounds complicated.
 
 # Examples
 
