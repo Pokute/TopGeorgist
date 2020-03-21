@@ -94,7 +94,7 @@ Milestone 3:
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
 	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
 	☐ Fix eating, planting, buying, selling for new goals.
-		☐ New consuming goal / requirement.
+		✔ New consuming goal / requirement.
 
 Milestone 4:
 
@@ -110,7 +110,7 @@ Milestone 4:
 	☐ Client automatic reconnect.
 	☐ Hot reload?
 	☐ Progressbar Storybook tests.
-	☐ React-Redux -> 7.1
+	✔ React-Redux -> 7.1
 		☐ Convert to redux hooks.
 
 Milestone 5:
@@ -160,6 +160,7 @@ Info:
 	https://en.wikipedia.org/wiki/The_Law_of_Peoples
 	https://en.wikipedia.org/wiki/Justice_as_Fairness:_A_Restatement
 	
+	Very impressive world gen: https://sote.miraheze.org/wiki/World
 
 Icebox:
 
