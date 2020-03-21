@@ -1,9 +1,12 @@
 import { createAction } from 'typesafe-actions';
-import { ItemType, TypeId } from '../reducers/itemType';
+import { ItemType, TypeId, defaultItemType } from '../reducers/itemType';
 
 export const add = createAction('ITEMTYPE_ADD', (resolve) => {
-	return (itemType: ItemType) => resolve({
-		itemType,
+	return (itemType: Partial<ItemType> & { typeId: TypeId }) => resolve({
+		itemType: {
+			...defaultItemType,
+			...itemType,
+		},
 	});
 });
 

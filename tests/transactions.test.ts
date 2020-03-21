@@ -1,16 +1,16 @@
-import { default as test } from 'ava';
-import sinon from 'sinon';
-import { put, select, all } from 'redux-saga/effects';
+import test from 'ava';
+import { takeEvery } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
 
-import { omitMetaAndError } from '../testUtils';
-import { TransactionParticipant, transactionSaga, transactionSaga2, transaction } from '../concerns/transaction';
+import { add as addTgo } from '../actions/tgos';
+import { selectTgo } from '../concerns/tgos';
 import { TgoId } from '../reducers/tgo';
-import { TypeId } from '../reducers/itemType';
-import { RootStateType } from '../reducers';
-import { add } from '../components/inventory';
-import { ItemTypesState } from '../reducers/itemTypes';
-import { TgosState } from '../reducers/tgos';
-import { getType } from 'typesafe-actions';
+import { add as addItemType } from '../actions/itemTypes';
+import { TypeId, ItemType } from '../reducers/itemType';
+import { Inventory } from '../components/inventory';
+import { TransactionParticipant, transaction } from '../concerns/transaction';
+import rootReducer from '../reducers';
+import rootSaga from '../sagas/root';
 
 // Test transactions
 
@@ -19,8 +19,8 @@ import { getType } from 'typesafe-actions';
 
 // Action creator
 
-test('./actions/transaction.ts: transaction - action creator', t => {
-	t.deepEqual(omitMetaAndError(transaction(...[
+test('./actions/transaction.ts: transaction - action creator works', t => {
+	t.notThrows(() => transaction(...[
 		{
 			tgoId: 'buyer' as TgoId,
 			items: [
@@ -47,46 +47,14 @@ test('./actions/transaction.ts: transaction - action creator', t => {
 				}
 			],
 		},
-	])), {
-		type: getType(transaction),
-		payload: {
-			participants: [
-				{
-					tgoId: 'buyer' as TgoId,
-					items: [
-						{
-							typeId: 'money' as TypeId,
-							count: -5,
-						},
-						{
-							typeId: 'cake' as TypeId,
-							count: 1,
-						}
-					],
-				},
-				{
-					tgoId: 'seller' as TgoId,
-					items: [
-						{
-							typeId: 'money' as TypeId,
-							count: 5,
-						},
-						{
-							typeId: 'cake' as TypeId,
-							count: -1,
-						}
-					],
-				},
-			]
-		}
-	});
+	]));
 });
 
-test('./actions/transaction.ts: transaction - fail on no participants', t => {
+test('./actions/transaction.ts: transaction - action creator - fail on no participants', t => {
 	t.throws(() => transaction(...[]));
 });
 
-test('./actions/transaction.ts: transaction - fail on no participant tgoId', t => {
+test('./actions/transaction.ts: transaction - action creator - fail on no participant tgoId', t => {
 	// Typescript actually handles most of this already.
 	t.throws(() => transaction(...[{
 		items: [],
@@ -95,284 +63,263 @@ test('./actions/transaction.ts: transaction - fail on no participant tgoId', t =
 
 // Saga
 
-test('./sagas/transaction.ts: transaction - simple case', t => {
-	const tSaga = transactionSaga2(transaction(...[{
-		tgoId: 'eater' as TgoId,
-		items: [
-			{
-				typeId: 'food' as TypeId,
-				count: -1,
-			},
-			{
-				typeId: 'calories' as TypeId,
-				count: 5,
-			},
-		]
-	}]));
+const itemTypes: Record<string, Partial<ItemType> & { typeId: TypeId }> = {
+	food: {	typeId: 'food' as TypeId },
+	calories: {	typeId: 'calories' as TypeId },
+} as const;
 
-	// This would be the select.
-	tSaga.next();
+const wrappedRootSaga = function* () {
+	yield* rootSaga();
+	yield takeEvery('*', function* () {});
+}
 
-	const store = {
-		itemTypes: {
-			food: {
-				typeId: 'food' as TypeId,
-				stackable: true,
+const setupRedux = () => expectSaga(wrappedRootSaga)
+	.withReducer(rootReducer);
 
-			},
-			calories: {
-				typeId: 'calories' as TypeId,
-				stackable: true,
-			},
-		} as ItemTypesState,
-		tgos: {
-			'eater': {
-				tgoId: 'eater' as TgoId,
-				inventory: [
-					{
-						typeId: 'food' as TypeId,
-						count: 1,
-					},
-				],
-			},
-		} as TgosState,
-	} as unknown as RootStateType;
-
-	// Give the store contents.
-	const puts = tSaga.next(store).value;
-
-	const resultAction = all([
-		put(add('eater' as TgoId, 'food' as TypeId, -1)),
-		put(add('eater' as TgoId, 'calories' as TypeId, 5)),
-	]);
-
-	t.deepEqual(
-		puts,
-		resultAction,
-	);
-});
-
-test('./sagas/transaction.ts: transaction - insufficient resources', t => {
-	const tSaga = transactionSaga2(transaction(...[{
-		tgoId: 'eater' as TgoId,
-		items: [
-			{
-				typeId: 'food' as TypeId,
-				count: -1,
-			},
-			{
-				typeId: 'calories' as TypeId,
-				count: 5,
-			},
-		]
-	}]));
-
-	// This would be the select.
-	tSaga.next();
-
-	const store = {
-		itemTypes: {
-			food: {
-				typeId: 'food' as TypeId,
-				stackable: true,
-				positiveOnly: true,
-			},
-			calories: {
-				typeId: 'calories' as TypeId,
-				stackable: true,
-			},
-		} as ItemTypesState,
-		tgos: {
-			'eater': {
-				tgoId: 'eater' as TgoId,
-				inventory: [
-					{
-						typeId: 'food' as TypeId,
-						count: 0,
-					},
-				],
-			},
-		} as TgosState,
-	} as unknown as RootStateType;
-
-	// Give the store contents.
-	t.throws(() => tSaga.next(store));
-});
-
-test('./sagas/transaction.ts: transaction - multi-participant case', t => {
-	const tSaga = transactionSaga2(transaction(...[
+test('./sagas/transaction.ts: transaction - simple case', async t => {
+	const initialInventory = [
 		{
-			tgoId: 'giver' as TgoId,
-			items: [
-				{
+			typeId: 'food' as TypeId,
+			count: 20,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 25,
+		}
+	];
+	const inventoryChange = [
+		{
+			typeId: 'food' as TypeId,
+			count: -1,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 5,
+		},
+	];
+
+	const createEaterTgo = addTgo({
+		inventory: initialInventory,
+	});
+	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(addItemType(itemTypes['food']))
+		.dispatch(addItemType(itemTypes['calories']))
+		.dispatch(createEaterTgo)
+		.dispatch(transaction(...[{
+			tgoId: eaterTgoId,
+			items: inventoryChange,
+		}]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
+		{
+			typeId: 'food' as TypeId,
+			count: 19,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 30,
+		},
+	]);
+});
+
+test('./sagas/transaction.ts: transaction - fail on no matching item type', async t => {
+	const initialInventory = [
+		{
+			typeId: 'unknown' as TypeId,
+			count: 20,
+		},
+	];
+	const inventoryChange = [
+		{
+			typeId: 'unknown' as TypeId,
+			count: -1,
+		},
+	];
+
+	const createEaterTgo = addTgo({
+		inventory: initialInventory,
+	});
+	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(createEaterTgo)
+		.dispatch(transaction(...[{
+			tgoId: eaterTgoId,
+			items: inventoryChange,
+		}]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
+		{
+			typeId: 'unknown' as TypeId,
+			count: 20,
+		},
+	]);
+});
+
+test('./sagas/transaction.ts: transaction - insufficient resources', async t => {
+	const initialInventory = [
+		{
+			typeId: 'food' as TypeId,
+			count: 0,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 25,
+		}
+	];
+	const inventoryChange = [
+		{
+			typeId: 'food' as TypeId,
+			count: -1,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 5,
+		},
+	];
+
+	const createEaterTgo = addTgo({
+		inventory: initialInventory,
+	});
+	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(addItemType(itemTypes['food']))
+		.dispatch(addItemType(itemTypes['calories']))
+		.dispatch(createEaterTgo)
+		.dispatch(transaction(...[{
+			tgoId: eaterTgoId,
+			items: inventoryChange,
+		}]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, initialInventory);
+});
+
+test('./sagas/transaction.ts: transaction - multi-participant case', async t => {
+	const initialGiverInventory = [
+		{
+			typeId: 'food' as TypeId,
+			count: 5,
+		},
+	];
+	const createGiverTgo = addTgo({
+		inventory: initialGiverInventory,
+	});
+	const { tgoId: giverTgoId } = createGiverTgo.payload.tgo;
+	const initialReceiverInventory: Inventory = [];
+	const createReceiverTgo = addTgo({
+		inventory: initialReceiverInventory,
+	});
+	const { tgoId: receiverTgoId } = createReceiverTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(addItemType(itemTypes['food']))
+		.dispatch(createGiverTgo)
+		.dispatch(createReceiverTgo)
+		.dispatch(transaction(...[
+			{
+				tgoId: giverTgoId,
+				items: [{
 					typeId: 'food' as TypeId,
 					count: -2,
-				},
-			]
-		},
-		{
-			tgoId: 'receiver' as TgoId,
-			items: [
-				{
+				}],
+			},
+			{
+				tgoId: receiverTgoId,
+				items: [{
 					typeId: 'food' as TypeId,
 					count: 2,
-				},
-			]
+				}],
+			},
+		]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, giverTgoId).inventory, [{
+		...initialGiverInventory[0],
+		count: 3,
+	}]);
+	t.deepEqual(selectTgo(storeState, receiverTgoId).inventory, [{
+		typeId: 'food' as TypeId,
+		count: 2,
+	}]);
+});
+
+test('./sagas/transaction.ts: transaction - multi-participant, insufficient resources', async t => {
+	const initialGiverInventory = [
+		{
+			typeId: 'food' as TypeId,
+			count: 5,
 		},
-	]));
-
-	// This would be the select.
-	t.notDeepEqual(
-		tSaga.next().value,
-		select(() => {}),
-	);
-
-	const store = {
-		itemTypes: {
-			food: {
-				typeId: 'food' as TypeId,
-				stackable: true,
-				positiveOnly: true,
+	];
+	const createGiverTgo = addTgo({
+		inventory: initialGiverInventory,
+	});
+	const { tgoId: giverTgoId } = createGiverTgo.payload.tgo;
+	const initialReceiverInventory: Inventory = [];
+	const createReceiverTgo = addTgo({
+		inventory: initialReceiverInventory,
+	});
+	const { tgoId: receiverTgoId } = createReceiverTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(addItemType(itemTypes['food']))
+		.dispatch(createGiverTgo)
+		.dispatch(createReceiverTgo)
+		.dispatch(transaction(...[
+			{
+				tgoId: giverTgoId,
+				items: [{
+					typeId: 'food' as TypeId,
+					count: -6,
+				}],
 			},
-		} as ItemTypesState,
-		tgos: {
-			'giver': {
-				tgoId: 'giver' as TgoId,
-				inventory: [
-					{
-						typeId: 'food' as TypeId,
-						count: 4,
-					},
-				],
+			{
+				tgoId: receiverTgoId,
+				items: [{
+					typeId: 'food' as TypeId,
+					count: 6,
+				}],
 			},
-			'receiver': {
-				tgoId: 'receiver' as TgoId,
-				inventory: [
-				],
-			},
-		} as TgosState,
-	} as unknown as RootStateType;
+		]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, giverTgoId).inventory, initialGiverInventory);
+	t.deepEqual(selectTgo(storeState, receiverTgoId).inventory, initialReceiverInventory);
+});
 
-	// Give the store contents.
-	const puts = tSaga.next(store).value;
+test('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', async t => {
+	const initialInventory = [
+		{
+			typeId: 'food' as TypeId,
+			count: 2,
+		},
+	];
+	const inventoryChange = [
+		{
+			typeId: 'food' as TypeId,
+			count: -5,
+		},
+	];
 
-	const resultAction = all([
-		put(add('giver' as TgoId, 'food' as TypeId, -2)),
-		put(add('receiver' as TgoId, 'food' as TypeId, 2)),
+	const createEaterTgo = addTgo({
+		inventory: initialInventory,
+		isInventoryVirtual: true,
+	});
+	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
+	const { storeState } = await setupRedux()
+		.dispatch(addItemType(itemTypes['food']))
+		.dispatch(addItemType(itemTypes['calories']))
+		.dispatch(createEaterTgo)
+		.dispatch(transaction(...[{
+			tgoId: eaterTgoId,
+			items: inventoryChange,
+		}]))
+		.run(1000);
+	
+	t.deepEqual(selectTgo(storeState, eaterTgoId).inventory, [
+		{
+			typeId: 'food' as TypeId,
+			count: -3,
+		},
 	]);
-
-	t.deepEqual(
-		puts,
-		resultAction,
-	);
-});
-
-test('./sagas/transaction.ts: transaction - multi-participant, insufficient resources', t => {
-	const tSaga = transactionSaga2(transaction(...[
-		{
-			tgoId: 'giver' as TgoId,
-			items: [
-				{
-					typeId: 'food' as TypeId,
-					count: -5,
-				},
-			]
-		},
-		{
-			tgoId: 'receiver' as TgoId,
-			items: [
-				{
-					typeId: 'food' as TypeId,
-					count: 5,
-				},
-			]
-		},
-	]));
-
-	// This would be the select.
-	t.notDeepEqual(
-		tSaga.next().value,
-		select(() => {}),
-	);
-
-	const store = {
-		itemTypes: {
-			food: {
-				typeId: 'food' as TypeId,
-				stackable: true,
-				positiveOnly: true,
-			},
-		} as ItemTypesState,
-		tgos: {
-			'giver': {
-				tgoId: 'giver' as TgoId,
-				inventory: [
-					{
-						typeId: 'food' as TypeId,
-						count: 4,
-					},
-				],
-			},
-			'receiver': {
-				tgoId: 'receiver' as TgoId,
-				inventory: [
-				],
-			},
-		} as TgosState,
-	} as unknown as RootStateType;
-	
-	t.throws(() => tSaga.next(store));
-});
-
-test('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', t => {
-const tSaga = transactionSaga2(transaction(...[
-		{
-			tgoId: 'virtualInventoryHolder' as TgoId,
-			items: [
-				{
-					typeId: 'normallyPositiveOnlyType' as TypeId,
-					count: -5,
-				},
-			]
-		},
-	]));
-
-	// This would be the select.
-	t.notDeepEqual(
-		tSaga.next().value,
-		select(() => {}),
-	);
-
-	const store = {
-		itemTypes: {
-			normallyPositiveOnlyType: {
-				typeId: 'normallyPositiveOnlyType' as TypeId,
-				stackable: true,
-				positiveOnly: true,
-			},
-		} as ItemTypesState,
-		tgos: {
-			'virtualInventoryHolder': {
-				tgoId: 'virtualInventoryHolder' as TgoId,
-				isInventoryVirtual: true,
-				inventory: [
-					{
-						typeId: 'normallyPositiveOnlyType' as TypeId,
-						count: 2,
-					},
-				],
-			},
-		} as TgosState,
-	} as unknown as RootStateType;
-	
-
-	// Give the store contents.
-	const puts = tSaga.next(store).value;
-
-	t.deepEqual(
-		puts,
-		all([
-			put(add('virtualInventoryHolder' as TgoId, 'normallyPositiveOnlyType' as TypeId, -5)),
-		]),
-	);
 });

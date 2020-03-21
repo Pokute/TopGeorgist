@@ -8,15 +8,15 @@ export type TypeId = Opaque<string, 'TypeId'>;
 
 export interface InitialItemType {
 	readonly label?: string,
-	readonly stackable?: boolean,
-	readonly positiveOnly?: boolean,
-	readonly isInteger?: boolean,
+	readonly stackable: boolean,
+	readonly positiveOnly: boolean,
+	readonly isInteger: boolean,
 	readonly building?: boolean,
 	readonly growsIntoTypeId?: TypeId,
 	readonly components?: ComponentArray,
-	readonly isStorable?: boolean,
+	readonly isStorable: boolean,
 	readonly isTgoId?: boolean,
-	readonly redeemable?: boolean,
+	readonly redeemable: boolean,
 	readonly inventory?: Inventory,
 };
 
@@ -24,10 +24,17 @@ export interface ItemType extends Readonly<InitialItemType> {
 	readonly typeId: TypeId,
 };
 
-const initialState: ItemType = {
-	typeId: '' as TypeId,
+export const defaultItemType: Pick<ItemType, 'stackable' | 'positiveOnly' | 'isInteger' | 'isStorable' | 'redeemable'> = {
 	stackable: true,
+	positiveOnly: true,
+	isInteger: false,
+	isStorable: true,
 	redeemable: true,
+} as const;
+
+const initialState: ItemType = {
+	...defaultItemType,
+	typeId: '' as TypeId,
 };
 
 // Itemtypes should not be modifiable during runtime.

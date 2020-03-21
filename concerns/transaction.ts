@@ -64,7 +64,7 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 		tgo: getTgoById(tgoId),
 	})
 	const participantsWithTgo = participants
-		.map(getTgoForParticipants)
+		.map(getTgoForParticipants);
 	if (participantsWithTgo.some(({ tgo }) => !tgo))
 		throw new Error('Participant tgoId does not have tgo!');
 	
@@ -109,9 +109,12 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 		itemsBalance: participant.itemsBalance.map(addItemType),
 	}));
 	
-	if (participantsWithItemBalanceTypes.some(({ itemsBalance }) => itemsBalance.some(({ type }) => !type)))
-		throw new Error('Participant item doesn\'t have a matching item type');
-			
+	const itemBalancesWithoutTypes = participantsWithItemBalanceTypes.flatMap(({ itemsBalance }) => itemsBalance.filter(({ type }) => !type));
+
+	if (itemBalancesWithoutTypes.length > 0) {
+		throw new Error(`Transaction item of type "${itemBalancesWithoutTypes[0].typeId}" ${itemBalancesWithoutTypes.length > 1 ? `and (${itemBalancesWithoutTypes.length - 1} others) ` : ''}doesn\'t have a matching item type.`);
+	}
+	
 	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
 		...rest,
 		itemsBalance: itemsBalance.map(({ type, ...itemsRest }) => ({
@@ -151,6 +154,14 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 		.map(createInventoryAddForParticipant).flat(1);
 	yield all(inventoryAdds.map(a => put(a)));
 };
+
+const transactionSagaCatcher = function*  (action: ReturnType<typeof transactionActions.transaction>) {
+	try {
+		yield* transactionSaga2(action);
+	} catch (e) {
+		console.error('Transaction failed with ', e);
+	}
+}
 
 export const transactionSaga = function* ({ payload: { participants } }: ReturnType<typeof transactionActions.transaction>) {
 
@@ -260,6 +271,6 @@ const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visi
 };
 
 export const transactionRootSaga = function* () {
-	yield takeEvery('TRANSACTION', transactionSaga2);
+	yield takeEvery('TRANSACTION', transactionSagaCatcher);
 	yield takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
 };
