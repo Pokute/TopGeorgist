@@ -21,6 +21,11 @@ const items: InitialItemTypesState = {
 		stackable: true,
 		isInteger: false,
 	},
+	hydrocarbons: {
+		label: 'hydrocarbons',
+		stackable: true,
+		isInteger: false,
+	},
 	money: {
 		label: 'Money',
 		stackable: true,
@@ -34,7 +39,7 @@ const items: InitialItemTypesState = {
 		],
 		inventory: [
 			{
-				typeId: 'calories' as TypeId,
+				typeId: 'hydrocarbons' as TypeId,
 				count: 500,
 			},
 		],

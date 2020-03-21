@@ -4,11 +4,12 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import isServer from '../isServer'
 import * as tickerActions from '../actions/ticker';
-import components, { ComponentTicker } from '../data/components';
+// import components, { ComponentTicker } from '../data/components';
 import { set as allSet } from '../actions/allSet';
 import { RootStateType } from '../reducers';
 import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo';
 import { AnyAction } from 'redux';
+// import { hasComponentComponents } from '../data/components_new';
 
 const tickerSaga = function* () {
 	while (true) {
@@ -26,21 +27,22 @@ const tick = function* () {
 		components: ReadonlyArray<ComponentType>,
 	};
 
-	const newActions: ReadonlyArray<AnyAction> = (Object.values(oldState.tgos)
-		.filter(tgo => tgo.components) as ReadonlyArray<TgoTypeWithComponents>)
-		.map(tgo => (tgo.components
-			.map(cId => (
-				typeof cId === 'string'
-					? [cId, undefined]
-					: cId
-			)) as ReadonlyArray<[ ComponentId, ComponentProps ]>)
-			.map(([cName, cProps]) => [components[cName], cProps])
-			.filter(c => c[0] && 'tick' in c[0])
-			.map(c => (c[0] as ComponentTicker).tick(tgo, c[1]))
-			.filter(actions => actions && actions.length > 0) as ReadonlyArray<ReadonlyArray<AnyAction>>
-		)
-		.reduce((acc: ReadonlyArray<ReadonlyArray<AnyAction>>, action) => [...acc, ...action], []) // Flatten one level
-		.reduce((acc: ReadonlyArray<AnyAction>, action) => [...acc, ...action], []);
+	const newActions: ReadonlyArray<AnyAction> = [];
+	// const newActions: ReadonlyArray<AnyAction> = Object.values<TgoType>(oldState.tgos)
+	// 	.filter(hasComponentComponents);
+	// 	.map(tgo => tgo.components
+	// 		.map<[ComponentId, typeof components[0] | undefined]>(cId => 
+	// 			Array.isArray(cId)
+	// 				? cId
+	// 				: [cId, undefined]
+	// 		)
+	// 		.map(([cName, cProps]) => [components[cName], cProps])
+	// 		.filter(([component]) => component && hasComponentTicker(component))
+	// 		.map(([component, componentProps]) => (component as ComponentTicker).tick(tgo, componentProps))
+	// 		.filter(actions => actions?.length > 0) as ReadonlyArray<ReadonlyArray<AnyAction>>
+	// 	)
+	// 	.reduce((acc: ReadonlyArray<ReadonlyArray<AnyAction>>, action) => [...acc, ...action], []) // Flatten one level
+	// 	.reduce((acc: ReadonlyArray<AnyAction>, action) => [...acc, ...action], []);
 	yield all(newActions.map(a => put(a)));
 
 	const newState: RootStateType = yield select();

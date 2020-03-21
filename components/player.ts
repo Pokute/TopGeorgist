@@ -7,4 +7,4 @@ export type ComponentPlayer = ComponentLabel & ComponentUniqueLabel & {
 }
 
 export const hasComponentPlayer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPlayer>) =>
-	tgo && (tgo.player !== undefined && tgo.player === true)
+	tgo?.player !== undefined && tgo?.player === true;

@@ -3,7 +3,7 @@ import { select, put, takeEvery, call, all } from "redux-saga/effects";
 import { Requirement, isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
 import { RootStateType } from "../reducers";
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal } from "../data/components_new";
-import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId } from "../components/inventory";
+import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from "../components/inventory";
 import { hasComponentPosition, ComponentPosition } from '../components/position';
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { moveWork, consumeWork } from "../data/works";
@@ -11,7 +11,7 @@ import { Inventory, InventoryItem } from "../components/inventory";
 import { transaction } from "../actions/transaction";
 import { Work } from "../reducers/work";
 import { setPosition } from "../components/position";
-import { remove as tgosRemove } from "../actions/tgos";
+import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
 import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from "../reducers/map";
@@ -83,6 +83,36 @@ const completeWork = function* (actorTgoId: TgoId, work: Work) {
 	return false;
 };
 
+const initGoal = function* (
+	actorTgo: TgoRoot & Partial<ComponentGoalDoer> & Partial<ComponentInventory>,
+	goalTgo: ComponentGoal,
+) {
+	if (hasComponentGoalDoer(actorTgo)) {
+		// yield put(addGoals(actorTgo.tgoId, [goalTgo.tgoId]));
+	}
+	if (hasComponentInventory(actorTgo)) {
+		yield put(inventoryAddTgoId(actorTgo.tgoId, goalTgo.tgoId));
+	}
+
+	// Remove Tgo from tgos
+	yield put(tgosAdd(goalTgo))
+}
+
+const cleanUpGoal = function* (
+	actorTgo: TgoRoot & Partial<ComponentGoalDoer> & Partial<ComponentInventory>,
+	goalTgo: ComponentGoal,
+) {
+	if (hasComponentGoalDoer(actorTgo)) {
+		yield put(removeGoals(actorTgo.tgoId, [goalTgo.tgoId]));
+	}
+	if (hasComponentInventory(actorTgo)) {
+		yield put(inventoryRemoveTgoId(actorTgo.tgoId, goalTgo.tgoId));
+	}
+
+	// Remove Tgo from tgos
+	yield put(tgosRemove(goalTgo.tgoId))
+}
+
 const handleGoalRequirementConsumeTypeId = function* (
 	actorTgo: ComponentInventory & Partial<ComponentGoalDoer>,
 	goalTgo: ComponentGoal & Partial<ComponentInventory>,
@@ -129,16 +159,8 @@ const handleGoalRequirementConsumeTypeId = function* (
 		return false; // Start saga from the top again.
 	}
 
-	const cleanUpGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
-		yield put(removeGoals(actorTgoId, [goalTgoId]));
-		yield put(removeTgoId(actorTgoId, goalTgoId));
-
-		// Remove Tgo from tgos
-		yield put(tgosRemove(goalTgoId))
-	}
-
 	if (goalTgo.inventory.filter(ii => ii.count !== 0).length === 0) {
-		yield* cleanUpGoal(actorTgo.tgoId, goalTgo.tgoId);
+		yield* cleanUpGoal(actorTgo, goalTgo);
 		return true;
 	}
 
@@ -196,17 +218,9 @@ const handleGoalRequirementConsume = function* (actorTgo: ComponentInventory, go
 const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTgo: ComponentGoal,  { targetPosition }: RequirementMove) {
 	const s: RootStateType = yield select();
 
-	const goalComplete = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
-		yield put(removeGoals(actorTgoId, [goalTgoId]))
-		yield put(removeTgoId(actorTgoId, goalTgoId));
-
-		// Remove Tgo from tgos
-		yield put(tgosRemove(goalTgoId))
-	}
-
 	if (positionMatches(actorTgo.position, targetPosition)) {
 		// The goal requirement completed.
-		yield* goalComplete(actorTgo.tgoId, goalTgo.tgoId);
+		yield* cleanUpGoal(actorTgo, goalTgo);
 		return true
 	}
 
@@ -245,13 +259,13 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 			// yield put(res);
 			yield put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y } as MapPosition));
 			if (positionMatches(actorTgo.position, targetPosition)) {
-				yield* goalComplete(actorTgo.tgoId, goalTgo.tgoId);
+				yield* cleanUpGoal(actorTgo, goalTgo);
 				break;
 			}
 		}
 		yield put(removeWorkInstance(goalTgo.tgoId, workInstanceTgo.tgoId));
 		if (positionMatches(actorTgo.position, targetPosition)) {
-			yield* goalComplete(actorTgo.tgoId, goalTgo.tgoId);
+			yield* cleanUpGoal(actorTgo, goalTgo);
 			return true;
 		}
 	}

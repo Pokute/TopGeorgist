@@ -34,7 +34,7 @@ export const consumeWork: Work = {
 	],
 	targetItemChanges: [
 		{
-			typeId: 'calories' as TypeId,
+			typeId: 'hydrocarbons' as TypeId,
 			count: -100,
 		},
 	],
@@ -94,3 +94,11 @@ export const tradeWork: Work = {
 	],
 	targetItemChanges: [],
 };
+
+export default [
+	moveWork,
+	consumeWork,
+	harvestWork,
+	smeltWork,
+	tradeWork,
+];
