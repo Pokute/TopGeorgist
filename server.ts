@@ -23,6 +23,7 @@ import { moveGoal } from './actions/moveGoal';
 import { consumeGoal } from './actions/consumeGoal';
 import { MapSize } from './reducers/map';
 import { RootStateType } from './reducers';
+import { transaction } from './actions/transaction';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -93,7 +94,7 @@ try {
 						case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':
-						case 'TRANSACTION':
+						case getType(transaction):
 						case 'PLANT':
 						case 'HARVEST':
 						case 'STORE_TRANSACTION_REQUEST':

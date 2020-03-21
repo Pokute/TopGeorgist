@@ -69,13 +69,13 @@ Has an inventory that tracks how many items have been eaten.
 While not enough items consumed: {
 
 	EatWork: {
-		Converts calories to calories.
+		Converts hydrocarbons to calories.
 	}
 }
 
 Pineapple has a prototype with inventory: [
 	{
-		typeId: 'calories',
+		typeId: 'hydrocarbons',
 		count: 500,
 	},
 ]

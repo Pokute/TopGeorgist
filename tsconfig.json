@@ -6,7 +6,7 @@
 		"module": "esnext",
 		"moduleResolution": "node",
 		"jsx": "react",
-		"target": "esnext",
+		"target": "es2019",
 		"allowJs": true,
 		"strict": true,
 		"allowSyntheticDefaultImports": true,
@@ -25,7 +25,8 @@
 		"ui/**/*",
 		"utils/**/*",
 		"data/**/*",
-		"tests/**/*"
+		"tests/**/*",
+		"typings/**/*"
 	],
 	"exclude": [
 		"node_modules"

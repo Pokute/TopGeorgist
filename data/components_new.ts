@@ -1,4 +1,4 @@
-import { Action } from "./components";
+import { Action, ComponentTicker } from "./components";
 import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
 import { TaskQueueType } from "../reducers/taskQueue";
 import { Goal } from "../reducers/goal";
