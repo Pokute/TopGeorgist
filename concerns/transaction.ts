@@ -45,7 +45,7 @@ export interface TransactionParticipant {
 
 export type TransactionActionType = ActionType<typeof transactionActions>;
 
-export const transactionSaga2 = function* ({ payload: { participants } }: ReturnType<typeof transactionActions.transaction>) {
+export const transactionSaga = function* ({ payload: { participants } }: ReturnType<typeof transactionActions.transaction>) {
 	if (!participants.every((p) => {
 		if (!p) return false;
 		if (!p.tgoId) return false;
@@ -155,95 +155,13 @@ export const transactionSaga2 = function* ({ payload: { participants } }: Return
 	yield all(inventoryAdds.map(a => put(a)));
 };
 
-const transactionSagaCatcher = function*  (action: ReturnType<typeof transactionActions.transaction>) {
+const transactionSagaCatcher = function* (action: ReturnType<typeof transactionActions.transaction>) {
 	try {
-		yield* transactionSaga2(action);
+		yield* transactionSaga(action);
 	} catch (e) {
 		console.error('Transaction failed with ', e);
 	}
 }
-
-export const transactionSaga = function* ({ payload: { participants } }: ReturnType<typeof transactionActions.transaction>) {
-
-	if (!participants.every((p) => {
-		if (!p) return false;
-		if (!p.tgoId) return false;
-		return true;
-	})) {
-		console.log('Participants are wrong!');
-		return false;
-	}
-
-	interface InventoryItemWithInfo extends InventoryItem {
-		readonly type: ItemType,
-		readonly ownerCount: number,
-	};
-	
-	interface TransactionParticipantWithInfo {
-		readonly tgoId: TgoId,
-		readonly items: ReadonlyArray<InventoryItemWithInfo>
-		readonly isInventoryVirtual?: ComponentInventory['isInventoryVirtual'],
-	};
-	
-	const getParticipantWithInfo = function*(p: TransactionParticipant) {
-		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
-		const newItems: InventoryItemWithInfo = yield all(p.items.map((item) => call(function* (i) {
-			return {
-				...i,
-				type: yield select((state: { itemTypes: ItemTypesState }) => state.itemTypes[i.typeId]),
-				ownerCount: {
-					count: 0,
-					...(pTgo.inventory || []).find((ii : { typeId: TypeId }) => ii.typeId === i.typeId),
-				}.count || 0,
-			};
-		}, item)));
-		return {
-			...p,
-			items: newItems,
-			inventoryVirtual: pTgo.inventoryVirtual,
-		};
-	}
-
-	const participantsWithInfo: ReadonlyArray<TransactionParticipantWithInfo> = yield all(participants.map(p => call(getParticipantWithInfo, p)));
-
-	const participantsWithInfo2: ReadonlyArray<TransactionParticipantWithInfo> = yield* (participants.map(function* (p) {
-		const pTgo = yield select((state: { tgos: TgosState }) => state.tgos[p.tgoId]);
-		const newItems: InventoryItemWithInfo = yield p.items.map(function* (i) {
-			return {
-				...i,
-				type: yield select((state: { itemTypes: ItemTypesState }) => state.itemTypes[i.typeId]),
-				ownerCount: {
-					count: 0,
-					...(pTgo.inventory || []).find((ii : { typeId: TypeId }) => ii.typeId === i.typeId),
-				}.count || 0,
-			};
-		});
-		return {
-			...p,
-			items: newItems,
-		};
-	}));
-
-	const allPraticipantsHaveItems = participantsWithInfo.every((p) =>
-		(p.isInventoryVirtual == true) ||
-		p.items.every(i =>
-			(((i.ownerCount + i.count) >= 0) || !i.type.positiveOnly),
-		),
-	);
-	if (!allPraticipantsHaveItems) return false; // There's not enough items to satisfy transaction.
-
-	const actions: ReadonlyArray<ReturnType<typeof inventoryActions.add>> = participantsWithInfo.reduce(
-		(total: ReadonlyArray<ReturnType<typeof inventoryActions.add>>, p) => [
-			...total,
-			...p.items
-				.map(i => inventoryActions.add(p.tgoId, i.typeId, i.count)),
-		],
-		[],
-	);
-
-	yield all(actions.map(a => put(a)));
-	return true;
-};
 
 const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
 	yield put(taskQueueActions.addTaskQueue(
