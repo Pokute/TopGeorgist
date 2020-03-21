@@ -1,4 +1,5 @@
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
+import { expectSaga } from 'redux-saga-test-plan';
 import sinon from 'sinon';
 import { handleCreateWork, handleWork } from '../concerns/work';
 import { createWork } from '../concerns/work';
@@ -6,8 +7,8 @@ import { consume } from '../data/recipes';
 import { TgoId } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';
 import { WSAEMSGSIZE } from 'constants';
-import { select, put, PutEffect, PutEffectDescriptor } from 'redux-saga/effects';
-import { RootStateType } from '../reducers';
+import { select, put, PutEffect, PutEffectDescriptor, takeEvery } from 'redux-saga/effects';
+import rootReducer, { RootStateType } from '../reducers';
 import { omitType, omitMetaAndError, overrideTgoWithId, overrideAddTgoActionWithId } from '../testUtils';
 import { TypeId } from '../reducers/itemType';
 import { ItemTypesState } from '../reducers/itemTypes';
@@ -16,23 +17,21 @@ import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId } from '../components/inventory';
 import { addWork as goalAddWork, removeWork } from '../actions/goal';
 import { ComponentWork } from '../data/components_new';
+import createSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware } from 'redux';
+import rootSaga from '../sagas/root';
+import { Recipe } from '../reducers/recipe';
 
 // Test work
 
-test('Create a work', t => {
+test('Create a work without errors', t => {
 	const params = {
 		goalTgoId: 'Temp goal id' as TgoId,
 		targetTgoId: 'Target id' as TgoId,
 		recipe: consume,
 	};
 
-	t.deepEqual(
-		omitMetaAndError(createWork(params)),
-		{
-			type: getType(createWork),
-			payload: params,
-		}
-	);
+	t.notThrows(() => createWork(params));
 });
 
 test('Test work - handleCreateWork - fail if goalTgoId not in store', t => {
@@ -185,9 +184,9 @@ test('Work - empty work', t => {
 
 	// Run empty work.
 	const hWI = handleWork(
-		{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
-		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+		{ tgoId: 'worker' as TgoId, isWorkDoer: true, inventory: [] },
 		work,
+		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 		);
 	// Is a generator;
 	t.truthy(hWI && hWI.next);
@@ -230,9 +229,9 @@ test('Work - wait 3 ticks', t => {
 
 	for (let i = 0; i < 5; i++) {
 		let hWI = handleWork(
-			{ tgoId: 'worker' as TgoId, activeGoals: [], inventory: [] },
-			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+			{ tgoId: 'worker' as TgoId, isWorkDoer: true, inventory: [] },
 			work,
+			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 			);
 		// Is a generator;
 		t.truthy(hWI && hWI.next);
@@ -266,8 +265,22 @@ test('Work - wait 3 ticks', t => {
 	}
 });
 
-test('Work - simple actor item change', t => {
-	const work = {
+const wrappedRootSaga = function* () {
+	yield* rootSaga();
+	yield takeEvery('*', function* () {});
+	// yield put(addTgo({
+	// 	inventory: [{
+	// 		typeId: 'coal' as TypeId,
+	// 		count: 20,
+	// 	}],
+	// }));
+}
+
+const setupRedux = expectSaga(wrappedRootSaga)
+	.withReducer(rootReducer);
+
+test.only('Work - simple actor item change', async t => {
+	const recipe: Recipe = {
 		actorItemChanges: [{
 			typeId: 'coal' as TypeId,
 			count: -10,
@@ -275,6 +288,17 @@ test('Work - simple actor item change', t => {
 		targetItemChanges: [],
 		type: 'furnace',
 	};
+
+	const { storeState } = await setupRedux
+		.dispatch(addTgo({
+			inventory: [{
+				typeId: 'coal' as TypeId,
+				count: 20,
+			}],
+		}))
+		.run(1000);
+
+	console.log('s', storeState);
 
 });
 
