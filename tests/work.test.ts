@@ -2,12 +2,10 @@ import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import { expectSaga } from 'redux-saga-test-plan';
 import sinon from 'sinon';
-import { handleCreateWork, handleWork } from '../concerns/work';
-import { createWork } from '../concerns/work';
+import { createWork, handleCreateWork, handleWork } from '../concerns/work';
 import { consume } from '../data/recipes';
 import { TgoId, TgoType } from '../reducers/tgo';
 import { getType } from 'typesafe-actions';
-import { WSAEMSGSIZE } from 'constants';
 import { select, put, PutEffect, PutEffectDescriptor, takeEvery } from 'redux-saga/effects';
 import rootReducer, { RootStateType } from '../reducers';
 import { omitType, omitMetaAndError, overrideTgoWithId, overrideAddTgoActionWithId } from '../testUtils';
@@ -15,11 +13,13 @@ import { TypeId } from '../reducers/itemType';
 import { ItemTypesState } from '../reducers/itemTypes';
 import { TgosState } from '../reducers/tgos';
 import { add as addTgo } from '../actions/tgos';
-import { addTgoId as inventoryAddTgoId } from '../components/inventory';
+import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../components/inventory';
 import { addWork as goalAddWork, removeWork } from '../actions/goal';
-import { ComponentWork, ComponentGoal } from '../data/components_new';
+import { ComponentWork, ComponentGoal, ComponentWorkDoer } from '../data/components_new';
 import { Recipe } from '../reducers/recipe';
 import rootSaga from '../sagas/root';
+import { addGoals } from '../actions/goals';
+import { tick } from '../actions/ticker';
 
 // Test work
 
@@ -183,15 +183,15 @@ test('Work - empty work', t => {
 	const work: ComponentWork = {
 		tgoId: 'emptyWork' as TgoId,
 		workRecipe: {
-			actorItemChanges: [],
-			targetItemChanges: [],
+			input: [],
+			output: [],
 			type: 'emptyWork',
 		},
 	};
 
 	// Run empty work.
 	const hWI = handleWork(
-		{ tgoId: 'worker' as TgoId, isWorkDoer: true, inventory: [] },
+		{ tgoId: 'worker' as TgoId, recipes: [], inventory: [] },
 		work,
 		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 		);
@@ -225,18 +225,18 @@ test('Work - wait 3 ticks', t => {
 		tgoId: 'waitWork' as TgoId,
 		workActorCommittedItemsTgoId: workCommittedItemsTgo.tgoId,
 		workRecipe: {
-			actorItemChanges: [{
+			input: [{
 				typeId: 'tick' as TypeId,
 				count: -3,
 			}],
-			targetItemChanges: [],
+			output: [],
 			type: 'waitWork',
 		},
 	};
 
 	for (let i = 0; i < 5; i++) {
 		let hWI = handleWork(
-			{ tgoId: 'worker' as TgoId, isWorkDoer: true, inventory: [] },
+			{ tgoId: 'worker' as TgoId, recipes: [], inventory: [] },
 			work,
 			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 			);
@@ -264,9 +264,9 @@ test('Work - wait 3 ticks', t => {
 					}]
 				},
 			} as TgosState } as unknown as RootStateType as any
-		)(undefined, i == (work.workRecipe.actorItemChanges[0].count * -1));
+		)(undefined, i == (work.workRecipe.input[0].count * -1));
 
-		if (i == (work.workRecipe.actorItemChanges[0].count * -1)) {
+		if (i == (work.workRecipe.input[0].count * -1)) {
 			return;
 		}
 	}
@@ -288,22 +288,31 @@ const setupRedux = expectSaga(wrappedRootSaga)
 
 test.only('Work - simple actor item change', async t => {
 	const recipe: Recipe = {
-		actorItemChanges: [{
+		input: [{
 			typeId: 'coal' as TypeId,
 			count: -10,
 		}],
-		targetItemChanges: [],
+		output: [],
 		type: 'furnace',
 	};
 
+	const createActor = addTgo({
+		inventory: [{
+			typeId: 'coal' as TypeId,
+			count: 20,
+		}],
+		recipes: [recipe],
+	});
+	const actorTgoId = createActor.payload.tgo.tgoId;
+
 	const { storeState } = await setupRedux
-		.dispatch(addTgo({
-			inventory: [{
-				typeId: 'coal' as TypeId,
-				count: 20,
-			}],
+		.dispatch(createActor)
+		.dispatch(createWork({
+			goalTgoId: '' as TgoId,
+			recipe,
+			targetTgoId: actorTgoId,
 		}))
-		.run(1000);
+		.silentRun(0);
 
 	console.log('s', storeState);
 
@@ -456,3 +465,121 @@ test.only('Work - simple actor item change', async t => {
 test.todo('Work - have two actors commit items');
 
 test.todo('Work - Deletes both the committedRequiredItems and committedAwerdedItems objects after completion');
+
+test('Work - hierarchy', async t => {
+	const upperBodyTgo: ComponentWorkDoer = {
+		tgoId: 'upperBody' as TgoId,
+		recipes: [
+			{
+				type: 'strengthToolUse',
+				input: [
+					{
+						typeId: 'energy' as TypeId,
+						count: -5,
+					},
+					{
+						typeId: 'tick' as TypeId,
+						count: -1,
+					},
+				],
+				output: [{
+					typeId: 'strengthToolUse' as TypeId,
+					count: 1,
+				}],
+			},
+		],
+	};
+
+	const handMill: ComponentWorkDoer = {
+		tgoId: 'handMill' as TgoId,
+		recipes: [
+			{
+				type: 'milling',
+				input: [
+					{
+						typeId: 'grain' as TypeId,
+						count: -1,
+					},
+					{
+						typeId: 'strengthToolUse' as TypeId,
+						count: -2,
+					},
+				],
+				output: [{
+					typeId: 'flour' as TypeId,
+					count: 1,
+				}],
+			},
+		],
+	}
+
+	const playerTgo: ComponentInventory = {
+		tgoId: 'player' as TgoId,
+		inventory: [
+			{
+				tgoId: upperBodyTgo.tgoId,
+				typeId: 'tgoId' as TypeId,
+				count: 1,
+			},
+			{
+				typeId: 'energy' as TypeId,
+				count: 50,
+			},
+			{
+				tgoId: handMill.tgoId,
+				typeId: 'tgoId' as TypeId,
+				count: 1,
+			},
+			{
+				typeId: 'grain' as TypeId,
+				count: 3,
+			},
+		],
+	};
+	const createPlayerTgo = addTgo(playerTgo);
+
+	const { storeState } = await setupRedux
+		.dispatch(createPlayerTgo)
+		// .dispatch(addGoals(createPlayerTgo.payload.tgo.tgoId, [{
+
+		// }]))
+		.dispatch(createGoal({
+			tgoId: createPlayerTgo.payload.tgo.tgoId,
+			items: [{
+				typeId: 'flour' as TypeId,
+				count: 3,
+			}],
+		}))
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.silentRun(0);
+	
+	t.deepEqual(
+		storeState.tgos[createPlayerTgo.payload.tgo.tgoId]?.inventory,
+		[
+			{
+				tgoId: upperBodyTgo.tgoId,
+				typeId: 'tgoId' as TypeId,
+				count: 1,
+			},
+			{
+				typeId: 'energy' as TypeId,
+				count: 35,
+			},
+			{
+				tgoId: handMill.tgoId,
+				typeId: 'tgoId' as TypeId,
+				count: 1,
+			},
+			{
+				typeId: 'grain' as TypeId,
+				count: 0,
+			},
+			{
+				typeId: 'flour' as TypeId,
+				count: 3,
+			},
+		],
+	);
+});

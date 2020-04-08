@@ -23,8 +23,8 @@ const InventoryItem = ({
 	}
 
 	const validRecipes = possibleRecipes
-		.filter(recipe => recipe.targetItemChanges.length > 0)
-		.filter(recipe => recipe.targetItemChanges.every(wtic => iiInventory.some(iii => (iii.typeId === wtic.typeId) && (iii.count >= wtic.count))));
+		.filter(recipe => recipe.output.length > 0)
+		.filter(recipe => recipe.output.every(wtic => iiInventory.some(iii => (iii.typeId === wtic.typeId) && (iii.count >= wtic.count))));
 
 	return (<>
 		{validRecipes.map(validRecipe => (

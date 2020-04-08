@@ -3,6 +3,6 @@ import { TgoId } from "./tgo";
 
 export type Recipe = {
 	readonly type: string,
-	readonly actorItemChanges: Inventory,
-	readonly targetItemChanges: Inventory,
+	readonly input: Inventory,
+	readonly output: Inventory,
 };

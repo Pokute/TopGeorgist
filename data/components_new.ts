@@ -96,11 +96,11 @@ export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: Base
 
 export type ComponentWorkDoer = 
 TgoRoot & {
-	readonly isWorkDoer: true,
+	readonly recipes: ReadonlyArray<Recipe>,
 };
 
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
-	tgo && tgo.isWorkDoer == true;
+	tgo && (tgo.recipes !== undefined)
 
 export type ComponentGoalDoer = 
 TgoRoot & {

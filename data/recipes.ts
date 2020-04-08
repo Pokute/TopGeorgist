@@ -3,7 +3,7 @@ import { TypeId } from '../reducers/itemType';
 
 export const move: Recipe = {
 	type: 'move',
-	actorItemChanges: [
+	input: [
 		{
 			typeId: 'calories' as TypeId,
 			count: -20,
@@ -12,17 +12,22 @@ export const move: Recipe = {
 			typeId: 'tick' as TypeId,
 			count: -3,
 		},
-		{
-			typeId: 'position' as TypeId,
-			count: 1,
-		},
 	],
-	targetItemChanges: [],
+	output: [{
+		typeId: 'position' as TypeId,
+		count: 1,
+	}],
 };
 
 export const consume: Recipe = {
 	type: 'consume',
-	actorItemChanges: [
+	input: [
+		{
+			typeId: 'hydrocarbons' as TypeId,
+			count: -100,
+		},
+	],
+	output: [
 		{
 			typeId: 'calories' as TypeId,
 			count: 100,
@@ -32,17 +37,11 @@ export const consume: Recipe = {
 			count: -2,
 		},
 	],
-	targetItemChanges: [
-		{
-			typeId: 'hydrocarbons' as TypeId,
-			count: -100,
-		},
-	],
 };
 
 export const harvest: Recipe = {
 	type: 'harvest',
-	actorItemChanges: [
+	input: [
 		{
 			typeId: 'berry' as TypeId,
 			count: 10,
@@ -52,7 +51,7 @@ export const harvest: Recipe = {
 			count: -1,
 		},
 	],
-	targetItemChanges: [
+	output: [
 		{
 			typeId: 'berry' as TypeId,
 			count: -10,
@@ -62,7 +61,7 @@ export const harvest: Recipe = {
 
 export const smelt: Recipe = {
 	type: 'smelt',
-	actorItemChanges: [
+	input: [
 		{
 			typeId: 'ironOre' as TypeId,
 			count: -4,
@@ -76,7 +75,7 @@ export const smelt: Recipe = {
 			count: 2,
 		},
 	],
-	targetItemChanges: [
+	output: [
 		{
 			typeId: 'smeltingWork' as TypeId, // Non-storeable
 			count: -5,
@@ -86,13 +85,13 @@ export const smelt: Recipe = {
 
 export const trade: Recipe = {
 	type: 'trade',
-	actorItemChanges: [
+	input: [
 		{
 			typeId: 'calculation' as TypeId,
 			count: -10,
 		}
 	],
-	targetItemChanges: [],
+	output: [],
 };
 
 export default {

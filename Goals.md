@@ -48,9 +48,11 @@ Work Inventory, inputs and outputs:
 * Some works are immediate and don't require their own inventory:
 	* Their recipe have at most one tangible & continous input&output item.
 	* Their recipe never take longer than one tick.
-	* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult?
+	* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult? - Prolly yeah.
+	* THINK: These works should probably performed by separate, specialised tgos.
 	* Examples:
-		* A screwdriving work.
+		* Planning, thinking, dexterity, precision, lower body strength, upper body strength works.
+		* Convert hydrocarbons to energy.
 * Other works have their own inventory:
 	* Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
 	* Their recipe requires multiple ticks.
@@ -90,6 +92,59 @@ Other concerns
 		* The resources must be pre-filled at the start of each tick.
 	* C: Make a graph/flow/reactive system?
 		* Sounds complicated.
+
+# Hierarchy
+
+* Player Tgo 
+	* Upper body Tgo
+		* Can perform energy+tick->strengthtooluse.
+		* Can perform energy+tick->precisiontooluse.
+		* Can't do both at the same time. This requires an inventory to keep track of used tick.
+	* Lower body Tgo
+	* Brain Tgo
+
+Player wants flour, has grains, has a portable hand mill ->
+hand mill has grains+strengthtooluse => flour recipe.
+system checks inventory
+	grains found
+	upper body tgo has energy => strengthtooluse recipe.
+strengthtooluse requires energy
+system checks inventory
+	energy found
+a new transaction is constructed
+	A:
+		player:
+			-energy
+			+strengthtooluse
+		upper body:
+			-tick
+	B:
+		player:
+			-strengthtooluse
+			-grains
+			+flour
+		hand mill:
+			-tick (or not)
+
+Transaction is performed.
+
+??? How do we check if a goal requires 3 crafter items? If we lose some during crafting or even gain some, the count is off.
+	* Add +flour into goal's virtual inventory.
+		* If someone gifts you 3 flour the crafting would still occur.
+	* Have goals somehow spy on player's inventory
+		* It's difficult to know if the crafted item was just donated or maybe it was generated for a different purpose, being earmarked for something else.
+
+tick completes:
+	upper body:
+		reset tick
+	hand mill:
+		reset tick
+
+API:
+	?: Need 3 flour
+	???
+	Some code searches for recipes with output: flour.
+	dispatch(transction())
 
 # Examples
 

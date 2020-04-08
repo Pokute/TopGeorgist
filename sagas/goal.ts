@@ -70,12 +70,12 @@ const completeWorkInput = function* (actorTgoId: TgoId, input: InventoryItem) {
 }
 
 const completeRecipe = function* (actorTgoId: TgoId, recipe: Recipe) {
-	const inputs = recipe.actorItemChanges.map(work => completeWorkInput(actorTgoId, work));
+	const inputs = recipe.input.map(work => completeWorkInput(actorTgoId, work));
 	const results: ReadonlyArray<boolean> = yield* inputs;
 	if (results.every(i => i)) {
 		return transaction({
 			tgoId: actorTgoId,
-			items: [...recipe.actorItemChanges, ...recipe.targetItemChanges],
+			items: [...recipe.input, ...recipe.output],
 		});
 	}
 	return false;
