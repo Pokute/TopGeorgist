@@ -1,4 +1,3 @@
-import IAction from './action';
 import { getType, ActionType } from 'typesafe-actions';
 
 import { AccountId } from './account';
