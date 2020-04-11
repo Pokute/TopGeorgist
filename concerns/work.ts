@@ -8,7 +8,7 @@ import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDo
 import { transaction } from '../concerns/transaction';
 import { RootStateType } from '../reducers';
 import { add as addTgo, remove as removeTgo } from "../actions/tgos";
-import { addWork as goalAddWork, removeWork } from '../actions/goal';
+import { addWork as goalAddWork, removeWork } from '../concerns/goal';
 import isServer from '../isServer';
 import { TypeId } from '../reducers/itemType';
 import { getTgoByIdFromRootState } from '../reducers/tgos';
@@ -16,19 +16,19 @@ import { tick } from '../actions/ticker';
 
 // Actions:
 
-export const createFromRecipe = createAction('WORK_CREATE_FROM_RECIPE', resolve => {
-	return ({ recipe }: { recipe: Recipe }) => resolve({
+export const createFromRecipe = createAction('WORK_CREATE_FROM_RECIPE',
+	({ recipe }: { recipe: Recipe }) => ({
 		recipe,
-	});
-});
+	})
+)();
 
-export const createWork = createAction('WORK_CREATE', resolve => {
-	return ({ goalTgoId, recipe, targetTgoId }: { goalTgoId: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => resolve({
+export const createWork = createAction('WORK_CREATE',
+	({ goalTgoId, recipe, targetTgoId }: { goalTgoId: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => ({
 			goalTgoId,
 			recipe,
 			targetTgoId,
-	});
-});
+	})
+)();
 
 export const workActions = {
 	createWork,

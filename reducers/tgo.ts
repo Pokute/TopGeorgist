@@ -2,8 +2,8 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as tgoActions from '../actions/tgo'; 
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
-import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
-import goalReducer from './goal';
+import { goalDoerReducer, GoalDoerActionType, goalDoerActionList } from '../concerns/goal';
+import { goalReducer } from '../concerns/goal';
 import { reducer as workReducer, WorkActionType } from '../concerns/work';
 import { TypeId } from './itemType';
 import { TgosState } from './tgos';
@@ -14,7 +14,7 @@ import { setPosition, ComponentPosition, PositionActionType, reducer as position
 import { ComponentPlayer } from '../components/player';
 import { ComponentLabel } from '../components/label';
 import { ComponentUniqueLabel } from '../components/uniqueLabel';
-import { GoalActionType } from './goal';
+import { GoalActionType } from '../concerns/goal';
 import { Opaque } from '../typings/global.d';
 
 export type TgoActionType = ActionType<typeof tgoActions>
@@ -25,7 +25,7 @@ const TgoOwnActionList = [
 const TgoOtherReducers = [
 	{ reducer: inventoryReducer, actions: InventoryActionList },
 	{ reducer: taskQueueReducer, actions: TaskQueueActionList },
-	{ reducer: goalsReducer, actions: GoalsActionList },
+	{ reducer: goalDoerReducer, actions: Object.values(goalDoerActionList) },
 ];
 const TgoOthersActionList = TgoOtherReducers.reduce((actions: ReadonlyArray<any>, reducer) => [ ...actions, ...reducer.actions ], []);
 export const TgoActionList = [
@@ -74,7 +74,7 @@ export const initialState:TgoType = {
 	},
 };
 
-export default (state: TgoType, action: PositionActionType | TgoActionType | InventoryActionType | TaskQueueActionType | GoalsActionType | GoalActionType | WorkActionType) : TgoType => {
+export default (state: TgoType, action: PositionActionType | TgoActionType | InventoryActionType | TaskQueueActionType | GoalDoerActionType | GoalActionType | WorkActionType) : TgoType => {
 	switch (action.type) {
 		case getType(tgoActions.setColor):
 			return {
@@ -91,7 +91,7 @@ export default (state: TgoType, action: PositionActionType | TgoActionType | Inv
 			const newTaskQueue = taskQueueReducer(state.taskQueue, action as TaskQueueActionType);
 			if (newTaskQueue !== usedState.taskQueue) usedState = { ...usedState, taskQueue: newTaskQueue };
 			if (hasComponentGoalDoer(state)) {
-				const newGoals = goalsReducer(state.activeGoals, action as GoalsActionType);
+				const newGoals = goalDoerReducer(state.activeGoals, action as GoalDoerActionType);
 				if (newGoals !== usedState.activeGoals) usedState = { ...usedState, activeGoals: newGoals };
 			}
 			if (isComponentGoal(state)) {

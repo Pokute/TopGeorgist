@@ -4,7 +4,7 @@ import { createAction } from 'typesafe-actions';
 import { omitType } from '../testUtils';
 
 test('omitType works properly', t => {
-	const action = createAction('OMITTYPE_TEST', (resolve) => () => resolve({}));
+	const action = createAction('OMITTYPE_TEST')();
 
 	t.deepEqual(omitType(action()), { payload: {
 	} });

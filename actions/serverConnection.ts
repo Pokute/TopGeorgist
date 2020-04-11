@@ -2,24 +2,18 @@ import { createAction } from 'typesafe-actions';
 
 import { ServerConnectionStateType } from '../reducers/serverConnection';
 
-export const createWebsocket = createAction('CONNECTION_CREATE_WEBSOCKET', (resolve) => {
-	return () => resolve({ });
-});
+export const createWebsocket = createAction('CONNECTION_CREATE_WEBSOCKET')();
 
-export const setWebsocket = createAction('CONNECTION_SET_WEBSOCKET', (resolve) => {
-	return (websocket: ServerConnectionStateType['websocket']) => resolve({
+export const setWebsocket = createAction('CONNECTION_SET_WEBSOCKET',
+	(websocket: ServerConnectionStateType['websocket']) => ({
 		websocket,
-	});
-});
+	})
+)();
 
-export const message = createAction('CONNECTION_MESSAGE', (resolve) => {
-	return (message: { data: any, event: MessageEvent }) => resolve(message);
-});
+export const message = createAction('CONNECTION_MESSAGE',
+	(message: { data: any, event: MessageEvent }) => (message)
+)();
 
-export const resetReconnectionDelay = createAction('CONNECTION_DELAY_RESET', (resolve) => {
-	return () => resolve();
-});
+export const resetReconnectionDelay = createAction('CONNECTION_DELAY_RESET')();
 
-export const doubleReconnectionDelay = createAction('CONNECTION_DELAY_DOUBLE', (resolve) => {
-	return () => resolve();
-});
+export const doubleReconnectionDelay = createAction('CONNECTION_DELAY_DOUBLE')();

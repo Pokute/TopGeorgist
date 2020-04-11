@@ -4,12 +4,12 @@ import { ActionType, getType } from 'typesafe-actions';
 import isServer from '../isServer'
 import * as tgoActions from '../actions/tgo';
 import * as netActions from '../actions/net';
-import { setGoals } from '../actions/goals';
+// import { setGoals } from '../concerns/goal';
 import { moveGoal } from '../actions/moveGoal';
 import { consumeGoal } from '../actions/consumeGoal';
 
 const sentTypes = {
-	setGoals,
+	// setGoals,
 	moveGoal,
 };
 
@@ -23,7 +23,7 @@ const clientListener = function* () {
 	// This will send all following actions to the server
 	yield takeEvery(
 		[
-			getType(setGoals),
+			// getType(setGoals),
 			getType(moveGoal),
 			getType(consumeGoal),
 		],

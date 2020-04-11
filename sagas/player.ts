@@ -12,7 +12,7 @@ import * as tgoActions from '../actions/tgo';
 import * as playerActions from '../actions/player';
 import { createPlayerAction } from '../data/initialObjects';
 import { TgoType } from '../reducers/tgo';
-import topGeorgist from '../reducers';
+import combinedReducers from '../reducers';
 import { setPlayerTgoId } from '../actions/defaults';
 import { setPosition } from '../components/position';
 import { hasComponentPlayer } from '../components/player';
@@ -21,7 +21,7 @@ import { hasComponentLabel } from '../components/label';
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;
 	console.log('Received playerCreateRequest ', label);
-	const state: ReturnType<typeof topGeorgist> = yield select();
+	const state: ReturnType<typeof combinedReducers> = yield select();
 	const hasNameConflict = (Object.values(state.tgos) as ReadonlyArray<TgoType>)
 		.some((tgo: TgoType) => (hasComponentPlayer(tgo) && hasComponentLabel(tgo) && (tgo.label === label)));
 	if (hasNameConflict) return;
@@ -68,7 +68,7 @@ const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, l
 const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<typeof playerActions.playerRequest>) {
 	if (isServer) return; // Client only
 
-	const state: ReturnType<typeof topGeorgist> = yield select();
+	const state: ReturnType<typeof combinedReducers> = yield select();
 	let accountId;
 	if (!state.defaults.accountId) {
 		yield put(netActions.send(accountsActions.accountRequest({

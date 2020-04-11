@@ -4,16 +4,14 @@ import { moveGoal } from '../actions/moveGoal';
 import { getType, ActionType } from "typesafe-actions";
 import { RootStateType } from "../reducers";
 import { add as addTgo } from "../actions/tgos";
-import { RequirementMove, RequirementConsumeTypeId } from "../reducers/goal";
+import { /*RequirementMove, RequirementConsumeTypeId,*/ addGoals, setWorkTargetTgoId } from "../concerns/goal";
 import * as inventoryActions from '../components/inventory';
-import { addGoals } from '../actions/goals'
 import { TgoId } from "../reducers/tgo";
 import isServer from '../isServer';
 import { consumeGoal } from "../actions/consumeGoal";
-import { setWorkTargetTgoId } from "../actions/goal";
 
 const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType<typeof moveGoal>) {
-	const s: RootStateType = yield select();
+/*	const s: RootStateType = yield select();
 	const tgo = s.tgos[tgoId];
 	if (!tgo) return false;
 
@@ -26,7 +24,7 @@ const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType
 				{
 					type: "RequirementMove",
 					targetPosition: position,
-				} as RequirementMove,
+				},
 			],
 		}
 	}));
@@ -39,10 +37,11 @@ const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType
 
 	// Add the tgoId to active goals.
 	yield put(addGoals(tgoId, [newGoalAction.payload.tgo.tgoId]));
+	*/
 };
 
 const handleCreateConsumeGoal = function* ({payload: {tgoId, targetTypeId, count = 1}}: ActionType<typeof consumeGoal>) {
-	const s: RootStateType = yield select();
+	/*const s: RootStateType = yield select();
 	const tgo = s.tgos[tgoId];
 	if (!tgo) return false;
 
@@ -70,6 +69,7 @@ const handleCreateConsumeGoal = function* ({payload: {tgoId, targetTypeId, count
 
 	// Add the tgoId to active goals.
 	yield put(addGoals(tgoId, [newGoalAction.payload.tgo.tgoId]));
+	*/
 };
 
 const goalCreatorRootSaga = function* () {

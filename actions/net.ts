@@ -1,14 +1,14 @@
 import { createAction } from 'typesafe-actions';
 import { AnyAction } from 'redux';
 
-export const send = createAction('NET_SEND', resolve => {
-	return (sendAction: AnyAction) => resolve({
+export const send = createAction('NET_SEND',
+	(sendAction: AnyAction) => ({
 		sendAction,
-	});
-});
+	})
+)();
 
-export const receiveMessage = createAction('NET_MESSAGE', resolve => {
-	return (messageData: any) => resolve({
+export const receiveMessage = createAction('NET_MESSAGE',
+	(messageData: any) => ({
 		messageData,
-	});
-});
+	})
+)();

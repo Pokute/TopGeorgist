@@ -14,11 +14,10 @@ import { ItemTypesState } from '../reducers/itemTypes';
 import { TgosState } from '../reducers/tgos';
 import { add as addTgo } from '../actions/tgos';
 import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../components/inventory';
-import { addWork as goalAddWork, removeWork } from '../actions/goal';
+import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal';
 import { ComponentWork, ComponentGoal, ComponentWorkDoer } from '../data/components_new';
 import { Recipe } from '../reducers/recipe';
 import rootSaga from '../sagas/root';
-import { addGoals } from '../actions/goals';
 import { tick } from '../actions/ticker';
 
 // Test work
@@ -538,18 +537,26 @@ test('Work - hierarchy', async t => {
 	};
 	const createPlayerTgo = addTgo(playerTgo);
 
+	const createGoalAction = createGoal(
+		createPlayerTgo.payload.tgo.tgoId,
+		{
+			requirements: [{
+				type: 'RequirementInventoryItems',
+				inventoryItems: [{
+					typeId: 'flour' as TypeId,
+					count: 3,
+				}],
+			}],
+			workTgoIds: [],
+		}
+	);
+
 	const { storeState } = await setupRedux
 		.dispatch(createPlayerTgo)
 		// .dispatch(addGoals(createPlayerTgo.payload.tgo.tgoId, [{
 
 		// }]))
-		.dispatch(createGoal({
-			tgoId: createPlayerTgo.payload.tgo.tgoId,
-			items: [{
-				typeId: 'flour' as TypeId,
-				count: 3,
-			}],
-		}))
+		.dispatch(createGoalAction)
 		.dispatch(tick())
 		.dispatch(tick())
 		.dispatch(tick())

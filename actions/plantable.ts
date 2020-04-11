@@ -2,17 +2,17 @@ import { createAction } from 'typesafe-actions';
 import { TgoId } from '../reducers/tgo';
 import { TypeId } from '../reducers/itemType';
 
-export const plant = createAction('PLANT', resolve => {
-	return (actorTgoId: TgoId, targetTypeId: TypeId) => resolve({
+export const plant = createAction('PLANT',
+	(actorTgoId: TgoId, targetTypeId: TypeId) => ({
 		actorTgoId,
 		targetTypeId,
-	});
-});
+	})
+)();
 
-export const harvest = createAction('HARVEST', resolve => {
-	return (tgoId: TgoId, visitableTgoId: TgoId, plantTypeId: TypeId) => resolve({
+export const harvest = createAction('HARVEST',
+	(tgoId: TgoId, visitableTgoId: TgoId, plantTypeId: TypeId) => ({
 		tgoId,
 		visitableTgoId,
 		plantTypeId,
-	});
-});
+	})
+)();

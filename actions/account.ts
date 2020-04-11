@@ -12,39 +12,39 @@ export const serverSaltPassword = (username: string, clientSaltedPassword: strin
 	return md.digest().toHex();
 };
 
-export const setPlayerTgoId = createAction('ACCOUNT_SET_PLAYER_TGO_ID', resolve => {
-	return ({ accountId, playerTgoId }: { accountId: AccountId, playerTgoId: TgoId }) => resolve({
+export const setPlayerTgoId = createAction('ACCOUNT_SET_PLAYER_TGO_ID',
+	({ accountId, playerTgoId }: { accountId: AccountId, playerTgoId: TgoId }) => ({
 		accountId,
 		playerTgoId,
-	});
-});
+	})
+)();
 
-export const createToken = createAction('ACCOUNT_CREATE_TOKEN', resolve => {
-	return ({ accountId }: { accountId: AccountId }) => resolve({
+export const createToken = createAction('ACCOUNT_CREATE_TOKEN',
+	({ accountId }: { accountId: AccountId }) => ({
 		accountId,
 		token: uuidv4(),
-	});
-});
+	})
+)();
 
-export const deleteToken = createAction('ACCOUNT_DELETE_TOKEN', resolve => {
-	return ({ accountId, token }: { accountId: AccountId, token: Token }) => resolve({
+export const deleteToken = createAction('ACCOUNT_DELETE_TOKEN',
+	({ accountId, token }: { accountId: AccountId, token: Token }) => ({
 		accountId,
 		token,
-	});
-});
+	})
+)();
 
-export const upgradeAccount = createAction('ACCOUNT_UPGRADE', resolve => {
-	return ({ accountId, username, clientSaltedPassword }: { accountId: AccountId, username: AccountType['username'], clientSaltedPassword: AccountType['clientAndServerSaltedPassword'] }) => resolve({
+export const upgradeAccount = createAction('ACCOUNT_UPGRADE',
+	({ accountId, username, clientSaltedPassword }: { accountId: AccountId, username: AccountType['username'], clientSaltedPassword: AccountType['clientAndServerSaltedPassword'] }) => ({
 		accountId,
 		username,
 		clientAndServerSaltedPassword: serverSaltPassword(username, clientSaltedPassword),
-	});
-});
+	})
+)();
 
-export const changePassword = createAction('ACCOUNT_CHANGE_PASSWORD', resolve => {
-	return ({ accountId, username, clientSaltedPassword, clientSaltedOldPassword }: { accountId: AccountId, username: AccountType['username'], clientSaltedPassword: AccountType['clientAndServerSaltedPassword'], clientSaltedOldPassword: AccountType['clientAndServerSaltedPassword'] }) => resolve({
+export const changePassword = createAction('ACCOUNT_CHANGE_PASSWORD',
+	({ accountId, username, clientSaltedPassword, clientSaltedOldPassword }: { accountId: AccountId, username: AccountType['username'], clientSaltedPassword: AccountType['clientAndServerSaltedPassword'], clientSaltedOldPassword: AccountType['clientAndServerSaltedPassword'] }) => ({
 		accountId,
 		clientAndServerSaltedPassword: serverSaltPassword(username, clientSaltedPassword),
 		clientAndServerSaltedOldPassword:  serverSaltPassword(username, clientSaltedOldPassword),
-	});
-});
+	})
+)();

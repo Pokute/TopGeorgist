@@ -11,23 +11,23 @@ import { RootStateType } from '../reducers';
 
 // Actions:
 
-export const transaction = createAction('TRANSACTION', (resolve) => {
-	return (...participants: TransactionParticipant[]) => {
+export const transaction = createAction('TRANSACTION',
+	(...participants: TransactionParticipant[]) => {
 		if (participants.length == 0) throw new Error('Can\'t create a transaction with no participants');
 		if (participants.some(p => !p.tgoId)) throw new Error('Transaction participant has no tgoId!');
-		return resolve({
+		return ({
 			participants,
 		});
-	};
-});
+	}
+)();
 
-export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST', (resolve) => {
-	return (tgoId: TgoId, visitableTgoId: TgoId, items: ReadonlyArray<InventoryItem>) => resolve({
+export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST',
+	(tgoId: TgoId, visitableTgoId: TgoId, items: ReadonlyArray<InventoryItem>) => ({
 		tgoId,
 		visitableTgoId,
 		items,
-	});
-});
+	})
+)();
 
 export const transactionActions = {
 	transaction,

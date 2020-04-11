@@ -9,9 +9,9 @@ interface TgoAction {
 
 // const resolveTgoAction = (payload: TgoAction, meta: any) => (resolve: any) => resolve(payload, meta);
 
-export const setColor = createAction('TGO_SET_COLOR', (resolve) => {
-	return (tgoId: TgoId, color: ComponentPresentation['presentation']['color']) => resolve({
+export const setColor = createAction('TGO_SET_COLOR',
+	(tgoId: TgoId, color: ComponentPresentation['presentation']['color']) => ({
 		tgoId,
 		color,
-	});
-});
+	})
+)();

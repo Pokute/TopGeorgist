@@ -10,31 +10,31 @@ const clientSaltPassword = (username: string, password: string) => {
 	return md.digest().toHex();
 };
 
-export const loginClientSalted = createAction('ACCOUNT_LOGIN_SALTED', resolve => {
-	return ({ username, password }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'] }) => resolve({
+export const loginClientSalted = createAction('ACCOUNT_LOGIN_SALTED',
+	({ username, password }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'] }) => ({
 		username,
 		clientSaltedPassword: clientSaltPassword(username, password),
-	});
-});
+	})
+)();
 
-export const loginWithToken = createAction('ACCOUNT_LOGIN_WITH_TOKEN', resolve => {
-	return ({ token }: { token: Token }) => resolve({
+export const loginWithToken = createAction('ACCOUNT_LOGIN_WITH_TOKEN',
+	({ token }: { token: Token }) => ({
 		token,
-	});
-});
+	})
+)();
 
-export const createAccountWithTokenClientSalted = createAction('ACCOUNT_CREATE_WITH_TOKEN', resolve => {
-	return ({ username, password, token }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'], token: Token }) => resolve({
+export const createAccountWithTokenClientSalted = createAction('ACCOUNT_CREATE_WITH_TOKEN',
+	({ username, password, token }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'], token: Token }) => ({
 		username,
 		clientSaltedPassword: clientSaltPassword(username, password),
 		token,
-	});
-});
+	})
+)();
 
-export const requestChangePasswordClientSalted = createAction('ACCOUNT_REQUEST_CHANGE_PASSWORD', resolve => {
-	return ({ username, password, oldPassword }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'], oldPassword: AccountType['clientAndServerSaltedPassword'] }) => resolve({
+export const requestChangePasswordClientSalted = createAction('ACCOUNT_REQUEST_CHANGE_PASSWORD',
+	({ username, password, oldPassword }: { username: AccountType['username'], password: AccountType['clientAndServerSaltedPassword'], oldPassword: AccountType['clientAndServerSaltedPassword'] }) => ({
 		username,
 		clientSaltedPassword: clientSaltPassword(username, password),
 		clientSaltedOldPassword: clientSaltPassword(username, oldPassword),
-	});
-});
+	})
+)();

@@ -1,6 +1,7 @@
 import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
-import { Requirement, isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume } from "../reducers/goal";
+import { Requirement, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from "../concerns/goal";
+import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from "../concerns/work";
 import { RootStateType } from "../reducers";
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from "../data/components_new";
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from "../components/inventory";
@@ -15,9 +16,6 @@ import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
 import { getType } from "typesafe-actions";
 import { tick } from "../actions/ticker";
 import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from "../reducers/map";
-import { createWork, handleWork, WorkOutput } from "../concerns/work";
-import { removeGoals } from "../actions/goals";
-import { removeWork } from "../actions/goal";
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();
@@ -95,7 +93,7 @@ const initGoal = function* (
 	// Remove Tgo from tgos
 	yield put(tgosAdd(goalTgo))
 }
-
+/*
 const cleanUpGoal = function* (
 	actorTgo: TgoRoot & Partial<ComponentGoalDoer> & Partial<ComponentInventory>,
 	goalTgo: ComponentGoal,
@@ -110,7 +108,8 @@ const cleanUpGoal = function* (
 	// Remove Tgo from tgos
 	yield put(tgosRemove(goalTgo.tgoId))
 }
-
+*/
+/*
 const handleGoalRequirementConsumeTypeId = function* (
 	actorTgo: ComponentInventory & Partial<ComponentGoalDoer>,
 	goalTgo: ComponentGoal & Partial<ComponentInventory>,
@@ -274,17 +273,17 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 	}
 	return false;
 };
-
+*/
 const handleGoalRequirement = function* (actorTgo: TgoRoot, goalTgo: ComponentGoal, requirement: Requirement) {
-	if (isRequirementDelivery(requirement)) {
-		// return handleGoalRequirementDelivery(actorTgoId, requirement);
-	}
-	if (isRequirementMove(requirement) && hasComponentPosition(actorTgo)) {
-		yield* handleGoalRequirementMove(actorTgo, goalTgo, requirement);
-	}
-	if (isRequirementConsume(requirement) && hasComponentInventory(actorTgo)) {
-		yield* handleGoalRequirementConsume(actorTgo, goalTgo, requirement);
-	}
+	// if (isRequirementDelivery(requirement)) {
+	// 	// return handleGoalRequirementDelivery(actorTgoId, requirement);
+	// }
+	// if (isRequirementMove(requirement) && hasComponentPosition(actorTgo)) {
+	// 	yield* handleGoalRequirementMove(actorTgo, goalTgo, requirement);
+	// }
+	// if (isRequirementConsume(requirement) && hasComponentInventory(actorTgo)) {
+	// 	yield* handleGoalRequirementConsume(actorTgo, goalTgo, requirement);
+	// }
 	return false;
 };
 
@@ -312,8 +311,8 @@ const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 	};
 
 	if (!hasComponentInventory(goalTgo) || !hasComponentInventory(actorTgo)) return false;
-	const redeemedWorksAction = goalTgo.goal.workTgoIds.map(workTgoId => s.tgos[workTgoId]).filter(hasComponentInventory).map(workIntanceTgo => redeem(actorTgo, workIntanceTgo));
-	yield all(redeemedWorksAction.map(a => put(a)))
+	// const redeemedWorksAction = goalTgo.goal.workTgoIds.map(workTgoId => s.tgos[workTgoId]).filter(hasComponentInventory).map(workIntanceTgo => redeem(actorTgo, workIntanceTgo));
+	// yield all(redeemedWorksAction.map(a => put(a)))
 	yield put(redeem(actorTgo, goalTgo));
 }
 

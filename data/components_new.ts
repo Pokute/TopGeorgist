@@ -1,7 +1,7 @@
 import { Action, ComponentTicker } from "./components";
 import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
 import { TaskQueueType } from "../reducers/taskQueue";
-import { Goal } from "../reducers/goal";
+import { Goal } from "../concerns/goal";
 import { Recipe } from "../reducers/recipe";
 import { ComponentPosition } from '../components/position';
 

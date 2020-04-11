@@ -3,42 +3,42 @@ import { ActionType, getType, createAction } from "typesafe-actions";
 import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
 import { TypeId } from "../reducers/itemType";
 
-export const add = createAction('TGO_INVENTORY_ADD', (resolve) => {
-	return (ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => {
+export const add = createAction('TGO_INVENTORY_ADD',
+	(ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => {
 		if (!typeId) throw new Error('inventory.add can\'t have empty typeId');
-		return resolve({
+		return ({
 			tgoId: ownerTgoId,
 			item: {
 				typeId,
 				count,
 			},
 		})
-	};
-});
+	}
+)();
 
-export const addTgoId = createAction('TGO_INVENTORY_ADD_TGO_ID', (resolve) => {
-	return (ownerTgoId: TgoId, tgoId: TgoId) => {
+export const addTgoId = createAction('TGO_INVENTORY_ADD_TGO_ID',
+	(ownerTgoId: TgoId, tgoId: TgoId) => {
 		if (!tgoId) throw new Error('inventory.addTgoId can\'t have empty item.tgoId');
-		return resolve({
+		return ({
 			tgoId: ownerTgoId,
 			item: {
 				tgoId,
 			},
 		});
 	}
-});
+)();
 
-export const removeTgoId = createAction('TGO_INVENTORY_REMOVE_TGO_ID', (resolve) => {
-	return (ownerTgoId: TgoId, tgoId: TgoId) => {
+export const removeTgoId = createAction('TGO_INVENTORY_REMOVE_TGO_ID',
+	(ownerTgoId: TgoId, tgoId: TgoId) => {
 		if (!tgoId) throw new Error('inventory.removeTgoId can\'t have empty item.tgoId');
-		return resolve({
+		return ({
 			tgoId: ownerTgoId,
 			item: {
 				tgoId,
 			},
 		});
 	}
-});
+)();
 
 export const inventoryActions = {
 	add,

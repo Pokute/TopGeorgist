@@ -4,23 +4,24 @@ import { createAction } from 'typesafe-actions';
 import { TgosState } from '../reducers/tgos';
 import { TgoPartials, TgoId } from '../reducers/tgo';
 
-export const setAll = createAction('TGOS_SET', (resolve) => {
-	return (tgos: TgosState) => resolve({
+export const setAll = createAction('TGOS_SET',
+	(tgos: TgosState) => ({
 		tgos,
-	});
-});
+	})
+)();
 
-export const add = createAction('TGO_ADD', (resolve) => {
-	return (tgo: TgoPartials) => resolve({
+export const add = createAction('TGO_ADD',
+	(tgo: TgoPartials) => ({
 		tgo: {
 			...tgo,
-			tgoId: uuidv4() as TgoId,
+			// tgoId: uuidv4() as TgoId,
+			tgoId: tgo.tgoId ?? uuidv4() as TgoId,
 		},
-	});
-});
+	})
+)();
 
-export const remove = createAction('TGO_REMOVE', (resolve) => {
-	return (tgoId: TgoId) => resolve({
+export const remove = createAction('TGO_REMOVE',
+	(tgoId: TgoId) => ({
 		tgoId,
-	});
-});
+	})
+)();

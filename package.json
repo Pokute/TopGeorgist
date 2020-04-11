@@ -32,7 +32,7 @@
     "redux-saga": "^1.1.3",
     "style-loader": "^0.20.3",
     "ts-node": "^8.5.2",
-    "typesafe-actions": "^4.0.0",
+    "typesafe-actions": "^5.1.0",
     "uuid": "^3.3.0",
     "ws": "^4.0.0",
     "ws-wrapper": "^1.3.2"
@@ -87,13 +87,14 @@
     "redux-persist-node-storage": "./node-modules/null-loader"
   },
   "scripts": {
-    "compile-local": "./node_modules/typescript/bin/tsc --esModuleInterop",
+    "compile-local": "node ./node_modules/typescript/bin/tsc --esModuleInterop",
     "build": "webpack --display-error-details --config webpack.config.js",
     "server-min": "node --inspect -r esm -r ts-node/register server.ts",
     "webserver-min": "node -r esm -r ts-node/register expressServer.ts",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "ava -vs",
+    "test-work": "ava -vs tests/work.test.ts",
     "testnyc": "nyc ava -vs"
   },
   "files": [

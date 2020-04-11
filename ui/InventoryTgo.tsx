@@ -49,23 +49,23 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData: string }) =
 		<span>{`${tgoData}`}</span>
 		{tgo.goal.requirements.map(req => {
 			switch(req.type) {
-				case 'RequirementMove': {
-					return (<span key={req.type}>
-						{`Req move to: ${req.targetPosition.x}, ${req.targetPosition.y}`}
-					</span>);
-				}
+				// case 'RequirementMove': {
+				// 	return (<span key={req.type}>
+				// 		{`Req move to: ${req.targetPosition.x}, ${req.targetPosition.y}`}
+				// 	</span>);
+				// }
 				default:
 					return (<span key={req.type}>
 						{`unknown type`}
 					</span>);
 			}
 		})}
-		{tgo.goal.workTgoIds.map(wiTgoId => (
+		{/* {tgo.goal.workTgoIds.map(wiTgoId => (
 			<RenderWork
 				key={wiTgoId}
 				workTgoId={wiTgoId}
 			/>	
-		))}
+		))} */}
 	</Category>
 );
 

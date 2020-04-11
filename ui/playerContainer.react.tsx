@@ -6,7 +6,7 @@ import CreatePlayerForm from './createPlayerForm.react';
 import { TgoId } from '../reducers/tgo';
 import { RootStateType } from '../reducers';
 import Category from './Category';
-import { RequirementDelivery } from '../reducers/goal';
+// import { RequirementDelivery } from '../concerns/goal';
 import { MapPosition } from '../reducers/map';
 
 export interface propTypes {
@@ -24,15 +24,15 @@ const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
 			}
 			{ defaultPlayerTgoId && (<button
 				onClick={() => {
-					const delivery:RequirementDelivery = {
-						tgoIds: [defaultPlayerTgoId],
-						targetPosition: {
-							x: 20,
-							y: 20
-						} as MapPosition,
-						type: "RequirementDelivery",
-						inventoryItems: [],
-					}
+					// const delivery:RequirementDelivery = {
+					// 	tgoIds: [defaultPlayerTgoId],
+					// 	targetPosition: {
+					// 		x: 20,
+					// 		y: 20
+					// 	} as MapPosition,
+					// 	type: "RequirementDelivery",
+					// 	inventoryItems: [],
+					// }
 				}}
 			>
 				Create Delivery Goal

@@ -1,10 +1,9 @@
 import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo';
-import goalsReducer, { GoalsActionType, GoalsActionList } from './goals';
+import { GoalActionType, goalActionList, GoalDoerActionType, goalDoerActionList } from '../concerns/goal';
 import * as taskQueueActions from '../actions/taskQueue'; 
-import * as goalsActions from '../actions/goals'; 
-import * as goalActions from '../actions/goal'; 
+import * as goalActions from '../concerns/goal'; 
 import { workActions } from '../concerns/work'; 
 import * as tgoActions from '../actions/tgo'; 
 import * as tgosActions from '../actions/tgos'; 
@@ -12,7 +11,6 @@ import { InventoryActionType } from '../components/inventory';
 import { hasComponentPlayer } from '../components/player';
 import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } from '../components/inventory';
 import { setPosition, hasComponentPosition, reducer as positionReducer, positionActions } from '../components/position';
-import { GoalActionType } from './goal';
 
 export type TgosState = {
 	readonly [extraProps: string]: TgoType;
@@ -37,7 +35,7 @@ const componentReducers = [
 	},
 ];
 
-export default (state: TgosState = initialState, action: TgosAction | TgoActionType | InventoryActionType | GoalActionType | GoalsActionType): TgosState => {
+export default (state: TgosState = initialState, action: TgosAction | TgoActionType | InventoryActionType | GoalActionType | GoalDoerActionType): TgosState => {
 	if (isActionOf(tgoActions.setColor, action)) {
 		return singleTgoReducer(state, action);
 	}
@@ -59,15 +57,14 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 			return action.payload.tgos;
 		default:
 			if (isActionOf(setPosition, action)
-				||isActionOf(tgoActions.setColor, action)
+				|| isActionOf(tgoActions.setColor, action)
 				|| isActionOf(inventoryActions.add, action)
 				|| isActionOf(inventoryActions.addTgoId, action)
 				|| isActionOf(inventoryActions.removeTgoId, action)
 				|| isActionOf(taskQueueActions.addTaskQueue, action)
 				|| isActionOf(taskQueueActions.setTaskQueue, action)
-				|| isActionOf(goalsActions.addGoals, action)
-				|| isActionOf(goalsActions.setGoals, action)
-				|| isActionOf(goalsActions.removeGoals, action)
+				|| isActionOf(goalDoerActionList.addGoals, action)
+				|| isActionOf(goalDoerActionList.removeGoals, action)
 				|| isActionOf(goalActions.addWork, action)
 				|| isActionOf(goalActions.removeWork, action)
 			) {

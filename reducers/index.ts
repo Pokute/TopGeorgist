@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import { combineReducers, AnyAction } from 'redux'
 import accounts, { AccountsState } from './accounts';
 import serverConnection, { ServerConnectionStateType } from './serverConnection';
 import clients, { ClientsState } from './clients';
@@ -11,6 +11,9 @@ import tgos, { TgosState } from './tgos';
 import ticker, { TickerStateType } from './ticker';
 import tileSets, { TileSetsState } from './tileSets';
 import views, { ViewsState } from './views';
+import { getType, ActionType } from 'typesafe-actions';
+import { createGoal, addGoals } from '../concerns/goal';
+import { add as addTgo } from '../actions/tgos';
 
 export interface RootStateType {
 	readonly accounts: AccountsState,
@@ -27,7 +30,7 @@ export interface RootStateType {
 	readonly views: ViewsState,
 };
 
-const topGeorgist = combineReducers({
+const combinedReducers = combineReducers({
 	accounts,
 	serverConnection,
 	clients,
@@ -42,4 +45,25 @@ const topGeorgist = combineReducers({
 	views,
 });
 
-export default topGeorgist;
+const rootReducer = (state: RootStateType | undefined, action: AnyAction) => {
+	switch (action.type) {
+		case getType(createGoal): {
+			const a = action as ActionType<typeof createGoal>;
+			const addGoalTgoAction = addTgo({
+				goal: a.payload.goal,
+			});
+			const addedGoalTgoState = combinedReducers(state, addGoalTgoAction);
+			if (state === addedGoalTgoState) return state;
+
+			const goalAddedToGoalDoerAction = addGoals(a.payload.tgoId, [addGoalTgoAction.payload.tgo.tgoId]);
+			const goalAddedToGoalDoerState = combinedReducers(addedGoalTgoState, goalAddedToGoalDoerAction);
+			if (state === goalAddedToGoalDoerState) return state;
+
+			return goalAddedToGoalDoerState;
+		}
+		default:
+			return combinedReducers(state, action);
+	}
+}
+
+export default rootReducer;

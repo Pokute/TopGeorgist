@@ -3,48 +3,48 @@ import { ViewId } from '../reducers/view';
 import { MapPosition, MapSize } from '../reducers/map';
 import { TgoId } from '../reducers/tgo';
 
-export const setPosition = createAction('VIEW_SET_POSITION', (resolve) => {
-	return (viewId: ViewId, position: MapPosition) => resolve({
+export const setPosition = createAction('VIEW_SET_POSITION',
+	(viewId: ViewId, position: MapPosition) => ({
 		viewId,
 		position,
-	});
-});
+	})
+)();
 
-export const setSize = createAction('VIEW_SET_SIZE', (resolve) => {
-	return (viewId: ViewId, size: MapSize) => resolve({
+export const setSize = createAction('VIEW_SET_SIZE',
+	(viewId: ViewId, size: MapSize) => ({
 		viewId,
 		size,
-	});
-});
+	})
+)();
 
-export const rawClick = createAction('VIEW_RAW_CLICK', (resolve) => {
-	return (viewId: ViewId, mapPosition: MapPosition) => resolve({
+export const rawClick = createAction('VIEW_RAW_CLICK',
+	(viewId: ViewId, mapPosition: MapPosition) => ({
 		viewId,
 		mapPosition,
-	});
-});
+	})
+)();
 
-export const setFollowTarget = createAction('VIEW_SET_FOLLOW_TARGET', (resolve) => {
-	return (viewId: ViewId, tgoId: TgoId) => resolve({
+export const setFollowTarget = createAction('VIEW_SET_FOLLOW_TARGET',
+	(viewId: ViewId, tgoId: TgoId) => ({
 		viewId,
 		tgoId,
-	});
-});
+	})
+)();
 
-export const render = createAction('VIEW_RENDER', (resolve) => {
-	return (viewId?: ViewId) => resolve({
+export const render = createAction('VIEW_RENDER',
+	(viewId?: ViewId) => ({
 		viewId,
-	});
-});
+	})
+)();
 
 export const clickActionStack = {
-	push: createAction('VIEW_CLICK_ACTION_STACK_PUSH', (resolve) => {
-		return (viewId: ViewId, action: any) => resolve({
+	push: createAction('VIEW_CLICK_ACTION_STACK_PUSH',
+		(viewId: ViewId, action: any) => ({
 			viewId,
 			action,
-		});
-	}),
-	pop: createAction('VIEW_CLICK_ACTION_STACK_POP', (resolve) => {
-		return () => resolve();
-	}),
+		})
+	)(),
+	pop: createAction('VIEW_CLICK_ACTION_STACK_POP',
+		() => ({})
+	)(),
 };
