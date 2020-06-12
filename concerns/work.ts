@@ -2,7 +2,7 @@ import { select, put, all, takeEvery, call } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { Recipe } from '../reducers/recipe';
-import { TgoId, TgoType } from '../reducers/tgo';
+import { TgoId, TgoType, TgoRoot } from '../reducers/tgo';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory';
 import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new';
 import { transaction } from '../concerns/transaction';
@@ -52,17 +52,18 @@ export interface Work {
 	readonly inputProgress: Inventory,
 };
 
-export const reducer = (state: Work, action: WorkActionType): Work => {
-	switch (action.type) {
-		case getType(workActions.createFromRecipe):
-			return {
-				...initialState,
-				recipe: action.payload.recipe,
-			};
-		default:
-			return state;
-	}
-};
+// export const reducer = (state: (Work & TgoRoot) | undefined, action: WorkActionType): Work & TgoRoot => {
+// 	switch (action.type) {
+// 		// case getType(workActions.createFromRecipe):
+// 		// 	return {
+// 		// 		...state,
+// 		// 		...initialState,
+// 		// 		recipe: action.payload.recipe,
+// 		// 	};
+// 		default:
+// 			// return state;
+// 	}
+// };
 
 // Sagas:
 
@@ -154,7 +155,8 @@ export const handleWork = function* (
 	goalTgo?: ComponentGoal & Partial<ComponentInventory>,
 ) {
 	const s: RootStateType = yield select();
-	if (!hasComponentGoalDoer(actorTgo)
+	// if (!hasComponentGoalDoer(actorTgo)
+	if (!hasComponentWorkDoer(actorTgo)
 		|| (goalTgo && !isComponentGoal(goalTgo))
 		|| !isComponentWork(workTgo)){
 		return undefined; // Fail
@@ -273,7 +275,6 @@ export const handleWork = function* (
 			.filter(items => items.count > 0)
 		}))
 	
-	console.log(participantsWithCommitables[0]);
 	const reqTransaction = transaction(
 		...participantsWithCommitables
 			.filter(participant => participant.committableRequiredItems.length > 0)
@@ -391,10 +392,10 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 		* This doesn't work as a standalone code anyway, requires goals to trigger.
 */
 
-export const handleCreateWork = function* ({ payload: { goalTgoId, recipe, targetTgoId }}: ActionType<typeof createWork>) {
+export const handleCreateWork = function* ({ payload: { /* goalTgoId, */ recipe, targetTgoId }}: ActionType<typeof createWork>) {
 	const s: RootStateType = yield select();
-	const goalTgo = s.tgos[goalTgoId];
-	if (!isComponentGoal(goalTgo)) return;
+	// const goalTgo = s.tgos[goalTgoId];
+	// if (!isComponentGoal(goalTgo)) return;
 
 	const emptyVirtualInventory = {
 		inventory: [],
@@ -406,30 +407,37 @@ export const handleCreateWork = function* ({ payload: { goalTgoId, recipe, targe
 		: undefined;
 	if (workActorCommittedItemsTgoAction)
 		yield put(workActorCommittedItemsTgoAction);
-	const workTargetCommittedItemsTgo = recipe.output.length > 0
+	const workTargetCommittedItemsTgoAction = recipe.output.length > 0
 		? addTgo(emptyVirtualInventory)
 		: undefined;
-	if (workTargetCommittedItemsTgo)
-		yield put(workTargetCommittedItemsTgo)
+	if (workTargetCommittedItemsTgoAction)
+		yield put(workTargetCommittedItemsTgoAction)
 
 	// Add a Work TgoId
-	const newWorkAction: ActionType<typeof addTgo> = yield put(addTgo({
+	const addTgoAction = addTgo({
 		workRecipe: recipe,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
-		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction ? workActorCommittedItemsTgoAction.payload.tgo.tgoId : undefined,
-		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgo ? workTargetCommittedItemsTgo.payload.tgo.tgoId : undefined,
+		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction?.payload.tgo.tgoId,
+		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgoAction?.payload.tgo.tgoId,
 		// inventory: [],
-	}));
+	});
+	yield put(addTgoAction);
 
-	// Add the WorkTgoId to Goal inventory
+	// Add the WorkTgoId to Worker inventory
 	yield put(inventoryAddTgoId(
-		goalTgoId,
-		newWorkAction.payload.tgo.tgoId
+		targetTgoId!,
+		addTgoAction.payload.tgo.tgoId
 	));
 
+	// Add the WorkTgoId to Goal inventory
+	// yield put(inventoryAddTgoId(
+	// 	goalTgoId,
+	// 	newWorkAction.payload.tgo.tgoId
+	// ));
+
 	// Add the WorkTgoId as a goal work
-	yield put(goalAddWork(goalTgoId, newWorkAction.payload.tgo.tgoId));
+	// yield put(goalAddWork(goalTgoId, newWorkAction.payload.tgo.tgoId));
 }
 
 const handleRemoveWork = function* ({ payload: { tgoId, workTgoId }}: ActionType<typeof removeWork>) {
@@ -468,7 +476,6 @@ const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & Comp
 
 const handleWorkTick = function* () {
 	const s: RootStateType = yield select();
-	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
 	const workOwners = Object.values(s.tgos)
 		.filter(hasComponentWorkDoer)
 		.filter(hasComponentInventory);
@@ -493,19 +500,17 @@ const inventoryTgoIds = (tgo: ComponentInventory): TgoIds =>
 const populateInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory) =>
 	inventoryTgoIds(tgo).map(ii => store.tgos[ii.tgoId]);
 
-
-
 const createTransactionForOutput = function* (tgo: TgoType & ComponentWorkDoer, output: Inventory) {
 	if (output.length === 0) return;
 	if (output.length > 1) throw new Error('createTransactionForOutput doesn\'t support multiple outputs');
 
 	if (!hasComponentInventory(tgo)) return;
 
-	const possibleRecipes = tgo.recipes.filter(r => r.output.some(recipeOutput => recipeOutput.typeId === output[0].typeId));
+	const possibleRecipes = tgo.recipeInfos.filter(ri => ri.recipe.output.some(recipeOutput => recipeOutput.typeId === output[0].typeId));
 
 	if (possibleRecipes.length === 0) return;
 
-	const possibleRecipe = possibleRecipes[0];
+	const possibleRecipe = possibleRecipes[0].recipe;
 	const transactioni = possibleRecipe.input.every(ii => inventoryHasItem(tgo, ii))
 		? transaction(
 			{

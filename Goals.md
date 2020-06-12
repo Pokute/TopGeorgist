@@ -141,10 +141,27 @@ tick completes:
 		reset tick
 
 API:
-	?: Need 3 flour
-	???
+	Requirement: 3 flour
+		Virtual inventory (probably). Those items don't actually exist here. It's just to keep track of created items.
+		This needs a separate Tgo since it has an inventory.
+		???: What's the API?
+			Goal's requirement.
+				If it's goal's requirement, does the goal have an inventory or is the requirement a separate Tgo with an inventory?
+	? Something that iterates over all the requirements
+		For goal:
+			Every GoalDoer has a list of goals.
+			Every tick each goaldoer checks for it's goals with requirements.
 	Some code searches for recipes with output: flour.
 	dispatch(transction())
+
+	Works and recipes HAVE to be doable without goals. It feels stupid that a plant needs a goal to grow.
+		? AutoWorker component?
+			has a list of recipeId's that are automatically triggered.
+
+	How to do something when work finishes?
+		Depend on something that the recipe produces?
+		What to do when work finishes? Actions with freeform fillable props like the UI has?
+			??? What API to add these?
 
 # Examples
 

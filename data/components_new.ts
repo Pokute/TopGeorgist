@@ -2,8 +2,9 @@ import { Action, ComponentTicker } from "./components";
 import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
 import { TaskQueueType } from "../reducers/taskQueue";
 import { Goal } from "../concerns/goal";
-import { Recipe } from "../reducers/recipe";
+import { Recipe, RecipeId } from "../reducers/recipe";
 import { ComponentPosition } from '../components/position';
+import { Work } from "../concerns/work";
 
 export type ComponentRentOffice = 
 	ComponentPosition & {
@@ -96,11 +97,16 @@ export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: Base
 
 export type ComponentWorkDoer = 
 TgoRoot & {
-	readonly recipes: ReadonlyArray<Recipe>,
+	// readonly recipeInfos: Record<RecipeId, {
+	readonly recipeInfos: ReadonlyArray<{
+		readonly recipe: Recipe,
+		readonly autoRun: boolean,
+		readonly workProgress?: TgoId, // Tgo with inventory.
+	}>,
 };
 
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
-	tgo && (tgo.recipes !== undefined)
+	tgo && (tgo.recipeInfos !== undefined)
 
 export type ComponentGoalDoer = 
 TgoRoot & {

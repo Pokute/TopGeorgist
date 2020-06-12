@@ -112,7 +112,7 @@ export const transactionSaga = function* ({ payload: { participants } }: ReturnT
 	const itemBalancesWithoutTypes = participantsWithItemBalanceTypes.flatMap(({ itemsBalance }) => itemsBalance.filter(({ type }) => !type));
 
 	if (itemBalancesWithoutTypes.length > 0) {
-		throw new Error(`Transaction item of type "${itemBalancesWithoutTypes[0].typeId}" ${itemBalancesWithoutTypes.length > 1 ? `and (${itemBalancesWithoutTypes.length - 1} others) ` : ''}doesn\'t have a matching item type.`);
+		throw new Error(`Transaction item of type "${itemBalancesWithoutTypes[0].typeId}" ${itemBalancesWithoutTypes.length > 1 ? `and (${itemBalancesWithoutTypes.length - 1} others) ` : ''}doesn\'t have a matching item type (store.itemTypes["${itemBalancesWithoutTypes[0].typeId}"]).`);
 	}
 	
 	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
