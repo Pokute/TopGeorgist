@@ -14,7 +14,7 @@ export const initialState = {
 	currentTick: 0,
 	tickInterval: 250,
 	tickTime: Date.now(),
-	running: true,
+	running: false,
 };
 
 type TickerAction = ActionType<typeof tickerActions>;

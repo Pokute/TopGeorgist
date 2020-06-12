@@ -24,6 +24,7 @@ import { consumeGoal } from './actions/consumeGoal';
 import { MapSize } from './reducers/map';
 import { RootStateType } from './reducers';
 import { transaction } from './concerns/transaction';
+import { setRunning as tickerSetRunning } from './actions/ticker';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -139,6 +140,8 @@ const init = () => {
 	initialObjectActions().forEach(o => store.dispatch(o));
 
 	store.dispatch(mapActions.generate({ size: { x: 200, y: 30 } as MapSize, seed: 1233321 }));
+
+	store.dispatch(tickerSetRunning(true));
 };
 
 init();
