@@ -17,7 +17,7 @@
     "esm": "^3.2.5",
     "express": "^4.16.4",
     "import-to-array": "^1.0.0",
-    "node-forge": "^0.7.6",
+    "node-forge": "^0.10.0",
     "null-loader": "^0.1.1",
     "prop-types": "^15.6.1",
     "random-js": "^1.0.8",
