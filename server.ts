@@ -18,7 +18,7 @@ import { getType } from 'typesafe-actions';
 import { AnyAction } from 'redux';
 import { extendedSocket } from './reducers/client';
 import { withClient } from './actions/withClient';
-import { setGoals } from './actions/goals';
+// import { setGoals } from './actions/goals';
 import { moveGoal } from './actions/moveGoal';
 import { consumeGoal } from './actions/consumeGoal';
 import { MapSize } from './reducers/map';
@@ -92,7 +92,7 @@ try {
 							store.dispatch(withClient(data.action, clientId));
 							break;
 						case getType(accountCommActions.createAccountWithTokenClientSalted):
-						case getType(setGoals):
+						// case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':
 						case getType(transaction):
