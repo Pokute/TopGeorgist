@@ -1,8 +1,8 @@
-import { Recipe } from '../reducers/recipe';
+import { Recipe, RecipeId } from '../reducers/recipe';
 import { TypeId } from '../reducers/itemType';
 
 export const move: Recipe = {
-	type: 'move',
+	type: 'move' as RecipeId,
 	input: [
 		{
 			typeId: 'calories' as TypeId,
@@ -20,7 +20,7 @@ export const move: Recipe = {
 };
 
 export const consume: Recipe = {
-	type: 'consume',
+	type: 'consume' as RecipeId,
 	input: [
 		{
 			typeId: 'hydrocarbons' as TypeId,
@@ -40,7 +40,7 @@ export const consume: Recipe = {
 };
 
 export const harvest: Recipe = {
-	type: 'harvest',
+	type: 'harvest' as RecipeId,
 	input: [
 		{
 			typeId: 'berry' as TypeId,
@@ -60,7 +60,7 @@ export const harvest: Recipe = {
 };
 
 export const smelt: Recipe = {
-	type: 'smelt',
+	type: 'smelt' as RecipeId,
 	input: [
 		{
 			typeId: 'ironOre' as TypeId,
@@ -84,7 +84,7 @@ export const smelt: Recipe = {
 };
 
 export const trade: Recipe = {
-	type: 'trade',
+	type: 'trade' as RecipeId,
 	input: [
 		{
 			typeId: 'calculation' as TypeId,
