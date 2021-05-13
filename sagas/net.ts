@@ -1,17 +1,17 @@
 import { ActionType, getType } from 'typesafe-actions';
 import { takeEvery, select, put } from 'redux-saga/effects';
 
-import * as netActions from '../actions/net';
-import { RootStateType } from '../reducers';
-import * as accountsActions from '../actions/accounts';
-import * as viewActions from '../actions/view';
-import * as mapActions from '../actions/map';
-import * as tileSetsActions from '../actions/tileSets';
-import * as tgoActions from '../actions/tgo';
-import * as tgosActions from '../actions/tgos';
-import { moveGoal } from '../actions/moveGoal';
-import { MapPosition } from '../reducers/map';
-import { ViewId } from '../reducers/view';
+import * as netActions from '../actions/net.js';
+import { RootStateType } from '../reducers.js';
+import * as accountsActions from '../actions/accounts.js';
+import * as viewActions from '../actions/view.js';
+import * as mapActions from '../actions/map.js';
+import * as tileSetsActions from '../actions/tileSets.js';
+import * as tgoActions from '../actions/tgo.js';
+import * as tgosActions from '../actions/tgos.js';
+import { moveGoal } from '../actions/moveGoal.js';
+import { MapPosition } from '../reducers/map.js';
+import { ViewId } from '../reducers/view.js';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
 	const clienToServerSocket = ((yield select()) as RootStateType).serverConnection.websocket;

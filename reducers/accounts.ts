@@ -1,8 +1,8 @@
 import { ActionType, getType, isActionOf } from 'typesafe-actions';
 
-import { accountActionList, AccountId, AccountType, default as accountReducer} from './account';
-import * as accountActions from '../actions/account'; 
-import * as accountsActions from '../actions/accounts'; 
+import { accountActionList, AccountId, AccountType, default as accountReducer} from './account.js';
+import * as accountActions from '../actions/account.js'; 
+import * as accountsActions from '../actions/accounts.js'; 
 
 export type AccountsState = {
 	readonly [extraProps: string]: AccountType;

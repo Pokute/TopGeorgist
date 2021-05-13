@@ -1,21 +1,21 @@
 import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
-import { Requirement, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from "../concerns/goal";
-import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from "../concerns/work";
-import { RootStateType } from "../reducers";
-import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from "../data/components_new";
-import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from "../components/inventory";
-import { hasComponentPosition, ComponentPosition } from '../components/position';
-import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
-import { move, consume } from "../data/recipes";
-import { Inventory, InventoryItem } from "../components/inventory";
-import { transaction, TransactionParticipant } from "../concerns/transaction";
-import { Recipe } from "../reducers/recipe";
-import { setPosition } from "../components/position";
-import { remove as tgosRemove, add as tgosAdd } from "../actions/tgos";
+import { Requirement, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
+import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from '../concerns/work.js';
+import { RootStateType } from '../reducers.js';
+import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from '../data/components_new.js';
+import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from '../components/inventory.js';
+import { hasComponentPosition, ComponentPosition } from '../components/position.js';
+import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
+import { move, consume } from '../data/recipes.js';
+import { Inventory, InventoryItem } from '../components/inventory.js';
+import { transaction, TransactionParticipant } from '../concerns/transaction.js';
+import { Recipe } from '../reducers/recipe.js';
+import { setPosition } from '../components/position.js';
+import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
 import { getType } from "typesafe-actions";
-import { tick } from "../actions/ticker";
-import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from "../reducers/map";
+import { tick } from '../actions/ticker.js';
+import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../reducers/map.js';
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();

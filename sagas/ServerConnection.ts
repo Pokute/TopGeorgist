@@ -5,11 +5,11 @@ import { eventChannel, END } from 'redux-saga';
 import { takeEvery, put, select, call, take, fork, delay } from 'redux-saga/effects';
 import WebSocketWrapper from 'ws-wrapper';
 
-import isServer from '../isServer'
-import config from '../config';
-import * as connectionActions from '../actions/serverConnection';
-import * as netActions from '../actions/net';
-import { RootStateType } from '../reducers';
+import isServer from '../isServer.js'
+import config from '../config.js';
+import * as connectionActions from '../actions/serverConnection.js';
+import * as netActions from '../actions/net.js';
+import { RootStateType } from '../reducers.js';
 
 const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions.createWebsocket>) {
 	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);

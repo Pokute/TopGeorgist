@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 
-import * as playerActions from '../actions/player';
+import * as playerActions from '../actions/player.js';
 import { Dispatch } from 'redux';
 import uuid from 'uuid';
 

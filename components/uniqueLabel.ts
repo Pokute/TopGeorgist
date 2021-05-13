@@ -1,5 +1,5 @@
-import { TgoType } from '../reducers/tgo';
-import { ComponentLabel } from './label';
+import { TgoType } from '../reducers/tgo.js';
+import { ComponentLabel } from './label.js';
 
 export type ComponentUniqueLabel = ComponentLabel & {
 	readonly uniqueLabel: true,

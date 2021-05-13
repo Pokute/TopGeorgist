@@ -1,15 +1,15 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import { inventoryActions } from '../components/inventory';
-import * as plantableActions from '../actions/plantable';
-import * as tgosActions from '../actions/tgos';
-import * as taskQueueActions from '../actions/taskQueue';
-import { transaction } from '../concerns/transaction';
-import { checkOnVisitableLocation } from '../utils/visitable';
+import { inventoryActions } from '../components/inventory.js';
+import * as plantableActions from '../actions/plantable.js';
+import * as tgosActions from '../actions/tgos.js';
+import * as taskQueueActions from '../actions/taskQueue.js';
+import { transaction } from '../concerns/transaction.js';
+import { checkOnVisitableLocation } from '../utils/visitable.js';
 import { ActionType, getType } from 'typesafe-actions';
-import { RootStateType } from '../reducers';
-import { hasComponentMapGridOccipier } from '../data/components_new';
-import { hasComponentInventory } from '../components/inventory';
-import { hasComponentPosition } from '../components/position';
+import { RootStateType } from '../reducers.js';
+import { hasComponentMapGridOccipier } from '../data/components_new.js';
+import { hasComponentInventory } from '../components/inventory.js';
+import { hasComponentPosition } from '../components/position.js';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s: RootStateType = yield select();

@@ -1,8 +1,8 @@
 import { createAction } from 'typesafe-actions';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AccountId, AccountTypePartial } from '../reducers/account';
-import { AccountsState } from '../reducers/accounts';
+import { AccountId, AccountTypePartial } from '../reducers/account.js';
+import { AccountsState } from '../reducers/accounts.js';
 
 export const setAll = createAction('ACCOUNT_SET',
 	(accounts: AccountsState) => ({

@@ -6,9 +6,9 @@ import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 
 // import { Button, Welcome } from '@storybook/react/demo';
-import ProgressBar from '../ui/progressBar';
+import ProgressBar from '../ui/progressBar.js';
 
-import { store } from '../store';
+import { store } from '../store.js';
 
 import '../static/style/topGeorgist.css';
 

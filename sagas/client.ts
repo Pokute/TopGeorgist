@@ -1,12 +1,12 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import isServer from '../isServer'
-import * as tgoActions from '../actions/tgo';
-import * as netActions from '../actions/net';
-// import { setGoals } from '../concerns/goal';
-import { moveGoal } from '../actions/moveGoal';
-import { consumeGoal } from '../actions/consumeGoal';
+import isServer from '../isServer.js'
+import * as tgoActions from '../actions/tgo.js';
+import * as netActions from '../actions/net.js';
+// import { setGoals } from '../concerns/goal.js';
+import { moveGoal } from '../actions/moveGoal.js';
+import { consumeGoal } from '../actions/consumeGoal.js';
 
 const sentTypes = {
 	// setGoals,

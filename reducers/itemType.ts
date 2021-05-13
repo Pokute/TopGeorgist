@@ -1,7 +1,7 @@
-import { ItemTypesState } from "./itemTypes";
-import { ComponentList, ComponentArray } from "../data/components";
-import { Inventory } from "../components/inventory";
-import { Opaque } from "../typings/global.d";
+import { ItemTypesState } from './itemTypes.js';
+import { ComponentList, ComponentArray } from '../data/components.js';
+import { Inventory } from '../components/inventory.js';
+import { Opaque } from '../typings/global.d.js';
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = Opaque<string, 'TypeId'>;

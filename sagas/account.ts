@@ -1,16 +1,16 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
-import isServer from '../isServer'
-import { set as allSet } from '../actions/allSet';
-import * as accountActions from '../actions/account';
-import * as accountCommActions from '../actions/accountComm';
-import * as accountsActions from '../actions/accounts';
-import combinedReducers from '../reducers';
-import { AccountType } from '../reducers/account';
-import { setAccountId, setPlayerTgoId } from '../actions/defaults';
-import { WithClient } from '../actions/withClient';
-import { TgoId } from '../reducers/tgo';
+import isServer from '../isServer.js'
+import { set as allSet } from '../actions/allSet.js';
+import * as accountActions from '../actions/account.js';
+import * as accountCommActions from '../actions/accountComm.js';
+import * as accountsActions from '../actions/accounts.js';
+import combinedReducers from '../reducers.js';
+import { AccountType } from '../reducers/account.js';
+import { setAccountId, setPlayerTgoId } from '../actions/defaults.js';
+import { WithClient } from '../actions/withClient.js';
+import { TgoId } from '../reducers/tgo.js';
 
 const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, username: findUsername, password }}: ActionType<typeof accountsActions.accountRequestWithClient>) {
 	if (!isServer) return;

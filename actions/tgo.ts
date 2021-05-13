@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
-import { TgoId } from '../reducers/tgo';
-import { ComponentPresentation } from '../data/components_new';
+import { TgoId } from '../reducers/tgo.js';
+import { ComponentPresentation } from '../data/components_new.js';
 
 interface TgoAction {
 	readonly tgoId: TgoId,

@@ -2,14 +2,14 @@ import { call, fork, put, select, take, takeEvery, all } from 'redux-saga/effect
 import { delay } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import isServer from '../isServer'
-import * as tickerActions from '../actions/ticker';
-// import components, { ComponentTicker } from '../data/components';
-import { set as allSet } from '../actions/allSet';
-import { RootStateType } from '../reducers';
-import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo';
+import isServer from '../isServer.js'
+import * as tickerActions from '../actions/ticker.js';
+// import components, { ComponentTicker } from '../data/components.js';
+import { set as allSet } from '../actions/allSet.js';
+import { RootStateType } from '../reducers.js';
+import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo.js';
 import { AnyAction } from 'redux';
-// import { hasComponentComponents } from '../data/components_new';
+// import { hasComponentComponents } from '../data/components_new.js';
 
 const tickerSaga = function* () {
 	while (true) {

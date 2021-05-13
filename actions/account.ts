@@ -2,9 +2,9 @@ import forge from 'node-forge';
 import { createAction } from 'typesafe-actions';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AccountId, Token, AccountType } from '../reducers/account';
-import { TgoId } from '../reducers/tgo';
-import serverConfig from '../serverConfig';
+import { AccountId, Token, AccountType } from '../reducers/account.js';
+import { TgoId } from '../reducers/tgo.js';
+import serverConfig from '../serverConfig.js';
 
 export const serverSaltPassword = (username: string, clientSaltedPassword: string) => {;
 	const md = forge.md.sha512.create();

@@ -1,7 +1,7 @@
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as tickerActions from '../actions/ticker';
-import * as allSetActions from '../actions/allSet';
+import * as tickerActions from '../actions/ticker.js';
+import * as allSetActions from '../actions/allSet.js';
 
 export interface TickerStateType {
 	readonly currentTick: number,

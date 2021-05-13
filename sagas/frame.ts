@@ -1,7 +1,7 @@
 import { call, fork, put } from 'redux-saga/effects';
 
-import isServer from '../isServer'
-import * as frameActions from '../actions/frame';
+import isServer from '../isServer.js'
+import * as frameActions from '../actions/frame.js';
 
 const reqWinFrame = () => new Promise(resolve => window.requestAnimationFrame(resolve));
 

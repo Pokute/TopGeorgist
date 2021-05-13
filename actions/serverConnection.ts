@@ -1,6 +1,6 @@
 import { createAction } from 'typesafe-actions';
 
-import { ServerConnectionStateType } from '../reducers/serverConnection';
+import { ServerConnectionStateType } from '../reducers/serverConnection.js';
 
 export const createWebsocket = createAction('CONNECTION_CREATE_WEBSOCKET')();
 

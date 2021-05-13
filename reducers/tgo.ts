@@ -1,21 +1,21 @@
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as tgoActions from '../actions/tgo'; 
-import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue';
-import { goalDoerReducer, GoalDoerActionType, goalDoerActionList } from '../concerns/goal';
-import { goalReducer } from '../concerns/goal';
-import { /* reducer as workReducer, */ WorkActionType } from '../concerns/work';
-import { TypeId } from './itemType';
-import { TgosState } from './tgos';
-import { ComponentList } from '../data/components';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal, hasComponentWorkDoer } from '../data/components_new';
-import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType, InventoryItem } from "../components/inventory";
-import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position';
-import { ComponentPlayer } from '../components/player';
-import { ComponentLabel } from '../components/label';
-import { ComponentUniqueLabel } from '../components/uniqueLabel';
-import { GoalActionType } from '../concerns/goal';
-import { Opaque } from '../typings/global.d';
+import * as tgoActions from '../actions/tgo.js'; 
+import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue.js';
+import { goalDoerReducer, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
+import { goalReducer } from '../concerns/goal.js';
+import { /* reducer as workReducer, */ WorkActionType } from '../concerns/work.js';
+import { TypeId } from './itemType.js';
+import { TgosState } from './tgos.js';
+import { ComponentList } from '../data/components.js';
+import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal, hasComponentWorkDoer } from '../data/components_new.js';
+import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType, InventoryItem } from '../components/inventory.js';
+import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
+import { ComponentPlayer } from '../components/player.js';
+import { ComponentLabel } from '../components/label.js';
+import { ComponentUniqueLabel } from '../components/uniqueLabel.js';
+import { GoalActionType } from '../concerns/goal.js';
+import { Opaque } from '../typings/global.d.js';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [

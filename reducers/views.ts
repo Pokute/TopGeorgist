@@ -1,10 +1,10 @@
 import { importToArray } from 'import-to-array';
 import { ActionType, getType, isActionOf } from 'typesafe-actions';
 
-import * as viewActions from '../actions/view';
-import * as viewsActions from '../actions/views';
-import viewReducer, { ViewType, viewActionList } from './view';
-import view from './view';
+import * as viewActions from '../actions/view.js';
+import * as viewsActions from '../actions/views.js';
+import viewReducer, { ViewType, viewActionList } from './view.js';
+import view from './view.js';
 import { AnyAction } from 'redux';
 
 export type ViewsState = {

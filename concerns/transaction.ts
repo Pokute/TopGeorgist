@@ -1,13 +1,13 @@
 import { select, put, all, call, takeEvery } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
-import { TgoId } from '../reducers/tgo';
-import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from '../components/inventory';
-import * as taskQueueActions from '../actions/taskQueue';
-import { TypeId, ItemType } from '../reducers/itemType';
-import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos';
-import { ItemTypesState } from '../reducers/itemTypes';
-import { RootStateType } from '../reducers';
+import { TgoId } from '../reducers/tgo.js';
+import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from '../components/inventory.js';
+import * as taskQueueActions from '../actions/taskQueue.js';
+import { TypeId, ItemType } from '../reducers/itemType.js';
+import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';
+import { ItemTypesState } from '../reducers/itemTypes.js';
+import { RootStateType } from '../reducers.js';
 
 // Actions:
 

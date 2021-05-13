@@ -1,9 +1,9 @@
 import test from 'ava';
 
-import { omitType } from '../testUtils';
-import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../components/inventory';
-import { TgoId } from '../reducers/tgo';
-import { TypeId } from '../reducers/itemType';
+import { omitType } from '../testUtils.js';
+import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../components/inventory.js';
+import { TgoId } from '../reducers/tgo.js';
+import { TypeId } from '../reducers/itemType.js';
 
 // Action creators
 

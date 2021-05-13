@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as accountCommActions from '../actions/accountComm';
-import Category from './Category';
-import * as netActions from '../actions/net';
-import { RootStateType } from '../reducers';
-import { Token } from '../reducers/account';
+import * as accountCommActions from '../actions/accountComm.js';
+import Category from './Category.js';
+import * as netActions from '../actions/net.js';
+import { RootStateType } from '../reducers.js';
+import { Token } from '../reducers/account.js';
 
 const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithToken }: ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => {
 	useEffect(() => {

@@ -1,10 +1,10 @@
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as allSetActions from '../actions/allSet';
-import * as tickerActions from '../actions/ticker';
-import * as governmentActions from '../actions/government';
-import { TgoId } from "./tgo";
-import { MapPosition } from '../reducers/map';
+import * as allSetActions from '../actions/allSet.js';
+import * as tickerActions from '../actions/ticker.js';
+import * as governmentActions from '../actions/government.js';
+import { TgoId } from './tgo.js';
+import { MapPosition } from '../reducers/map.js';
 
 export interface GovernmentStateType {
 	readonly citizens: CitizensStateType,

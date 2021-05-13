@@ -1,22 +1,22 @@
 import { put, select, takeEvery, take } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
-import * as accountActions from '../actions/account';
-import isServer from '../isServer'
-import * as accountsActions from '../actions/accounts';
-import { set as allSet } from '../actions/allSet';
-import * as defaultsActions from '../actions/defaults';
-import * as netActions from '../actions/net';
-import * as taskQueueActions from '../actions/taskQueue';
-import * as tgoActions from '../actions/tgo';
-import * as playerActions from '../actions/player';
-import { createPlayerAction } from '../data/initialObjects';
-import { TgoType } from '../reducers/tgo';
-import combinedReducers from '../reducers';
-import { setPlayerTgoId } from '../actions/defaults';
-import { setPosition } from '../components/position';
-import { hasComponentPlayer } from '../components/player';
-import { hasComponentLabel } from '../components/label';
+import * as accountActions from '../actions/account.js';
+import isServer from '../isServer.js'
+import * as accountsActions from '../actions/accounts.js';
+import { set as allSet } from '../actions/allSet.js';
+import * as defaultsActions from '../actions/defaults.js';
+import * as netActions from '../actions/net.js';
+import * as taskQueueActions from '../actions/taskQueue.js';
+import * as tgoActions from '../actions/tgo.js';
+import * as playerActions from '../actions/player.js';
+import { createPlayerAction } from '../data/initialObjects.js';
+import { TgoType } from '../reducers/tgo.js';
+import combinedReducers from '../reducers.js';
+import { setPlayerTgoId } from '../actions/defaults.js';
+import { setPosition } from '../components/position.js';
+import { hasComponentPlayer } from '../components/player.js';
+import { hasComponentLabel } from '../components/label.js';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;

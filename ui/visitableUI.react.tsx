@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import * as netActions from '../actions/net';
-import VisitableGovernmentBuilding from './visitable/governmentBuilding';
-import VisitableRentOffice from './visitable/rentOffice';
-import { TgoType } from '../reducers/tgo';
-import { RootStateType } from '../reducers';
+import * as netActions from '../actions/net.js';
+import VisitableGovernmentBuilding from './visitable/governmentBuilding.js';
+import VisitableRentOffice from './visitable/rentOffice.js';
+import { TgoType } from '../reducers/tgo.js';
+import { RootStateType } from '../reducers.js';
 import { Dispatch } from 'redux';
-import { Action } from '../data/components';
-import ActionUI from './action';
-import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, ComponentVisitable } from '../data/components_new';
-import { hasComponentInventory } from '../components/inventory';
-import { hasComponentPlayer } from '../components/player';
-import { ComponentLabel, hasComponentLabel } from '../components/label';
+import { Action } from '../data/components.js';
+import ActionUI from './action.js';
+import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, ComponentVisitable } from '../data/components_new.js';
+import { hasComponentInventory } from '../components/inventory.js';
+import { hasComponentPlayer } from '../components/player.js';
+import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 
 export interface Type {
 	readonly visitable: TgoType & ComponentLabel & ComponentVisitable,

@@ -1,6 +1,6 @@
 import { Action } from 'redux'
-import { TgoType, TgoId } from './reducers/tgo';
-import { add as addTgo } from './actions/tgos';
+import { TgoType, TgoId } from './reducers/tgo.js';
+import { add as addTgo } from './actions/tgos.js';
 
 // We don't care about the meta and error fields actions.
 export const omitMetaAndError = <T extends Action & { meta?: any, error?: any }>(action: T) => {

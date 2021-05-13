@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as netActions from '../actions/net';
-import ParamInput, { packParam } from './paramInput';
-import { Action } from '../data/components';
+import * as netActions from '../actions/net.js';
+import ParamInput, { packParam } from './paramInput.js';
+import { Action } from '../data/components.js';
 
 export interface Type {
 	readonly action: Action,

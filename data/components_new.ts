@@ -1,10 +1,10 @@
-import { Action, ComponentTicker } from "./components";
-import { TgoType, ComponentType, TgoId, TgoRoot } from "../reducers/tgo";
-import { TaskQueueType } from "../reducers/taskQueue";
-import { Goal } from "../concerns/goal";
-import { Recipe, RecipeId } from "../reducers/recipe";
-import { ComponentPosition } from '../components/position';
-import { Work } from "../concerns/work";
+import { Action, ComponentTicker } from './components.js';
+import { TgoType, ComponentType, TgoId, TgoRoot } from '../reducers/tgo.js';
+import { TaskQueueType } from '../reducers/taskQueue.js';
+import { Goal } from '../concerns/goal.js';
+import { Recipe, RecipeId } from '../reducers/recipe.js';
+import { ComponentPosition } from '../components/position.js';
+import { Work } from '../concerns/work.js';
 
 export type ComponentRentOffice = 
 	ComponentPosition & {

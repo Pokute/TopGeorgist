@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RootStateType } from '../../reducers';
+import { RootStateType } from '../../reducers.js';
 
 const VisitableGovernmentBuilding = (props: ReturnType<typeof mapStoreToProps>) => (
 	<ul>

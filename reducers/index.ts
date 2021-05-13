@@ -1,19 +1,19 @@
 import { combineReducers, AnyAction } from 'redux'
-import accounts, { AccountsState } from './accounts';
-import serverConnection, { ServerConnectionStateType } from './serverConnection';
-import clients, { ClientsState } from './clients';
-import defaults, { Type as DefaultsType } from './defaults';
-import frame, { FrameStateType } from './frame';
-import government, { GovernmentStateType } from './government';
-import itemTypes, { ItemTypesState } from './itemTypes';
-import map, { MapType } from './map';
-import tgos, { TgosState } from './tgos';
-import ticker, { TickerStateType } from './ticker';
-import tileSets, { TileSetsState } from './tileSets';
-import views, { ViewsState } from './views';
+import accounts, { AccountsState } from './accounts.js';
+import serverConnection, { ServerConnectionStateType } from './serverConnection.js';
+import clients, { ClientsState } from './clients.js';
+import defaults, { Type as DefaultsType } from './defaults.js';
+import frame, { FrameStateType } from './frame.js';
+import government, { GovernmentStateType } from './government.js';
+import itemTypes, { ItemTypesState } from './itemTypes.js';
+import map, { MapType } from './map.js';
+import tgos, { TgosState } from './tgos.js';
+import ticker, { TickerStateType } from './ticker.js';
+import tileSets, { TileSetsState } from './tileSets.js';
+import views, { ViewsState } from './views.js';
 import { getType, ActionType } from 'typesafe-actions';
-import { createGoal, addGoals } from '../concerns/goal';
-import { add as addTgo } from '../actions/tgos';
+import { createGoal, addGoals } from '../concerns/goal.js';
+import { add as addTgo } from '../actions/tgos.js';
 
 export interface RootStateType {
 	readonly accounts: AccountsState,

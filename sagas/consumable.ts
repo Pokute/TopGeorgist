@@ -1,10 +1,10 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as taskQueueActions from '../actions/taskQueue';
-import { transaction } from '../concerns/transaction';
-import * as consumableActions from '../actions/consumable';
-import { TypeId } from '../reducers/itemType';
+import * as taskQueueActions from '../actions/taskQueue.js';
+import { transaction } from '../concerns/transaction.js';
+import * as consumableActions from '../actions/consumable.js';
+import { TypeId } from '../reducers/itemType.js';
 
 const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.consume>) {
 	const actorTgo = (yield select()).tgos[actorTgoId];

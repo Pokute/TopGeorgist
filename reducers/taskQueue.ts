@@ -1,6 +1,6 @@
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as taskQueueActions from '../actions/taskQueue';
+import * as taskQueueActions from '../actions/taskQueue.js';
 import { AnyAction } from 'redux';
 
 export type TaskCost = {

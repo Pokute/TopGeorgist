@@ -1,6 +1,6 @@
 import * as webpack from 'webpack';
 
-import commonConfig from './webpack.common.config';
+import commonConfig from './webpack.common.config.js';
 
 const config: webpack.Configuration = {
 	mode: 'development',

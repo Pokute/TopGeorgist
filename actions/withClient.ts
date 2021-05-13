@@ -1,6 +1,6 @@
 import { AnyAction } from "redux";
 
-import { ClientId } from "../reducers/client";
+import { ClientId } from '../reducers/client.js';
 
 export type WithClient <T extends AnyAction> = T & {
 	payload: {

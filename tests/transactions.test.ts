@@ -2,15 +2,15 @@ import test from 'ava';
 import { takeEvery } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 
-import { add as addTgo } from '../actions/tgos';
-import { selectTgo } from '../concerns/tgos';
-import { TgoId } from '../reducers/tgo';
-import { add as addItemType } from '../actions/itemTypes';
-import { TypeId, ItemType } from '../reducers/itemType';
-import { Inventory } from '../components/inventory';
-import { TransactionParticipant, transaction } from '../concerns/transaction';
-import rootReducer from '../reducers';
-import rootSaga from '../sagas/root';
+import { add as addTgo } from '../actions/tgos.js';
+import { selectTgo } from '../concerns/tgos.js';
+import { TgoId } from '../reducers/tgo.js';
+import { add as addItemType } from '../actions/itemTypes.js';
+import { TypeId, ItemType } from '../reducers/itemType.js';
+import { Inventory } from '../components/inventory.js';
+import { TransactionParticipant, transaction } from '../concerns/transaction.js';
+import rootReducer from '../reducers.js';
+import rootSaga from '../sagas/root.js';
 import Sinon from 'sinon';
 
 // Test transactions

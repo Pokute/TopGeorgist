@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProgressBar from './progressBar';
-import { RootStateType } from '../reducers';
-import { TaskType } from '../reducers/taskQueue';
-import { ComponentLabel, hasComponentLabel } from '../components/label';
-import { TgoType } from '../reducers/tgo';
+import ProgressBar from './progressBar.js';
+import { RootStateType } from '../reducers.js';
+import { TaskType } from '../reducers/taskQueue.js';
+import { ComponentLabel, hasComponentLabel } from '../components/label.js';
+import { TgoType } from '../reducers/tgo.js';
 
 const costMapper = (task: TaskType) => {
 	if (!task.cost) return () => 0;

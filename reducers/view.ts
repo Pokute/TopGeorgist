@@ -1,11 +1,11 @@
 import { ActionType, getType } from "typesafe-actions";
-import { TgoId } from "./tgo";
-import { clickActionStack } from "../actions/view";
+import { TgoId } from './tgo.js';
+import { clickActionStack } from '../actions/view.js';
 
-import { ViewsState } from './views';
-import * as viewActions from '../actions/view';
-import { MapPosition, MapSize } from "./map";
-import { Opaque } from "../typings/global.d";
+import { ViewsState } from './views.js';
+import * as viewActions from '../actions/view.js';
+import { MapPosition, MapSize } from './map.js';
+import { Opaque } from '../typings/global.d.js';
 
 export type ViewId = Opaque<string, 'ViewId'>;
 

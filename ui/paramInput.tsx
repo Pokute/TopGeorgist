@@ -1,5 +1,5 @@
 import React from 'react';
-import ParamInputPosition, { paramInputPositionPack, ParamInputPositionReact } from './ParamInputPosition';
+import ParamInputPosition, { paramInputPositionPack, ParamInputPositionReact } from './ParamInputPosition.js';
 import { connect } from 'react-redux';
 
 export interface Parameter {

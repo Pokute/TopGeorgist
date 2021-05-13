@@ -1,12 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { InventoryItem, hasComponentInventory } from '../components/inventory';
-import { isComponentGoal, isComponentWork, ComponentGoalDoer, ComponentGoal } from '../data/components_new';
-import { RootStateType } from '../reducers';
-import InventoryReact from './inventory.react';
-import { TgoId } from '../reducers/tgo';
-import Category from './Category';
+import { InventoryItem, hasComponentInventory } from '../components/inventory.js';
+import { isComponentGoal, isComponentWork, ComponentGoalDoer, ComponentGoal } from '../data/components_new.js';
+import { RootStateType } from '../reducers.js';
+import InventoryReact from './inventory.react.js';
+import { TgoId } from '../reducers/tgo.js';
+import Category from './Category.js';
 
 const RenderWork = ({ workTgoId }: { workTgoId: TgoId }) => {
 	const wiTgo = useSelector((store: RootStateType) => store.tgos[workTgoId]);

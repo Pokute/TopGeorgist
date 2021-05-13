@@ -5,7 +5,7 @@
 import { getType, ActionType } from 'typesafe-actions';
 import WebSocketWrapper from 'ws-wrapper';
 
-import * as serverConnectionActions from '../actions/serverConnection';
+import * as serverConnectionActions from '../actions/serverConnection.js';
 
 export interface ServerConnectionStateType {
 	readonly websocket?: WebSocketWrapper,

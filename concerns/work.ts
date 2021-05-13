@@ -1,18 +1,18 @@
 import { select, put, all, takeEvery, call } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
-import { Recipe } from '../reducers/recipe';
-import { TgoId, TgoType, TgoRoot } from '../reducers/tgo';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory';
-import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new';
-import { transaction } from '../concerns/transaction';
-import { RootStateType } from '../reducers';
-import { add as addTgo, remove as removeTgo } from "../actions/tgos";
-import { addWork as goalAddWork, removeWork } from '../concerns/goal';
-import isServer from '../isServer';
-import { TypeId } from '../reducers/itemType';
-import { getTgoByIdFromRootState } from '../reducers/tgos';
-import { tick } from '../actions/ticker';
+import { Recipe } from '../reducers/recipe.js';
+import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory.js';
+import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new.js';
+import { transaction } from '../concerns/transaction.js';
+import { RootStateType } from '../reducers.js';
+import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
+import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
+import isServer from '../isServer.js';
+import { TypeId } from '../reducers/itemType.js';
+import { getTgoByIdFromRootState } from '../reducers/tgos.js';
+import { tick } from '../actions/ticker.js';
 
 // Actions:
 

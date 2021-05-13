@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { ItemType, TypeId, defaultItemType } from '../reducers/itemType';
+import { ItemType, TypeId, defaultItemType } from '../reducers/itemType.js';
 
 export const add = createAction('ITEMTYPE_ADD',
 	(itemType: Partial<ItemType> & { typeId: TypeId }) => ({

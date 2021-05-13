@@ -1,4 +1,4 @@
-// import MapReducerAction from '../../actions/generics/MapReducerActions';
+// import MapReducerAction from '../../actions/generics/MapReducerActions.js';
 
 // export interface MapReducer<T> {
 // 	[extraProps: string]: T;

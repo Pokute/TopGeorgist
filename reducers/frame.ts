@@ -1,6 +1,6 @@
 import { ActionType, getType } from "typesafe-actions";
 
-import * as frameActions from '../actions/frame';
+import * as frameActions from '../actions/frame.js';
 
 export interface FrameStateType {
 	readonly current: number,

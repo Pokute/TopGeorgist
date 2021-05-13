@@ -1,11 +1,11 @@
 import { AnyAction } from "redux";
 import { getType, ActionType, createAction } from "typesafe-actions";
 
-import { Inventory } from "../components/inventory";
-import { TgoId } from "../reducers/tgo";
-import { MapPosition } from "../reducers/map";
-import { TypeId } from "../reducers/itemType";
-import { ComponentGoalDoer } from "../data/components_new";
+import { Inventory } from '../components/inventory.js';
+import { TgoId } from '../reducers/tgo.js';
+import { MapPosition } from '../reducers/map.js';
+import { TypeId } from '../reducers/itemType.js';
+import { ComponentGoalDoer } from '../data/components_new.js';
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = MapPosition;

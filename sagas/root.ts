@@ -1,20 +1,20 @@
-import account from './account';
-import buildingGovernment from './buildings/government';
-import buildingRentOffice from './buildings/rentOffice';
-import client from './client';
-import goal from './goal';
-import goalCreator from './goalCreator';
-import serverConnection from './ServerConnection';
-import consumable from './consumable';
-import frame from './frame';
-import net from './net';
-import plant from './plantable';
-import player from './player';
-import taskQueue from './taskQueue';
-import ticker from './ticker';
-import { transactionRootSaga } from '../concerns/transaction';
-import view from './view';
-import { workRootSaga } from '../concerns/work';
+import account from './account.js';
+import buildingGovernment from './buildings/government.js';
+import buildingRentOffice from './buildings/rentOffice.js';
+import client from './client.js';
+import goal from './goal.js';
+import goalCreator from './goalCreator.js';
+import serverConnection from './ServerConnection.js';
+import consumable from './consumable.js';
+import frame from './frame.js';
+import net from './net.js';
+import plant from './plantable.js';
+import player from './player.js';
+import taskQueue from './taskQueue.js';
+import ticker from './ticker.js';
+import { transactionRootSaga } from '../concerns/transaction.js';
+import view from './view.js';
+import { workRootSaga } from '../concerns/work.js';
 
 const rootSaga = function* () {
 	yield* account();

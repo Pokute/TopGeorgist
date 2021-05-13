@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 
-import CurrentPlayerInfo from './currentPlayerInfo.react';
-import CreatePlayerForm from './createPlayerForm.react';
-import { TgoId } from '../reducers/tgo';
-import { RootStateType } from '../reducers';
-import Category from './Category';
-// import { RequirementDelivery } from '../concerns/goal';
-import { MapPosition } from '../reducers/map';
+import CurrentPlayerInfo from './currentPlayerInfo.react.js';
+import CreatePlayerForm from './createPlayerForm.react.js';
+import { TgoId } from '../reducers/tgo.js';
+import { RootStateType } from '../reducers.js';
+import Category from './Category.js';
+// import { RequirementDelivery } from '../concerns/goal.js';
+import { MapPosition } from '../reducers/map.js';
 
 export interface propTypes {
 	readonly defaultPlayerTgoId?: TgoId,

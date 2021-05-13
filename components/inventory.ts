@@ -1,7 +1,7 @@
 import { ActionType, getType, createAction } from "typesafe-actions";
 
-import { TgoId, TgoType, TgoRoot } from "../reducers/tgo";
-import { TypeId } from "../reducers/itemType";
+import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
+import { TypeId } from '../reducers/itemType.js';
 
 export const add = createAction('TGO_INVENTORY_ADD',
 	(ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => {

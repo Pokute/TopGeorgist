@@ -3,13 +3,13 @@ import createSagaMiddleware from 'redux-saga';
 import { batchedSubscribe, NotifyFunction } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
-import isServer from './isServer'
+import isServer from './isServer.js'
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 // AsyncNodeStorage is not included in browser.
 // import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
-import topGeorgist from './reducers';
-import rootSaga from './sagas/root';
+import topGeorgist from './reducers/index.js';
+import rootSaga from './sagas/root.js';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleWares = applyMiddleware(sagaMiddleware);

@@ -2,17 +2,17 @@ import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as viewActions from '../actions/view';
-import { ViewType } from '../reducers/view';
-import { RootStateType } from '../reducers';
-import { TgosState } from '../reducers/tgos';
-import { TileType } from '../reducers/tile';
-import { TileSetType } from '../reducers/tileSet';
-import { MapType, MapPosition } from '../reducers/map';
-import { hasComponentPresentation } from '../data/components_new';
-import { hasComponentPosition } from '../components/position';
-import { hasComponentLabel } from '../components/label';
-import { TgoType } from '../reducers/tgo';
+import * as viewActions from '../actions/view.js';
+import { ViewType } from '../reducers/view.js';
+import { RootStateType } from '../reducers.js';
+import { TgosState } from '../reducers/tgos.js';
+import { TileType } from '../reducers/tile.js';
+import { TileSetType } from '../reducers/tileSet.js';
+import { MapType, MapPosition } from '../reducers/map.js';
+import { hasComponentPresentation } from '../data/components_new.js';
+import { hasComponentPosition } from '../components/position.js';
+import { hasComponentLabel } from '../components/label.js';
+import { TgoType } from '../reducers/tgo.js';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: MapPosition, tile: TileType, tileSize: number) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';

@@ -1,14 +1,14 @@
 import { select, put, takeEvery, call, all } from "redux-saga/effects";
 
-import { moveGoal } from '../actions/moveGoal';
+import { moveGoal } from '../actions/moveGoal.js';
 import { getType, ActionType } from "typesafe-actions";
-import { RootStateType } from "../reducers";
-import { add as addTgo } from "../actions/tgos";
-import { /*RequirementMove, RequirementConsumeTypeId,*/ addGoals, setWorkTargetTgoId } from "../concerns/goal";
-import * as inventoryActions from '../components/inventory';
-import { TgoId } from "../reducers/tgo";
-import isServer from '../isServer';
-import { consumeGoal } from "../actions/consumeGoal";
+import { RootStateType } from '../reducers.js';
+import { add as addTgo } from '../actions/tgos.js';
+import { /*RequirementMove, RequirementConsumeTypeId,*/ addGoals, setWorkTargetTgoId } from '../concerns/goal.js';
+import * as inventoryActions from '../components/inventory.js';
+import { TgoId } from '../reducers/tgo.js';
+import isServer from '../isServer.js';
+import { consumeGoal } from '../actions/consumeGoal.js';
 
 const handleCreateMoveGoal = function* ({payload: {tgoId, position}}: ActionType<typeof moveGoal>) {
 /*	const s: RootStateType = yield select();

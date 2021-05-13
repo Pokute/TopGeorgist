@@ -2,16 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import components, { ComponentActionable, Action, ComponentWithParams } from '../data/components';
-import * as netActions from '../actions/net';
-import { TypeId } from '../reducers/itemType';
-import { TgoId } from '../reducers/tgo';
-import { RootStateType } from '../reducers';
-import Category from './Category';
-import InventoryTgo from './InventoryTgo';
-import recipes from '../data/recipes';
-import { hasComponentInventory } from '../components/inventory';
-import InventoryItem from './InventoryItem.react';
+import components, { ComponentActionable, Action, ComponentWithParams } from '../data/components.js';
+import * as netActions from '../actions/net.js';
+import { TypeId } from '../reducers/itemType.js';
+import { TgoId } from '../reducers/tgo.js';
+import { RootStateType } from '../reducers.js';
+import Category from './Category.js';
+import InventoryTgo from './InventoryTgo.js';
+import recipes from '../data/recipes.js';
+import { hasComponentInventory } from '../components/inventory.js';
+import InventoryItem from './InventoryItem.react.js';
 
 export interface Type {
 	// readonly inventory: ReadonlyArray<InventoryItem>,

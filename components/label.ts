@@ -1,4 +1,4 @@
-import { TgoType } from '../reducers/tgo';
+import { TgoType } from '../reducers/tgo.js';
 
 export interface ComponentLabel {
 	readonly label: string,

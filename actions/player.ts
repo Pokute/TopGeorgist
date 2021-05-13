@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { AccountId } from '../reducers/account';
+import { AccountId } from '../reducers/account.js';
 
 export const playerRequest = createAction('PLAYER_CREATE_REQUEST',
 	({ accountId, label }: { accountId: AccountId, label: string }) => ({

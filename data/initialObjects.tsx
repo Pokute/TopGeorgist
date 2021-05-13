@@ -1,8 +1,8 @@
-import * as tgosActions from '../actions/tgos';
-import { add as tileSetAdd } from '../actions/tileSets';
-import { Parameter } from '../ui/paramInput';
-import { MapPosition } from '../reducers/map';
-import { TypeId } from '../reducers/itemType';
+import * as tgosActions from '../actions/tgos.js';
+import { add as tileSetAdd } from '../actions/tileSets.js';
+import { Parameter } from '../ui/paramInput.js';
+import { MapPosition } from '../reducers/map.js';
+import { TypeId } from '../reducers/itemType.js';
 
 export const createPlayerAction = () => tgosActions.add({
 	player: true,

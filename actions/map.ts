@@ -1,7 +1,7 @@
 import { createAction } from "typesafe-actions";
 import { engines as randomEngines, integer as randomInteger } from 'random-js';
 
-import { MapSettings, MapType } from "../reducers/map";
+import { MapSettings, MapType } from '../reducers/map.js';
 
 export const generate = createAction('MAP_GENERATE',
 	(settings: MapSettings) => ({

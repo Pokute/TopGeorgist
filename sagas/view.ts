@@ -1,7 +1,7 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as viewActions from '../actions/view';
+import * as viewActions from '../actions/view.js';
 
 const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: ActionType<typeof viewActions.rawClick>) {
 	const s = yield select();

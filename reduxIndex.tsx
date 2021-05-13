@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { store } from './store';
-import TopGeorgist from './ui/topGeorgist.react';
-import init from './topGeorgist';
-import * as viewsActions from './actions/views';
-import * as defaultsActions from './actions/defaults';
-import { TgoId } from './reducers/tgo';
-import { ViewId } from './reducers/view';
+import { store } from './store.js';
+import TopGeorgist from './ui/topGeorgist.react.js';
+import init from './topGeorgist.js';
+import * as viewsActions from './actions/views.js';
+import * as defaultsActions from './actions/defaults.js';
+import { TgoId } from './reducers/tgo.js';
+import { ViewId } from './reducers/view.js';
 
 const Providers: React.SFC = () => {
 	const [ initialized, setInitialized ] = useState(false);

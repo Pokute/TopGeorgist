@@ -3,28 +3,28 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Server as WSS } from 'ws';
 
-import config from './config';
-import { store } from './store';
-import createItemTypes from './data/types';
-import initialObjectActions from './data/initialObjects';
-import * as accountCommActions from './actions/accountComm';
-import * as accountsActions from './actions/accounts';
-import * as tgoActions from './actions/tgo';
-import * as playerActions from './actions/player';
-import * as mapActions from './actions/map';
-import * as clientActions from './actions/client';
-import { set as allSet } from './actions/allSet';
+import config from './config.js';
+import { store } from './store.js';
+import createItemTypes from './data/types.js';
+import initialObjectActions from './data/initialObjects.js';
+import * as accountCommActions from './actions/accountComm.js';
+import * as accountsActions from './actions/accounts.js';
+import * as tgoActions from './actions/tgo.js';
+import * as playerActions from './actions/player.js';
+import * as mapActions from './actions/map.js';
+import * as clientActions from './actions/client.js';
+import { set as allSet } from './actions/allSet.js';
 import { getType } from 'typesafe-actions';
 import { AnyAction } from 'redux';
-import { extendedSocket } from './reducers/client';
-import { withClient } from './actions/withClient';
-// import { setGoals } from './actions/goals';
-import { moveGoal } from './actions/moveGoal';
-import { consumeGoal } from './actions/consumeGoal';
-import { MapSize } from './reducers/map';
-import { RootStateType } from './reducers';
-import { transaction } from './concerns/transaction';
-import { setRunning as tickerSetRunning } from './actions/ticker';
+import { extendedSocket } from './reducers/client.js';
+import { withClient } from './actions/withClient.js';
+// import { setGoals } from './actions/goals.js';
+import { moveGoal } from './actions/moveGoal.js';
+import { consumeGoal } from './actions/consumeGoal.js';
+import { MapSize } from './reducers/map.js';
+import { RootStateType } from './reducers/index.js';
+import { transaction } from './concerns/transaction.js';
+import { setRunning as tickerSetRunning } from './actions/ticker.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });

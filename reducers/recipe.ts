@@ -1,5 +1,5 @@
-import { Inventory } from "../components/inventory";
-import { Opaque } from '../typings/global.d';
+import { Inventory } from '../components/inventory.js';
+import { Opaque } from '../typings/global.d.js';
 
 export type RecipeId = Opaque<string, 'RecipeId'>
 

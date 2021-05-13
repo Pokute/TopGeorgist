@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
-import { ViewId } from '../reducers/view';
-import { MapPosition, MapSize } from '../reducers/map';
-import { TgoId } from '../reducers/tgo';
+import { ViewId } from '../reducers/view.js';
+import { MapPosition, MapSize } from '../reducers/map.js';
+import { TgoId } from '../reducers/tgo.js';
 
 export const setPosition = createAction('VIEW_SET_POSITION',
 	(viewId: ViewId, position: MapPosition) => ({

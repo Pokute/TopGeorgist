@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createAction } from 'typesafe-actions';
 
-import { TgosState } from '../reducers/tgos';
-import { TgoPartials, TgoId } from '../reducers/tgo';
+import { TgosState } from '../reducers/tgos.js';
+import { TgoPartials, TgoId } from '../reducers/tgo.js';
 
 export const setAll = createAction('TGOS_SET',
 	(tgos: TgosState) => ({

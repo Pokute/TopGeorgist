@@ -1,8 +1,8 @@
 import { engines as randomEngines, integer as randomInteger } from 'random-js';
 
-import * as mapActions from '../actions/map'; 
+import * as mapActions from '../actions/map.js'; 
 import { ActionType, getType } from 'typesafe-actions';
-import { Opaque } from '../typings/global.d';
+import { Opaque } from '../typings/global.d.js';
 
 export type MapPosition = Opaque<{
 	readonly x: number,

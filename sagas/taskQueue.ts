@@ -1,13 +1,13 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as taskQueueActions from '../actions/taskQueue';
-import * as tickerActions from '../actions/ticker';
-import { RootStateType } from '../reducers';
-import { TgoType } from '../reducers/tgo';
-import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue';
+import * as taskQueueActions from '../actions/taskQueue.js';
+import * as tickerActions from '../actions/ticker.js';
+import { RootStateType } from '../reducers.js';
+import { TgoType } from '../reducers/tgo.js';
+import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue.js';
 import { AnyAction } from 'redux';
-import tgos from '../reducers/tgos';
+import tgos from '../reducers/tgos.js';
 
 const handleQueueForOwner = function* (owner: TgoType) {
 	if (!owner.taskQueue) return false;

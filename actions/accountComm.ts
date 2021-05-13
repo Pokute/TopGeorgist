@@ -1,7 +1,7 @@
 import forge from 'node-forge';
 import { createAction } from 'typesafe-actions';
 
-import { Token, AccountType } from '../reducers/account';
+import { Token, AccountType } from '../reducers/account.js';
 
 const clientSaltPassword = (username: string, password: string) => {
 	const clientSalt = 'TGCSalt-';

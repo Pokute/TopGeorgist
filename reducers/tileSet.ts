@@ -1,7 +1,7 @@
 import { ActionType, getType } from 'typesafe-actions';
 
-import * as tileSetActions from '../actions/tileSet'; 
-import { TileType } from './tile';
+import * as tileSetActions from '../actions/tileSet.js'; 
+import { TileType } from './tile.js';
 
 export type TilesType = {
 	readonly [extraProps: string]: TileType;

@@ -1,11 +1,11 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import * as governmentActions from '../../actions/government';
-import { inventoryActions } from '../../components/inventory';
-import { transaction } from '../../concerns/transaction';
-import { checkOnVisitableLocation } from '../../utils/visitable';
-import { RootStateType } from '../../reducers';
-import { hasComponentPosition } from '../../components/position';
-import { TypeId } from '../../reducers/itemType';
+import * as governmentActions from '../../actions/government.js';
+import { inventoryActions } from '../../components/inventory.js';
+import { transaction } from '../../concerns/transaction.js';
+import { checkOnVisitableLocation } from '../../utils/visitable.js';
+import { RootStateType } from '../../reducers.js';
+import { hasComponentPosition } from '../../components/position.js';
+import { TypeId } from '../../reducers/itemType.js';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s: RootStateType = yield select();
