@@ -6,7 +6,7 @@ import { set as allSet } from '../actions/allSet.js';
 import * as accountActions from '../actions/account.js';
 import * as accountCommActions from '../actions/accountComm.js';
 import * as accountsActions from '../actions/accounts.js';
-import combinedReducers from '../reducers.js';
+import combinedReducers from '../reducers/index.js';
 import { AccountType } from '../reducers/account.js';
 import { setAccountId, setPlayerTgoId } from '../actions/defaults.js';
 import { WithClient } from '../actions/withClient.js';

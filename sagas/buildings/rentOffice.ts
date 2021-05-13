@@ -5,7 +5,7 @@ import * as governmentActions from '../../actions/government.js';
 import { inventoryActions } from '../../components/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../../utils/visitable.js';
-import { RootStateType } from '../../reducers.js';
+import { RootStateType } from '../../reducers/index.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../components/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';

@@ -1,8 +1,8 @@
-import { select, put, takeEvery, call, all } from "redux-saga/effects";
+import { select, put, takeEvery, call, all } from 'redux-saga/effects';
 
 import { moveGoal } from '../actions/moveGoal.js';
-import { getType, ActionType } from "typesafe-actions";
-import { RootStateType } from '../reducers.js';
+import { getType, ActionType } from 'typesafe-actions';
+import { RootStateType } from '../reducers/index.js';
 import { add as addTgo } from '../actions/tgos.js';
 import { /*RequirementMove, RequirementConsumeTypeId,*/ addGoals, setWorkTargetTgoId } from '../concerns/goal.js';
 import * as inventoryActions from '../components/inventory.js';

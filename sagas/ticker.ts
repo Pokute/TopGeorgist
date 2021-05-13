@@ -6,7 +6,7 @@ import isServer from '../isServer.js'
 import * as tickerActions from '../actions/ticker.js';
 // import components, { ComponentTicker } from '../data/components.js';
 import { set as allSet } from '../actions/allSet.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo.js';
 import { AnyAction } from 'redux';
 // import { hasComponentComponents } from '../data/components_new.js';

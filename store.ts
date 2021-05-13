@@ -1,17 +1,23 @@
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import createSagaMiddleware from 'redux-saga';
+import reduxSaga from 'redux-saga';
 import { batchedSubscribe, NotifyFunction } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
 import isServer from './isServer.js'
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
+import type { default as storageType } from 'redux-persist/lib/storage';
+// @ts-ignore
+// import { default as oStorage } from 'redux-persist/lib/storage/index.js'; // defaults to localStorage for web and AsyncStorage for react-native
+import { default as oStorage } from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
+
+const storage = (oStorage as any).default as typeof storageType;
+
 // AsyncNodeStorage is not included in browser.
 // import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
 import topGeorgist from './reducers/index.js';
 import rootSaga from './sagas/root.js';
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = reduxSaga();
 const middleWares = applyMiddleware(sagaMiddleware);
 
 let enhancer;

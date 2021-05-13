@@ -1,4 +1,4 @@
-import { ActionType, getType } from "typesafe-actions";
+import { ActionType, getType } from 'typesafe-actions';
 import { TgoId } from './tgo.js';
 import { clickActionStack } from '../actions/view.js';
 

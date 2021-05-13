@@ -1,5 +1,5 @@
+import { Dispatch } from 'redux';
 import { add } from '../actions/itemTypes.js';
-import { Dispatch } from '../node_modules/redux.js';
 import { InitialItemType, TypeId } from '../reducers/itemType.js';
 
 const defaultType = {

@@ -6,7 +6,7 @@ import VisitableUI from './visitableUI.react.js';
 import { getMinMax } from '../utils/view.js';
 import { ViewType } from '../reducers/view.js';
 import { TgoId } from '../reducers/tgo.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { MapType, MapSize, MapPosition } from '../reducers/map.js';
 import Category from './Category.js';
 import { hasComponentVisitable } from '../data/components_new.js';

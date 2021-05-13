@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import CurrentPlayerInfo from './currentPlayerInfo.react.js';
 import CreatePlayerForm from './createPlayerForm.react.js';
 import { TgoId } from '../reducers/tgo.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 // import { RequirementDelivery } from '../concerns/goal.js';
 import { MapPosition } from '../reducers/map.js';

@@ -5,7 +5,7 @@ import * as netActions from '../actions/net.js';
 import VisitableGovernmentBuilding from './visitable/governmentBuilding.js';
 import VisitableRentOffice from './visitable/rentOffice.js';
 import { TgoType } from '../reducers/tgo.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { Dispatch } from 'redux';
 import { Action } from '../data/components.js';
 import ActionUI from './action.js';

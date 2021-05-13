@@ -1,5 +1,5 @@
-import { AnyAction } from "redux";
-import { getType, ActionType, createAction } from "typesafe-actions";
+import { AnyAction } from 'redux';
+import { getType, ActionType, createAction } from 'typesafe-actions';
 
 import { Inventory } from '../components/inventory.js';
 import { TgoId } from '../reducers/tgo.js';

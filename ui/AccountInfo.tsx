@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import * as accountCommActions from '../actions/accountComm.js';
 import Category from './Category.js';
 import * as netActions from '../actions/net.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { Token } from '../reducers/account.js';
 
 const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithToken }: ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => {

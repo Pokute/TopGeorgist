@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import * as playerActions from '../actions/player.js';
 import { Dispatch } from 'redux';
-import uuid from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 
 const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => {
 	const creationName = useRef<HTMLInputElement>(null);
@@ -30,7 +30,7 @@ const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) =
 				type="button"
 				onClick={() => {
 					if (creationName.current && submitButton.current) {
-						creationName.current.value = uuid.v4();
+						creationName.current.value = uuidV4();
 						submitButton.current.click();
 					}
 				}}

@@ -6,7 +6,7 @@ const config: webpack.Configuration = {
 	mode: 'development',
 	entry: [
 		// './topGeorgist'
-		'./reduxIndex',
+		'./reduxIndex.tsx',
 	],
 	target: 'web',
 	output: {

@@ -9,7 +9,7 @@ import isServer from '../isServer.js'
 import config from '../config.js';
 import * as connectionActions from '../actions/serverConnection.js';
 import * as netActions from '../actions/net.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 
 const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions.createWebsocket>) {
 	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);

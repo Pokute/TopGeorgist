@@ -1,12 +1,12 @@
-import { createAction } from "typesafe-actions";
-import { engines as randomEngines, integer as randomInteger } from 'random-js';
+import { createAction } from 'typesafe-actions';
+import { nativeMath, integer as randomInteger } from 'random-js';
 
 import { MapSettings, MapType } from '../reducers/map.js';
 
 export const generate = createAction('MAP_GENERATE',
 	(settings: MapSettings) => ({
 		settings: {
-			seed: randomInteger(-1000000, 1000000)(randomEngines.nativeMath),
+			seed: randomInteger(-1000000, 1000000)(nativeMath),
 			...settings,
 		},
 	})

@@ -7,7 +7,7 @@ import { consume } from '../data/recipes.js';
 import { TgoId, TgoType } from '../reducers/tgo.js';
 import { getType } from 'typesafe-actions';
 import { select, put, PutEffect, PutEffectDescriptor, takeEvery } from 'redux-saga/effects';
-import rootReducer, { RootStateType } from '../reducers.js';
+import rootReducer, { RootStateType } from '../reducers/index.js';
 import { omitType, omitMetaAndError, overrideTgoWithId, overrideAddTgoActionWithId } from '../testUtils.js';
 import { TypeId } from '../reducers/itemType.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';

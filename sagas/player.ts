@@ -12,7 +12,7 @@ import * as tgoActions from '../actions/tgo.js';
 import * as playerActions from '../actions/player.js';
 import { createPlayerAction } from '../data/initialObjects.js';
 import { TgoType } from '../reducers/tgo.js';
-import combinedReducers from '../reducers.js';
+import combinedReducers from '../reducers/index.js';
 import { setPlayerTgoId } from '../actions/defaults.js';
 import { setPosition } from '../components/position.js';
 import { hasComponentPlayer } from '../components/player.js';

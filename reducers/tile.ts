@@ -1,5 +1,5 @@
-import { Color } from "csstype";
-import { AnyAction } from "redux";
+import { Color } from 'csstype';
+import { AnyAction } from 'redux';
 
 export type TileId = string;
 

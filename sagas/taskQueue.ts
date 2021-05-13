@@ -3,7 +3,7 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue.js';
 import * as tickerActions from '../actions/ticker.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { TgoType } from '../reducers/tgo.js';
 import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue.js';
 import { AnyAction } from 'redux';

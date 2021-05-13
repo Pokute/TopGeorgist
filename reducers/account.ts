@@ -1,11 +1,11 @@
-import { AnyAction } from "redux";
+import { AnyAction } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import * as accountActions from '../actions/account.js';
 import { AccountsState } from './accounts.js';
 import { TgoId } from './tgo.js';
-import { Omit } from "react-redux";
-import { getType, ActionType } from "typesafe-actions";
+import { Omit } from 'react-redux';
+import { getType, ActionType } from 'typesafe-actions';
 import { Opaque } from '../typings/global.d.js';
 
 export type AccountId = Opaque<string, 'AccountId'>;

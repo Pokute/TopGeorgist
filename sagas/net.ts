@@ -2,7 +2,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import { takeEvery, select, put } from 'redux-saga/effects';
 
 import * as netActions from '../actions/net.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import * as accountsActions from '../actions/accounts.js';
 import * as viewActions from '../actions/view.js';
 import * as mapActions from '../actions/map.js';

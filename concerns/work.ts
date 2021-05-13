@@ -6,7 +6,7 @@ import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory.js';
 import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new.js';
 import { transaction } from '../concerns/transaction.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
 import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
 import isServer from '../isServer.js';

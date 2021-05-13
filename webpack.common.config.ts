@@ -1,5 +1,11 @@
+import ResolveTypeScriptPlugin from 'resolve-typescript-plugin';
+
 export default {
 	resolve: {
+		// fullySpecified: true,
+		plugins: [
+			new ((ResolveTypeScriptPlugin as any).default)()
+		],
 		extensions: [
 			'.js',
 			'.mjs',
@@ -13,7 +19,8 @@ export default {
 				test: /(\.js$|\.mjs$|\.ts|\.tsx)/i,
 				exclude: /node_modules/,
 				use: {
-					loader: 'awesome-typescript-loader',
+					loader: 'ts-loader',
+					// loader: 'awesome-typescript-loader',
 				},
 			},
 			// {

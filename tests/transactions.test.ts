@@ -9,7 +9,7 @@ import { add as addItemType } from '../actions/itemTypes.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
 import { Inventory } from '../components/inventory.js';
 import { TransactionParticipant, transaction } from '../concerns/transaction.js';
-import rootReducer from '../reducers.js';
+import rootReducer from '../reducers/index.js';
 import rootSaga from '../sagas/root.js';
 import Sinon from 'sinon';
 

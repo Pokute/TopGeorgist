@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 
 interface Segment {
 	readonly cost: number,

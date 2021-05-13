@@ -6,7 +6,7 @@ import components, { ComponentActionable, Action, ComponentWithParams } from '..
 import * as netActions from '../actions/net.js';
 import { TypeId } from '../reducers/itemType.js';
 import { TgoId } from '../reducers/tgo.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import InventoryTgo from './InventoryTgo.js';
 import recipes from '../data/recipes.js';

@@ -6,7 +6,7 @@ import ConnectionInfo from './ConnectionInfo.js';
 import PlayerContainer from './playerContainer.react.js';
 import View from './view.react.js';
 import Inventory from './inventory.react.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>

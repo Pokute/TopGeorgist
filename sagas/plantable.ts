@@ -6,7 +6,7 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { transaction } from '../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../utils/visitable.js';
 import { ActionType, getType } from 'typesafe-actions';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { hasComponentInventory } from '../components/inventory.js';
 import { hasComponentPosition } from '../components/position.js';

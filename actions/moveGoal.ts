@@ -1,4 +1,4 @@
-import { createAction } from "typesafe-actions";
+import { createAction } from 'typesafe-actions';
 
 import { TgoId, TgoType } from '../reducers/tgo.js';
 import { TypeId } from '../reducers/itemType.js';

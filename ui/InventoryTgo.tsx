@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { InventoryItem, hasComponentInventory } from '../components/inventory.js';
 import { isComponentGoal, isComponentWork, ComponentGoalDoer, ComponentGoal } from '../data/components_new.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import InventoryReact from './inventory.react.js';
 import { TgoId } from '../reducers/tgo.js';
 import Category from './Category.js';

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 
 // interface Segment {
 // 	cost: any,

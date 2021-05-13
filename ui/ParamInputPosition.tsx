@@ -1,6 +1,6 @@
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
-import React, { useState, useMemo } from "react";
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import React, { useState, useMemo } from 'react';
 
 import { Parameter, ReactReduxParam, TypeProps } from './paramInput.js';
 import * as viewActions from '../actions/view.js';

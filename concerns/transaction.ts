@@ -7,7 +7,7 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
 import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 
 // Actions:
 

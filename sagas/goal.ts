@@ -1,8 +1,8 @@
-import { select, put, takeEvery, call, all } from "redux-saga/effects";
+import { select, put, takeEvery, call, all } from 'redux-saga/effects';
 
 import { Requirement, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
 import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from '../concerns/work.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from '../data/components_new.js';
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from '../components/inventory.js';
 import { hasComponentPosition, ComponentPosition } from '../components/position.js';
@@ -13,7 +13,7 @@ import { transaction, TransactionParticipant } from '../concerns/transaction.js'
 import { Recipe } from '../reducers/recipe.js';
 import { setPosition } from '../components/position.js';
 import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
-import { getType } from "typesafe-actions";
+import { getType } from 'typesafe-actions';
 import { tick } from '../actions/ticker.js';
 import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../reducers/map.js';
 

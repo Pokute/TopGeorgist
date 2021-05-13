@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ProgressBar from './progressBar.js';
-import { RootStateType } from '../reducers.js';
+import { RootStateType } from '../reducers/index.js';
 import { TaskType } from '../reducers/taskQueue.js';
 import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 import { TgoType } from '../reducers/tgo.js';

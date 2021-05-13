@@ -1,4 +1,4 @@
-import { engines as randomEngines, integer as randomInteger } from 'random-js';
+import { MersenneTwister19937, integer as randomInteger } from 'random-js';
 
 import * as mapActions from '../actions/map.js'; 
 import { ActionType, getType } from 'typesafe-actions';
@@ -90,8 +90,7 @@ type MapAction = ActionType<typeof mapActions>;
 export default (state: MapType = initialState, action: MapAction): MapType => {
 	switch (action.type) {
 		case getType(mapActions.generate): {
-			const mt = randomEngines.mt19937();
-			mt.seed(action.payload.settings.seed);
+			const mt = MersenneTwister19937.seed(action.payload.settings.seed);
 			const usedSettings: Required<MapSettings> = { ...defaultSettings, ...action.payload.settings };
 			return {
 				...initialState,
