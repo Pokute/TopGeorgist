@@ -1,0 +1,16 @@
+diff --git a/node_modules/@redux-saga/delay-p/package.json b/node_modules/@redux-saga/delay-p/package.json
+index 84bf303..2a8c462 100644
+--- a/node_modules/@redux-saga/delay-p/package.json
++++ b/node_modules/@redux-saga/delay-p/package.json
+@@ -3,6 +3,11 @@
+   "version": "1.1.2",
+   "description": "Promisified setTimeout",
+   "main": "./dist/redux-saga-delay-p.cjs.js",
++  "exports": {
++    "require": "./dist/redux-saga-delay-p.cjs.js",
++    "import": "./dist/redux-saga-delay-p.esm.js"
++  },
++  "type": "module",
+   "module": "./dist/redux-saga-delay-p.esm.js",
+   "typings": "./index.d.ts",
+   "files": [

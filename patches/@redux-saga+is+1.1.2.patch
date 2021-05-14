@@ -1,0 +1,16 @@
+diff --git a/node_modules/@redux-saga/is/package.json b/node_modules/@redux-saga/is/package.json
+index 75cc97d..fd66dda 100644
+--- a/node_modules/@redux-saga/is/package.json
++++ b/node_modules/@redux-saga/is/package.json
+@@ -3,6 +3,11 @@
+   "version": "1.1.2",
+   "description": "Runtime type checking helpers",
+   "main": "dist/redux-saga-is.cjs.js",
++  "exports": {
++    "require": "./dist/redux-saga-is.cjs.js",
++    "import": "./dist/redux-saga-is.esm.js"
++  },
++  "type": "module",
+   "module": "dist/redux-saga-is.esm.js",
+   "typings": "./index.d.ts",
+   "files": [

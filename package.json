@@ -20,6 +20,7 @@
     "import-to-array": "^1.0.0",
     "node-forge": "^0.10.0",
     "null-loader": "^0.1.1",
+    "patch-package": "^6.4.7",
     "prop-types": "^15.6.1",
     "random-js": "^2.1.0",
     "react": "^17.0.2",
@@ -99,7 +100,8 @@
     "build-storybook": "build-storybook",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
-    "testnyc": "nyc ava -vs"
+    "testnyc": "nyc ava -vs",
+    "postinstall": "patch-package"
   },
   "files": [
     "static/topGeorgist.bundle.js"
