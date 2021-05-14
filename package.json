@@ -79,7 +79,7 @@
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.5.1",
     "nyc": "^15.0.0",
-    "redux-saga-test-plan": "^4.0.0-rc.3",
+    "redux-saga-test-plan": "^4.0.1",
     "sinon": "^7.3.2",
     "source-map-loader": "^0.2.3",
     "ts-loader": "^9.1.2",
@@ -94,8 +94,8 @@
   "scripts": {
     "compile-local": "node ./node_modules/typescript/bin/tsc --esModuleInterop",
     "build": "webpack --display-error-details --config webpack.config.js",
-    "server-min": "node --inspect --loader ts-node/esm server.ts",
-    "webserver-min": "node -r esm -r ts-node/register expressServer.ts",
+    "server-min": "node --experimental-specifier-resolution=node --inspect --loader ts-node/esm server.ts",
+    "webserver-min": "node --experimental-specifier-resolution=node --inspet --loader ts-node/esm expressServer.ts",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "ava -vs",
@@ -110,11 +110,12 @@
     "extensions": {
       "ts": "module"
     },
-		"nonSemVerExperiments": {
-			"configurableModuleFormat": true
-		},
-		"nodeArguments": [
-			"--loader=ts-node/esm"
-		]
+    "nonSemVerExperiments": {
+      "configurableModuleFormat": true
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm",
+      "--experimental-specifier-resolution=node"
+    ]
   }
 }
