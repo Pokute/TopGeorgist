@@ -107,25 +107,14 @@
     "static/topGeorgist.bundle.js"
   ],
   "ava": {
-    "compileEnhancements": false,
-    "babel": {
-      "testOptions": {
-        "presets": [
-          [
-            "module:ava/stage-4",
-            {
-              "modules": false
-            }
-          ]
-        ]
-      }
+    "extensions": {
+      "ts": "module"
     },
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "esm",
-      "ts-node/register"
-    ]
+		"nonSemVerExperiments": {
+			"configurableModuleFormat": true
+		},
+		"nodeArguments": [
+			"--loader=ts-node/esm"
+		]
   }
 }
