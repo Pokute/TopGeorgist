@@ -46,7 +46,7 @@ export const initialState: WorkType = {
 	inputProgress: [],
 };
 
-export interface Work {
+export interface Work { // A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
 	readonly recipe: Recipe,
 	readonly targetTgoId?: TgoId,
 	readonly inputProgress: Inventory,
@@ -152,18 +152,18 @@ export const handleWork = function* (
 	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
 	// actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
-	goalTgo?: ComponentGoal & Partial<ComponentInventory>,
+	// goalTgo?: ComponentGoal & Partial<ComponentInventory>,
 ) {
-	const s: RootStateType = yield select();
 	// if (!hasComponentGoalDoer(actorTgo)
 	if (!hasComponentWorkDoer(actorTgo)
-		|| (goalTgo && !isComponentGoal(goalTgo))
+		// || (goalTgo && !isComponentGoal(goalTgo))
 		|| !isComponentWork(workTgo)){
 		return undefined; // Fail
 	}
 
-	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes.
-	
+	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes when taking inputs also from target inv.
+
+	const s: RootStateType = yield select();
 	const getTgoById = getTgoByIdFromRootState(s.tgos);
 
 	const participants = [
@@ -207,15 +207,14 @@ export const handleWork = function* (
 		participant.missingRequiredItems.every(requiredItem => requiredItem.count == 0)
 	);
 
-	const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
-		.map(participant => ({
-			tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-		}))
-		.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
-		
-
 	if (allRequirementsFulfilled) {
 		// Send the reawrd of work.
+
+		const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
+			.map(participant => ({
+				tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+			}))
+			.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
 
 		const rewards = rewardOutputs(participantsWithWorkInfo);
 		if (rewards.length) {
@@ -382,7 +381,7 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 
 	Creates a work tgo with recipe, above inventories and goal tgoId
 
-	Adds work as item into goal inventory
+	//Adds work as item into goal inventory
 	Adds work as a goal work.
 
 	Notes:
@@ -460,14 +459,12 @@ const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & Comp
 
 	const works = owner.inventory
 		.filter((ii): ii is InventoryItem & { tgoId: TgoId } => ii.tgoId !== undefined)
-		.map(ii => s.tgos[ii.tgoId!])
+		.map(ii => s.tgos[ii.tgoId])
 		.filter(isComponentWork);
 
 	const activeWork = works[0];
 	if (!activeWork)
 		return true;
-
-	if (!isComponentWork(activeWork)) return false;
 
 	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
 	yield* handleWork(owner, activeWork);

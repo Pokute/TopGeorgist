@@ -194,7 +194,7 @@ test('Work - empty work', t => {
 	const hWI = handleWork(
 		{ tgoId: 'worker' as TgoId, recipeInfos: [], inventory: [] },
 		work,
-		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+		// { tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 		);
 	// Is a generator;
 	t.truthy(hWI && hWI.next);
@@ -239,7 +239,7 @@ test('Work - wait 3 ticks', t => {
 		let hWI = handleWork(
 			{ tgoId: 'worker' as TgoId, recipeInfos: [], inventory: [] },
 			work,
-			{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
+			// { tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
 			);
 		// Is a generator;
 		t.truthy(hWI && hWI.next);
@@ -278,10 +278,10 @@ const wrappedRootSaga = function* () {
 	yield takeEvery('*', function* () {});
 }
 
-const setupRedux = expectSaga(wrappedRootSaga)
+const setupRedux = () => expectSaga(wrappedRootSaga)
 	.withReducer(rootReducer);
 
-test('Work - simple actor item change', async t => {
+test.only('Work - simple actor item change', async t => {
 	const recipe: Recipe = {
 		input: [{
 			typeId: 'coal' as TypeId,
@@ -303,7 +303,7 @@ test('Work - simple actor item change', async t => {
 	});
 	const actorTgoId = createActor.payload.tgo.tgoId;
 
-	const { storeState } = await setupRedux
+	const { storeState } = await setupRedux()
 		.dispatch(itemTypeAdd({
 			typeId: 'coal' as TypeId,
 			stackable: true,
@@ -322,6 +322,32 @@ test('Work - simple actor item change', async t => {
 		{
 			typeId: 'coal' as TypeId,
 			count: 10,
+		},
+	);
+
+	const { storeState: storeState2 } = await setupRedux()
+		.dispatch(itemTypeAdd({
+			typeId: 'coal' as TypeId,
+			stackable: true,
+			positiveOnly: true,
+		}))
+		.dispatch(createActor)
+		.dispatch(createWork({
+			goalTgoId: '' as TgoId,
+			recipe,
+			targetTgoId: actorTgoId,
+		}))
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.silentRun(0);
+
+	console.log(selectTgo(storeState2, actorTgoId)?.inventory);
+
+	t.deepEqual(selectTgo(storeState2, actorTgoId)?.inventory?.find(({ typeId }) => typeId === 'coal' as TypeId),
+		{
+			typeId: 'coal' as TypeId,
+			count: 0,
 		},
 	);
 });
@@ -562,12 +588,18 @@ test('Work - hierarchy', async t => {
 		}
 	);
 
-	const { storeState } = await setupRedux
+	const { storeState } = await setupRedux()
 		.dispatch(createPlayerTgo)
 		// .dispatch(addGoals(createPlayerTgo.payload.tgo.tgoId, [{
 
 		// }]))
 		.dispatch(createGoalAction)
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
 		.dispatch(tick())
 		.dispatch(tick())
 		.dispatch(tick())

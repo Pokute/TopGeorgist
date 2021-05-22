@@ -9,6 +9,8 @@ Which should be higher level - Goals or Contracts?
 
 Goals define what we want the end-state to be. More commonly in inventory change goals.
 
+* Q: How do goals know when work completes?
+
 ## Contracts
 
 When work requirements are asymmetric. For example, hairdressing contract specifies that hairdresser does the work, not the client.
@@ -42,33 +44,39 @@ When can recipes be executed? Some recipes definitely require tools, like a forg
 `ComponentWorkDoer`: A tgo can do Work related items. Check with `hasComponentWorkDoer`.
 
 Work is an application of recipe. Work is always done by a single Tgo.
+Works must be inside inventories.
+Works inside inventories of ComponentWorkDoer are processed each tick.
 
 Work Inventory, inputs and outputs:
 
 * Some works are immediate and don't require their own inventory:
-	* Their recipe have at most one tangible & continous input&output item.
-	* Their recipe never take longer than one tick.
+	* Req: Their recipe have at most one tangible & continous input&output item.
+	* Req: Their recipe never take longer than one tick.
 	* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult? - Prolly yeah.
 	* THINK: These works should probably performed by separate, specialised tgos.
 	* Examples:
 		* Planning, thinking, dexterity, precision, lower body strength, upper body strength works.
 		* Convert hydrocarbons to energy.
 * Other works have their own inventory:
-	* Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
-	* Their recipe requires multiple ticks.
+	* Either:
+		* Req: Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
+		* Req: Their recipe requires multiple ticks.
 	* Items inputed might be refunded.
-	* Can't be assigned to an in-world item.
 	* Examples:
 		* Long thinking process, like deciding where to shop.
 		* Eating, requires time, inventory items and skills.
-* Some works are actually in-world items:
+* Some works are actually in inventories of world items which are not ComponentWorkDoer:
 	* Examples:
-		* Building a house
-		* Continuing of furniture assembling:
-			* MORE DETAIL NEEDED
-		* Repairing a screwdriver.
-			* HOW WOULD THIS WORK?
+		* Constructions site for buildings.
+			* Q: How is completion handled. What replaces the construction site with the building?
 	* Q: Sounds like prime candidate for contract. This could have multiple contributors?
+* Unresolved cases:
+	* Furnishing a house
+		* Either dummy world item or just ComponentWork with ComponentPosition.
+	* Prospecting an area for ores.
+		* Either dummy world item (Prospecting marker) or just ComponentWork with ComponentPosition.
+	* Repairing a screwdriver.
+		* Maybe work is inside screwdriver's inventory or placed within the WorkDoer's (repairman) inventory?
 
 Work can take inputs and outputs from `WorkDoer`:`inventory` and possibly `targetTgo`.`inventory`.
 
@@ -79,7 +87,15 @@ Works live in inventories:
 * Either in a Tgo With `ComponentWorkDoer`'s inventory, where the works are done directly.
 * Or inside GoalTgo's inventory. In this case it's the goal that activates that work.
 
-Other concerns
+* Work lifecycle.
+	* Q: What creates works?
+	* Q: How are works terminated?
+		* Are they terminated on completion?
+		* When we want one hammer, it doesn't work that we just go and make infinite amount of them... Something has to terminate the work.
+	* Creating a new work for each minimal amont of work is feels very inefficient. I don't mind being inefficient, but I don't think making possibly tens of new, single-tick works per tick for each player seems overkill.
+	* Goals could control many work lifespans if they don't make multiple works.
+
+# Other concerns
 
 * There could be multiple goals with same type of work.
 * What are the priorities of those?

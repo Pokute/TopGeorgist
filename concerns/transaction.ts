@@ -132,21 +132,21 @@ export const transactionSaga = function* ({ payload: { participants } }: ReturnT
 
 	const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
 
-	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
-		itemsBalance.every(verifyStackable)
-	))
-		throw new Error('Transaction requirements - stackable not met.');
+	const flattenedItemsBalance = participantsWithItemBalanceVerifiedTypes
+		.map(({ itemsBalance }) => itemsBalance)
+		.flat();
 
-	if (!participantsWithItemBalanceVerifiedTypes
-		.filter(notParticipantWithVirtualInventoryFilter).every(({ itemsBalance }) =>
-			itemsBalance.every(verifyPositiveOnly)
-		))
-		throw new Error('Transaction requirements - positiveOnly not met.');
+	const stackableFails = flattenedItemsBalance.filter(item => !verifyStackable(item));
+	if (stackableFails.length > 0)
+		throw new Error(`Transaction requirements - stackable not met for items: ${JSON.stringify(stackableFails)}`);
 
-	if (!participantsWithItemBalanceVerifiedTypes.every(({ itemsBalance }) =>
-		itemsBalance.every(verifyIsInteger)
-	))
-		throw new Error('Transaction requirements - integer not met.');
+	const positiveOnlyFails = flattenedItemsBalance.filter(item => !verifyPositiveOnly(item));
+	if (positiveOnlyFails.length > 0)
+		throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
+
+	const isIntegerFails = flattenedItemsBalance.filter(item => !verifyIsInteger(item));
+	if (isIntegerFails.length > 0)
+		throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
 
 	const createInventoryAddForParticipant = ({ tgoId, items }: { tgoId: TgoId, items: Inventory }) =>
 		items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
