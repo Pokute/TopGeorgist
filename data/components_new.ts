@@ -77,11 +77,11 @@ export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo 
 
 export type ComponentWork = 
 TgoRoot & {
+	// Actor is the tgo in whose inventory this work is.
 	readonly workRecipe: Recipe,
-	// readonly actorTgoId: TgoId,
 	readonly workTargetTgoId?: TgoId,
-	readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from participant's inventory, but can be redeemed.
-	readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from participant's inventory, but can be redeemed.
+	readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from actor's inventory, but can be redeemed.
+	readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
 };
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
@@ -101,7 +101,7 @@ TgoRoot & {
 	readonly recipeInfos: ReadonlyArray<{
 		readonly recipe: Recipe,
 		readonly autoRun: boolean,
-		readonly workProgress?: TgoId, // Tgo with inventory.
+//		readonly workProgress?: TgoId, // Tgo with inventory.
 	}>,
 };
 

@@ -89,10 +89,10 @@ Works live in inventories:
 
 * Work lifecycle.
 	* Q: What creates works?
-	* Q: How are works terminated?
-		* Are they terminated on completion?
-		* When we want one hammer, it doesn't work that we just go and make infinite amount of them... Something has to terminate the work.
-	* Creating a new work for each minimal amont of work is feels very inefficient. I don't mind being inefficient, but I don't think making possibly tens of new, single-tick works per tick for each player seems overkill.
+		* Maybe manual?
+		* Goals?
+	* Works are terminated on completion.
+	* Q: Creating a new work for each minimal amont of work is feels very inefficient. I don't mind being inefficient, but I don't think making possibly tens of new, single-tick works per tick for each player seems overkill.
 	* Goals could control many work lifespans if they don't make multiple works.
 
 # Other concerns

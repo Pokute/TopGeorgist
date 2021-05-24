@@ -148,6 +148,7 @@ export type WorkOutput = Array<{
 	awardItems: Inventory,
 }> | undefined;
 
+
 export const handleWork = function* (
 	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
 	// actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
@@ -158,7 +159,7 @@ export const handleWork = function* (
 	if (!hasComponentWorkDoer(actorTgo)
 		// || (goalTgo && !isComponentGoal(goalTgo))
 		|| !isComponentWork(workTgo)){
-		return undefined; // Fail
+		return 'error'; // Fail
 	}
 
 	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes when taking inputs also from target inv.
@@ -231,7 +232,7 @@ export const handleWork = function* (
 				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
 			}))
 			.filter(({ awardItems }) => awardItems.length > 0)
-		return temp;
+		return 'completed';
 	}
 
 	const participantsWithCommitables = participantsWithWorkInfo
@@ -348,7 +349,7 @@ export const handleWork = function* (
 		yield put(goalRemoveWork(goalTgoId, workTgoId));
 		return workTgo.work.targetItemChanges;
 	}*/
-	return undefined;
+	return 'completed';
 }
 
 const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
@@ -467,8 +468,14 @@ const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & Comp
 		return true;
 
 	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
-	yield* handleWork(owner, activeWork);
-	return true;
+	const completed = (yield* handleWork(owner, activeWork)) === 'completed';
+
+	if (completed) {
+		yield put(removeTgoId(owner.tgoId, activeWork.tgoId))
+		return (works.length === 1); // Completed All Works?
+	}
+
+	return false;
 }
 
 const handleWorkTick = function* () {

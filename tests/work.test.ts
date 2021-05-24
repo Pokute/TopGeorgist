@@ -281,7 +281,7 @@ const wrappedRootSaga = function* () {
 const setupRedux = () => expectSaga(wrappedRootSaga)
 	.withReducer(rootReducer);
 
-test.only('Work - simple actor item change', async t => {
+test('Work - simple actor item change', async t => {
 	const recipe: Recipe = {
 		input: [{
 			typeId: 'coal' as TypeId,
@@ -294,7 +294,7 @@ test.only('Work - simple actor item change', async t => {
 	const createActor = addTgo({
 		inventory: [{
 			typeId: 'coal' as TypeId,
-			count: 20,
+			count: 22,
 		}],
 		recipeInfos: [{
 			autoRun: false,
@@ -321,33 +321,7 @@ test.only('Work - simple actor item change', async t => {
 	t.deepEqual(selectTgo(storeState, actorTgoId)?.inventory?.find(({ typeId }) => typeId === 'coal' as TypeId),
 		{
 			typeId: 'coal' as TypeId,
-			count: 10,
-		},
-	);
-
-	const { storeState: storeState2 } = await setupRedux()
-		.dispatch(itemTypeAdd({
-			typeId: 'coal' as TypeId,
-			stackable: true,
-			positiveOnly: true,
-		}))
-		.dispatch(createActor)
-		.dispatch(createWork({
-			goalTgoId: '' as TgoId,
-			recipe,
-			targetTgoId: actorTgoId,
-		}))
-		.dispatch(tick())
-		.dispatch(tick())
-		.dispatch(tick())
-		.silentRun(0);
-
-	console.log(selectTgo(storeState2, actorTgoId)?.inventory);
-
-	t.deepEqual(selectTgo(storeState2, actorTgoId)?.inventory?.find(({ typeId }) => typeId === 'coal' as TypeId),
-		{
-			typeId: 'coal' as TypeId,
-			count: 0,
+			count: 12,
 		},
 	);
 });
