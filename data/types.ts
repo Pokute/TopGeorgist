@@ -15,7 +15,7 @@ export type InitialItemTypesState = {
 	readonly [extraProps: string]: InitialItemType;
 };
 
-const items: InitialItemTypesState = {
+export const items: InitialItemTypesState = {
 	calories: {
 		label: 'calories',
 		stackable: true,
@@ -90,11 +90,12 @@ const items: InitialItemTypesState = {
 	}
 };
 
+export const createItemTypeAction = (typeId: string, item: InitialItemType) =>
+	add({ ...defaultType, typeId: typeId as TypeId, ...item });
+
 const createItemTypes = (dispatch: Dispatch) => {
 	const actions = Object.entries(items)
-		.map(([key, val]) => ({ ...val, typeId: key as TypeId }))
-		.map(i => ({ ...defaultType, ...i }))
-		.map(add);
+		.map(([key, val]) => createItemTypeAction(key, val));
 	actions.forEach(a => dispatch(a));
 };
 

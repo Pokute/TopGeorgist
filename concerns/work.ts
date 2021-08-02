@@ -13,6 +13,8 @@ import isServer from '../isServer.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { tick } from '../actions/ticker.js';
+import { selectTgo } from './tgos.js';
+import { tryWrapTakeEvery } from '../sagas/sagaHelper.js';
 
 // Actions:
 
@@ -23,10 +25,11 @@ export const createFromRecipe = createAction('WORK_CREATE_FROM_RECIPE',
 )();
 
 export const createWork = createAction('WORK_CREATE',
-	({ goalTgoId, recipe, targetTgoId }: { goalTgoId: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => ({
-			goalTgoId,
-			recipe,
-			targetTgoId,
+	({ workerTgoId, goalTgoId, recipe, targetTgoId }: { workerTgoId: TgoId, goalTgoId?: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => ({
+		workerTgoId,
+		goalTgoId,
+		recipe,
+		targetTgoId,
 	})
 )();
 
@@ -37,33 +40,6 @@ export const workActions = {
 export type WorkActionType = ActionType<typeof workActions>;
 
 // Reducer:
-
-interface WorkType {
-	readonly inputProgress: Inventory,
-}
-
-export const initialState: WorkType = {
-	inputProgress: [],
-};
-
-export interface Work { // A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
-	readonly recipe: Recipe,
-	readonly targetTgoId?: TgoId,
-	readonly inputProgress: Inventory,
-};
-
-// export const reducer = (state: (Work & TgoRoot) | undefined, action: WorkActionType): Work & TgoRoot => {
-// 	switch (action.type) {
-// 		// case getType(workActions.createFromRecipe):
-// 		// 	return {
-// 		// 		...state,
-// 		// 		...initialState,
-// 		// 		recipe: action.payload.recipe,
-// 		// 	};
-// 		default:
-// 			// return state;
-// 	}
-// };
 
 // Sagas:
 
@@ -96,7 +72,7 @@ export interface Work { // A work is a recipe in progress. There's a separate tg
 // Actor has a Goal (get to position)
 //   something recognises that we need position changes to complete it.
 // Actor searches his works how to generate position changes.
-// Actor creates a new work to the goal
+// Actor creates a new work to the goal (Where?)
 // Actor repeats below until work is complete.
 //   Actor pushes (all) inventory to work through transactions.
 //   Actor can also push one tick to work through transaction.
@@ -151,13 +127,9 @@ export type WorkOutput = Array<{
 
 export const handleWork = function* (
 	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
-	// actorTgo: ComponentGoalDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
-	// goalTgo?: ComponentGoal & Partial<ComponentInventory>,
 ) {
-	// if (!hasComponentGoalDoer(actorTgo)
 	if (!hasComponentWorkDoer(actorTgo)
-		// || (goalTgo && !isComponentGoal(goalTgo))
 		|| !isComponentWork(workTgo)){
 		return 'error'; // Fail
 	}
@@ -204,37 +176,6 @@ export const handleWork = function* (
 			})),
 		}));
 
-	const allRequirementsFulfilled = participantsWithWorkInfo.every(participant =>
-		participant.missingRequiredItems.every(requiredItem => requiredItem.count == 0)
-	);
-
-	if (allRequirementsFulfilled) {
-		// Send the reawrd of work.
-
-		const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
-
-		const rewards = rewardOutputs(participantsWithWorkInfo);
-		if (rewards.length) {
-			yield all(rewards.map(({ tgoId, missingAwardItems }) => put(transaction(
-				{
-					tgoId,
-					items: missingAwardItems,
-				}
-			))));
-		}
-
-		const temp = participantsWithWorkInfo
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ awardItems }) => awardItems.length > 0)
-		return 'completed';
-	}
-
 	const participantsWithCommitables = participantsWithWorkInfo
 		// .filter(participant => (participant.missingRequiredItems.length > 0) && (participant.missingRequiredItems.every(ii => ii.count > 0)))
 		.map(participant => ({
@@ -275,34 +216,70 @@ export const handleWork = function* (
 			.filter(items => items.count > 0)
 		}))
 	
-	const reqTransaction = transaction(
+	const committablesWithTick = [
 		...participantsWithCommitables
-			.filter(participant => participant.committableRequiredItems.length > 0)
-			.map(p => [
-				{
-					tgoId: p.tgo.tgoId,
-					items: p.committableRequiredItems
-						.filter(ri => ri.typeId !== 'tick')
-						.map(ii => ({ ...ii, count: -1 * ii.count })),
-				},
-				// {
-				// 	tgoId: p.requiredItemCommitTgoId,
-				// 	items: p.committableRequiredItems
-				// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
-				// },
-			]).flat(),
+		.filter(participant => participant.committableRequiredItems.length > 0)
+		.map(p => [
+			{
+				tgoId: p.tgo.tgoId,
+				items: p.committableRequiredItems
+					.filter(ri => ri.typeId !== 'tick')
+					.map(ii => ({ ...ii, count: -1 * ii.count })),
+			},
+			// {
+			// 	tgoId: p.requiredItemCommitTgoId,
+			// 	items: p.committableRequiredItems
+			// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
+			// },
+		]).flat(),
 		...(workTgo.workActorCommittedItemsTgoId && participantsWithCommitables.some(participant => participant.missingRequiredItems.some(ri => ri.typeId === 'tick' && ri.count > 0))
 			? [{
 				tgoId: workTgo.workActorCommittedItemsTgoId,
 				items: [{
 					typeId: 'tick' as TypeId,
-					count: -1,
+					count: 1,
 				}]
 			}]
-			: []),
+			: [])
+	];
+	
+	if (committablesWithTick.length > 0) {
+		const reqTransaction = transaction(...committablesWithTick);
+		yield put(reqTransaction);
+	}
+
+	const allRequirementsFulfilled = participantsWithWorkInfo.every(participant =>
+		participant.missingRequiredItems.every(requiredItem => requiredItem.count == 0)
 	);
 
-	yield put(reqTransaction);
+	if (allRequirementsFulfilled) {
+		// Send the reward of work.
+
+		const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
+			.map(participant => ({
+				tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+			}))
+			.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
+
+		const rewards = rewardOutputs(participantsWithWorkInfo);
+		if (rewards.length) {
+			yield all(rewards.map(({ tgoId, missingAwardItems }) => put(transaction(
+				{
+					tgoId,
+					items: missingAwardItems,
+				}
+			))));
+		}
+
+		const temp = participantsWithWorkInfo
+			.map(participant => ({
+				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
+			}))
+			.filter(({ awardItems }) => awardItems.length > 0)
+		return 'completed';
+	}
+
+	return 'ongoing';
 
 /*
 	// Find out what part of work is not yet done.
@@ -349,7 +326,6 @@ export const handleWork = function* (
 		yield put(goalRemoveWork(goalTgoId, workTgoId));
 		return workTgo.work.targetItemChanges;
 	}*/
-	return 'completed';
 }
 
 const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
@@ -392,10 +368,18 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 		* This doesn't work as a standalone code anyway, requires goals to trigger.
 */
 
-export const handleCreateWork = function* ({ payload: { /* goalTgoId, */ recipe, targetTgoId }}: ActionType<typeof createWork>) {
+export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoId, */ recipe, targetTgoId }}: ActionType<typeof createWork>) {
 	const s: RootStateType = yield select();
 	// const goalTgo = s.tgos[goalTgoId];
 	// if (!isComponentGoal(goalTgo)) return;
+
+	if (workerTgoId && !selectTgo(s, workerTgoId)) {
+		throw new Error('Tgo matching workerTgoId in handleCreateWork not found!');
+	}
+
+	if (targetTgoId && !selectTgo(s, targetTgoId)) {
+		throw new Error('Tgo matching targetTgoId in handleCreateWork not found!');
+	}
 
 	const emptyVirtualInventory = {
 		inventory: [],
@@ -424,9 +408,9 @@ export const handleCreateWork = function* ({ payload: { /* goalTgoId, */ recipe,
 	});
 	yield put(addTgoAction);
 
-	// Add the WorkTgoId to Worker inventory
+	// Add the WorkTgoId to inventory
 	yield put(inventoryAddTgoId(
-		targetTgoId!,
+		workerTgoId,
 		addTgoAction.payload.tgo.tgoId
 	));
 
@@ -468,9 +452,9 @@ const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & Comp
 		return true;
 
 	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
-	const completed = (yield* handleWork(owner, activeWork)) === 'completed';
+	const workResult = yield* handleWork(owner, activeWork);
 
-	if (completed) {
+	if (['completed', 'error'].includes(workResult)) {
 		yield put(removeTgoId(owner.tgoId, activeWork.tgoId))
 		return (works.length === 1); // Completed All Works?
 	}
@@ -533,7 +517,7 @@ const createTransactionForOutput = function* (tgo: TgoType & ComponentWorkDoer, 
 
 export const workRootSaga = function* () {
 	if (!isServer) return;
-	yield takeEvery(getType(createWork), handleCreateWork);
+	yield tryWrapTakeEvery(getType(createWork), handleCreateWork);
 	yield takeEvery(getType(removeWork), handleRemoveWork);
 	yield takeEvery(getType(tick), handleWorkTick);
 };

@@ -4,7 +4,6 @@ import { TaskQueueType } from '../reducers/taskQueue.js';
 import { Goal } from '../concerns/goal.js';
 import { Recipe, RecipeId } from '../reducers/recipe.js';
 import { ComponentPosition } from '../components/position.js';
-import { Work } from '../concerns/work.js';
 
 export type ComponentRentOffice = 
 	ComponentPosition & {
@@ -77,6 +76,7 @@ export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo 
 
 export type ComponentWork = 
 TgoRoot & {
+	// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
 	// Actor is the tgo in whose inventory this work is.
 	readonly workRecipe: Recipe,
 	readonly workTargetTgoId?: TgoId,

@@ -87,6 +87,7 @@
     "build-storybook": "build-storybook",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
+    "test-saga": "ava -vs tests/sagaThrow.test.ts",
     "testnyc": "nyc ava -vs",
     "postinstall": "patch-package"
   },

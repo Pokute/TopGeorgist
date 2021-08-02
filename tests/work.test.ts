@@ -1,166 +1,114 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
-import { expectSaga } from 'redux-saga-test-plan';
 import sinon from 'sinon';
-import { createWork, handleCreateWork, handleWork } from '../concerns/work.js';
+import { createWork, handleWork } from '../concerns/work.js';
 import { consume } from '../data/recipes.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
-import { getType } from 'typesafe-actions';
-import { select, put, PutEffect, PutEffectDescriptor, takeEvery } from 'redux-saga/effects';
+import { TgoId } from '../reducers/tgo.js';
+import { getType, Action } from 'typesafe-actions';
+import { takeEvery } from 'redux-saga/effects';
 import rootReducer, { RootStateType } from '../reducers/index.js';
-import { omitType, omitMetaAndError, overrideTgoWithId, overrideAddTgoActionWithId } from '../testUtils.js';
 import { TypeId } from '../reducers/itemType.js';
-import { ItemTypesState } from '../reducers/itemTypes.js';
 import { TgosState } from '../reducers/tgos.js';
 import { add as addTgo } from '../actions/tgos.js';
 import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../components/inventory.js';
 import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal.js';
-import { ComponentWork, ComponentGoal, ComponentWorkDoer } from '../data/components_new.js';
+import { ComponentWork, ComponentGoal, ComponentWorkDoer, hasComponentWorkDoer } from '../data/components_new.js';
 import { Recipe, RecipeId } from '../reducers/recipe.js';
 import rootSaga from '../sagas/root.js';
 import { tick } from '../actions/ticker.js';
 import { selectTgo } from '../concerns/tgos.js';
 import { add as itemTypeAdd } from '../actions/itemTypes.js';
+import { SagaIterator } from 'redux-saga';
+import { expectSaga, wrapEveryErrorReportAction } from '../sagas/sagaHelper.js';
+import { items, createItemTypeAction } from '../data/types.js';
 
 // Test work
 
 util.inspect.defaultOptions.depth = 500;  
 
-test('Create a work without errors', t => {
-	const params = {
-		goalTgoId: 'Temp goal id' as TgoId,
-		targetTgoId: 'Target id' as TgoId,
-		recipe: consume,
+const setupRedux = (saga: () => SagaIterator<any> & IterableIterator<any>) => {
+	const wrappedRootSaga = function* () {
+		yield* saga();
+		yield takeEvery('*', function* (a: Action) { console.log(a) }); // redux-saga-test-plan requires this. See sagaThrow.test.ts
 	};
 
-	t.notThrows(() => createWork(params));
+	return expectSaga(wrappedRootSaga)
+		.withReducer(rootReducer);
+};
+
+test('Test work - fail if workerTgoId not in store', async t => {
+	t.plan(0);
+
+	const workAction = createWork({
+		workerTgoId: 'illegalId' as TgoId,
+		goalTgoId: undefined,
+		recipe: consume,
+		targetTgoId: undefined,
+	});
+
+	await setupRedux(rootSaga)
+		.put(wrapEveryErrorReportAction({
+			actionPattern: getType(createWork),
+			workerName: 'handleCreateWork',
+			error: new Error('Tgo matching workerTgoId in handleCreateWork not found!'),
+		}))
+		.dispatch(workAction)
+		.silentRun(0);
 });
 
-test('Test work - handleCreateWork - fail if goalTgoId not in store', t => {
-	const params = {
-		goalTgoId: 'Temp goal id' as TgoId,
-		targetTgoId: 'Target id' as TgoId,
+test('Test work - fail if targetTgoId not in store', async t => {
+	t.plan(0);
+	// Should this fail?
+	// * Currently it should fail.
+	// - HandleCreateWork saga relies on it.
+	// - It might make coding easier if it doesn't.
+	// - Code might be refactored that only the tick phase / possible prepare phase requires it.
+
+	// Shoud it throw or fail silently?
+	// * Currently it should throw.
+	// ! BUT throwing will restart the takeEvery and instead puts an action.
+	// - createWork should only be triggered by the server and never sent by the client - It's an exception!
+
+	const workAction = createWork({
+		workerTgoId: 'illegalId' as TgoId,
+		goalTgoId: undefined,
 		recipe: consume,
-	};
+		targetTgoId: 'illegalId' as TgoId,
+	});
 
-	const wSaga = handleCreateWork(createWork(params));
-
-	t.deepEqual(
-		wSaga.next( ).value,
-		select()
-	);
-
-	t.true(
-		wSaga.next({ tgos: {} } as unknown as RootStateType as any).done
-	);
+	await setupRedux(rootSaga)
+		.put(wrapEveryErrorReportAction({
+			actionPattern: getType(createWork),
+			workerName: 'handleCreateWork',
+			error: new Error('Tgo matching targetTgoId in handleCreateWork not found!'),
+		}))
+		.dispatch(workAction)
+		.silentRun(0);
 });
 
-test('Test work - creates a tgo for virtual inventory if it doesn\'t exist and work.actorItemChanges.length > 0', t => {
-	const params = {
-		goalTgoId: 'Temp goal id' as TgoId,
-		targetTgoId: 'Target id' as TgoId,
+test.failing('Test work - creation - fail if goalTgoId not in store', async t => {
+	// Possibly remove goalTgoId from work.
+	t.plan(0);
+
+	const createTarget = addTgo({
+	});
+
+	const workAction = createWork({
+		workerTgoId: 'illegalId' as TgoId,
+		goalTgoId: 'illegalId' as TgoId,
 		recipe: consume,
-	};
+		targetTgoId: createTarget.payload.tgo.tgoId,
+	});
 
-	const wSaga = handleCreateWork(createWork(params));
-
-	t.deepEqual(
-		wSaga.next().value,
-		select()
-	);
-
-	const goalTgo: TgoType & ComponentGoal = {
-		tgoId: 'Temp goal id' as TgoId,
-		goal: {
-			requirements: [],
-			workTgoIds: [],
-		},
-	};
-
-	const wSagaAddTgoPut = wSaga.next({ tgos: {
-		[goalTgo.tgoId]: goalTgo,
-	} as TgosState } as unknown as RootStateType as any).value;
-
-	type AddTgoType = ReturnType<typeof addTgo>;
-
-	const isPutEffect = (a: any): a is PutEffect => a && a.type === 'PUT';
-	const isAddAction = (a: any): a is AddTgoType => a && a.type === getType(addTgo);
-	const isInventoryAddTgoIdAction = (a: any): a is ReturnType<typeof inventoryAddTgoId> => a && a.type === getType(inventoryAddTgoId);
-	const isGoalAddWorkAction = (a: any): a is ReturnType<typeof goalAddWork> => a && a.type === getType(goalAddWork);
-
-	// Testing internals here. :-(
-	const emptyVirtualInventory = {
-		inventory: [],
-		isInventoryVirtual: true,
-	};
-
-	if (!isPutEffect(wSagaAddTgoPut) || !isAddAction(wSagaAddTgoPut.payload.action)) {
-		t.fail();
-		return;
-	}
-	const overridden = overrideAddTgoActionWithId(
-		addTgo(emptyVirtualInventory),
-		wSagaAddTgoPut.payload.action.payload.tgo.tgoId
-	);
-	t.deepEqual(
-		wSagaAddTgoPut,
-		put(overridden)
-	);
-
-	const wSagaSecondAddTgoPut = wSaga.next().value;
-	if (!isPutEffect(wSagaSecondAddTgoPut) || !isAddAction(wSagaSecondAddTgoPut.payload.action)) {
-		t.fail();
-		return;
-	}
-
-	const overriddenS = overrideAddTgoActionWithId(
-		addTgo(emptyVirtualInventory),
-		wSagaSecondAddTgoPut.payload.action.payload.tgo.tgoId
-	);
-	t.deepEqual(
-		wSagaSecondAddTgoPut,
-		put(overriddenS)
-	);
-
-	const wSagaAddWorkTgoPut = wSaga.next().value;
-	if (!isPutEffect(wSagaAddWorkTgoPut) || !isAddAction(wSagaAddWorkTgoPut.payload.action)) {
-		t.fail();
-		return;
-	}
-
-	const overriddenW = overrideAddTgoActionWithId(
-		addTgo({
-			workRecipe: consume,
-			workTargetTgoId: 'Target id' as TgoId,
-			workActorCommittedItemsTgoId: wSagaAddTgoPut.payload.action.payload.tgo.tgoId,
-			workTargetCommittedItemsTgoId: wSagaSecondAddTgoPut.payload.action.payload.tgo.tgoId,
-		}),
-		wSagaAddWorkTgoPut.payload.action.payload.tgo.tgoId
-	);
-	t.deepEqual(
-		wSagaAddWorkTgoPut,
-		put(overriddenW)
-	);
-
-	const inventoryAddToGoal = wSaga.next(wSagaAddWorkTgoPut.payload.action as any).value;
-	if (!isPutEffect(inventoryAddToGoal) || !isInventoryAddTgoIdAction(inventoryAddToGoal.payload.action)) {
-		t.fail();
-		return;
-	}
-	t.deepEqual(
-		inventoryAddToGoal,
-		put(inventoryAddTgoId('Temp goal id' as TgoId, inventoryAddToGoal.payload.action.payload.item.tgoId))
-	);
-	const workAdd = wSaga.next().value;
-	if (!isPutEffect(workAdd) || !isGoalAddWorkAction(workAdd.payload.action)) {
-		t.fail();
-		return;
-	}
-	// t.deepEqual(
-	// 	workAdd,
-	// 	put(goalAddWork('Temp goal id' as TgoId, wSagaAddWorkTgoPut.payload.action.payload.tgo.tgoId))
-	// )
-	t.true(wSaga.next().done);
+	await setupRedux(rootSaga)
+		.dispatch(createTarget)
+		.put(wrapEveryErrorReportAction({
+			actionPattern: getType(createWork),
+			workerName: 'handleCreateWork',
+			error: new Error('Tgo matching goalTgoId in handleCreateWork not found!'),
+		}))
+		.dispatch(workAction)
+		.silentRun(0);
 });
 
 const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) => (next?: any) => (expected?: Parameters<DeepEqualAssertion>[1], done: boolean = false, message?: Parameters<DeepEqualAssertion>[2]) => {
@@ -179,42 +127,92 @@ const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) =>
 	return genResult;
 }
 
-test('Work - empty work', t => {
-	// Create an empty work.
-	const work: ComponentWork = {
-		tgoId: 'emptyWork' as TgoId,
-		workRecipe: {
+test('Work - work is removed after completion', async t => {
+	const createTarget = addTgo({
+	});
+	const createTargetTgoId = createTarget.payload.tgo.tgoId;
+	const workAction = createWork({
+		workerTgoId: 'illegalId' as TgoId,
+		goalTgoId: undefined,
+		recipe: {
 			input: [],
 			output: [],
 			type: 'emptyWork' as RecipeId,
 		},
-	};
+		targetTgoId: createTargetTgoId,
+	});
 
-	// Run empty work.
-	const hWI = handleWork(
-		{ tgoId: 'worker' as TgoId, recipeInfos: [], inventory: [] },
-		work,
-		// { tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
-		);
-	// Is a generator;
-	t.truthy(hWI && hWI.next);
+	const reduxState = await setupRedux(rootSaga)
+		.dispatch(createTarget)
+		.dispatch(workAction)
+		.silentRun(0);
 	
-	const genDeepEqual = createGenDeepEqual(t, hWI);
+	const storeState: RootStateType = reduxState.storeState;
 
-	// Start execution
-	genDeepEqual()();
-
-	// Supply the store;
-	genDeepEqual(
-		{ tgos: {
-			['Temp goal id']: {
-				tgoId: 'Temp goal id' as TgoId,
-			}
-		} as TgosState } as unknown as RootStateType as any
-	)(undefined, true);
+	t.deepEqual(storeState.tgos[createTargetTgoId].inventory, [])
 });
 
-test('Work - wait 3 ticks', t => {
+const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId]  => {
+	const addTgoAction = addTgo(...params);
+	return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+};
+
+test.only('Work - wait 3 ticks', async t => {
+	const threeTickRecipe = {
+		input: [{
+			typeId: 'tick' as TypeId,
+			count: -3,
+		}],
+		output: [],
+		type: 'waitWork' as RecipeId,
+	};
+	
+	const [addWorker, workerTgoId] = addTgoWithId({
+		recipeInfos: [{ // becomes a workDoer
+			recipe: threeTickRecipe,
+			autoRun: false,
+		}],
+	});
+
+	// Create an work on 3 tick wait.
+
+	const workAction = createWork({
+		workerTgoId: workerTgoId,
+		goalTgoId: undefined,
+		recipe: threeTickRecipe,
+		targetTgoId: workerTgoId,
+	});
+
+	const reduxState = await setupRedux(rootSaga)
+		.dispatch(createItemTypeAction('tick', items['tick']))
+		.dispatch(addWorker)
+		.dispatch(workAction)
+		.dispatch(tick())
+		.dispatch(tick())
+		.dispatch(tick())
+		.silentRun(0);
+
+	console.log(reduxState.storeState);
+	return;
+
+	const storeState: RootStateType = reduxState.storeState;
+
+	t.deepEqual(storeState.tgos[workerTgoId].inventory, []);
+
+	const reduxState2 = await setupRedux(rootSaga)
+		.dispatch(createItemTypeAction('tick', items['tick']))
+		.dispatch(addWorker)
+		.dispatch(workAction)
+		.dispatch(tick())
+		.dispatch(tick())
+		.silentRun(0);
+	
+	const storeState2: RootStateType = reduxState.storeState;
+
+	t.notDeepEqual(storeState2.tgos[workerTgoId].inventory, []);
+});
+
+test.skip('Work - wait 3 ticks (old)', t => {
 	const workCommittedItemsTgo = {
 		tgoId: 'waitWorkCommittedItems' as TgoId,
 		inventory: [],
@@ -273,14 +271,6 @@ test('Work - wait 3 ticks', t => {
 	}
 });
 
-const wrappedRootSaga = function* () {
-	yield* rootSaga();
-	yield takeEvery('*', function* () {});
-}
-
-const setupRedux = () => expectSaga(wrappedRootSaga)
-	.withReducer(rootReducer);
-
 test('Work - simple actor item change', async t => {
 	const recipe: Recipe = {
 		input: [{
@@ -303,7 +293,7 @@ test('Work - simple actor item change', async t => {
 	});
 	const actorTgoId = createActor.payload.tgo.tgoId;
 
-	const { storeState } = await setupRedux()
+	const { storeState } = await setupRedux(rootSaga)
 		.dispatch(itemTypeAdd({
 			typeId: 'coal' as TypeId,
 			stackable: true,
@@ -311,6 +301,7 @@ test('Work - simple actor item change', async t => {
 		}))
 		.dispatch(createActor)
 		.dispatch(createWork({
+			workerTgoId: 'illegalId' as TgoId,
 			goalTgoId: '' as TgoId,
 			recipe,
 			targetTgoId: actorTgoId,
@@ -562,7 +553,7 @@ test('Work - hierarchy', async t => {
 		}
 	);
 
-	const { storeState } = await setupRedux()
+	const { storeState } = await setupRedux(rootSaga)
 		.dispatch(createPlayerTgo)
 		// .dispatch(addGoals(createPlayerTgo.payload.tgo.tgoId, [{
 
