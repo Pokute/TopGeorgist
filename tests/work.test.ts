@@ -13,7 +13,7 @@ import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../components
 import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal.js';
 import { ComponentWork, ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.js';
 import { Recipe, RecipeId } from '../reducers/recipe.js';
-import { tick } from '../actions/ticker.js';
+import { tick } from '../concerns/ticker.js';
 import { selectTgo } from '../concerns/tgos.js';
 import { add as itemTypeAdd } from '../actions/itemTypes.js';
 import { wrapEveryErrorReportAction } from '../sagas/sagaHelper.js';

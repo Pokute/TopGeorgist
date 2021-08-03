@@ -26,7 +26,7 @@ import { consumeGoal } from './actions/consumeGoal.js';
 import { MapSize } from './reducers/map.js';
 import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
-import { setRunning as tickerSetRunning } from './actions/ticker.js';
+import { setRunning as tickerSetRunning } from './concerns/ticker.js';
 import { claimLand, payRent } from './sagas/buildings/rentOffice.js';
 
 // Start the server

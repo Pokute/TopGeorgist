@@ -8,7 +8,7 @@ import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
 import map, { MapType } from './map.js';
 import tgos, { TgosState } from './tgos.js';
-import ticker, { TickerStateType } from './ticker.js';
+import { tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
 import { getType, ActionType } from 'typesafe-actions';
@@ -25,7 +25,7 @@ export interface RootStateType {
 	readonly map: MapType,
 	readonly serverConnection: ServerConnectionStateType,
 	readonly tgos: TgosState,
-	readonly ticker: TickerStateType,
+	readonly ticker: ReturnType<typeof tickerReducer>,
 	readonly tileSets: TileSetsState,
 	readonly views: ViewsState,
 };
@@ -40,7 +40,7 @@ const combinedReducers = combineReducers({
 	itemTypes,
 	map,
 	tgos,
-	ticker,
+	ticker: tickerReducer,
 	tileSets,
 	views,
 });

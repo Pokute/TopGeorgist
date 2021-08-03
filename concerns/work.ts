@@ -11,7 +11,7 @@ import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
 import isServer from '../isServer.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getTgoByIdFromRootState } from '../reducers/tgos.js';
-import { tick } from '../actions/ticker.js';
+import { tick } from '../concerns/ticker.js';
 import { selectTgo } from './tgos.js';
 import { tryWrapTakeEvery } from '../sagas/sagaHelper.js';
 

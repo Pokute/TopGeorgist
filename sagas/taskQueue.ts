@@ -2,7 +2,7 @@ import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue.js';
-import * as tickerActions from '../actions/ticker.js';
+import { tick } from '../concerns/ticker.js';
 import { RootStateType } from '../reducers/index.js';
 import { TgoType } from '../reducers/tgo.js';
 import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue.js';
@@ -78,7 +78,7 @@ const handleQueueTick = function* () {
 };
 
 const queueListeners = function* () {
-	yield takeEvery(getType(tickerActions.tick), handleQueueTick);
+	yield takeEvery(getType(tick), handleQueueTick);
 };
 
 export default queueListeners;

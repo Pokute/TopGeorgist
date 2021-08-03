@@ -1,7 +1,7 @@
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as allSetActions from '../actions/allSet.js';
-import * as tickerActions from '../actions/ticker.js';
+import { tick } from '../concerns/ticker.js';
 import * as governmentActions from '../actions/government.js';
 import { TgoId } from './tgo.js';
 import { MapPosition } from '../reducers/map.js';
@@ -47,10 +47,9 @@ const initialClaimState = {
 const rentPerTick = 0.5;
 
 type GovernmentAction = ActionType<typeof governmentActions>;
-type TickerAction = ActionType<typeof tickerActions>;
 type AllSetAction = ActionType<typeof allSetActions>;
 
-export default (state: GovernmentStateType = initialState, action: GovernmentAction | TickerAction | AllSetAction): GovernmentStateType => {
+export default (state: GovernmentStateType = initialState, action: GovernmentAction | ActionType<typeof tick> | AllSetAction): GovernmentStateType => {
 	switch (action.type) {
 		case (getType(governmentActions.addCitizen)):
 			const citizen = state.citizens[action.payload];
@@ -115,7 +114,7 @@ export default (state: GovernmentStateType = initialState, action: GovernmentAct
 				},
 			};
 		}
-		case (getType(tickerActions.tick)):
+		case (getType(tick)):
 			return {
 				...state,
 				claims: state.claims.map(c => ({

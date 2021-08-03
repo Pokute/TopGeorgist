@@ -11,7 +11,7 @@ import net from './net.js';
 import plant from './plantable.js';
 import player from './player.js';
 import taskQueue from './taskQueue.js';
-import ticker from './ticker.js';
+import { tickerRootSaga } from '../concerns/ticker.js';
 import { transactionRootSaga } from '../concerns/transaction.js';
 import view from './view.js';
 import { workRootSaga } from '../concerns/work.js';
@@ -30,7 +30,7 @@ const rootSaga = function* () {
 	yield* plant();
 	yield* player();
 	yield* taskQueue();
-	yield* ticker();
+	yield* tickerRootSaga();
 	yield* transactionRootSaga();
 	yield* view();
 	yield* workRootSaga();
