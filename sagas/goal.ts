@@ -1,9 +1,8 @@
 import { select, put, takeEvery, call, all } from 'redux-saga/effects';
 
-import { Requirement, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
+import { Requirement, ComponentGoalDoer, ComponentGoal, hasComponentGoalDoer, isComponentGoal, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
 import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from '../concerns/work.js';
 import { RootStateType } from '../reducers/index.js';
-import { ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal, isComponentWork, ComponentGoal, hasComponentWorkDoer } from '../data/components_new.js';
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from '../components/inventory.js';
 import { hasComponentPosition, ComponentPosition } from '../components/position.js';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';

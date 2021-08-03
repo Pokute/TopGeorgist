@@ -4,7 +4,6 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 import { Recipe } from '../reducers/recipe.js';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory.js';
-import { isComponentGoal, isComponentWork, hasComponentGoalDoer, ComponentGoalDoer, ComponentGoal, ComponentWork, hasComponentWorkDoer, ComponentWorkDoer } from '../data/components_new.js';
 import { transaction } from '../concerns/transaction.js';
 import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
@@ -25,7 +24,17 @@ export const createFromRecipe = createAction('WORK_CREATE_FROM_RECIPE',
 )();
 
 export const createWork = createAction('WORK_CREATE',
-	({ workerTgoId, goalTgoId, recipe, targetTgoId }: { workerTgoId: TgoId, goalTgoId?: TgoId, recipe: Recipe, targetTgoId?: TgoId }) => ({
+	({
+		workerTgoId,
+		goalTgoId,
+		recipe,
+		targetTgoId
+	}: {
+		workerTgoId: TgoId,
+		goalTgoId?: TgoId,
+		recipe: Recipe,
+		targetTgoId?: TgoId
+	}) => ({
 		workerTgoId,
 		goalTgoId,
 		recipe,
@@ -39,6 +48,34 @@ export const workActions = {
 };
 export type WorkActionType = ActionType<typeof workActions>;
 
+// Work TGO members:
+
+export type ComponentWork = 
+	TgoRoot & {
+		// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
+		// Actor is the tgo in whose inventory this work is.
+		readonly workRecipe: Recipe,
+		readonly workTargetTgoId?: TgoId,
+		readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from actor's inventory, but can be redeemed.
+		readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
+	};
+
+export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
+	tgo && typeof tgo.workRecipe !== 'undefined';
+
+export type ComponentWorkDoer = 
+	TgoRoot & {
+		// readonly recipeInfos: Record<RecipeId, {
+		readonly recipeInfos: ReadonlyArray<{
+			readonly recipe: Recipe,
+			readonly autoRun: boolean,
+	//		readonly workProgress?: TgoId, // Tgo with inventory.
+		}>,
+	};
+
+export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
+	tgo && (tgo.recipeInfos !== undefined)
+	
 // Reducer:
 
 // Sagas:
@@ -381,6 +418,11 @@ export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoI
 		throw new Error('Tgo matching targetTgoId in handleCreateWork not found!');
 	}
 
+	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
+		const addTgoAction = addTgo(...params);
+		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+	};
+
 	const emptyVirtualInventory = {
 		inventory: [],
 		isInventoryVirtual: true,
@@ -398,7 +440,7 @@ export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoI
 		yield put(workTargetCommittedItemsTgoAction)
 
 	// Add a Work TgoId
-	const addTgoAction = addTgo({
+	const [addWorkAction, workTgoId] = addTgoWithId({
 		workRecipe: recipe,
 		// actorTgoId: goalTgo,
 		workTargetTgoId: targetTgoId,
@@ -406,12 +448,12 @@ export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoI
 		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgoAction?.payload.tgo.tgoId,
 		// inventory: [],
 	});
-	yield put(addTgoAction);
+	yield put(addWorkAction);
 
 	// Add the WorkTgoId to inventory
 	yield put(inventoryAddTgoId(
 		workerTgoId,
-		addTgoAction.payload.tgo.tgoId
+		workTgoId
 	));
 
 	// Add the WorkTgoId to Goal inventory

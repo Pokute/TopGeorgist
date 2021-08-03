@@ -1,8 +1,6 @@
 import { Action, ComponentTicker } from './components.js';
 import { TgoType, ComponentType, TgoId, TgoRoot } from '../reducers/tgo.js';
 import { TaskQueueType } from '../reducers/taskQueue.js';
-import { Goal } from '../concerns/goal.js';
-import { Recipe, RecipeId } from '../reducers/recipe.js';
 import { ComponentPosition } from '../components/position.js';
 
 export type ComponentRentOffice = 
@@ -73,45 +71,3 @@ TgoRoot & {
 
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
 	tgo && Array.isArray(tgo.components);
-
-export type ComponentWork = 
-TgoRoot & {
-	// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
-	// Actor is the tgo in whose inventory this work is.
-	readonly workRecipe: Recipe,
-	readonly workTargetTgoId?: TgoId,
-	readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from actor's inventory, but can be redeemed.
-	readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
-};
-
-export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
-	tgo && typeof tgo.workRecipe !== 'undefined';
-
-export type ComponentGoal = 
-TgoRoot & {
-	readonly goal: Goal,
-};
-
-export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
-	tgo && typeof tgo.goal !== 'undefined';
-
-export type ComponentWorkDoer = 
-TgoRoot & {
-	// readonly recipeInfos: Record<RecipeId, {
-	readonly recipeInfos: ReadonlyArray<{
-		readonly recipe: Recipe,
-		readonly autoRun: boolean,
-//		readonly workProgress?: TgoId, // Tgo with inventory.
-	}>,
-};
-
-export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
-	tgo && (tgo.recipeInfos !== undefined)
-
-export type ComponentGoalDoer = 
-TgoRoot & {
-	readonly activeGoals: ReadonlyArray<TgoId>,
-};
-
-export const hasComponentGoalDoer = <BaseT extends TgoType | ComponentGoalDoer>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoalDoer>) =>
-	tgo && Array.isArray(tgo.activeGoals);

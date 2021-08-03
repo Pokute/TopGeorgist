@@ -2,7 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { InventoryItem, hasComponentInventory } from '../components/inventory.js';
-import { isComponentGoal, isComponentWork, ComponentGoalDoer, ComponentGoal } from '../data/components_new.js';
+import { isComponentWork } from '../concerns/work.js';
+import { ComponentGoal, isComponentGoal } from '../concerns/goal.js';
 import { RootStateType } from '../reducers/index.js';
 import InventoryReact from './inventory.react.js';
 import { TgoId } from '../reducers/tgo.js';

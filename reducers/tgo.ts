@@ -2,13 +2,13 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import * as tgoActions from '../actions/tgo.js'; 
 import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType, TaskQueueType } from './taskQueue.js';
-import { goalDoerReducer, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
+import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.js';
 import { goalReducer } from '../concerns/goal.js';
-import { /* reducer as workReducer, */ WorkActionType } from '../concerns/work.js';
+import { /* reducer as workReducer, */ WorkActionType, ComponentWork, ComponentWorkDoer } from '../concerns/work.js';
 import { TypeId } from './itemType.js';
 import { TgosState } from './tgos.js';
 import { ComponentList } from '../data/components.js';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents, ComponentWork, ComponentGoal, ComponentGoalDoer, ComponentWorkDoer, hasComponentGoalDoer, isComponentWork, isComponentGoal, hasComponentWorkDoer } from '../data/components_new.js';
+import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType, InventoryItem } from '../components/inventory.js';
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
 import { ComponentPlayer } from '../components/player.js';

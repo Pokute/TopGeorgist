@@ -1,12 +1,12 @@
 import util from 'util';
 import { default as test } from 'ava';
-import { expectSaga } from 'redux-saga-test-plan';
+import { SagaTester } from './testHelpers';
 import { createAction, ActionType, getType } from 'typesafe-actions';
-import { takeEvery, take, fork, put } from 'redux-saga/effects';
+import { takeEvery, take } from 'redux-saga/effects';
 
-import { expectSaga as ownExpectSaga, tryWrapTakeEvery, wrapEveryErrorReportAction } from '../sagas/sagaHelper';
+import { tryWrapTakeEvery, wrapEveryErrorReportAction } from '../sagas/sagaHelper';
 
-// This file is for testing redux-saga-test-plan behaviour
+// This file is for testing redux-saga-tester behaviour
 //  and also figuring out how redux-saga works.
 // https://redux-saga.js.org/docs/advanced/ForkModel#error-propagation
 // Above link explains throwing in redux-saga.
@@ -89,88 +89,74 @@ const testingSaga = function* () {
 	yield takeEvery('*', function* () {}); // redux-saga-test-plan requires this. It won't dispatch actions if there are no sagas that take those actions.
 }
 
-test('ExpectSaga initializes store correctly', async t => {
-	const res = expectSaga(testingSaga)
-		.withReducer(testStore)
-		.silentRun(0);
+test('SagaTester is a valid constructor', t => {
+	// redux-saga-tester is export symbols in wrong way for new node so check that our version does it correctly.
 
-	t.deepEqual((await res).storeState, { current: 0 });
+	t.true(typeof SagaTester === 'function');
+	t.notThrows(() => { new SagaTester(); });
+})
+
+test('SagaTester initializes store correctly', t => {
+	const storeTester = new SagaTester({
+		reducers: testStore,
+	});
+
+	t.deepEqual(storeTester.getState(), { current: 0 });
 });
 
-test.failing('Known failure: ExpectSaga doesn\'t process actions without take actions.', async t => {
-	const res = expectSaga(function* () {})
-			.withReducer(testStore)
-			.dispatch(increase())
-			.silentRun(0);
+test('SagaTester processes actions without take actions.', t => {
+	const storeTester = new SagaTester({
+		reducers: testStore,
+	});
+	storeTester.dispatch(increase())
 
-	t.deepEqual((await res).storeState, { current: 1 });
+	t.deepEqual(storeTester.getState(), { current: 1 });
 });
 
-test('ExpectSaga handles actions', async t => {
-	const res = expectSaga(testingSaga)
-		.withReducer(testStore)
-		.dispatch(increase())
-		.dispatch(increase({ amount : 4}))
-		.dispatch(increase())
-		.silentRun(0);
+test('SagaTester handles actions', async t => {
+	const storeTester = new (SagaTester as any)({
+		reducers: testStore,
+	});
+	storeTester.dispatch(increase())
+	storeTester.dispatch(increase({ amount : 4}))
+	storeTester.dispatch(increase())
 
-	t.deepEqual((await res).storeState, { current: 6 });
+	t.deepEqual(storeTester.getState(), { current: 6 });
 });
 
-test('ExpectSaga handles actions in correct order', async t => {
-	const res = expectSaga(testingSaga)
-		.withReducer(testStore)
-		.dispatch(set(10))
-		.dispatch(increase({ amount: -2 }))
-		.dispatch(double())
-		.silentRun(0);
+test('SagaTester handles actions in correct order', t => {
+	const storeTester = new SagaTester({
+		reducers: testStore,
+	});
+	storeTester.dispatch(set(10))
+	storeTester.dispatch(increase({ amount : -2}))
+	storeTester.dispatch(double())
 
-	t.deepEqual((await res).storeState, { current: 16 });
+	t.deepEqual(storeTester.getState(), { current: 16 });
 });
 
-test('ExpectSaga handles a saga that throws', async t => {
+test.skip('SagaTester handles a saga that throws', t => {
 	const onIncrease = function * () {
 		yield take(increase);
 		yield take(increase);
 		throw new Error('After second increase')
 	};
 
-	const res1 = await (expectSaga(onIncrease)
-		.withReducer(testStore)
-		.dispatch(increase())
-		.silentRun(0));
+	const storeTester = new SagaTester({
+		reducers: testStore,
+	});
+	storeTester.start(onIncrease);
+	storeTester.dispatch(increase())
 
-	t.deepEqual(res1.storeState, { current: 1 });
+	t.deepEqual(storeTester.getState(), { current: 1 });
 
-	const res2 = await (expectSaga(onIncrease)
-		.withReducer(testStore)
-		.throws(new Error('After second increase'))
-		.dispatch(increase())
-		.dispatch(increase())
-		.silentRun(0));
 
-	t.deepEqual(res2.storeState, { current: 2 });
-});
-
-test('ExpectSaga handles a forked saga that throws', async t => {
-	const onIncrease = function * () {
-		try {
-			yield take(increase);
-			yield fork(function * () {
-				throw new Error('After second increase')
-			})
-			yield take(increase);
-		} catch (e) {
-			console.log('Catched.')
-		}
-	};
-
-	const res1 = await (expectSaga(onIncrease)
-		.withReducer(testStore)
-		.dispatch(increase())
-		.silentRun(0));
-
-	t.deepEqual(res1.storeState, { current: 1 });
+	const storeTester2 = new SagaTester({
+		reducers: testStore,
+	});
+	storeTester2.start(onIncrease);
+	storeTester.dispatch(increase())
+	t.throws(() => storeTester2.dispatch(increase()));
 
 	// const res2 = await (expectSaga(onIncrease)
 	// 	.withReducer(testStore)
@@ -179,30 +165,58 @@ test('ExpectSaga handles a forked saga that throws', async t => {
 	// 	.dispatch(increase())
 	// 	.silentRun(0));
 
-	// t.deepEqual(res2.storeState, { current: 2 });
+	t.deepEqual(storeTester2.getState(), { current: 2 });
 });
 
-test('Our own expectSaga doesn\'t allow using .throws()', t => {
-	t.throwsAsync(async () => {
-		await ownExpectSaga(function* () {})
-			.throws('foo');
-	});
-});
+// test('SagaTester handles a forked saga that throws', t => {
+// 	const onIncrease = function * () {
+// 		try {
+// 			yield take(increase);
+// 			yield fork(function * () {
+// 				throw new Error('After second increase')
+// 			})
+// 			yield take(increase);
+// 		} catch (e) {
+// 			console.log('Catched.')
+// 		}
+// 	};
 
-test('tryWrapTakeEvery catches exceptions and wraps them in an action.', async t => {
-	t.plan(0);
+// 	const res1 = await (expectSaga(onIncrease)
+// 		.withReducer(testStore)
+// 		.dispatch(increase())
+// 		.silentRun(0));
+
+// 	t.deepEqual(res1.storeState, { current: 1 });
+
+// 	// const res2 = await (expectSaga(onIncrease)
+// 	// 	.withReducer(testStore)
+// 	// 	.throws(new Error('After second increase'))
+// 	// 	.dispatch(increase())
+// 	// 	.dispatch(increase())
+// 	// 	.silentRun(0));
+
+// 	// t.deepEqual(res2.storeState, { current: 2 });
+// });
+
+test('tryWrapTakeEvery catches exceptions and wraps them in an action.', t => {
 	const a = createAction('A')();
 
-	await ownExpectSaga(function* () {
+	const storeTester = new SagaTester({
+		reducers: testStore,
+	});
+	storeTester.start(function* () {
 		yield tryWrapTakeEvery(getType(a), function* (ac: ActionType<typeof a>) {
 			throw new Error('Our fun error');
 		});
-	})
-		.dispatch(a())
-		.put(wrapEveryErrorReportAction({
+	});
+	storeTester.dispatch(a())
+
+	t.deepEqual(storeTester.getCalledActions(), [
+		a(),
+		wrapEveryErrorReportAction({
 			actionPattern: getType(a),
 			workerName: '',
 			error: new Error('Our fun error'),
-		}))
-		.silentRun(0);
+		})
+	]);
 });
