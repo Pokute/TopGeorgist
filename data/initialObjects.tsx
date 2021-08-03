@@ -3,6 +3,8 @@ import { add as tileSetAdd } from '../actions/tileSets.js';
 import { Parameter } from '../ui/paramInput.js';
 import { MapPosition } from '../reducers/map.js';
 import { TypeId } from '../reducers/itemType.js';
+import { getType } from 'typesafe-actions';
+import { payRent, claimLand } from '../sagas/buildings/rentOffice.js';
 
 export const createPlayerAction = () => tgosActions.add({
 	player: true,
@@ -108,13 +110,13 @@ export const rentOfficeAction = () => tgosActions.add({
 				}],
 				label: 'Claim land',
 				onClick: {
-					type: 'RENT_OFFICE_CLAIM_LAND',
+					type: getType(claimLand),
 				},
 			},
 			{
 				label: 'Pay outstanding rent',
 				onClick: {
-					type: 'RENT_OFFICE_PAY_RENT',
+					type: getType(payRent),
 				},
 			},
 		],

@@ -1,5 +1,5 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import { ActionType, getType } from 'typesafe-actions';
+import { ActionType, getType, createAction } from 'typesafe-actions';
 
 import * as governmentActions from '../../actions/government.js';
 import { inventoryActions } from '../../components/inventory.js';
@@ -9,8 +9,24 @@ import { RootStateType } from '../../reducers/index.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../components/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
+import { TgoId } from '../../reducers/tgo.js';
+import { MapPosition } from '../../reducers/map.js';
 
-const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: any) {
+export const claimLand = createAction('RENT_OFFICE_CLAIM_LAND', ({
+	tgoId,
+	position,
+	visitableTgoId,
+}: {
+	tgoId: TgoId,
+	position: MapPosition,
+	visitableTgoId: TgoId,
+}) => ({
+	tgoId,
+	position,
+	visitableTgoId,
+}))();
+
+const claimLandsaga = function* ({ payload: { position, tgoId, visitableTgoId }}: ReturnType<typeof claimLand>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
@@ -29,7 +45,20 @@ const claimLand = function* ({ payload: { position, tgoId, visitableTgoId }}: an
 	return true;
 };
 
-const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
+export const payRent = createAction('RENT_OFFICE_PAY_RENT', ({
+	tgoId,
+	visitableTgoId,
+}: {
+	tgoId: TgoId,
+	visitableTgoId: TgoId,
+}) => ({
+	tgoId,
+	visitableTgoId,
+}))();
+
+const payRentSaga = function* ({
+	payload: { tgoId, visitableTgoId }
+}: ReturnType<typeof payRent>) {
 	const s: RootStateType = yield select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
@@ -55,8 +84,8 @@ const payRent = function* ({ payload: { tgoId, visitableTgoId }}: any) {
 };
 
 const rentOfficeListener = function* () {
-	yield takeEvery('RENT_OFFICE_CLAIM_LAND', claimLand);
-	yield takeEvery('RENT_OFFICE_PAY_RENT', payRent);
+	yield takeEvery(getType(claimLand), claimLandsaga);
+	yield takeEvery(getType(payRent), payRentSaga);
 };
 
 export default rentOfficeListener;

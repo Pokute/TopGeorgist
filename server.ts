@@ -27,6 +27,7 @@ import { MapSize } from './reducers/map.js';
 import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
 import { setRunning as tickerSetRunning } from './actions/ticker.js';
+import { claimLand, payRent } from './sagas/buildings/rentOffice.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -103,8 +104,8 @@ try {
 						case 'STORE_TRANSACTION_REQUEST':
 						case 'GOVERNMENT_CLAIM_CITIZENSHIP':
 						case 'GOVERNMENT_CLAIM_STIPEND':
-						case 'RENT_OFFICE_CLAIM_LAND':
-						case 'RENT_OFFICE_PAY_RENT':
+						case getType(claimLand):
+						case getType(payRent):
 						case getType(moveGoal):
 						case getType(consumeGoal):
 							store.dispatch(data.action);
