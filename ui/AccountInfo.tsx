@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as accountCommActions from '../actions/accountComm.js';
+import { createAccountWithTokenClientSalted, loginClientSalted, loginWithToken } from '../concerns/account.js';
 import Category from './Category.js';
 import * as netActions from '../actions/net.js';
 import { RootStateType } from '../reducers/index.js';
-import { Token } from '../reducers/account.js';
+import { Token } from '../concerns/account.js';
 
 const AccountInfo = ({ account, onCreateAccountSubmit, onLoginSubmit, loginWithToken }: ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => {
 	useEffect(() => {
@@ -89,7 +89,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 		const password = data.get('password');
 		const token = data.get('token');
 		if (username && password && token && (typeof username === 'string') && (typeof password === 'string') && (typeof token === 'string')) {
-			dispatch(netActions.send(accountCommActions.createAccountWithTokenClientSalted({ username, password, token })));
+			dispatch(netActions.send(createAccountWithTokenClientSalted({ username, password, token })));
 		}
 	},
 	onLoginSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -99,11 +99,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 		const username = data.get('username');
 		const password = data.get('password');
 		if (username && password && (typeof username === 'string') && (typeof password === 'string')) {
-			dispatch(netActions.send(accountCommActions.loginClientSalted({ username, password })));
+			dispatch(netActions.send(loginClientSalted({ username, password })));
 		}
 	},
 	loginWithToken: (token: Token) => {
-		dispatch(netActions.send(accountCommActions.loginWithToken({ token })));
+		dispatch(netActions.send(loginWithToken({ token })));
 	},
 });
 

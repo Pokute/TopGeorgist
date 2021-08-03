@@ -3,7 +3,7 @@ import { takeEvery, select, put } from 'redux-saga/effects';
 
 import * as netActions from '../actions/net.js';
 import { RootStateType } from '../reducers/index.js';
-import * as accountsActions from '../actions/accounts.js';
+import { accountsActions } from '../concerns/account.js';
 import * as viewActions from '../actions/view.js';
 import * as mapActions from '../actions/map.js';
 import * as tileSetsActions from '../actions/tileSets.js';

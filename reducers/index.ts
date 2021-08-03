@@ -1,5 +1,6 @@
 import { combineReducers, AnyAction } from 'redux'
-import accounts, { AccountsState } from './accounts.js';
+
+import { accountListReducer } from '../concerns/account.js';
 import serverConnection, { ServerConnectionStateType } from './serverConnection.js';
 import clients, { ClientsState } from './clients.js';
 import defaults, { Type as DefaultsType } from './defaults.js';
@@ -16,7 +17,7 @@ import { createGoal, addGoals } from '../concerns/goal.js';
 import { add as addTgo } from '../actions/tgos.js';
 
 export interface RootStateType {
-	readonly accounts: AccountsState,
+	readonly accounts: ReturnType<typeof accountListReducer>,
 	readonly clients: ClientsState,
 	readonly defaults: DefaultsType,
 	readonly frame: ReturnType<typeof frameReducer>,
@@ -31,7 +32,7 @@ export interface RootStateType {
 };
 
 const combinedReducers = combineReducers({
-	accounts,
+	accounts: accountListReducer,
 	serverConnection,
 	clients,
 	defaults,

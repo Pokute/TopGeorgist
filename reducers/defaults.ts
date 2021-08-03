@@ -1,6 +1,6 @@
 import { getType, ActionType } from 'typesafe-actions';
 
-import { AccountId } from './account.js';
+import { AccountId } from '../concerns/account.js';
 import * as defaultActions from '../actions/defaults.js';
 import { TgoId } from './tgo.js';
 import { ViewId } from './view.js';

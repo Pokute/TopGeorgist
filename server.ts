@@ -9,8 +9,8 @@ import config from './config.js';
 import { store } from './store.js';
 import createItemTypes from './data/types.js';
 import initialObjectActions from './data/initialObjects.js';
-import * as accountCommActions from './actions/accountComm.js';
-import * as accountsActions from './actions/accounts.js';
+import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted } from './concerns/account.js';
+import { accountsActions } from './concerns/account.js';
 import * as tgoActions from './actions/tgo.js';
 import * as playerActions from './actions/player.js';
 import * as mapActions from './actions/map.js';
@@ -90,11 +90,11 @@ try {
 								clientId,
 							}));
 							break;
-						case getType(accountCommActions.loginClientSalted):
-						case getType(accountCommActions.loginWithToken):
+						case getType(loginClientSalted):
+						case getType(loginWithToken):
 							store.dispatch(withClient(data.action, clientId));
 							break;
-						case getType(accountCommActions.createAccountWithTokenClientSalted):
+						case getType(createAccountWithTokenClientSalted):
 						// case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':

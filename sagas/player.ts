@@ -1,9 +1,8 @@
 import { put, select, takeEvery, take } from 'redux-saga/effects';
 import { getType, ActionType } from 'typesafe-actions';
 
-import * as accountActions from '../actions/account.js';
+import { accountActions, accountsActions } from '../concerns/account.js';
 import isServer from '../isServer.js'
-import * as accountsActions from '../actions/accounts.js';
 import { set as allSet } from '../actions/allSet.js';
 import * as defaultsActions from '../actions/defaults.js';
 import * as netActions from '../actions/net.js';

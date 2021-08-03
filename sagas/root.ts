@@ -1,4 +1,4 @@
-import account from './account.js';
+import { accountRootSaga } from '../concerns/account.js';
 import buildingGovernment from './buildings/government.js';
 import buildingRentOffice from './buildings/rentOffice.js';
 import client from './client.js';
@@ -17,7 +17,7 @@ import view from './view.js';
 import { workRootSaga } from '../concerns/work.js';
 
 const rootSaga = function* () {
-	yield* account();
+	yield* accountRootSaga();
 	yield* buildingGovernment();
 	yield* buildingRentOffice();
 	yield* client();
