@@ -6,7 +6,7 @@ import goal from './goal.js';
 import goalCreator from './goalCreator.js';
 import serverConnection from './ServerConnection.js';
 import consumable from './consumable.js';
-import frame from './frame.js';
+import { frameRootSaga } from '../concerns/frame.js';
 import net from './net.js';
 import plant from './plantable.js';
 import player from './player.js';
@@ -25,7 +25,7 @@ const rootSaga = function* () {
 	yield* goalCreator();
 	yield* serverConnection();
 	yield* consumable();
-	yield* frame();
+	yield* frameRootSaga();
 	yield* net();
 	yield* plant();
 	yield* player();

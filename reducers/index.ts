@@ -3,7 +3,7 @@ import accounts, { AccountsState } from './accounts.js';
 import serverConnection, { ServerConnectionStateType } from './serverConnection.js';
 import clients, { ClientsState } from './clients.js';
 import defaults, { Type as DefaultsType } from './defaults.js';
-import frame, { FrameStateType } from './frame.js';
+import { frameReducer } from '../concerns/frame.js';
 import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
 import map, { MapType } from './map.js';
@@ -19,7 +19,7 @@ export interface RootStateType {
 	readonly accounts: AccountsState,
 	readonly clients: ClientsState,
 	readonly defaults: DefaultsType,
-	readonly frame: FrameStateType,
+	readonly frame: ReturnType<typeof frameReducer>,
 	readonly government: GovernmentStateType,
 	readonly itemTypes: ItemTypesState,
 	readonly map: MapType,
@@ -35,7 +35,7 @@ const combinedReducers = combineReducers({
 	serverConnection,
 	clients,
 	defaults,
-	frame,
+	frame: frameReducer,
 	government,
 	itemTypes,
 	map,
