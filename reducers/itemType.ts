@@ -1,5 +1,5 @@
 import { ItemTypesState } from './itemTypes.js';
-import { ComponentList, ComponentArray } from '../data/components.js';
+import { ComponentArray } from '../data/components.js';
 import { Inventory } from '../components/inventory.js';
 import { Opaque } from '../typings/global.d.js';
 

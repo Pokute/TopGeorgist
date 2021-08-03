@@ -1,11 +1,5 @@
-import { AnyAction } from 'redux';
-
-import { inventoryActions } from '../components/inventory.js';
-import { TgoType, ComponentId } from '../reducers/tgo.js';
-
 import { Parameter } from '../ui/paramInput.js';
 import { TypeId } from '../reducers/itemType.js';
-import { hasComponentInventory } from '../components/inventory.js';
 
 export interface Action {
 	readonly label: string,
@@ -18,34 +12,19 @@ export interface Action {
 		}>,
 		readonly [extra: string]: any,
 	},
-	actorRequirements?: {
-		components: Array<string>
-	}
 }
 
-export interface ComponentTicker {
-	readonly tick: (tgo: TgoType, options: any) => ReadonlyArray<AnyAction> | void,
-}
-
-// export const hasComponentTicker =  <BaseT extends TgoType | ComponentTicker>(tgo: BaseT) : tgo is (BaseT & Required<ComponentTicker>) =>
-// 	tgo && (tgo.tick !== undefined);
-
-export interface ComponentActionable {
+interface ComponentActionable {
 	readonly actions: {
 		[actionName: string]: Action,
 	}
 }
 
-export interface ComponentEmpty {
-};
-
-type Component = ComponentEmpty | ComponentTicker | ComponentActionable;
-
 export interface ComponentList {
-	readonly [componentName: string]: Component,
+	readonly [componentName: string]: ComponentActionable,
 }
 
-export type ComponentWithParams = [
+type ComponentWithParams = [
 	string,
 	any
 ];
@@ -62,11 +41,6 @@ const components: {
 				onClick: {
 					// type: 'CONSUMABLE_CONSUME',
 					type: 'TGO_GOAL_CREATE_CONSUME' as TypeId,
-				},
-				actorRequirements: {
-					components: [
-						'consumer',
-					],
 				},
 			},
 			turnIntoSeeds: {
@@ -90,8 +64,4 @@ const components: {
 			},
 		},
 	},
-	trader: {
-	},
 };
-
-export default components;

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import components, { ComponentActionable, Action, ComponentWithParams } from '../data/components.js';
+import { Action } from '../data/components.js';
 import * as netActions from '../actions/net.js';
 import { TypeId } from '../reducers/itemType.js';
 import { TgoId } from '../reducers/tgo.js';

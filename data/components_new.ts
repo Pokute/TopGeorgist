@@ -1,7 +1,17 @@
-import { Action, ComponentTicker } from './components.js';
-import { TgoType, ComponentType, TgoId, TgoRoot } from '../reducers/tgo.js';
+import { Action, ComponentList } from './components.js';
+import { TgoType, TgoRoot } from '../reducers/tgo.js';
 import { TaskQueueType } from '../reducers/taskQueue.js';
 import { ComponentPosition } from '../components/position.js';
+
+// Common
+
+type ComponentId = keyof ComponentList;
+type ComponentProps = {
+	readonly [extraProp: string]: any,
+};
+type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
+
+// Specific
 
 export type ComponentRentOffice = 
 	ComponentPosition & {

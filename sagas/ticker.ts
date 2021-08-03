@@ -1,15 +1,12 @@
 import { call, fork, put, select, take, takeEvery, all } from 'redux-saga/effects';
 import { delay } from 'redux-saga/effects';
-import { ActionType, getType } from 'typesafe-actions';
+import { getType } from 'typesafe-actions';
 
 import isServer from '../isServer.js'
 import * as tickerActions from '../actions/ticker.js';
-// import components, { ComponentTicker } from '../data/components.js';
 import { set as allSet } from '../actions/allSet.js';
 import { RootStateType } from '../reducers/index.js';
-import { TgoType, ComponentId, ComponentProps, ComponentType } from '../reducers/tgo.js';
 import { AnyAction } from 'redux';
-// import { hasComponentComponents } from '../data/components_new.js';
 
 const tickerSaga = function* () {
 	while (true) {
@@ -23,9 +20,6 @@ const tickerSaga = function* () {
 
 const tick = function* () {
 	const oldState: RootStateType = yield select();
-	type TgoTypeWithComponents = TgoType & {
-		components: ReadonlyArray<ComponentType>,
-	};
 
 	const newActions: ReadonlyArray<AnyAction> = [];
 	// const newActions: ReadonlyArray<AnyAction> = Object.values<TgoType>(oldState.tgos)
