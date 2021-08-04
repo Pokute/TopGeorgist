@@ -40,45 +40,7 @@ When can recipes be executed? Some recipes definitely require tools, like a forg
 
 ## Work
 
-`ComponentWork`: A tgo is a Work. Check with `isComponentWork()`.
-`ComponentWorkDoer`: A tgo can do Work related items. Check with `hasComponentWorkDoer`.
-
-Work is an application of recipe. Work is always done by a single Tgo.
-Works must be inside inventories.
-Works inside inventories of ComponentWorkDoer are processed each tick.
-
-Work Inventory, inputs and outputs:
-
-* Some works are immediate and don't require their own inventory:
-	* Req: Their recipe have at most one tangible & continous input&output item.
-	* Req: Their recipe never take longer than one tick.
-	* THINK: Do these still need an inventory, since inputing all different items/work at the same time is difficult? - Prolly yeah.
-	* THINK: These works should probably performed by separate, specialised tgos.
-	* Examples:
-		* Planning, thinking, dexterity, precision, lower body strength, upper body strength works.
-		* Convert hydrocarbons to energy.
-* Other works have their own inventory:
-	* Either:
-		* Req: Their recipe has multiple tangible inputs so these might "buffer" to internal inventory.
-		* Req: Their recipe requires multiple ticks.
-	* Items inputed might be refunded.
-	* Examples:
-		* Long thinking process, like deciding where to shop.
-		* Eating, requires time, inventory items and skills.
-* Some works are actually in inventories of world items which are not ComponentWorkDoer:
-	* Examples:
-		* Constructions site for buildings.
-			* Q: How is completion handled. What replaces the construction site with the building?
-	* Q: Sounds like prime candidate for contract. This could have multiple contributors?
-* Unresolved cases:
-	* Furnishing a house
-		* Either dummy world item or just ComponentWork with ComponentPosition.
-	* Prospecting an area for ores.
-		* Either dummy world item (Prospecting marker) or just ComponentWork with ComponentPosition.
-	* Repairing a screwdriver.
-		* Maybe work is inside screwdriver's inventory or placed within the WorkDoer's (repairman) inventory?
-
-Work can take inputs and outputs from `WorkDoer`:`inventory` and possibly `targetTgo`.`inventory`.
+See `Works.md`.
 
 Move work practically uses a single inventory.
 
@@ -109,7 +71,7 @@ Works live in inventories:
 	* C: Make a graph/flow/reactive system?
 		* Sounds complicated.
 
-# Hierarchy
+# Work Hierarchy
 
 * Player Tgo 
 	* Upper body Tgo
