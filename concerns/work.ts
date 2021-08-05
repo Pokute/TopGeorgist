@@ -161,7 +161,6 @@ export type WorkOutput = Array<{
 	awardItems: Inventory,
 }> | undefined;
 
-
 export const handleWork = function* (
 	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
@@ -171,59 +170,37 @@ export const handleWork = function* (
 		return 'error'; // Fail
 	}
 
-	// FIXME. work component has an inventory, but it should have TWO inventories. One for actor inv changes and one for target inv changes when taking inputs also from target inv.
-
 	const s: RootStateType = yield select();
 	const getTgoById = getTgoByIdFromRootState(s.tgos);
 
 	const participants = [
-		{ tgo: actorTgo },
-		...(workTgo.workTargetTgoId ? [{ tgo: workTgo }] : [])
+		{
+			tgo: actorTgo,
+			requiredItemCommitTgoId: workTgo.workActorCommittedItemsTgoId,
+			committedItems: getTgoById(workTgo.workActorCommittedItemsTgoId)?.inventory ?? [],
+			itemsChange: workTgo.workRecipe.input,
+		},
 	];
 
-	const participantsWithWorkInfo = participants
-		.map((participant, index) => {
-			const committedItemsTgoId = index == 0 ? workTgo.workActorCommittedItemsTgoId : workTgo.workTargetCommittedItemsTgoId;
-			return {
-				...participant,
-				requiredItemCommitTgoId: committedItemsTgoId,
-				itemsChange: index == 0 ? workTgo.workRecipe.input : workTgo.workRecipe.output,
-				committedItems: (committedItemsTgoId ? (getTgoById(committedItemsTgoId) || { inventory: [] }).inventory : undefined) || [],
-			};
-		})
-		.map((participant) => ({
-			...participant,
-			requiredItems: participant.itemsChange
-				.map(ii => ({ ...ii, count: ii.count * -1}))
-				.filter(({ count }) => count >= 0),
-			awardItems: participant.itemsChange
-				.filter(({ count }) => count > 0),
-			committedRequiredItems: participant.committedItems.filter(({ count }) => count <= 0),
-			committedAwardItems: participant.committedItems.filter(({ count }) => count > 0),
-		}))
-		.map((participant) => ({
-			...participant,
-			missingRequiredItems: participant.requiredItems.map(({ typeId, count }) => ({
-				typeId,
-				count: count - (-1 * (participant.committedItems.find(({ typeId: committedTypeId }) => committedTypeId == typeId) || { count: 0 }).count),
-			})),
-			missingAwardItems: participant.awardItems.map(({ typeId, count }) => ({
-				typeId,
-				count: count - (participant.committedAwardItems.find(({ typeId: awardTypeId }) => awardTypeId == typeId) || { count: 0 }).count,
-			})),
-		}));
+	const missingInput = workTgo.workRecipe.input
+		.map(ii => ({
+			...ii,
+			count: ii.count - participants
+				.map(participant =>
+					participant.committedItems.find(({ typeId: committedTypeId }) => committedTypeId == ii.typeId)?.count ?? 0
+				).reduce((sum, current) => sum + current, 0),
+			})
+		)
+		.filter(ii => ii.count !== 0);
 
-	const participantsWithCommitables = participantsWithWorkInfo
-		// .filter(participant => (participant.missingRequiredItems.length > 0) && (participant.missingRequiredItems.every(ii => ii.count > 0)))
+	const participantsWithCommitables = participants
 		.map(participant => ({
 			...participant,
-			committableRequiredInventoryTypes: participant
-				.missingRequiredItems
+			committableRequiredInventoryTypes: missingInput
 				.map(requiredItem => requiredItem.typeId)
 				.filter(typeId =>
 					typeId !== 'tick' &&
-					(participant.tgo.inventory || [])
-						.some(pii => pii.typeId === typeId)
+					participant.tgo.inventory?.some(pii => pii.typeId === typeId)
 				)
 		}))
 		.map(participant => ({
@@ -232,137 +209,89 @@ export const handleWork = function* (
 				...participant
 					.committableRequiredInventoryTypes.map(typeId => ({
 						typeId,
-						count: Math.min(
-							(participant.missingRequiredItems.find(ri => ri.typeId === typeId) || { count: 0 }).count,
-							((participant.tgo.inventory || []).find(ii => ii.typeId === typeId) || { count: 0 }).count
-						)
+						count: participant.tgo.inventory?.find(ii => ii.typeId === typeId)?.count ?? 0
 					})),
-				// MOVE THIS, every participant shouldn't be able to commit ticks!
-				// Add a tick if required
-				// ...(participant.requiredItems.some(ri => ri.typeId === 'tick'))
-				// 	? [{
-				// 		typeId: 'tick' as TypeId,
-				// 		count: Math.max(
-				// 			-1,
-				// 			(participant.missingRequiredItems.find(ri => ri.typeId === 'tick') || { count: 0 }).count
-				// 		),
-				// 	}]
-				// 	: []
 			]
-			// Don't add 0 counts to transactions.
-			.filter(items => items.count > 0)
-		}))
-	
-	const committablesWithTick = [
-		...participantsWithCommitables
-		.filter(participant => participant.committableRequiredItems.length > 0)
-		.map(p => [
-			{
-				tgoId: p.tgo.tgoId,
-				items: p.committableRequiredItems
-					.filter(ri => ri.typeId !== 'tick')
-					.map(ii => ({ ...ii, count: -1 * ii.count })),
-			},
-			// {
-			// 	tgoId: p.requiredItemCommitTgoId,
-			// 	items: p.committableRequiredItems
-			// 		.map(ii => ({ ...ii, count: -1 * ii.count })), // Committed required items are negative.
-			// },
-		]).flat(),
-		...(workTgo.workActorCommittedItemsTgoId && participantsWithCommitables.some(participant => participant.missingRequiredItems.some(ri => ri.typeId === 'tick' && ri.count > 0))
+			.filter(items => items.count > 0) // Don't add 0 counts to transactions.
+		}));
+
+	const participantsWithCommitablesWithTickSource: Array<{ tgoId: TgoId, committableRequiredItems: (typeof participantsWithCommitables)[0]['committableRequiredItems'] }> = [
+		...participantsWithCommitables.map(participant => ({
+			tgoId: participant.tgo.tgoId,
+			committableRequiredItems: participant.committableRequiredItems,
+		})),
+		...missingInput.some(mii => mii.typeId === 'tick')
 			? [{
-				tgoId: workTgo.workActorCommittedItemsTgoId,
-				items: [{
-					typeId: 'tick' as TypeId,
-					count: 1,
-				}]
+				tgoId: '' as TgoId, // '' so we can discard this from the transaction.
+				committableRequiredItems: [{ typeId: 'tick' as TypeId, count: 1 }],
 			}]
-			: [])
-	];
+			: [],
+	].filter(({ committableRequiredItems }) => committableRequiredItems.length > 0);
+
+	const [missedRequiredItems, participantWithItemsToCommit] = participantsWithCommitablesWithTickSource
+		.reduce<[Inventory, Array<{ tgoId: TgoId, itemsToCommit: Inventory }>]>(
+			([currentMissingItems, participantItemsToCommit], participant) => {
+				const currentParticipantItemsToCommit = ({
+					tgoId: participant.tgoId,
+					itemsToCommit: currentMissingItems.map<InventoryItem>(
+						missingItem => ({
+							typeId: missingItem.typeId,
+							count: Math.min(
+								missingItem.count,
+								participant.committableRequiredItems
+									.find(participantItem => participantItem.typeId === missingItem.typeId)?.count ?? 0
+							),
+						})
+					).filter(committingItem => committingItem.count > 0)
+				});
+				return [
+					currentMissingItems.map(currentMissingItem => ({
+						typeId: currentMissingItem.typeId,
+						count: currentMissingItem.count - (currentParticipantItemsToCommit.itemsToCommit
+							.find(participantItem => participantItem.typeId === currentMissingItem.typeId)?.count ?? 0),
+					})).filter(({ count }) => count > 0),
+					[...participantItemsToCommit, currentParticipantItemsToCommit]
+				];
+			},
+			[missingInput, []]
+		);
+
+	const mangledCommittables = participantWithItemsToCommit
+		.map(p => [
+			...p.tgoId // Skip the tick source.
+				? [{ // Remove items from participant.
+					tgoId: p.tgoId,
+					items: p.itemsToCommit
+						// .filter(ri => ri.typeId !== 'tick')
+						.map(ii => ({ ...ii, count: -1 * ii.count })),
+				}]
+				: [],
+			...workTgo.workActorCommittedItemsTgoId
+				? [{ // Add items to committed items.
+					tgoId: workTgo.workActorCommittedItemsTgoId,
+					items: p.itemsToCommit
+				}]
+				: [],
+		]).flat();
 	
-	if (committablesWithTick.length > 0) {
-		const reqTransaction = transaction(...committablesWithTick);
+	if (mangledCommittables.length > 0) {
+		const reqTransaction = transaction(...mangledCommittables);
 		yield put(reqTransaction);
 	}
 
-	const allRequirementsFulfilled = participantsWithWorkInfo.every(participant =>
-		participant.missingRequiredItems.every(requiredItem => requiredItem.count == 0)
-	);
+	const allRequirementsFulfilled = missedRequiredItems.length === 0;
 
 	if (allRequirementsFulfilled) {
 		// Send the reward of work.
 
-		const rewardOutputs = (participants: typeof participantsWithWorkInfo) => participants
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, missingAwardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ missingAwardItems }) => missingAwardItems.length > 0)
-
-		const rewards = rewardOutputs(participantsWithWorkInfo);
-		if (rewards.length) {
-			yield all(rewards.map(({ tgoId, missingAwardItems }) => put(transaction(
-				{
-					tgoId,
-					items: missingAwardItems,
-				}
-			))));
-		}
-
-		const temp = participantsWithWorkInfo
-			.map(participant => ({
-				tgoId: participant.tgo.tgoId, awardItems: participant.missingAwardItems.filter(missingAwardItem => missingAwardItem.count > 0)
-			}))
-			.filter(({ awardItems }) => awardItems.length > 0)
+		yield put(transaction({
+			tgoId: workTgo.workTargetTgoId ?? actorTgo.tgoId,
+			items: workTgo.workRecipe.output,
+		}));
 		return 'completed';
 	}
 
 	return 'ongoing';
-
-/*
-	// Find out what part of work is not yet done.
-	const missingItems = workTgo.work.actorItemChanges
-		// .filter(ii => ii.tgoId === undefined)
-		// .filter(ii => ii.count < 0) // Negative values for work are inputs.
-		.map(ii => ({ ...ii, count: ii.count - (workTgo.inventory.find(wi => wi.typeId == ii.typeId) || { count: 0 }).count}))
-		.filter(ii => ii.count > 0)
-		const participant = participants[0];
-	if (!hasComponentInventory(participant)) return false;
-
-	const actorItemsForWork = missingItems.map(input => {
-			const actorItem = participant.inventory.find(ii => ii.typeId === input.typeId)
-			if (!actorItem) return undefined;
-			return {
-				typeId: actorItem.typeId,
-				count: Math.min(actorItem.count, input.count)
-			};
-		})
-		.filter(input => input) as Inventory
-	const workTransaction = transaction(
-		{
-			tgoId: actorTgoId,
-			items: actorItemsForWork.map(ii => ({...ii, count: ii.count * -1}))
-		},
-		{
-			tgoId: workTgoId,
-			items: [
-				...actorItemsForWork,
-				...(workTgo.work.actorItemChanges.some(input => input.typeId === 'tick')
-					? [{
-						typeId: 'tick',
-						count: 1,
-					}]
-					: []
-				)
-			]
-		}
-	);
-
-	yield put(workTransaction);
-
-	if (yield* checkWorkCompletion(workTgoId)) {
-		yield put(goalRemoveWork(goalTgoId, workTgoId));
-		return workTgo.work.targetItemChanges;
-	}*/
 }
 
 const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {

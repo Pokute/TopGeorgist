@@ -6,11 +6,11 @@ export const move: Recipe = {
 	input: [
 		{
 			typeId: 'calories' as TypeId,
-			count: -20,
+			count: 20,
 		},
 		{
 			typeId: 'tick' as TypeId,
-			count: -3,
+			count: 3,
 		},
 	],
 	output: [{
@@ -24,17 +24,17 @@ export const consume: Recipe = {
 	input: [
 		{
 			typeId: 'hydrocarbons' as TypeId,
-			count: -100,
+			count: 100,
+		},
+		{
+			typeId: 'tick' as TypeId,
+			count: 2,
 		},
 	],
 	output: [
 		{
 			typeId: 'calories' as TypeId,
 			count: 100,
-		},
-		{
-			typeId: 'tick' as TypeId,
-			count: -2,
 		},
 	],
 };
@@ -48,13 +48,13 @@ export const harvest: Recipe = {
 		},
 		{
 			typeId: 'tick' as TypeId,
-			count: -1,
+			count: 1,
 		},
 	],
 	output: [
 		{
 			typeId: 'berry' as TypeId,
-			count: -10,
+			count: 10,
 		}
 	],
 };
@@ -64,11 +64,11 @@ export const smelt: Recipe = {
 	input: [
 		{
 			typeId: 'ironOre' as TypeId,
-			count: -4,
+			count: 4,
 		},
 		{
 			typeId: 'tick' as TypeId,
-			count: -2,
+			count: 2,
 		},
 		{
 			typeId: 'ironIngot' as TypeId,
@@ -78,7 +78,7 @@ export const smelt: Recipe = {
 	output: [
 		{
 			typeId: 'smeltingWork' as TypeId, // Non-storeable
-			count: -5,
+			count: 5,
 		},
 	],
 };
@@ -88,7 +88,7 @@ export const trade: Recipe = {
 	input: [
 		{
 			typeId: 'calculation' as TypeId,
-			count: -10,
+			count: 10,
 		}
 	],
 	output: [],

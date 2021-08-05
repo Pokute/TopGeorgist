@@ -110,22 +110,6 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 	]);
 });
 
-const createGenDeepEqual = <G extends Generator>(t: ExecutionContext, gen: G) => (next?: any) => (expected?: Parameters<DeepEqualAssertion>[1], done: boolean = false, message?: Parameters<DeepEqualAssertion>[2]) => {
-	const genResult = gen.next(next);
-	if (expected) {
-		t.deepEqual(
-			genResult,
-			{
-				value: expected,
-				done,
-			},
-		);
-	} else {
-		t.true(genResult.done === done);
-	}
-	return genResult;
-}
-
 test('Work - work is removed after completion', async t => {
 	const [createWorker, workerTgoId] = addTgoWithId({ recipeInfos: [] });
 	const workAction = createWork({
@@ -150,7 +134,7 @@ test('Work - wait 3 ticks', async t => {
 	const threeTickRecipe = {
 		input: [{
 			typeId: 'tick' as TypeId,
-			count: -3,
+			count: 3,
 		}],
 		output: [],
 		type: 'waitWork' as RecipeId,
@@ -178,89 +162,25 @@ test('Work - wait 3 ticks', async t => {
 	storeTester.dispatch(workAction);
 	storeTester.dispatch(tick());
 	storeTester.dispatch(tick());
+	// Work should still remain.
+	t.notDeepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
+	storeTester.dispatch(tick());
 	storeTester.dispatch(tick());
 
 	// Work should delete itself.
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
-
-
-	const storeTester2 = setupStoreTester();
-	storeTester2.dispatch(createItemTypeAction('tick', items['tick']));
-	storeTester2.dispatch(addWorker);
-	storeTester2.dispatch(workAction);
-	storeTester2.dispatch(tick());
-	storeTester2.dispatch(tick());
-
-	// Work should remain.
-	t.notDeepEqual(storeTester2.getState().tgos[workerTgoId].inventory, []);
-});
-
-test.skip('Work - wait 3 ticks (old)', t => {
-	const workCommittedItemsTgo = {
-		tgoId: 'waitWorkCommittedItems' as TgoId,
-		inventory: [],
-		isInventoryVirtual: true,
-	};
-
-	// Create an work on 3 tick wait.
-	const work: ComponentWork = {
-		tgoId: 'waitWork' as TgoId,
-		workActorCommittedItemsTgoId: workCommittedItemsTgo.tgoId,
-		workRecipe: {
-			input: [{
-				typeId: 'tick' as TypeId,
-				count: -3,
-			}],
-			output: [],
-			type: 'waitWork' as RecipeId,
-		},
-	};
-
-	for (let i = 0; i < 5; i++) {
-		let hWI = handleWork(
-			{ tgoId: 'worker' as TgoId, recipeInfos: [], inventory: [] },
-			work,
-			// { tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
-			);
-		// Is a generator;
-		t.truthy(hWI && hWI.next);
-	
-		// Expect completion after 3 ticks.
-		const genDeepEqual = createGenDeepEqual(t, hWI);
-	
-		// Start execution
-		genDeepEqual()();
-	
-		// Supply the store;
-		let transactions;
-		transactions = genDeepEqual(
-			{ tgos: {
-				['worker']: {
-					tgoId: 'worker' as TgoId,
-				},
-				['waitWorkCommittedItems']: {
-					...workCommittedItemsTgo,
-					inventory: [{
-						typeId: 'tick' as TypeId,
-						count: -i,
-					}]
-				},
-			} as TgosState } as unknown as RootStateType as any
-		)(undefined, i == (work.workRecipe.input[0].count * -1));
-
-		if (i == (work.workRecipe.input[0].count * -1)) {
-			return;
-		}
-	}
 });
 
 test('Work - simple actor item change', async t => {
 	const recipe: Recipe = {
 		input: [{
 			typeId: 'coal' as TypeId,
-			count: -10,
+			count: 10,
 		}],
-		output: [],
+		output: [{
+			typeId: 'heat' as TypeId,
+			count: 3,
+		}],
 		type: 'furnace' as RecipeId,
 	};
 
@@ -279,22 +199,34 @@ test('Work - simple actor item change', async t => {
 	storeTester.dispatch(itemTypeAdd({
 		typeId: 'coal' as TypeId,
 		stackable: true,
-		positiveOnly: true,
+		// positiveOnly: true,
+	}));
+	storeTester.dispatch(itemTypeAdd({
+		typeId: 'heat' as TypeId,
+		stackable: true,
+		// positiveOnly: true,
 	}));
 	storeTester.dispatch(createActor);
 	storeTester.dispatch(createWork({
 		workerTgoId: actorTgoId,
 		goalTgoId: undefined,
 		recipe,
-		// targetTgoId: actorTgoId,
+		targetTgoId: actorTgoId,
 	}));
 	storeTester.dispatch(tick());
+	storeTester.dispatch(tick());
 
-	t.deepEqual(selectTgo(storeTester.getState(), actorTgoId)?.inventory?.find(({ typeId }) => typeId === 'coal' as TypeId),
-		{
-			typeId: 'coal' as TypeId,
-			count: 12,
-		},
+	t.deepEqual(selectTgo(storeTester.getState(), actorTgoId)?.inventory,
+		[
+			{
+				typeId: 'coal' as TypeId,
+				count: 12,
+			},
+			{
+				typeId: 'heat' as TypeId,
+				count: 3,
+			},
+		]
 	);
 });
 
@@ -358,14 +290,14 @@ test('Work - simple actor item change', async t => {
 // 			tgoId: 'appleTree' as TgoId,
 // 			items: [{
 // 				typeId: 'nutrients' as TypeId,
-// 				count: -10,
+// 				count: 0,
 // 			}]
 // 		},
 // 		{
 // 			tgoId: 'tradeWorkCommittedItems' as TgoId,
 // 			items: [{
 // 				typeId: 'nutrients' as TypeId,
-// 				count: -10,
+// 				count: 10,
 // 			}]
 // 		}
 // 	)), false);
@@ -406,7 +338,7 @@ test('Work - simple actor item change', async t => {
 // 					...workInstanceCommittedItemsTgo,
 // 					inventory: [{
 // 						typeId: 'nutrients' as TypeId,
-// 						count: -10,
+// 						count: 10,
 // 					}]
 // 				},
 // 			} as TgosState,
@@ -456,11 +388,11 @@ test('Work - hierarchy', async t => {
 				input: [
 					{
 						typeId: 'energy' as TypeId,
-						count: -5,
+						count: 5,
 					},
 					{
 						typeId: 'tick' as TypeId,
-						count: -1,
+						count: 1,
 					},
 				],
 				output: [{
@@ -480,11 +412,11 @@ test('Work - hierarchy', async t => {
 				input: [
 					{
 						typeId: 'grain' as TypeId,
-						count: -1,
+						count: 1,
 					},
 					{
 						typeId: 'strengthToolUse' as TypeId,
-						count: -2,
+						count: 2,
 					},
 				],
 				output: [{
