@@ -13,7 +13,7 @@ import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } 
 import { setPosition, hasComponentPosition, reducer as positionReducer, positionActions } from '../components/position.js';
 
 export type TgosState = {
-	readonly [extraProps: string]: TgoType;
+	readonly [tgoId: string]: TgoType;
 };
 
 const initialState: TgosState = {};

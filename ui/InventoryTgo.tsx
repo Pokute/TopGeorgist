@@ -15,23 +15,23 @@ const RenderWork = ({ workTgoId }: { workTgoId: TgoId }) => {
 		return (
 			<div>
 				<div>Recipe: {wiTgo.workRecipe.type}</div>
-				<div>Target: {wiTgo.workTargetTgoId}</div>
+				<div>Target: {wiTgo.workOutputInventoryTgoId}</div>
 				<div>
 					ActorCommitted:
-					<InventoryReact
-						ownerTgoId={wiTgo.workActorCommittedItemsTgoId}
-					/>
+					{/* <InventoryReact
+						ownerTgoId={wiTgo.workInputCommittedItemsTgoId}
+					/> */}
 				</div>
 				<div>
 					TargetCommitted:
-					<InventoryReact
+					{/* <InventoryReact
 						ownerTgoId={wiTgo.workTargetCommittedItemsTgoId}
-					/>
+					/> */}
 				</div>
 				<div>
 					workTarget:
 					<InventoryReact
-						ownerTgoId={wiTgo.workTargetTgoId}
+						ownerTgoId={wiTgo.workOutputInventoryTgoId}
 					/>
 				</div>
 			</div>

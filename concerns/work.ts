@@ -25,20 +25,23 @@ export const createFromRecipe = createAction('WORK_CREATE_FROM_RECIPE',
 
 export const createWork = createAction('WORK_CREATE',
 	({
-		workerTgoId,
-		goalTgoId,
 		recipe,
-		targetTgoId
+		workerTgoId,
+		inputInventoryTgoIds,
+		outputInventoryTgoId,
+		goalTgoId,
 	}: {
-		workerTgoId: TgoId,
-		goalTgoId?: TgoId,
 		recipe: Recipe,
-		targetTgoId?: TgoId
+		workerTgoId?: TgoId,
+		inputInventoryTgoIds: ReadonlyArray<TgoId>,
+		outputInventoryTgoId?: TgoId
+		goalTgoId?: TgoId,
 	}) => ({
-		workerTgoId,
-		goalTgoId,
 		recipe,
-		targetTgoId,
+		workerTgoId,
+		inputInventoryTgoIds,
+		outputInventoryTgoId,
+		goalTgoId,
 	})
 )();
 
@@ -53,11 +56,13 @@ export type WorkActionType = ActionType<typeof workActions>;
 export type ComponentWork = 
 	TgoRoot & {
 		// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
-		// Actor is the tgo in whose inventory this work is.
+		// Worker is the tgo in whose inventory this work is.
 		readonly workRecipe: Recipe,
-		readonly workTargetTgoId?: TgoId,
-		readonly workActorCommittedItemsTgoId?: TgoId, // Committed items are already removed from actor's inventory, but can be redeemed.
-		readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
+		readonly workInputInventoryTgoIds: ReadonlyArray<TgoId>,
+		readonly workOutputInventoryTgoId?: TgoId,
+		// readonly workInputCommittedItemsTgoId?: Record<TgoId, TgoId>, // Committed items are already removed from input inventory, but can be redeemed.
+		readonly workInputCommittedItemsTgoId?: Record<string, TgoId>, // Committed items are already removed from input inventory, but can be redeemed.
+		// readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
 	};
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
@@ -162,10 +167,10 @@ export type WorkOutput = Array<{
 }> | undefined;
 
 export const handleWork = function* (
-	actorTgo: ComponentWorkDoer & Partial<ComponentInventory>,
+	workDoerTgo: ComponentWorkDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
 ) {
-	if (!hasComponentWorkDoer(actorTgo)
+	if (!hasComponentWorkDoer(workDoerTgo)
 		|| !isComponentWork(workTgo)){
 		return 'error'; // Fail
 	}
@@ -173,14 +178,13 @@ export const handleWork = function* (
 	const s: RootStateType = yield select();
 	const getTgoById = getTgoByIdFromRootState(s.tgos);
 
-	const participants = [
-		{
-			tgo: actorTgo,
-			requiredItemCommitTgoId: workTgo.workActorCommittedItemsTgoId,
-			committedItems: getTgoById(workTgo.workActorCommittedItemsTgoId)?.inventory ?? [],
+	const participants = workTgo.workInputInventoryTgoIds
+		.map(workInputInventoryTgoId =>s.tgos[workInputInventoryTgoId])
+		.map(workInputInventoryTgo => ({
+			tgo: workInputInventoryTgo,
+			committedItems: getTgoById(workTgo.workInputCommittedItemsTgoId[workInputInventoryTgo.tgoId])?.inventory ?? [],
 			itemsChange: workTgo.workRecipe.input,
-		},
-	];
+		}));
 
 	const missingInput = workTgo.workRecipe.input
 		.map(ii => ({
@@ -266,9 +270,9 @@ export const handleWork = function* (
 						.map(ii => ({ ...ii, count: -1 * ii.count })),
 				}]
 				: [],
-			...workTgo.workActorCommittedItemsTgoId
+			...workTgo.workInputCommittedItemsTgoId[p.tgoId]
 				? [{ // Add items to committed items.
-					tgoId: workTgo.workActorCommittedItemsTgoId,
+					tgoId: workTgo.workInputCommittedItemsTgoId[p.tgoId],
 					items: p.itemsToCommit
 				}]
 				: [],
@@ -285,7 +289,7 @@ export const handleWork = function* (
 		// Send the reward of work.
 
 		yield put(transaction({
-			tgoId: workTgo.workTargetTgoId ?? actorTgo.tgoId,
+			tgoId: workTgo.workOutputInventoryTgoId ?? workDoerTgo.tgoId,
 			items: workTgo.workRecipe.output,
 		}));
 		return 'completed';
@@ -294,9 +298,9 @@ export const handleWork = function* (
 	return 'ongoing';
 }
 
-const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
+const handleCancelWork = function* (workDoerTgoId: TgoId, workTgoId: TgoId) {
 	const s: RootStateType = yield select();
-	const actorTgo = s.tgos[actorTgoId];
+	const workDoerTgo = s.tgos[workDoerTgoId];
 	const workTgo = s.tgos[workTgoId];
 	if (!isComponentWork(workTgo)) return false;
 
@@ -312,8 +316,8 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 		});
 	};
 
-	if (!hasComponentInventory(workTgo) || !hasComponentInventory(actorTgo)) return false;
-	yield put(redeem(actorTgo, workTgo));
+	if (!hasComponentInventory(workTgo) || !hasComponentInventory(workDoerTgo)) return false;
+	yield put(redeem(workDoerTgo, workTgo));
 }
 
 /*
@@ -334,17 +338,17 @@ const handleCancelWork = function* (actorTgoId: TgoId, workTgoId: TgoId) {
 		* This doesn't work as a standalone code anyway, requires goals to trigger.
 */
 
-export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoId, */ recipe, targetTgoId }}: ActionType<typeof createWork>) {
+export const handleCreateWork = function* ({ payload: { recipe, workerTgoId, inputInventoryTgoIds, outputInventoryTgoId, /* goalTgoId, */ }}: ActionType<typeof createWork>) {
 	const s: RootStateType = yield select();
 	// const goalTgo = s.tgos[goalTgoId];
 	// if (!isComponentGoal(goalTgo)) return;
 
-	if (workerTgoId && !selectTgo(s, workerTgoId)) {
-		throw new Error('Tgo matching workerTgoId in handleCreateWork not found!');
+	if (inputInventoryTgoIds.some(inputInventoryTgoId => !selectTgo(s, inputInventoryTgoId))) {
+		throw new Error('Tgos matching inputInventoryTgoIds in handleCreateWork not found!');
 	}
 
-	if (targetTgoId && !selectTgo(s, targetTgoId)) {
-		throw new Error('Tgo matching targetTgoId in handleCreateWork not found!');
+	if (outputInventoryTgoId && !selectTgo(s, outputInventoryTgoId)) {
+		throw new Error('Tgo matching outputInventoryTgoId in handleCreateWork not found!');
 	}
 
 	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
@@ -357,33 +361,39 @@ export const handleCreateWork = function* ({ payload: { workerTgoId, /* goalTgoI
 		isInventoryVirtual: true,
 	};
 
-	const workActorCommittedItemsTgoAction = recipe.input.length > 0
-		? addTgo(emptyVirtualInventory)
-		: undefined;
-	if (workActorCommittedItemsTgoAction)
-		yield put(workActorCommittedItemsTgoAction);
-	const workTargetCommittedItemsTgoAction = recipe.output.length > 0
-		? addTgo(emptyVirtualInventory)
-		: undefined;
-	if (workTargetCommittedItemsTgoAction)
-		yield put(workTargetCommittedItemsTgoAction)
+	const workInputCommittedItemsTgoAction: Array<[TgoId, ReturnType<typeof addTgo>]> = recipe.input.length > 0
+		? inputInventoryTgoIds.map<[TgoId, ReturnType<typeof addTgo>]>(inputInventoryTgoId => [inputInventoryTgoId, addTgo(emptyVirtualInventory)])
+		: [];
+	if (workInputCommittedItemsTgoAction.length > 0)
+		yield all(workInputCommittedItemsTgoAction.map(([, action]) => put(action)));
+	const s2: RootStateType = yield select();
+	// const workTargetCommittedItemsTgoAction = recipe.output.length > 0
+	// 	? addTgo(emptyVirtualInventory)
+	// 	: undefined;
+	// if (workTargetCommittedItemsTgoAction)
+	// 	yield put(workTargetCommittedItemsTgoAction)
 
 	// Add a Work TgoId
 	const [addWorkAction, workTgoId] = addTgoWithId({
 		workRecipe: recipe,
-		// actorTgoId: goalTgo,
-		workTargetTgoId: targetTgoId,
-		workActorCommittedItemsTgoId: workActorCommittedItemsTgoAction?.payload.tgo.tgoId,
-		workTargetCommittedItemsTgoId: workTargetCommittedItemsTgoAction?.payload.tgo.tgoId,
-		// inventory: [],
+		workInputInventoryTgoIds: recipe.input.length > 0 ? inputInventoryTgoIds : [],
+		workOutputInventoryTgoId: recipe.output.length > 0 ? outputInventoryTgoId : undefined,
+		workInputCommittedItemsTgoId: workInputCommittedItemsTgoAction.length > 0
+			? Object.fromEntries(
+				workInputCommittedItemsTgoAction.map(([tgoId, createInventoryAction]) => [tgoId, createInventoryAction.payload.tgo.tgoId]) ?? []
+			)
+			: undefined,
+		// workTargetCommittedItemsTgoId: workTargetCommittedItemsTgoAction?.payload.tgo.tgoId,
 	});
 	yield put(addWorkAction);
 
 	// Add the WorkTgoId to inventory
-	yield put(inventoryAddTgoId(
-		workerTgoId,
-		workTgoId
-	));
+	if (workerTgoId) {
+		yield put(inventoryAddTgoId(
+			workerTgoId,
+			workTgoId
+		));
+	}
 
 	// Add the WorkTgoId to Goal inventory
 	// yield put(inventoryAddTgoId(
@@ -399,10 +409,10 @@ const handleRemoveWork = function* ({ payload: { tgoId, workTgoId }}: ActionType
 	const s: RootStateType = yield select();
 	const work = s.tgos[workTgoId];
 	
-	if (work.workActorCommittedItemsTgoId)
-		yield put(removeTgo(work.workActorCommittedItemsTgoId));
-	if (work.workTargetCommittedItemsTgoId)
-		yield put(removeTgo(work.workTargetCommittedItemsTgoId));
+	if (work.workInputCommittedItemsTgoId && Object.entries(work.workInputCommittedItemsTgoId).length > 0)
+		yield all(Object.keys(work.workInputCommittedItemsTgoId).map(tgoId => removeTgo(tgoId as TgoId)).map(action => put(action)));
+	// if (work.workTargetCommittedItemsTgoId)
+	// 	yield put(removeTgo(work.workTargetCommittedItemsTgoId));
 	yield put(removeTgo(workTgoId));
 	yield put(removeTgoId(tgoId, workTgoId));
 }

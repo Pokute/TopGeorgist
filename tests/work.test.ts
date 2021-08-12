@@ -31,10 +31,11 @@ const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof 
 
 test('Test work - fail if workerTgoId not in store', async t => {
 	const workAction = createWork({
-		workerTgoId: 'illegalId' as TgoId,
-		goalTgoId: undefined,
 		recipe: consume,
-		targetTgoId: undefined,
+		workerTgoId: 'illegalId' as TgoId,
+		inputInventoryTgoIds: ['illegalId' as TgoId],
+		outputInventoryTgoId: undefined,
+		goalTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -44,7 +45,7 @@ test('Test work - fail if workerTgoId not in store', async t => {
 		wrapEveryErrorReportAction({
 			actionPattern: getType(createWork),
 			workerName: 'handleCreateWork',
-			error: new Error('Tgo matching workerTgoId in handleCreateWork not found!'),
+			error: new Error('Tgos matching inputInventoryTgoIds in handleCreateWork not found!'),
 		})
 	]);
 });
@@ -64,10 +65,11 @@ test('Test work - fail if targetTgoId not in store', async t => {
 	const [createWorker, workerTgoId] = addTgoWithId({  });
 
 	const workAction = createWork({
-		workerTgoId: workerTgoId,
-		goalTgoId: undefined,
 		recipe: consume,
-		targetTgoId: 'illegalId' as TgoId,
+		workerTgoId: workerTgoId,
+		inputInventoryTgoIds: [workerTgoId],
+		outputInventoryTgoId: 'illegalId' as TgoId,
+		goalTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -79,7 +81,7 @@ test('Test work - fail if targetTgoId not in store', async t => {
 		wrapEveryErrorReportAction({
 			actionPattern: getType(createWork),
 			workerName: 'handleCreateWork',
-			error: new Error('Tgo matching targetTgoId in handleCreateWork not found!'),
+			error: new Error('Tgo matching outputInventoryTgoId in handleCreateWork not found!'),
 		})
 	]);
 });
@@ -92,10 +94,11 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 	});
 
 	const workAction = createWork({
-		workerTgoId: 'illegalId' as TgoId,
-		goalTgoId: 'illegalId' as TgoId,
 		recipe: consume,
-		targetTgoId: createTarget.payload.tgo.tgoId,
+		workerTgoId: 'illegalId' as TgoId,
+		inputInventoryTgoIds: ['illegalId' as TgoId],
+		outputInventoryTgoId: createTarget.payload.tgo.tgoId,
+		goalTgoId: 'illegalId' as TgoId,
 	});
 
 	const storeTester = setupStoreTester();
@@ -113,13 +116,14 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 test('Work - work is removed after completion', async t => {
 	const [createWorker, workerTgoId] = addTgoWithId({ recipeInfos: [] });
 	const workAction = createWork({
-		workerTgoId: workerTgoId,
-		goalTgoId: undefined,
 		recipe: {
 			input: [],
 			output: [],
 			type: 'emptyWork' as RecipeId,
 		},
+		workerTgoId: workerTgoId,
+		inputInventoryTgoIds: [workerTgoId],
+		goalTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -130,7 +134,7 @@ test('Work - work is removed after completion', async t => {
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
 });
 
-test('Work - wait 3 ticks', async t => {
+test.only('Work - wait 3 ticks', async t => {
 	const threeTickRecipe = {
 		input: [{
 			typeId: 'tick' as TypeId,
@@ -150,10 +154,11 @@ test('Work - wait 3 ticks', async t => {
 	// Create an work on 3 tick wait.
 
 	const workAction = createWork({
-		workerTgoId: workerTgoId,
-		goalTgoId: undefined,
 		recipe: threeTickRecipe,
-		targetTgoId: workerTgoId,
+		workerTgoId: workerTgoId,
+		inputInventoryTgoIds: [workerTgoId],
+		outputInventoryTgoId: workerTgoId,
+		goalTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -171,7 +176,7 @@ test('Work - wait 3 ticks', async t => {
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
 });
 
-test('Work - simple actor item change', async t => {
+test('Work - simple item change', async t => {
 	const recipe: Recipe = {
 		input: [{
 			typeId: 'coal' as TypeId,
@@ -184,7 +189,7 @@ test('Work - simple actor item change', async t => {
 		type: 'furnace' as RecipeId,
 	};
 
-	const [createActor, actorTgoId] = addTgoWithId({
+	const [createWorkDoer, workDoerTgoId] = addTgoWithId({
 		inventory: [{
 			typeId: 'coal' as TypeId,
 			count: 22,
@@ -206,17 +211,18 @@ test('Work - simple actor item change', async t => {
 		stackable: true,
 		// positiveOnly: true,
 	}));
-	storeTester.dispatch(createActor);
+	storeTester.dispatch(createWorkDoer);
 	storeTester.dispatch(createWork({
-		workerTgoId: actorTgoId,
-		goalTgoId: undefined,
 		recipe,
-		targetTgoId: actorTgoId,
+		workerTgoId: workDoerTgoId,
+		inputInventoryTgoIds: [workDoerTgoId],
+		outputInventoryTgoId: workDoerTgoId,
+		goalTgoId: undefined,
 	}));
 	storeTester.dispatch(tick());
 	storeTester.dispatch(tick());
 
-	t.deepEqual(selectTgo(storeTester.getState(), actorTgoId)?.inventory,
+	t.deepEqual(selectTgo(storeTester.getState(), workDoerTgoId)?.inventory,
 		[
 			{
 				typeId: 'coal' as TypeId,
@@ -374,7 +380,7 @@ test('Work - simple actor item change', async t => {
 // 	}], true);
 // });
 
-test.todo('Work - have two actors commit items');
+test.todo('Work - work with multiple input inventories');
 
 test.todo('Work - Deletes both the committedRequiredItems and committedAwerdedItems objects after completion');
 
