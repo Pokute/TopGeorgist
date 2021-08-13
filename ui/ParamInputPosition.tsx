@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 
 import { Parameter, ReactReduxParam, TypeProps } from './paramInput.js';
 import * as viewActions from '../actions/view.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 import { ViewId } from '../reducers/view.js';
 
 export const paramInputPositionPack = (parameter: Parameter, formData: FormData) => ({

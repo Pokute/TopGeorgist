@@ -3,7 +3,7 @@ import { getType, ActionType } from 'typesafe-actions';
 
 import { Inventory } from '../components/inventory.js';
 import { TgoId } from './tgo.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 import * as goalActions from '../concerns/goal.js';
 import { TypeId } from './itemType.js';
 

@@ -4,7 +4,7 @@ import * as allSetActions from '../actions/allSet.js';
 import { tick } from '../concerns/ticker.js';
 import * as governmentActions from '../actions/government.js';
 import { TgoId } from './tgo.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 
 export interface GovernmentStateType {
 	readonly citizens: CitizensStateType,

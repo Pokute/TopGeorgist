@@ -1,7 +1,7 @@
 import { createAction, ActionType, getType } from 'typesafe-actions';
 
 import { TgoRoot, TgoId, TgoType } from '../reducers/tgo.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 
 export type ComponentPosition = TgoRoot & {
 	readonly position: MapPosition,

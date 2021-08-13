@@ -8,7 +8,7 @@ import { RootStateType } from '../reducers/index.js';
 import { TgosState } from '../reducers/tgos.js';
 import { TileType } from '../reducers/tile.js';
 import { TileSetType } from '../reducers/tileSet.js';
-import { MapType, MapPosition } from '../reducers/map.js';
+import { MapType, MapPosition } from '../concerns/map.js';
 import { hasComponentPresentation } from '../data/components_new.js';
 import { hasComponentPosition } from '../components/position.js';
 import { hasComponentLabel } from '../components/label.js';

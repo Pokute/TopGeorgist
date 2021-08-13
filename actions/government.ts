@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 
 export const addCitizen = createAction('CITIZEN_ADD',
 	(tgoId: TgoId) => (tgoId)

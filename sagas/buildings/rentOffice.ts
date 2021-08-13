@@ -10,7 +10,7 @@ import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../components/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
 import { TgoId } from '../../reducers/tgo.js';
-import { MapPosition } from '../../reducers/map.js';
+import { MapPosition } from '../../concerns/map.js';
 
 export const claimLand = createAction('RENT_OFFICE_CLAIM_LAND', ({
 	tgoId,

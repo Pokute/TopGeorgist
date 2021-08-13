@@ -4,7 +4,7 @@ import { clickActionStack } from '../actions/view.js';
 
 import { ViewsState } from './views.js';
 import * as viewActions from '../actions/view.js';
-import { MapPosition, MapSize } from './map.js';
+import { MapPosition, MapSize } from '../concerns/map.js';
 import { Opaque } from '../typings/global.d.js';
 
 export type ViewId = Opaque<string, 'ViewId'>;

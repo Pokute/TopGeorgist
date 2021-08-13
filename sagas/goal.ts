@@ -14,7 +14,7 @@ import { setPosition } from '../components/position.js';
 import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
 import { getType } from 'typesafe-actions';
 import { tick } from '../concerns/ticker.js';
-import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../reducers/map.js';
+import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../concerns/map.js';
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
 // 	const s: RootStateType = yield select();

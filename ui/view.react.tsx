@@ -7,7 +7,7 @@ import { getMinMax } from '../utils/view.js';
 import { ViewType } from '../reducers/view.js';
 import { TgoId } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
-import { MapType, MapSize, MapPosition } from '../reducers/map.js';
+import { MapType, MapSize, MapPosition } from '../concerns/map.js';
 import Category from './Category.js';
 import { hasComponentVisitable } from '../data/components_new.js';
 import { hasComponentInventory } from '../components/inventory.js';

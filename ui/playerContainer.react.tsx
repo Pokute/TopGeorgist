@@ -7,7 +7,7 @@ import { TgoId } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 // import { RequirementDelivery } from '../concerns/goal.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 
 export interface propTypes {
 	readonly defaultPlayerTgoId?: TgoId,

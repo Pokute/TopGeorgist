@@ -13,7 +13,7 @@ import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted }
 import { accountsActions } from './concerns/account.js';
 import * as tgoActions from './actions/tgo.js';
 import * as playerActions from './actions/player.js';
-import * as mapActions from './actions/map.js';
+import { mapActions, MapSize } from './concerns/map.js';
 import * as clientActions from './actions/client.js';
 import { set as allSet } from './actions/allSet.js';
 import { getType } from 'typesafe-actions';
@@ -23,7 +23,6 @@ import { withClient } from './actions/withClient.js';
 // import { setGoals } from './actions/goals.js';
 import { moveGoal } from './actions/moveGoal.js';
 import { consumeGoal } from './actions/consumeGoal.js';
-import { MapSize } from './reducers/map.js';
 import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
 import { setRunning as tickerSetRunning } from './concerns/ticker.js';

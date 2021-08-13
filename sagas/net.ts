@@ -5,12 +5,12 @@ import * as netActions from '../actions/net.js';
 import { RootStateType } from '../reducers/index.js';
 import { accountsActions } from '../concerns/account.js';
 import * as viewActions from '../actions/view.js';
-import * as mapActions from '../actions/map.js';
+import { mapActions } from '../concerns/map.js';
 import * as tileSetsActions from '../actions/tileSets.js';
 import * as tgoActions from '../actions/tgo.js';
 import * as tgosActions from '../actions/tgos.js';
 import { moveGoal } from '../actions/moveGoal.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 import { ViewId } from '../reducers/view.js';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {

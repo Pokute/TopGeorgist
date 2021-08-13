@@ -1,7 +1,7 @@
 import * as tgosActions from '../actions/tgos.js';
 import { add as tileSetAdd } from '../actions/tileSets.js';
 import { Parameter } from '../ui/paramInput.js';
-import { MapPosition } from '../reducers/map.js';
+import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../sagas/buildings/rentOffice.js';

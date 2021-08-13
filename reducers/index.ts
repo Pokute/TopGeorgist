@@ -1,4 +1,5 @@
 import { combineReducers, AnyAction } from 'redux'
+import { getType, ActionType } from 'typesafe-actions';
 
 import { accountListReducer } from '../concerns/account.js';
 import serverConnection, { ServerConnectionStateType } from './serverConnection.js';
@@ -7,12 +8,11 @@ import defaults, { Type as DefaultsType } from './defaults.js';
 import { frameReducer } from '../concerns/frame.js';
 import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
-import map, { MapType } from './map.js';
+import { mapReducer } from '../concerns/map.js';
 import tgos, { TgosState } from './tgos.js';
 import { tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
-import { getType, ActionType } from 'typesafe-actions';
 import { createGoal, addGoals } from '../concerns/goal.js';
 import { add as addTgo } from '../actions/tgos.js';
 
@@ -23,7 +23,7 @@ export interface RootStateType {
 	readonly frame: ReturnType<typeof frameReducer>,
 	readonly government: GovernmentStateType,
 	readonly itemTypes: ItemTypesState,
-	readonly map: MapType,
+	readonly map: ReturnType<typeof mapReducer>,
 	readonly serverConnection: ServerConnectionStateType,
 	readonly tgos: TgosState,
 	readonly ticker: ReturnType<typeof tickerReducer>,
@@ -39,7 +39,7 @@ const combinedReducers = combineReducers({
 	frame: frameReducer,
 	government,
 	itemTypes,
-	map,
+	map: mapReducer,
 	tgos,
 	ticker: tickerReducer,
 	tileSets,

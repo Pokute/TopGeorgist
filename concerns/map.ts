@@ -1,8 +1,34 @@
-import { MersenneTwister19937, integer as randomInteger } from 'random-js';
+import { createAction, ActionType, getType } from 'typesafe-actions';
+import { MersenneTwister19937, nativeMath, integer as randomInteger } from 'random-js';
 
-import * as mapActions from '../actions/map.js'; 
-import { ActionType, getType } from 'typesafe-actions';
+import isServer from '../isServer.js'
 import { Opaque } from '../typings/global.d.js';
+
+// Actions:
+
+export const generate = createAction('MAP_GENERATE',
+	(settings: MapSettings) => ({
+		settings: {
+			seed: randomInteger(-1000000, 1000000)(nativeMath),
+			...settings,
+		},
+	})
+)();
+
+export const set = createAction('MAP_SET',
+	(mapState: MapType) => (mapState)
+)();
+
+export const mapActions = {
+	generate,
+	set,
+} as const;
+
+export type MapActions = ActionType<typeof mapActions>;
+
+// Sagas:
+
+// Reducer:
 
 export type MapPosition = Opaque<{
 	readonly x: number,
@@ -85,9 +111,7 @@ const fillMapData = (usedSettings: MapSettings, fillWith: number | (() => number
 			.map(_ => fillWith()),
 });
 
-type MapAction = ActionType<typeof mapActions>;
-
-export default (state: MapType = initialState, action: MapAction): MapType => {
+export const mapReducer = (state: MapType = initialState, action: MapActions): MapType => {
 	switch (action.type) {
 		case getType(mapActions.generate): {
 			const mt = MersenneTwister19937.seed(action.payload.settings.seed);
