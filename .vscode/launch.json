@@ -47,27 +47,6 @@
 			],
 			"port": 9229,
 		},
-		{
-			"type": "chrome",
-			"request": "launch",
-			"name": "Storybook Debug",
-			"url": "http://localhost:6006",
-			"sourceMaps": true,
-			"webRoot": "${workspaceFolder}",
-			"sourceMapPathOverrides": {
-			  "webpack:///*": "${webRoot}/*",
-			},
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Start storybook",
-			"runtimeExecutable": "npm",
-			"runtimeArgs": [
-				"run-script",
-				"storybook"
-			]
-		},
 	],
 	"compounds": [
 		{
