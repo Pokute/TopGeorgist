@@ -1,4 +1,4 @@
-import { createAction } from 'typesafe-actions';
+import { createAction, ActionType } from 'typesafe-actions';
 
 import { ServerConnectionStateType } from '../reducers/serverConnection.js';
 
@@ -17,3 +17,13 @@ export const message = createAction('CONNECTION_MESSAGE',
 export const resetReconnectionDelay = createAction('CONNECTION_DELAY_RESET')();
 
 export const doubleReconnectionDelay = createAction('CONNECTION_DELAY_DOUBLE')();
+
+export const serverConnectionActions = {
+	createWebsocket,
+	setWebsocket,
+	message,
+	resetReconnectionDelay,
+	doubleReconnectionDelay,
+} as const;
+
+type ServerConnectionAction = ActionType<typeof serverConnectionActions>

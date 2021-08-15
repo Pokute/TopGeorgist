@@ -25,11 +25,11 @@ interface ProgressBarSegmentProps {
 	readonly title?: string
 };
 
-const ProgressBarSegment: React.SFC<ProgressBarSegmentProps> = ({
+const ProgressBarSegment = ({
 	progressFraction,
 	cost,
 	title,
-}) => (
+}: ProgressBarSegmentProps) => (
 	<div
 		className='segment'
 		style={{ flex: cost }}
@@ -48,7 +48,7 @@ ProgressBarSegment.defaultProps = {
 	title: undefined,
 };
 
-const ProgressBar: React.SFC<Props> = ({
+const ProgressBar = ({
 	costMapping,
 	perFrameIncrease,
 	progress,
@@ -56,7 +56,7 @@ const ProgressBar: React.SFC<Props> = ({
 	tickTime,
 	tickInterval,
 	frameTime,
-}) => {
+}: Props) => {
 	const calcTickPlusTimeProgress = () => Math.max(0,
 		Math.min(
 			progress! + (perFrameIncrease

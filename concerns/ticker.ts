@@ -1,11 +1,11 @@
 import { createAction, ActionType, getType } from 'typesafe-actions';
 import { AnyAction } from 'redux';
-import { call, delay, fork, put, select, take, takeEvery, all } from 'redux-saga/effects';
+import { call, delay, fork, put, takeEvery, all } from 'typed-redux-saga';
 
 import * as allSetActions from '../actions/allSet.js';
 import isServer from '../isServer.js'
 import { set as allSet } from '../actions/allSet.js';
-import { RootStateType } from '../reducers/index.js';
+import { select, take } from '../store.js';
 
 // Actions:
 
@@ -23,7 +23,7 @@ export const setRunning = createAction('SET_TICKER_RUNNING',
 	(running: boolean) => (running)
 )();
 
-const tickerActions = {
+export const tickerActions = {
 	tick,
 	setTickInterval,
 	setRunning,
@@ -35,16 +35,16 @@ type TickerAction = ActionType<typeof tickerActions>
 
 const tickerSaga = function* () {
 	while (true) {
-		if (!(yield select()).ticker.running) {
-			while ((yield take(getType(setRunning))).payload.running === false) ;
+		if (!(yield* select()).ticker.running) {
+			while ((yield* take(getType(setRunning))).payload === false) ;
 		}
-		yield put(tick());
-		yield delay((yield select()).ticker.tickInterval);
+		yield* put(tick());
+		yield* delay((yield* select()).ticker.tickInterval);
 	}
 };
 
 const tickSaga = function* () {
-	const oldState: RootStateType = yield select();
+	const oldState = yield* select();
 
 	const newActions: ReadonlyArray<AnyAction> = [];
 	// const newActions: ReadonlyArray<AnyAction> = Object.values<TgoType>(oldState.tgos)
@@ -62,9 +62,9 @@ const tickSaga = function* () {
 	// 	)
 	// 	.reduce((acc: ReadonlyArray<ReadonlyArray<AnyAction>>, action) => [...acc, ...action], []) // Flatten one level
 	// 	.reduce((acc: ReadonlyArray<AnyAction>, action) => [...acc, ...action], []);
-	yield all(newActions.map(a => put(a)));
+	yield* all(newActions.map(a => put(a)));
 
-	const newState: RootStateType = yield select();
+	const newState = yield* select();
 	const calls = Object.values(newState.clients).map(c => call(
 		[c.socket, c.socket.sendAction],
 		allSet({
@@ -73,15 +73,15 @@ const tickSaga = function* () {
 		}),
 	));
 	try {
-		yield all(calls);
+		yield* all(calls);
 	} catch (ex) {
 		console.log(ex);
 	}
 };
 
 export const tickerRootSaga = function* () {
-	if (isServer) yield fork(tickerSaga);
-	yield takeEvery(getType(tick), tickSaga);
+	if (isServer) yield* fork(tickerSaga);
+	yield* takeEvery(getType(tick), tickSaga);
 };
 
 // Reducer:

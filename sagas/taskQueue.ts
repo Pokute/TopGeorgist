@@ -1,13 +1,13 @@
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue.js';
 import { tick } from '../concerns/ticker.js';
-import { RootStateType } from '../reducers/index.js';
 import { TgoType } from '../reducers/tgo.js';
 import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue.js';
 import { AnyAction } from 'redux';
 import tgos from '../reducers/tgos.js';
+import { select } from '../store.js';
 
 const handleQueueForOwner = function* (owner: TgoType) {
 	if (!owner.taskQueue) return false;
@@ -50,7 +50,7 @@ const handleQueueForOwner = function* (owner: TgoType) {
 
 	const advancedTask = advanceTask(topTask);
 
-	yield all(generatedAdvanceActions.map(a => put(a)));
+	yield* all(generatedAdvanceActions.map(a => put(a)));
 
 	const newTaskQueue = [
 		advancedTask,
@@ -59,26 +59,26 @@ const handleQueueForOwner = function* (owner: TgoType) {
 	const { completed: completedTasks, remaining: remainingTasks } = getCompletedTasks(newTaskQueue);
 
 	// First remove completed items from TaskQueue so that other sagas see access them.
-	yield put(taskQueueActions.setTaskQueue(owner.tgoId, remainingTasks));
+	yield* put(taskQueueActions.setTaskQueue(owner.tgoId, remainingTasks));
 
 	if (completedTasks.some(task => task.hasOwnProperty('PUT'))) {
 		console.warn('Task action has a PUT already.');
 	}
-	yield (completedTasks.filter(task => task.completionAction).map((task: TaskType) => put(task.completionAction as AnyAction)));
+	yield* (completedTasks.filter(task => task.completionAction).map((task: TaskType) => put(task.completionAction as AnyAction)));
 };
 
 const handleQueueTick = function* () {
 	// console.log('HandleQueue');
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
 	const queueOwners = Object.values(s.tgos)
 		.filter(tgo => (tgo.taskQueue && tgo.taskQueue.length > 0));
 
-	for (const queueOwner of queueOwners) yield call(handleQueueForOwner, queueOwner);
+	for (const queueOwner of queueOwners) yield* call(handleQueueForOwner, queueOwner);
 };
 
 const queueListeners = function* () {
-	yield takeEvery(getType(tick), handleQueueTick);
+	yield* takeEvery(getType(tick), handleQueueTick);
 };
 
 export default queueListeners;

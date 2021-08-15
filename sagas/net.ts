@@ -1,8 +1,7 @@
 import { ActionType, getType } from 'typesafe-actions';
-import { takeEvery, select, put } from 'redux-saga/effects';
+import { takeEvery, put }  from 'typed-redux-saga';
 
 import * as netActions from '../actions/net.js';
-import { RootStateType } from '../reducers/index.js';
 import { accountsActions } from '../concerns/account.js';
 import * as viewActions from '../actions/view.js';
 import { mapActions } from '../concerns/map.js';
@@ -12,9 +11,10 @@ import * as tgosActions from '../actions/tgos.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { MapPosition } from '../concerns/map.js';
 import { ViewId } from '../reducers/view.js';
+import { select } from '../store.js';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
-	const clienToServerSocket = ((yield select()) as RootStateType).serverConnection.websocket;
+	const clienToServerSocket = (yield* select()).serverConnection.websocket;
 	if (!clienToServerSocket) {
 		return;
 	}
@@ -29,22 +29,22 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 
 	const payload = messageData.action.payload;
 
-	yield put(messageData.action);
+	yield* put(messageData.action);
 
 	switch (messageData.action.type) {
 		case 'ALL_SET':
 			const newState = payload;
-			if (newState.map) yield put(mapActions.set(newState.map));
-			if (newState.tileSets) yield put(tileSetsActions.set(newState.tileSets));
-			if (newState.tgos) yield put(tgosActions.setAll(newState.tgos));
-			if (newState.accounts) yield put(accountsActions.setAll(newState.accounts));
+			if (newState.map) yield* put(mapActions.set(newState.map));
+			if (newState.tileSets) yield* put(tileSetsActions.set(newState.tileSets));
+			if (newState.tgos) yield* put(tgosActions.setAll(newState.tgos));
+			if (newState.accounts) yield* put(accountsActions.setAll(newState.accounts));
 			break;
 		case 'DEFAULTS_SET_PLAYER':
-			const defaultPlayerTgoId = ((yield select()) as RootStateType).defaults.playerTgoId;
+			const defaultPlayerTgoId = (yield* select()).defaults.playerTgoId;
 			if (defaultPlayerTgoId) {
-				yield put(viewActions.setFollowTarget('main' as ViewId, defaultPlayerTgoId));
+				yield* put(viewActions.setFollowTarget('main' as ViewId, defaultPlayerTgoId));
 
-				yield put(viewActions.clickActionStack.push('main' as ViewId, moveGoal(
+				yield* put(viewActions.clickActionStack.push('main' as ViewId, moveGoal(
 					defaultPlayerTgoId,
 					{ x: 0, y: 0 } as MapPosition,
 				)))
@@ -60,8 +60,8 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 };
 
 const netListener = function* () {
-	yield takeEvery(getType(netActions.send), netSend);
-	yield takeEvery(getType(netActions.receiveMessage), receiveMessageListener);
+	yield* takeEvery(getType(netActions.send), netSend);
+	yield* takeEvery(getType(netActions.receiveMessage), receiveMessageListener);
 };
 
 export default netListener;

@@ -16,7 +16,7 @@ interface Type {
 type InternalType = Required<Type>;
 type Props = Type;
 
-const SegmentedProgressBar: React.SFC<Props> = ({ segments, costMapping }) => {
+const SegmentedProgressBar = ({ segments, costMapping }: Props) => {
 
 	const clampedSegmentProgress = ({ cost, progress }: Segment) =>
 		Math.max(0, (Math.min(progress, cost)));

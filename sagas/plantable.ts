@@ -1,4 +1,4 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery } from 'typed-redux-saga';
 import { inventoryActions } from '../components/inventory.js';
 import * as plantableActions from '../actions/plantable.js';
 import * as tgosActions from '../actions/tgos.js';
@@ -6,13 +6,13 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { transaction } from '../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../utils/visitable.js';
 import { ActionType, getType } from 'typesafe-actions';
-import { RootStateType } from '../reducers/index.js';
 import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { hasComponentInventory } from '../components/inventory.js';
 import { hasComponentPosition } from '../components/position.js';
+import { select } from '../store.js';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	const actorTgo = s.tgos[actorTgoId];
 	const plantableType = s.itemTypes[targetTypeId];
 
@@ -27,7 +27,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 		.every(tgo => !hasComponentMapGridOccipier(tgo))
 	if (!freePlot) return false;
 
-	const transactionResult = yield put(transaction({
+	const transactionResult = yield* put(transaction({
 		tgoId: actorTgoId,
 		items: [
 			{
@@ -68,7 +68,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 		],
 	});
 
-	yield put(taskQueueActions.addTaskQueue(
+	yield* put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Planting ${plantableType.label}`,
@@ -85,7 +85,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 };
 
 const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targetTgoId, plantTypeId }}: ActionType<typeof plantableActions.harvest>) {
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	const actorTgo = s.tgos[actorTgoId];
 	const visitableTgo = s.tgos[targetTgoId];
 	if (!hasComponentPosition(actorTgo) || (!hasComponentPosition(visitableTgo)))
@@ -107,7 +107,7 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 		],
 	});
 	console.log('transactionResult: ', transactionResult);
-	const plantType = (yield select()).itemTypes[plantTypeId];
+	const plantType = (yield* select()).itemTypes[plantTypeId];
 
 	const remove = {
 		type: 'TGO_REMOVE',
@@ -115,7 +115,7 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 			tgoId: targetTgoId,
 		},
 	};
-	yield put(taskQueueActions.addTaskQueue(
+	yield* put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[
 			{
@@ -145,8 +145,8 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 };
 
 const plantListener = function* () {
-	yield takeEvery(getType(plantableActions.plant), plant);
-	yield takeEvery(getType(plantableActions.harvest), harvest);
+	yield* takeEvery(getType(plantableActions.plant), plant);
+	yield* takeEvery(getType(plantableActions.harvest), harvest);
 };
 
 export default plantListener;

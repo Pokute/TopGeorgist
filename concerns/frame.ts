@@ -1,5 +1,5 @@
 import { ActionType, createAction, getType } from 'typesafe-actions';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put }  from 'typed-redux-saga';
 
 import isServer from '../isServer.js'
 
@@ -17,14 +17,14 @@ const reqWinFrame = () => new Promise(resolve => window.requestAnimationFrame(re
 
 const frameLoop = function* () {
 	while (true) {
-		yield call(reqWinFrame);
-		yield put(frame());
+		yield* call(reqWinFrame);
+		yield* put(frame());
 	}
 };
 
 export const frameRootSaga = function* () {
 	if (isServer) return;
-	yield fork(frameLoop);
+	yield* fork(frameLoop);
 };
 
 // Reducer:

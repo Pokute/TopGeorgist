@@ -1,18 +1,19 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as taskQueueActions from '../actions/taskQueue.js';
 import { transaction } from '../concerns/transaction.js';
 import * as consumableActions from '../actions/consumable.js';
 import { TypeId } from '../reducers/itemType.js';
+import { select } from '../store.js';
 
 const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.consume>) {
-	const actorTgo = (yield select()).tgos[actorTgoId];
-	const targetType = (yield select()).itemTypes[targetTypeId];
-	if (!actorTgo.components.includes('consumer')) return false;
-	if (!actorTgo.components.includes('player')) return false;
+	const actorTgo = (yield* select()).tgos[actorTgoId];
+	const targetType = (yield* select()).itemTypes[targetTypeId];
+	if (!actorTgo?.components?.includes('consumer')) return false;
+	if (!actorTgo?.components?.includes('player')) return false;
 
-	yield put(taskQueueActions.addTaskQueue(
+	yield* put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Eating ${targetType.label}`,
@@ -41,8 +42,8 @@ const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType
 };
 
 const intoSeeds = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.intoSeeds>) {
-	const targetType = (yield select()).itemTypes[targetTypeId];
-	yield put(taskQueueActions.addTaskQueue(
+	const targetType = (yield* select()).itemTypes[targetTypeId];
+	yield* put(taskQueueActions.addTaskQueue(
 		actorTgoId,
 		[{
 			title: `Extracting seeds from ${targetType.label}`,
@@ -70,8 +71,8 @@ const intoSeeds = function* ({ payload: { actorTgoId, targetTypeId } }: ActionTy
 };
 
 const consumableRootSaga = function* () {
-	yield takeEvery(getType(consumableActions.consume), consume);
-	yield takeEvery(getType(consumableActions.intoSeeds), intoSeeds);
+	yield* takeEvery(getType(consumableActions.consume), consume);
+	yield* takeEvery(getType(consumableActions.intoSeeds), intoSeeds);
 };
 
 export default consumableRootSaga;

@@ -9,7 +9,7 @@ import * as defaultsActions from './actions/defaults.js';
 import { TgoId } from './reducers/tgo.js';
 import { ViewId } from './reducers/view.js';
 
-const Providers: React.SFC = () => {
+const Providers = () => {
 	const [ initialized, setInitialized ] = useState(false);
 	useEffect(() => {
 		init();

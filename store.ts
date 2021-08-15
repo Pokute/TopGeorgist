@@ -3,6 +3,7 @@ import reduxSaga from 'redux-saga';
 import { batchedSubscribe, NotifyFunction } from 'redux-batched-subscribe';
 import { persistStore, persistReducer } from 'redux-persist';
 
+import { select, take, fork } from './redux-saga-helpers';
 import isServer from './isServer.js'
 import type { default as storageType } from 'redux-persist/lib/storage';
 // @ts-ignore
@@ -38,7 +39,7 @@ if (isServer) {
 	);
 	letStore = createStore(
 		persistReducers,
-		{},
+		undefined,
 		enhancer,
 	);
 	letPersistor = persistStore(letStore);
@@ -56,7 +57,7 @@ if (isServer) {
 	);
 	letStore = createStore(
 		topGeorgist,
-		{},
+		undefined,
 		enhancer
 	);
 }
@@ -69,4 +70,19 @@ const persistor = letPersistor;
 export {
 	store,
 	persistor,
+	select,
+	fork,
+	take,
 };
+
+/* Interesting stuff
+
+type DiscriminateUnion<T, K extends keyof T, V extends T[K]> = 
+  T extends Record<K, V> ? T : never
+
+type MapDiscriminatedUnion<T extends Record<K, string>, K extends keyof T> =
+  { [V in T[K]]: DiscriminateUnion<T, K, V> };
+
+type WhatIWant = MapDiscriminatedUnion<AllActions, 'type'>;
+
+*/

@@ -1,10 +1,11 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as viewActions from '../actions/view.js';
+import { select } from '../store.js';
 
 const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: ActionType<typeof viewActions.rawClick>) {
-	const s = yield select();
+	const s = yield* select();
 	const view = s.views[viewId];
 	if (!view) return false;
 
@@ -14,7 +15,7 @@ const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: Actio
 	if (topAction.function) {
 		topAction.function({position: mapPosition})
 	} else {
-		yield put({
+		yield* put({
 			...topAction,
 			payload: {
 				...topAction.payload,
@@ -25,14 +26,14 @@ const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: Actio
 	}
 
 	if (topAction.popOnClick) {
-		yield put(viewActions.clickActionStack.pop());
+		yield* put(viewActions.clickActionStack.pop());
 	}
 
 	return true;
 };
 
 const viewListener = function* () {
-	yield takeEvery(getType(viewActions.rawClick), handleViewRawClick);
+	yield* takeEvery(getType(viewActions.rawClick), handleViewRawClick);
 };
 
 export default viewListener;

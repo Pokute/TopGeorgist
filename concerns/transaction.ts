@@ -1,4 +1,4 @@
-import { select, put, all, call, takeEvery } from 'redux-saga/effects';
+import { put, all, call, takeEvery }  from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
@@ -7,7 +7,7 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
 import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
-import { RootStateType } from '../reducers/index.js';
+import { select } from '../store.js';
 
 // Actions:
 
@@ -54,7 +54,7 @@ export const transactionSaga = function* ({ payload: { participants } }: ReturnT
 		throw new Error('Transaction - Participant list has invalid participants.');
 	}
 
-	const { itemTypes, tgos }: RootStateType = yield select(({ itemTypes, tgos }) => ({ itemTypes, tgos }));
+	const { itemTypes, tgos } = yield* select(({ itemTypes, tgos }) => ({ itemTypes, tgos }));
 
 	const getTgoById = getTgoByIdFromRootState(tgos);
 
@@ -152,7 +152,7 @@ export const transactionSaga = function* ({ payload: { participants } }: ReturnT
 		items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
 	const inventoryAdds: ReturnType<typeof inventoryActions.add>[] = participantsWithItemBalanceVerifiedTypes
 		.map(createInventoryAddForParticipant).flat(1);
-	yield all(inventoryAdds.map(a => put(a)));
+	yield* all(inventoryAdds.map(a => put(a)));
 };
 
 const transactionSagaCatcher = function* (action: ReturnType<typeof transactionActions.transaction>) {
@@ -164,7 +164,7 @@ const transactionSagaCatcher = function* (action: ReturnType<typeof transactionA
 }
 
 const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
-	yield put(taskQueueActions.addTaskQueue(
+	yield* put(taskQueueActions.addTaskQueue(
 		tgoId,
 		[{
 			title: `Trading`,
@@ -189,6 +189,6 @@ const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visi
 };
 
 export const transactionRootSaga = function* () {
-	yield takeEvery('TRANSACTION', transactionSagaCatcher);
-	yield takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
+	yield* takeEvery('TRANSACTION', transactionSagaCatcher);
+	yield* takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
 };

@@ -1,11 +1,10 @@
-import { Color } from 'csstype';
 import { AnyAction } from 'redux';
 
 export type TileId = string;
 
 export interface TileType {
 	readonly tileId: TileId,
-	readonly fillStyle: Color,
+	readonly fillStyle: string,
 }
 
 const initialState = {

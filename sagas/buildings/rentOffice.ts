@@ -1,16 +1,16 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType, createAction } from 'typesafe-actions';
 
 import * as governmentActions from '../../actions/government.js';
 import { inventoryActions } from '../../components/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../../utils/visitable.js';
-import { RootStateType } from '../../reducers/index.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../components/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
 import { TgoId } from '../../reducers/tgo.js';
 import { MapPosition } from '../../concerns/map.js';
+import { select } from '../../store.js';
 
 export const claimLand = createAction('RENT_OFFICE_CLAIM_LAND', ({
 	tgoId,
@@ -27,7 +27,7 @@ export const claimLand = createAction('RENT_OFFICE_CLAIM_LAND', ({
 }))();
 
 const claimLandsaga = function* ({ payload: { position, tgoId, visitableTgoId }}: ReturnType<typeof claimLand>) {
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
@@ -41,7 +41,7 @@ const claimLandsaga = function* ({ payload: { position, tgoId, visitableTgoId }}
 		));
 	if (existingClaim) return false;
 
-	yield put(governmentActions.rent(tgoId, position));
+	yield* put(governmentActions.rent(tgoId, position));
 	return true;
 };
 
@@ -59,7 +59,7 @@ export const payRent = createAction('RENT_OFFICE_PAY_RENT', ({
 const payRentSaga = function* ({
 	payload: { tgoId, visitableTgoId }
 }: ReturnType<typeof payRent>) {
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	const actorTgo = s.tgos[tgoId];
 	const visitableTgo = s.tgos[visitableTgoId];
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
@@ -76,16 +76,16 @@ const payRentSaga = function* ({
 		const moneyItem = hasComponentInventory(actorTgo) ? actorTgo.inventory.find(it => it.typeId === 'money') : { count: 0 };
 		const currentMoney = moneyItem ? moneyItem.count : 0;
 		const change = Math.max(Math.min(currentRentDebt, currentMoney), 0);
-		yield put(governmentActions.addRentDebt(tgoId, claim.position, -change));
-		yield put(inventoryActions.add(tgoId, 'money' as TypeId, -change));
-		yield put(governmentActions.distribute(change));
+		yield* put(governmentActions.addRentDebt(tgoId, claim.position, -change));
+		yield* put(inventoryActions.add(tgoId, 'money' as TypeId, -change));
+		yield* put(governmentActions.distribute(change));
 	}
 	return true;
 };
 
 const rentOfficeListener = function* () {
-	yield takeEvery(getType(claimLand), claimLandsaga);
-	yield takeEvery(getType(payRent), payRentSaga);
+	yield* takeEvery(getType(claimLand), claimLandsaga);
+	yield* takeEvery(getType(payRent), payRentSaga);
 };
 
 export default rentOfficeListener;

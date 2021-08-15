@@ -1,4 +1,4 @@
-import { combineReducers, AnyAction } from 'redux'
+import { combineReducers, AnyAction, Reducer } from 'redux'
 import { getType, ActionType } from 'typesafe-actions';
 
 import { accountListReducer } from '../concerns/account.js';
@@ -46,22 +46,25 @@ const combinedReducers = combineReducers({
 	views,
 });
 
-const rootReducer = (state: RootStateType | undefined, action: AnyAction) => {
+const rootReducer: Reducer<RootStateType, AnyAction> = (state: RootStateType | undefined, action: AnyAction) => {
+	if (!state) {
+		return combinedReducers(state, action)
+	}
 	switch (action.type) {
-		case getType(createGoal): {
-			const a = action as ActionType<typeof createGoal>;
-			const addGoalTgoAction = addTgo({
-				goal: a.payload.goal,
-			});
-			const addedGoalTgoState = combinedReducers(state, addGoalTgoAction);
-			if (state === addedGoalTgoState) return state;
+		// case getType(createGoal): {
+		// 	const a = action as ActionType<typeof createGoal>;
+		// 	const addGoalTgoAction = addTgo({
+		// 		goal: a.payload.goal,
+		// 	});
+		// 	const addedGoalTgoState = combinedReducers(state, addGoalTgoAction);
+		// 	if (state === addedGoalTgoState) return state;
 
-			const goalAddedToGoalDoerAction = addGoals(a.payload.tgoId, [addGoalTgoAction.payload.tgo.tgoId]);
-			const goalAddedToGoalDoerState = combinedReducers(addedGoalTgoState, goalAddedToGoalDoerAction);
-			if (state === goalAddedToGoalDoerState) return state;
+		// 	const goalAddedToGoalDoerAction = addGoals(a.payload.tgoId, [addGoalTgoAction.payload.tgo.tgoId]);
+		// 	const goalAddedToGoalDoerState = combinedReducers(addedGoalTgoState, goalAddedToGoalDoerAction);
+		// 	if (state === goalAddedToGoalDoerState) return state;
 
-			return goalAddedToGoalDoerState;
-		}
+		// 	return goalAddedToGoalDoerState;
+		// }
 		default:
 			return combinedReducers(state, action);
 	}

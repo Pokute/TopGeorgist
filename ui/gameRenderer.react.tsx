@@ -144,7 +144,7 @@ export interface Type {
 
 type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;
 
-const GameRenderer: React.SFC<Props> = ({
+const GameRenderer = ({
 	view,
 	map,
 	minTile,
@@ -152,7 +152,7 @@ const GameRenderer: React.SFC<Props> = ({
 	tgosState,
 	tileSet,
 	onClick,
-}) => {
+}: Props) => {
 	const canvas = useRef<HTMLCanvasElement | null>(null);
 
 	const onMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -198,10 +198,12 @@ const GameRenderer: React.SFC<Props> = ({
 	);
 };
 
-const mapStoreToProps = (store: RootStateType) => ({
-	tgosState: store.tgos,
-	tileSet: store.tileSets[store.map.tileSetId],
-});
+const mapStoreToProps = (store: RootStateType) => {
+	return ({
+		tgosState: store.tgos,
+		tileSet: store.tileSets[store.map.tileSetId],
+	})
+};
 
 const mapDispatchToProps = (dispatch: Dispatch, { view: v, map, minTile }: Type) => ({
 	onClick: (event: React.MouseEvent<HTMLCanvasElement>) => {

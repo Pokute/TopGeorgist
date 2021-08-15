@@ -1,28 +1,28 @@
 /// <reference path="../typings/ws-wrapper.d.ts" />
 
-import { ActionType, getType } from 'typesafe-actions';
+import { ActionType, getType, Action } from 'typesafe-actions';
 import { eventChannel, END } from 'redux-saga';
-import { takeEvery, put, select, call, take, fork, delay } from 'redux-saga/effects';
+import { take as rawTake, takeEvery, put, call, fork, delay } from 'typed-redux-saga';
 import WebSocketWrapper from 'ws-wrapper';
 
 import isServer from '../isServer.js'
 import config from '../config.js';
 import * as connectionActions from '../actions/serverConnection.js';
 import * as netActions from '../actions/net.js';
-import { RootStateType } from '../reducers/index.js';
+import { select, take } from '../store.js';
 
 const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions.createWebsocket>) {
 	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);
 	const clientToServerWS = new WebSocketWrapper(ws);
 
-	const state: RootStateType = yield select();
+	const state = yield* select();
 
 	if (state.serverConnection.websocket) {
 		// Disconnect old.
 		state.serverConnection.websocket.disconnect();
 	}
 
-	yield put(connectionActions.setWebsocket(clientToServerWS));
+	yield* put(connectionActions.setWebsocket(clientToServerWS));
 };
 
 const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<typeof connectionActions.setWebsocket>) {
@@ -30,7 +30,7 @@ const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<type
 		return null;
 	}
 
-	const eC = () => eventChannel(emitter => {
+	const createConnectionEventChannel = () => eventChannel(emitter => {
 		websocket.on('message', ({data, event}: { data: any, event: MessageEvent }) => {
 			emitter(connectionActions.message({ data, event }));
 		});
@@ -50,51 +50,51 @@ const listenSetWebsocket = function* ({ payload: { websocket }}: ActionType<type
 		return () => {};
 	});
 
-	const c = yield call(eC);
+	const connectionEventChannel = yield* call(createConnectionEventChannel);
 
 	try {
 		while (true) {
-			const foo = yield take(c);
-			yield put(foo)
+			const channelAction: Action<any> = yield* rawTake(connectionEventChannel) as any;
+			yield* put(channelAction)
 		}
 	} finally {
-		yield put(connectionActions.setWebsocket(undefined));
+		yield* put(connectionActions.setWebsocket(undefined));
 	}
 };
 
 const listenMessage = function* ({ payload: { data: jsonData } }: ActionType<typeof connectionActions.message>) {
 	const data = JSON.parse(jsonData);
 
-	yield put(netActions.receiveMessage(data));
+	yield* put(netActions.receiveMessage(data));
 };
 
 const reconnectionSaga = function* () {
-	yield put(connectionActions.createWebsocket());
+	yield* put(connectionActions.createWebsocket());
 
 	while (true) {
-		// const wsOrDelayTimeout = yield race({
+		// const wsOrDelayTimeout = yield* race({
 		// 	take(getType(connectionActions.setWebsocket)),
 		// 	delay(currentDelay);
 		// });
-		const ws = yield take(getType(connectionActions.setWebsocket));
+		const ws = yield* take(getType(connectionActions.setWebsocket));
 		if (ws.payload.websocket) {
-			yield put(connectionActions.resetReconnectionDelay());
+			yield* put(connectionActions.resetReconnectionDelay());
 		} else {
-			yield put(connectionActions.createWebsocket());
-			const currentDelay = ((yield select()) as RootStateType).serverConnection.reconnectionDelay;
-			yield delay(currentDelay);
-			yield put(connectionActions.doubleReconnectionDelay());
+			yield* put(connectionActions.createWebsocket());
+			const currentDelay = (yield* select()).serverConnection.reconnectionDelay;
+			yield* delay(currentDelay);
+			yield* put(connectionActions.doubleReconnectionDelay());
 		}
 	}
 };
 
 const serverConnectionListener = function* () {
-	yield takeEvery(getType(connectionActions.createWebsocket), listenCreateWebsocket);
-	yield takeEvery(getType(connectionActions.setWebsocket), listenSetWebsocket);
-	yield takeEvery(getType(connectionActions.message), listenMessage);
+	yield* takeEvery(getType(connectionActions.createWebsocket), listenCreateWebsocket);
+	yield* takeEvery(getType(connectionActions.setWebsocket), listenSetWebsocket);
+	yield* takeEvery(getType(connectionActions.message), listenMessage);
 	if (!isServer) {
-		yield fork(reconnectionSaga);
-		// yield put(connectionActions.createWebsocket());
+		yield* fork(reconnectionSaga);
+		// yield* put(connectionActions.createWebsocket());
 	}
 };
 

@@ -1,4 +1,4 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import isServer from '../isServer.js'
@@ -14,14 +14,14 @@ const sentTypes = {
 };
 
 const sendAction = function* (action: ActionType<typeof sentTypes>) {
-	yield put(netActions.send(action));
+	yield* put(netActions.send(action));
 };
 
 const clientListener = function* () {
 	if (isServer) return;
 
 	// This will send all following actions to the server
-	yield takeEvery(
+	yield* takeEvery(
 		[
 			// getType(setGoals),
 			getType(moveGoal),

@@ -1,4 +1,4 @@
-import { select, put, takeEvery, call, all } from 'redux-saga/effects';
+import { put, takeEvery, call, all } from 'typed-redux-saga';
 
 import { Requirement, ComponentGoalDoer, ComponentGoal, hasComponentGoalDoer, isComponentGoal, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
 import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from '../concerns/work.js';
@@ -15,9 +15,10 @@ import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
 import { getType } from 'typesafe-actions';
 import { tick } from '../concerns/ticker.js';
 import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../concerns/map.js';
+import { select } from '../store.js';
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
-// 	const s: RootStateType = yield select();
+// 	const s= yield* select();
 
 // 	const targetPosition = typeof requirement.targetPosition === 'string'
 // 		? s.tgos[requirement.targetPosition as RequirementDeliveryTargetTgoId]
@@ -46,24 +47,24 @@ import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPo
 // }
 
 const completeWorkInput = function* (actorTgoId: TgoId, input: InventoryItem) {
-	if (input.typeId === 'tick') {
-		if (input.count <= 0)
-			return true;
-		const getCurrentTick = function*() { return ((yield select()) as RootStateType).ticker.currentTick; }
-		const endTick = (yield getCurrentTick()) + input.count;
-		while (yield getCurrentTick() < endTick) {
-			yield false;
-		}
-		return true;
-	} else {
-		const s: RootStateType = yield select();
-		const actorTgo = s.tgos[actorTgoId];
-		if (!hasComponentInventory(actorTgo)) {
-			return false;
-		}
+	// if (input.typeId === 'tick') {
+	// 	if (input.count <= 0)
+	// 		return true;
+	// 	const getCurrentTick = function*() { return ((yield* select()) as RootStateType).ticker.currentTick; }
+	// 	const endTick = (yield* getCurrentTick()) + input.count;
+	// 	while (yield (getCurrentTick() < endTick)) {
+	// 		yield false;
+	// 	}
+	// 	return true;
+	// } else {
+	// 	const s: RootStateType = yield* select();
+	// 	const actorTgo = s.tgos[actorTgoId];
+	// 	if (!hasComponentInventory(actorTgo)) {
+	// 		return false;
+	// 	}
 
-		return (actorTgo.inventory.some(i => (i.typeId === input.typeId) && (i.count >= input.count)));
-	}
+	// 	return (actorTgo.inventory.some(i => (i.typeId === input.typeId) && (i.count >= input.count)));
+	// }
 }
 
 const completeRecipe = function* (actorTgoId: TgoId, recipe: Recipe) {
@@ -83,14 +84,14 @@ const initGoal = function* (
 	goalTgo: ComponentGoal,
 ) {
 	if (hasComponentGoalDoer(actorTgo)) {
-		// yield put(addGoals(actorTgo.tgoId, [goalTgo.tgoId]));
+		// yield* put(addGoals(actorTgo.tgoId, [goalTgo.tgoId]));
 	}
 	if (hasComponentInventory(actorTgo)) {
-		yield put(inventoryAddTgoId(actorTgo.tgoId, goalTgo.tgoId));
+		yield* put(inventoryAddTgoId(actorTgo.tgoId, goalTgo.tgoId));
 	}
 
 	// Remove Tgo from tgos
-	yield put(tgosAdd(goalTgo))
+	yield* put(tgosAdd(goalTgo))
 }
 /*
 const cleanUpGoal = function* (
@@ -98,14 +99,14 @@ const cleanUpGoal = function* (
 	goalTgo: ComponentGoal,
 ) {
 	if (hasComponentGoalDoer(actorTgo)) {
-		yield put(removeGoals(actorTgo.tgoId, [goalTgo.tgoId]));
+		yield* put(removeGoals(actorTgo.tgoId, [goalTgo.tgoId]));
 	}
 	if (hasComponentInventory(actorTgo)) {
-		yield put(inventoryRemoveTgoId(actorTgo.tgoId, goalTgo.tgoId));
+		yield* put(inventoryRemoveTgoId(actorTgo.tgoId, goalTgo.tgoId));
 	}
 
 	// Remove Tgo from tgos
-	yield put(tgosRemove(goalTgo.tgoId))
+	yield* put(tgosRemove(goalTgo.tgoId))
 }
 */
 /*
@@ -114,7 +115,7 @@ const handleGoalRequirementConsumeTypeId = function* (
 	goalTgo: ComponentGoal & Partial<ComponentInventory>,
 	{ consumableTypeId, count }: RequirementConsumeTypeId
 ) {
-	const s: RootStateType = yield select();
+	const s= yield* select();
 
 	if (count <= 0) {
 		return true;
@@ -135,7 +136,7 @@ const handleGoalRequirementConsumeTypeId = function* (
 		}
 
 		// Remove item from actor's inventory, add converted calories to goal's inventory
-		yield put(transaction(
+		yield* put(transaction(
 			{
 				tgoId: actorTgo.tgoId,
 				items: [{
@@ -164,7 +165,7 @@ const handleGoalRequirementConsumeTypeId = function* (
 	if (goalTgo.goal.workTgoIds.length == 0) {
 		const foundRecipe = consume;
 		if (foundRecipe) {
-			const workAction = yield put(createWork({goalTgoId: goalTgo.tgoId, recipe: foundRecipe, targetTgoId: goalTgo.tgoId}));
+			const workAction = yield* put(createWork({goalTgoId: goalTgo.tgoId, recipe: foundRecipe, targetTgoId: goalTgo.tgoId}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -188,9 +189,9 @@ const handleGoalRequirementConsumeTypeId = function* (
 		yield* handleWork(actorWithGoals, workTgo, goalTgo);
 	if (workOutput) {
 		// const mapped: Array<TransactionParticipant> = workOutput.map(wo => ({ tgoId: wo.tgoId, items: wo.awardItems }));
-		// yield put(all(transaction(...mapped)));
+		// yield* put(all(transaction(...mapped)));
 
-		yield put(removeWork(goalTgo.tgoId, workTgo.tgoId));
+		yield* put(removeWork(goalTgo.tgoId, workTgo.tgoId));
 		return false;
 	}
 	return false;
@@ -213,7 +214,7 @@ const handleGoalRequirementConsume = function* (actorTgo: ComponentInventory, go
 };
 
 const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTgo: ComponentGoal,  { targetPosition }: RequirementMove) {
-	const s: RootStateType = yield select();
+	const s= yield* select();
 
 	if (positionMatches(actorTgo.position, targetPosition)) {
 		// The goal requirement completed.
@@ -225,7 +226,7 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 	if (goalTgo.goal.workTgoIds.length == 0) {
 		const foundRecipe = move;
 		if (foundRecipe) {
-			const workAction = yield put(createWork({ goalTgoId: goalTgo.tgoId, recipe: foundRecipe}));
+			const workAction = yield* put(createWork({ goalTgoId: goalTgo.tgoId, recipe: foundRecipe}));
 			return false; // TODO: Fix that we don't have to exit this function. We need to do a new select() or use the above result.
 		} else {
 			// give up.
@@ -252,19 +253,19 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 		const actorWorkOutput = workOutput[0].awardItems;
 		for (let positionChange = 0; positionChange < (actorWorkOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
 			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
-			const currentPos = ((yield select()) as RootStateType).tgos[actorTgo.tgoId]!.position!;
+			const currentPos = ((yield* select()) as RootStateType).tgos[actorTgo.tgoId]!.position!;
 			const change = {
 				x: -1 * Math.sign(positionOffset.x),
 				y: -1 * Math.sign(positionOffset.y),
 			};
-			// yield put(res);
-			yield put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y } as MapPosition));
+			// yield* put(res);
+			yield* put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y } as MapPosition));
 			if (positionMatches(actorTgo.position, targetPosition)) {
 				yield* cleanUpGoal(actorTgo, goalTgo);
 				break;
 			}
 		}
-		yield put(removeWork(goalTgo.tgoId, workTgo.tgoId));
+		yield* put(removeWork(goalTgo.tgoId, workTgo.tgoId));
 		if (positionMatches(actorTgo.position, targetPosition)) {
 			yield* cleanUpGoal(actorTgo, goalTgo);
 			return true;
@@ -292,7 +293,7 @@ const handleGoal = function* (actorTgo: TgoRoot, goalTgo: ComponentGoal) {
 };
 
 const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
-	const s: RootStateType = yield select();
+	const s = yield* select();
 	const actorTgo = s.tgos[actorTgoId];
 	const goalTgo = s.tgos[goalTgoId];
 	if (!isComponentGoal(goalTgo)) return false;
@@ -311,12 +312,12 @@ const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 
 	if (!hasComponentInventory(goalTgo) || !hasComponentInventory(actorTgo)) return false;
 	// const redeemedWorksAction = goalTgo.goal.workTgoIds.map(workTgoId => s.tgos[workTgoId]).filter(hasComponentInventory).map(workIntanceTgo => redeem(actorTgo, workIntanceTgo));
-	// yield all(redeemedWorksAction.map(a => put(a)))
-	yield put(redeem(actorTgo, goalTgo));
+	// yield* all(redeemedWorksAction.map(a => put(a)))
+	yield* put(redeem(actorTgo, goalTgo));
 }
 
 const handleGoalsForOwner = function* (owner: TgoType & ComponentGoalDoer & ComponentInventory) {
-	const s: RootStateType = yield select();
+	const s= yield* select();
 	if (owner.activeGoals.length <= 0) {
 		return false;
 	}
@@ -330,17 +331,17 @@ const handleGoalsForOwner = function* (owner: TgoType & ComponentGoalDoer & Comp
 }
 
 const handleGoalTick = function* () {
-	const s: RootStateType = yield select();
+	const s= yield* select();
 	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
 	const goalOwners = Object.values(s.tgos)
 		.filter(hasComponentGoalDoer)
 		.filter(hasComponentInventory);
 
-	for (const goalOwner of goalOwners) yield call(handleGoalsForOwner, goalOwner);
+	for (const goalOwner of goalOwners) yield* call(handleGoalsForOwner, goalOwner);
 };
 
 const queueListeners = function* () {
-	yield takeEvery(getType(tick), handleGoalTick);
+	yield* takeEvery(getType(tick), handleGoalTick);
 };
 
 export default queueListeners;
