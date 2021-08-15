@@ -5,7 +5,7 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { transaction } from '../concerns/transaction.js';
 import * as consumableActions from '../actions/consumable.js';
 import { TypeId } from '../reducers/itemType.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 const consume = function* ({ payload: { actorTgoId, targetTypeId } }: ActionType<typeof consumableActions.consume>) {
 	const actorTgo = (yield* select()).tgos[actorTgoId];

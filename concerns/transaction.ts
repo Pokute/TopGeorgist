@@ -7,7 +7,7 @@ import * as taskQueueActions from '../actions/taskQueue.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
 import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 // Actions:
 

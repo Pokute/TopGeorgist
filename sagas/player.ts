@@ -15,7 +15,7 @@ import { setPlayerTgoId } from '../actions/defaults.js';
 import { setPosition } from '../components/position.js';
 import { hasComponentPlayer } from '../components/player.js';
 import { hasComponentLabel } from '../components/label.js';
-import { select, take } from '../store.js';
+import { select, take } from '../redux-saga-helpers.js';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;

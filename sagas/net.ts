@@ -11,7 +11,7 @@ import * as tgosActions from '../actions/tgos.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { MapPosition } from '../concerns/map.js';
 import { ViewId } from '../reducers/view.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
 	const clienToServerSocket = (yield* select()).serverConnection.websocket;

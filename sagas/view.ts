@@ -2,7 +2,7 @@ import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as viewActions from '../actions/view.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: ActionType<typeof viewActions.rawClick>) {
 	const s = yield* select();

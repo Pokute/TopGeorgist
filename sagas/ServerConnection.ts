@@ -9,7 +9,7 @@ import isServer from '../isServer.js'
 import config from '../config.js';
 import * as connectionActions from '../actions/serverConnection.js';
 import * as netActions from '../actions/net.js';
-import { select, take } from '../store.js';
+import { select, take } from '../redux-saga-helpers.js';
 
 const listenCreateWebsocket = function* ({}: ActionType<typeof connectionActions.createWebsocket>) {
 	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);

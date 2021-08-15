@@ -14,7 +14,7 @@ import { getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { tick } from '../concerns/ticker.js';
 import { selectTgo } from './tgos.js';
 import { tryWrapTakeEvery } from '../sagas/sagaHelper.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 // Actions:
 

@@ -7,7 +7,7 @@ import { TgoType } from '../reducers/tgo.js';
 import { TaskQueueType, TaskType, checkTaskCompletion } from '../reducers/taskQueue.js';
 import { AnyAction } from 'redux';
 import tgos from '../reducers/tgos.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 const handleQueueForOwner = function* (owner: TgoType) {
 	if (!owner.taskQueue) return false;

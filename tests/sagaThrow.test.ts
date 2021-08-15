@@ -75,20 +75,6 @@ const testStore = (state = initialState, action: Action) => {
 	}
 };
 
-// const setupRedux = () => {
-// 	const wrappedRootSaga = function* () {
-// 		yield* rootSaga();
-// 		yield takeEvery('*', function* () {});
-// 	};
-
-// 	return expectSaga(wrappedRootSaga)
-// 		.withReducer(rootReducer);
-// };
-
-const testingSaga = function* () {
-	yield takeEvery('*', function* () {}); // redux-saga-test-plan requires this. It won't dispatch actions if there are no sagas that take those actions.
-}
-
 test('SagaTester is a valid constructor', t => {
 	// redux-saga-tester is export symbols in wrong way for new node so check that our version does it correctly.
 

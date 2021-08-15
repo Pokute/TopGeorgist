@@ -9,7 +9,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { hasComponentInventory } from '../components/inventory.js';
 import { hasComponentPosition } from '../components/position.js';
-import { select } from '../store.js';
+import { select } from '../redux-saga-helpers.js';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s = yield* select();

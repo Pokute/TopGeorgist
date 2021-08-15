@@ -5,7 +5,7 @@ import { transaction } from '../../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../../utils/visitable.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { TypeId } from '../../reducers/itemType.js';
-import { select } from '../../store.js';
+import { select } from '../../redux-saga-helpers.js';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s = yield* select();
