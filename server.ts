@@ -1,9 +1,7 @@
 /// <reference path="./typings/global.d.ts" />
 /// <reference path="./typings/ws-wrapper.d.ts" />
 import { v4 as uuidv4 } from 'uuid';
-import ws from 'ws';
-
-const { Server: WSS } = ws;
+import { WebSocketServer as WSS } from 'ws';
 
 import config from './config.js';
 import { store } from './store.js';
