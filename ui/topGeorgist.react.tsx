@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import AccountInfo from './AccountInfo.js';
+import AccountInfo from './account/AccountInfo.js';
 import ConnectionInfo from './ConnectionInfo.js';
 import PlayerContainer from './playerContainer.react.js';
 import View from './view.react.js';

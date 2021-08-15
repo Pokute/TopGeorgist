@@ -11,7 +11,6 @@ import * as tgoActions from '../actions/tgo.js';
 import * as playerActions from '../actions/player.js';
 import { createPlayerAction } from '../data/initialObjects.js';
 import { TgoType } from '../reducers/tgo.js';
-import combinedReducers from '../reducers/index.js';
 import { setPlayerTgoId } from '../actions/defaults.js';
 import { setPosition } from '../components/position.js';
 import { hasComponentPlayer } from '../components/player.js';
@@ -21,7 +20,7 @@ import { select, take } from '../store.js';
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;
 	console.log('Received playerCreateRequest ', label);
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	const hasNameConflict = (Object.values(state.tgos) as ReadonlyArray<TgoType>)
 		.some((tgo: TgoType) => (hasComponentPlayer(tgo) && hasComponentLabel(tgo) && (tgo.label === label)));
 	if (hasNameConflict) return;
@@ -68,7 +67,7 @@ const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, l
 const handleClientPlayerCreate = function* ({ payload: { label }}: ActionType<typeof playerActions.playerRequest>) {
 	if (isServer) return; // Client only
 
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	let accountId;
 	if (!state.defaults.accountId) {
 		yield* put(netActions.send(accountsActions.accountRequest({

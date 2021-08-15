@@ -7,7 +7,7 @@ import config from './config.js';
 import { store } from './store.js';
 import createItemTypes from './data/types.js';
 import initialObjectActions from './data/initialObjects.js';
-import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted } from './concerns/account.js';
+import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted, requestChangePasswordClientSalted } from './concerns/account.js';
 import { accountsActions } from './concerns/account.js';
 import * as tgoActions from './actions/tgo.js';
 import * as playerActions from './actions/player.js';
@@ -96,6 +96,7 @@ try {
 							store.dispatch(withClient(data.action, clientId));
 							break;
 						case getType(createAccountWithTokenClientSalted):
+						case getType(requestChangePasswordClientSalted):
 						// case getType(setGoals):
 						case 'CONSUMABLE_CONSUME':
 						case 'CONSUMABLE_INTO_SEEDS':

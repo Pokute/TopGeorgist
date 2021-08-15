@@ -9,7 +9,6 @@ import { TgoId } from '../reducers/tgo.js';
 import serverConfig from '../serverConfig.js';
 import isServer from '../isServer.js'
 import { set as allSet } from '../actions/allSet.js';
-import combinedReducers from '../reducers/index.js';
 import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayerTgoId } from '../actions/defaults.js';
 import { WithClient } from '../actions/withClient.js';
 import { select } from '../store.js';
@@ -156,7 +155,7 @@ export const requestChangePasswordClientSalted = createAction('ACCOUNT_REQUEST_C
 const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, username: findUsername, password }}: ActionType<typeof accountsActions.accountRequestWithClient>) {
 	if (!isServer) return;
 	console.log('Received accountCreateRequest ', findUsername);
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	if (findUsername) {
 		const hasNameConflict = (Object.values(state.accounts) as AccountType[])
 			.some(({ username: searchUsername }) => searchUsername === findUsername);
@@ -176,7 +175,7 @@ const handleAccountCreateRequestWithClient = function* ({ payload: { clientId, u
 	});
 	yield* put(createTokenAction);
 
-	const finalState: ReturnType<typeof combinedReducers> = yield* select();
+	const finalState = yield* select();
 	const socket = state.clients[clientId].socket;
 	socket.sendAction(allSet({
 		...finalState,
@@ -192,7 +191,7 @@ const handleAccountLogin = function* ({ payload: { clientId, username, clientSal
 	if (!isServer) return;
 	if (!username || !clientSaltedPassword) return;
 
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	const foundAccount = (Object.values(state.accounts) as AccountType[])
 		.find(account =>
 			account.username === username
@@ -221,7 +220,7 @@ const handleAccountLoginWithToken = function* ({ payload: { clientId, token }}: 
 	if (!isServer) return;
 	if (!token) return;
 
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	const foundAccount = (Object.values(state.accounts) as AccountType[]).find(account => account.tokens.includes(token));
 
 	if (!foundAccount) return;
@@ -241,7 +240,7 @@ const handleAccountLoginWithToken = function* ({ payload: { clientId, token }}: 
 const handleAccountCreateWithToken = function* ({ payload: { username, clientSaltedPassword, token }}: ActionType<typeof createAccountWithTokenClientSalted>) {
 	if (!isServer) return;
 	console.log('Received handleAccountCreateWithToken ', username);
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	const foundAccount = (Object.values(state.accounts) as AccountType[]).find(account => account.tokens.includes(token));
 	if (!foundAccount) {
 		// Account with that token not found!
@@ -271,7 +270,7 @@ const handleAccountCreateWithToken = function* ({ payload: { username, clientSal
 const handleRequestChangePasswordClientSalted = function* ({ payload: { username, clientSaltedPassword, clientSaltedOldPassword }}: ActionType<typeof requestChangePasswordClientSalted>) {
 	if (!isServer) return;
 
-	const state: ReturnType<typeof combinedReducers> = yield* select();
+	const state = yield* select();
 	const foundAccount = (Object.values(state.accounts) as AccountType[]).find(account => account.username === username);
 
 	if (!foundAccount) {
@@ -284,9 +283,10 @@ const handleRequestChangePasswordClientSalted = function* ({ payload: { username
 		clientSaltedPassword,
 		clientSaltedOldPassword,
 	}));
-}
+};
 
 export const accountRootSaga = function* () {
+	if (!isServer) return;
 	yield* takeEvery(getType(accountsActions.accountRequestWithClient), handleAccountCreateRequestWithClient);
 	yield* takeEvery(`${getType(loginClientSalted)}_WITH_CLIENT`, handleAccountLogin);
 	yield* takeEvery(`${getType(loginWithToken)}_WITH_CLIENT`, handleAccountLoginWithToken);
