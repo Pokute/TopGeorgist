@@ -57,8 +57,12 @@ try {
 		}));
 
 		// When data is received
-		socket.on('message', (message) => {
-			if (typeof message === 'string') {
+		socket.on('message', function parseMessage (this, wsData, isBinary?: boolean) {
+			if (!Buffer.isBuffer(wsData)) {
+				console.log('Unknown message of type: ', typeof wsData);
+			}
+			const message = wsData.toString();
+			if (message) {
 				try {
 					const data = JSON.parse(message);
 					console.log(data);
@@ -111,14 +115,14 @@ try {
 							console.log(`Unhandled data action of type ${data.action.type}`);
 					}
 				} catch (jsonEx) {
-					console.log('malformed JSON in message: ', message, '|', jsonEx);
+					console.log('malformed JSON in message: ', wsData, '|', jsonEx);
 					return;
 				}
 			// } else if (typeof message === 'object') {
 			// 	if (message.action) {
 			// 	}
 			} else {
-				console.log('Unknown message of type: ', typeof message);
+				console.log('Unknown message of type: ', typeof wsData);
 			}
 		});
 
