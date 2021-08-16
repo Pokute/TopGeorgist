@@ -1,9 +1,9 @@
 import util from 'util';
 import { default as test } from 'ava';
-import { SagaTester } from './testHelpers';
 import { createAction, ActionType, getType } from 'typesafe-actions';
 import { takeEvery, take } from 'redux-saga/effects';
 
+import { SagaTester } from '../testUtils.js';
 import { tryWrapTakeEvery, wrapEveryErrorReportAction } from '../sagas/sagaHelper';
 
 // This file is for testing redux-saga-tester behaviour

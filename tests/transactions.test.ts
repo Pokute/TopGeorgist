@@ -8,7 +8,7 @@ import { TypeId, ItemType } from '../reducers/itemType.js';
 import { Inventory } from '../components/inventory.js';
 import { TransactionParticipant, transaction } from '../concerns/transaction.js';
 import Sinon from 'sinon';
-import { setupStoreTester } from './testHelpers.js';
+import { setupStoreTester } from '../testUtils.js'
 
 // Test transactions
 
