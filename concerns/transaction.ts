@@ -2,7 +2,7 @@ import { put, all, call, takeEvery }  from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
-import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from '../components/inventory.js';
+import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
 import * as taskQueueActions from '../actions/taskQueue.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
 import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';

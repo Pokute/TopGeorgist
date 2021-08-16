@@ -2,11 +2,11 @@ import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, getType, createAction } from 'typesafe-actions';
 
 import * as governmentActions from '../../actions/government.js';
-import { inventoryActions } from '../../components/inventory.js';
+import { inventoryActions } from '../../concerns/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../../utils/visitable.js';
 import { hasComponentPosition } from '../../components/position.js';
-import { hasComponentInventory } from '../../components/inventory.js';
+import { hasComponentInventory } from '../../concerns/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
 import { TgoId } from '../../reducers/tgo.js';
 import { MapPosition } from '../../concerns/map.js';

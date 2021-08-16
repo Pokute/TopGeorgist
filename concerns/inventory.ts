@@ -3,6 +3,8 @@ import { ActionType, getType, createAction } from 'typesafe-actions';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { TypeId } from '../reducers/itemType.js';
 
+// Actions:
+
 export const add = createAction('TGO_INVENTORY_ADD',
 	(ownerTgoId: TgoId, typeId: TypeId, count: number = 1) => {
 		if (!typeId) throw new Error('inventory.add can\'t have empty typeId');
@@ -45,6 +47,8 @@ export const inventoryActions = {
 	addTgoId,
 	removeTgoId,
 };
+
+// Reducer:
 
 export interface InventoryItem {
 	readonly typeId: TypeId,
@@ -105,6 +109,8 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 			return state;
 	}
 };
+
+// Component
 
 export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,

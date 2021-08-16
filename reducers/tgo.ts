@@ -7,7 +7,7 @@ import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal,
 import { goalReducer } from '../concerns/goal.js';
 import { /* reducer as workReducer, */ WorkActionType, ComponentWork, ComponentWorkDoer } from '../concerns/work.js';
 import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
-import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../components/inventory.js';
+import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../concerns/inventory.js';
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
 import { ComponentPlayer } from '../components/player.js';
 import { ComponentLabel } from '../components/label.js';

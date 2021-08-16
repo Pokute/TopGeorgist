@@ -1,6 +1,6 @@
 import { put, takeEvery }  from 'typed-redux-saga';
 import * as governmentActions from '../../actions/government.js';
-import { inventoryActions } from '../../components/inventory.js';
+import { inventoryActions } from '../../concerns/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../../utils/visitable.js';
 import { hasComponentPosition } from '../../components/position.js';

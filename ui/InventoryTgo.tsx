@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { InventoryItem, hasComponentInventory } from '../components/inventory.js';
+import { InventoryItem, hasComponentInventory } from '../concerns/inventory.js';
 import { isComponentWork } from '../concerns/work.js';
 import { ComponentGoal, isComponentGoal } from '../concerns/goal.js';
 import { RootStateType } from '../reducers/index.js';

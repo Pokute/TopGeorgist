@@ -7,9 +7,9 @@ import * as goalActions from '../concerns/goal.js';
 import { workActions } from '../concerns/work.js'; 
 import * as tgoActions from '../actions/tgo.js'; 
 import * as tgosActions from '../actions/tgos.js'; 
-import { InventoryActionType } from '../components/inventory.js';
+import { InventoryActionType } from '../concerns/inventory.js';
 import { hasComponentPlayer } from '../components/player.js';
-import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } from '../components/inventory.js';
+import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } from '../concerns/inventory.js';
 import { setPosition, hasComponentPosition, reducer as positionReducer, positionActions } from '../components/position.js';
 
 export type TgosState = {

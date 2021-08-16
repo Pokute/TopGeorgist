@@ -4,7 +4,7 @@ import { moveGoal } from '../actions/moveGoal.js';
 import { getType, ActionType } from 'typesafe-actions';
 import { add as addTgo } from '../actions/tgos.js';
 import { /*RequirementMove, RequirementConsumeTypeId,*/ addGoals, setWorkTargetTgoId } from '../concerns/goal.js';
-import * as inventoryActions from '../components/inventory.js';
+import * as inventoryActions from '../concerns/inventory.js';
 import { TgoId } from '../reducers/tgo.js';
 import isServer from '../isServer.js';
 import { consumeGoal } from '../actions/consumeGoal.js';

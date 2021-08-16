@@ -10,7 +10,7 @@ import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import InventoryTgo from './InventoryTgo.js';
 import recipes from '../data/recipes.js';
-import { hasComponentInventory } from '../components/inventory.js';
+import { hasComponentInventory } from '../concerns/inventory.js';
 import InventoryItem from './InventoryItem.react.js';
 
 export interface Type {

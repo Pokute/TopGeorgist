@@ -10,7 +10,7 @@ import { Dispatch } from 'redux';
 import { Action } from '../data/components.js';
 import ActionUI from './action.js';
 import { hasComponentLeaderBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, ComponentVisitable } from '../data/components_new.js';
-import { hasComponentInventory } from '../components/inventory.js';
+import { hasComponentInventory } from '../concerns/inventory.js';
 import { hasComponentPlayer } from '../components/player.js';
 import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 

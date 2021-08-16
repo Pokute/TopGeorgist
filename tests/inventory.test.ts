@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import { omitType } from '../testUtils.js';
-import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../components/inventory.js';
+import { add, addTgoId, removeTgoId, hasComponentInventory, Inventory, ComponentInventory, reducer } from '../concerns/inventory.js';
 import { TgoId } from '../reducers/tgo.js';
 import { TypeId } from '../reducers/itemType.js';
 

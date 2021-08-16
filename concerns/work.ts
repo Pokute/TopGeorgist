@@ -3,7 +3,7 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { Recipe } from '../reducers/recipe.js';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from '../components/inventory.js';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from './inventory.js';
 import { transaction } from '../concerns/transaction.js';
 import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';

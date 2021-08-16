@@ -1,5 +1,5 @@
 import { put, takeEvery } from 'typed-redux-saga';
-import { inventoryActions } from '../components/inventory.js';
+import { inventoryActions } from '../concerns/inventory.js';
 import * as plantableActions from '../actions/plantable.js';
 import * as tgosActions from '../actions/tgos.js';
 import * as taskQueueActions from '../actions/taskQueue.js';
@@ -7,7 +7,7 @@ import { transaction } from '../concerns/transaction.js';
 import { checkOnVisitableLocation } from '../utils/visitable.js';
 import { ActionType, getType } from 'typesafe-actions';
 import { hasComponentMapGridOccipier } from '../data/components_new.js';
-import { hasComponentInventory } from '../components/inventory.js';
+import { hasComponentInventory } from '../concerns/inventory.js';
 import { hasComponentPosition } from '../components/position.js';
 import { select } from '../redux-saga-helpers.js';
 

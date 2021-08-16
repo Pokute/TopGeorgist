@@ -5,7 +5,7 @@ import { selectTgo } from '../concerns/tgos.js';
 import { TgoId } from '../reducers/tgo.js';
 import { add as addItemType } from '../actions/itemTypes.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';
-import { Inventory } from '../components/inventory.js';
+import { Inventory } from '../concerns/inventory.js';
 import { TransactionParticipant, transaction } from '../concerns/transaction.js';
 import Sinon from 'sinon';
 import { setupStoreTester } from '../testUtils.js'

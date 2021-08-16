@@ -9,7 +9,7 @@ import { RootStateType } from '../reducers/index.js';
 import { TypeId } from '../reducers/itemType.js';
 import { TgosState } from '../reducers/tgos.js';
 import { add as addTgo } from '../actions/tgos.js';
-import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../components/inventory.js';
+import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../concerns/inventory.js';
 import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal.js';
 import { ComponentWork, ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.js';
 import { Recipe, RecipeId } from '../reducers/recipe.js';

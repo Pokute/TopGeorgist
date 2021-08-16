@@ -1,4 +1,4 @@
-import { Inventory } from '../components/inventory.js';
+import { Inventory } from '../concerns/inventory.js';
 import { Opaque } from '../typings/global.d.js';
 
 export type RecipeId = Opaque<string, 'RecipeId'>
