@@ -134,7 +134,7 @@ test('Work - work is removed after completion', async t => {
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
 });
 
-test.failing('Work - wait 3 ticks', async t => {
+test('Work - wait 3 ticks', async t => {
 	const threeTickRecipe = {
 		input: [{
 			typeId: 'tick' as TypeId,
@@ -170,10 +170,11 @@ test.failing('Work - wait 3 ticks', async t => {
 	// Work should still remain.
 	t.notDeepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
 	storeTester.dispatch(tick());
-	storeTester.dispatch(tick());
-
-	// Work should delete itself.
+	
+	debugger;
+	// Work should delete itself from worker inventory.
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
+	t.true(() => storeTester.getState().tgos.length === 1); // Only the initial worker TgoId remains.
 });
 
 test('Work - simple item change', async t => {
