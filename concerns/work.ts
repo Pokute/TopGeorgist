@@ -7,7 +7,7 @@ import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasCompon
 import { transaction } from '../concerns/transaction.js';
 import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
-import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
+// import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
 import isServer from '../isServer.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getTgoByIdFromRootState } from '../reducers/tgos.js';
@@ -46,6 +46,13 @@ export const createWork = createAction('WORK_CREATE',
 	})
 )();
 
+export const cancelWork = createAction('WORK_CANCEL',
+	(workDoerTgoId: TgoId, workTgoId: TgoId) => ({
+		workDoerTgoId,
+		workTgoId,
+	})
+)();
+
 export const workActions = {
 	createWork,
 	createFromRecipe,
@@ -59,7 +66,6 @@ export type ComponentWork =
 		// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
 		// Worker is the tgo in whose inventory this work is.
 		readonly workRecipe: Recipe,
-		// readonly workInputInventoryTgoIds: ReadonlyArray<TgoId>,
 		readonly workOutputInventoryTgoId?: TgoId,
 		// readonly workInputCommittedItemsTgoId?: Record<TgoId, TgoId>, // Committed items are already removed from input inventory, but can be redeemed.
 		readonly workInputCommittedItemsTgoId?: Record<string, TgoId>, // Keyed by committer TgoId. Committed items are already removed from input inventory, but can be redeemed.
@@ -75,7 +81,6 @@ export type ComponentWorkDoer =
 		readonly recipeInfos: ReadonlyArray<{
 			readonly recipe: Recipe,
 			readonly autoRun: boolean,
-	//		readonly workProgress?: TgoId, // Tgo with inventory.
 		}>,
 	};
 
@@ -109,7 +114,6 @@ export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is
 // }
 
 
-
 // Steps:
 //
 // Actor has a Goal (get to position)
@@ -123,51 +127,7 @@ export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is
 // 
 
 
-
-
-
-
-
-// {
-// 	if (input.typeId === 'tick') {
-// 		if (input.count <= 0)
-// 			return true;
-// 		const getCurrentTick = function*() { return ((yield* select()) as RootStateType).ticker.currentTick; }
-// 		const endTick = (yield getCurrentTick()) + input.count;
-// 		while (yield getCurrentTick() < endTick) {
-// 			yield false;
-// 		}
-// 		return true;
-// 	} else {
-// 		const s= yield* select();
-// 		const actorTgo = s.tgos[actorTgoId];
-// 		if (!hasComponentInventory(actorTgo)) {
-// 			return false;
-// 		}
-
-// 		return (actorTgo.inventory.some(i => (i.typeId === input.typeId) && (i.count >= input.count)));
-// 	}
-// }
-
-const checkWorkCompletion = function* (workTgoId: TgoId) {
-	const s= yield* select();
-	const workTgo = s.tgos[workTgoId];
-	if (!isComponentWork(workTgo)) return undefined; // Fail
-	if (workTgo.workRecipe.input.length == 0) return true;
-	if (!hasComponentInventory(workTgo)) return false;
-
-	return (workTgo.workRecipe.input.every(input => {
-		const foundProgressItem = workTgo.inventory.find(progress => progress.typeId === input.typeId);
-		return ((foundProgressItem !== undefined) && (foundProgressItem.count >= input.count));
-	}));
-}
-
-export type WorkOutput = Array<{
-	tgoId: TgoId,
-	awardItems: Inventory,
-}> | undefined;
-
-export const handleWork = function* (
+const handleWork = function* (
 	workDoerTgo: ComponentWorkDoer & Partial<ComponentInventory>,
 	workTgo: ComponentWork & Partial<ComponentInventory>,
 ) {
@@ -227,9 +187,7 @@ export const handleWork = function* (
 			...participant,
 			committableRequiredInventoryTypes: missingInput
 				.map(requiredItem => requiredItem.typeId)
-				.filter(typeId =>
-					// typeId !== 'tick' &&
-					participant.tgo.inventory?.some(pii => pii.typeId === typeId)
+				.filter(typeId => participant.tgo.inventory?.some(pii => pii.typeId === typeId)
 				)
 		}))
 		.map(participant => ({
@@ -309,26 +267,40 @@ export const handleWork = function* (
 	return 'ongoing';
 }
 
-const handleCancelWork = function* (workDoerTgoId: TgoId, workTgoId: TgoId) {
+const handleCancelWork = function* ({ payload: { workDoerTgoId, workTgoId }}: ActionType<typeof cancelWork>) {
 	const s= yield* select();
-	const workDoerTgo = s.tgos[workDoerTgoId];
-	const workTgo = s.tgos[workTgoId];
-	if (!isComponentWork(workTgo)) return false;
+	const workDoer = s.tgos[workDoerTgoId];
+	const work = s.tgos[workTgoId];
+	if (
+		!isComponentWork(work)
+		|| !hasComponentInventory(workDoer)
+		|| !workDoer.inventory.some(ii => ii.tgoId === workTgoId)
+		|| !hasComponentInventory(work)
+	) return false;
 
-	const redeem = (to: TgoType & ComponentInventory, from: TgoType & ComponentInventory) => {
+	const redeem = (to?: TgoType, from?: TgoType) => {
+		if (!hasComponentInventory(to) || !hasComponentInventory(from))
+			return [];
+
 		const redeemableInventoryItems = from.inventory.filter(ii => s.itemTypes[ii.typeId].redeemable)
-		return transaction({
+		if (redeemableInventoryItems.length === 0)
+			return [];
+
+		return [transaction({
 			tgoId: from.tgoId,
 			items: redeemableInventoryItems.map(ii => ({...ii, count: ii.count * -1})),
 		},
 		{
 			tgoId: to.tgoId,
 			items: redeemableInventoryItems,
-		});
+		})];
 	};
 
-	if (!hasComponentInventory(workTgo) || !hasComponentInventory(workDoerTgo)) return false;
-	yield* put(redeem(workDoerTgo, workTgo));
+	yield* all(
+		Object.entries(work.workInputCommittedItemsTgoId)
+			.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(s.tgos[inputTgoId], s.tgos[inputCommittedInventoryTgoId]))
+			.flat()
+	);
 }
 
 /*
@@ -349,7 +321,7 @@ const handleCancelWork = function* (workDoerTgoId: TgoId, workTgoId: TgoId) {
 		* This doesn't work as a standalone code anyway, requires goals to trigger.
 */
 
-export const handleCreateWork = function* ({ payload: { recipe, workerTgoId, inputInventoryTgoIds, outputInventoryTgoId, /* goalTgoId, */ }}: ActionType<typeof createWork>) {
+const handleCreateWork = function* ({ payload: { recipe, workerTgoId, inputInventoryTgoIds, outputInventoryTgoId, /* goalTgoId, */ }}: ActionType<typeof createWork>) {
 	const s= yield* select();
 	// const goalTgo = s.tgos[goalTgoId];
 	// if (!isComponentGoal(goalTgo)) return;
@@ -423,17 +395,19 @@ export const handleCreateWork = function* ({ payload: { recipe, workerTgoId, inp
 	// yield* put(goalAddWork(goalTgoId, newWorkAction.payload.tgo.tgoId));
 }
 
-const handleRemoveWork = function* ({ payload: { tgoId, workTgoId }}: ActionType<typeof removeWork>) {
-	const s= yield* select();
-	const work = s.tgos[workTgoId];
-	
-	if (work.workInputCommittedItemsTgoId && Object.entries(work.workInputCommittedItemsTgoId).length > 0)
-		yield* all(Object.keys(work.workInputCommittedItemsTgoId).map(tgoId => removeTgo(tgoId as TgoId)).map(action => put(action)));
-	// if (work.workTargetCommittedItemsTgoId)
-	// 	yield* put(removeTgo(work.workTargetCommittedItemsTgoId));
-	yield* put(removeTgo(workTgoId));
-	yield* put(removeTgoId(tgoId, workTgoId));
-}
+// Removes committed inventory Tgos and the work.
+const finalizeWork = function* (owner: ComponentInventory, work: ComponentWork) {
+	if (owner.inventory.length <= 0) {
+		return false;
+	}
+
+	yield* all(
+		Object.values(work.workInputCommittedItemsTgoId ?? {})
+			.map(committedInventoryTgoId => put(removeTgo(committedInventoryTgoId)))
+	);
+	yield* put(removeTgoId(owner.tgoId, work.tgoId));
+	yield* put(removeTgo(work.tgoId));
+};
 
 const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & ComponentInventory) {
 	const s= yield* select();
@@ -454,7 +428,7 @@ const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & Comp
 	const workResult = yield* handleWork(owner, activeWork);
 
 	if (['completed', 'error'].includes(workResult)) {
-		yield* put(removeTgoId(owner.tgoId, activeWork.tgoId))
+		yield* call(finalizeWork, owner, activeWork);
 		return (works.length === 1); // Completed All Works?
 	}
 
@@ -475,7 +449,7 @@ const inventoryItemRequirementFulfilled = (owned: InventoryItem, required: Inven
 	|| (required.tgoId !== undefined && owned.tgoId === required.tgoId)
 	|| (owned.typeId === required.typeId && owned.count >= required.count);
 
-const inventoryHasItem = (tgo: ComponentInventory, required: InventoryItem) =>
+export const inventoryHasItem = (tgo: ComponentInventory, required: InventoryItem) =>
 	tgo.inventory.some(ii => inventoryItemRequirementFulfilled(ii, required))
 
 type TgoInventoryItem = Required<Pick<InventoryItem, 'tgoId'>>;
@@ -484,39 +458,12 @@ type TgoIds = ReadonlyArray<TgoInventoryItem>;
 const inventoryTgoIds = (tgo: ComponentInventory): TgoIds =>
 	tgo.inventory.filter(ii => ii.tgoId) as TgoIds;
 
-const populateInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory) =>
+export const getInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory) =>
 	inventoryTgoIds(tgo).map(ii => store.tgos[ii.tgoId]);
-
-const createTransactionForOutput = function* (tgo: TgoType & ComponentWorkDoer, output: Inventory) {
-	if (output.length === 0) return;
-	if (output.length > 1) throw new Error('createTransactionForOutput doesn\'t support multiple outputs');
-
-	if (!hasComponentInventory(tgo)) return;
-
-	const possibleRecipes = tgo.recipeInfos.filter(ri => ri.recipe.output.some(recipeOutput => recipeOutput.typeId === output[0].typeId));
-
-	if (possibleRecipes.length === 0) return;
-
-	const possibleRecipe = possibleRecipes[0].recipe;
-	const transactioni = possibleRecipe.input.every(ii => inventoryHasItem(tgo, ii))
-		? transaction(
-			{
-				tgoId: tgo.tgoId,
-				items: [
-					...possibleRecipe.input.map(ii => ({ ...ii, count: ii.count * -1 })),
-					...possibleRecipe.output,
-				],
-			},
-		)
-		: undefined;
-	if (transactioni) {
-		const res = yield* put(transactioni);
-	}
-}
 
 export const workRootSaga = function* () {
 	if (!isServer) return;
 	yield* tryWrapTakeEvery(getType(createWork), handleCreateWork);
-	yield* takeEvery(getType(removeWork), handleRemoveWork);
+	yield* takeEvery(getType(cancelWork), handleCancelWork);
 	yield* takeEvery(getType(tick), handleWorkTick);
 };

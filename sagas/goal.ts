@@ -1,7 +1,7 @@
 import { put, takeEvery, call, all } from 'typed-redux-saga';
 
 import { Requirement, ComponentGoalDoer, ComponentGoal, hasComponentGoalDoer, isComponentGoal, /*isRequirementDelivery, isRequirementMove, RequirementMove, RequirementConsume, RequirementConsumeTypeId, RequirementConsumeTgoId, isRequirementConsume*/ } from '../concerns/goal.js';
-import { createWork, /*removeGoals,*/ handleWork, /*removeWork,*/ WorkOutput } from '../concerns/work.js';
+import { createWork, /*removeGoals, handleWork, removeWork, WorkOutput*/ } from '../concerns/work.js';
 import { RootStateType } from '../reducers/index.js';
 import { hasComponentInventory, ComponentInventory, inventoryActions, removeTgoId as inventoryRemoveTgoId, addTgoId as inventoryAddTgoId } from '../concerns/inventory.js';
 import { hasComponentPosition, ComponentPosition } from '../components/position.js';

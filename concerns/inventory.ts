@@ -117,5 +117,5 @@ export type ComponentInventory = TgoRoot & {
 	readonly isInventoryVirtual?: boolean, // Allows having negative count of any type.
 };
 
-export const hasComponentInventory = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
-	typeof tgo.inventory !== undefined && Array.isArray(tgo.inventory);
+export const hasComponentInventory = <BaseT extends TgoType>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
+	(tgo !== undefined) && typeof tgo.inventory !== undefined && Array.isArray(tgo.inventory);

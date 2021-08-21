@@ -1,7 +1,7 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import sinon from 'sinon';
-import { createWork, handleWork } from '../concerns/work.js';
+import { createWork } from '../concerns/work.js';
 import { consume } from '../data/recipes.js';
 import { TgoId } from '../reducers/tgo.js';
 import { getType, Action } from 'typesafe-actions';
@@ -171,10 +171,9 @@ test('Work - wait 3 ticks', async t => {
 	t.notDeepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
 	storeTester.dispatch(tick());
 	
-	debugger;
 	// Work should delete itself from worker inventory.
 	t.deepEqual(storeTester.getState().tgos[workerTgoId].inventory, []);
-	t.true(() => storeTester.getState().tgos.length === 1); // Only the initial worker TgoId remains.
+	t.true(Object.keys(storeTester.getState().tgos).length === 1); // Only the initial worker TgoId remains.
 });
 
 test('Work - simple item change', async t => {
@@ -385,7 +384,7 @@ test.todo('Work - work with multiple input inventories');
 
 test.todo('Work - Deletes both the committedRequiredItems and committedAwerdedItems objects after completion');
 
-test.failing('Work - hierarchy', async t => {
+test('Work - hierarchy', async t => {
 	const upperBodyTgo: ComponentWorkDoer = {
 		tgoId: 'upperBody' as TgoId,
 		recipeInfos: [{
