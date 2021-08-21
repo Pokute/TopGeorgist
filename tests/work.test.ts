@@ -236,153 +236,62 @@ test('Work - simple item change', async t => {
 	);
 });
 
-// test('Work - simple target item change', t => {
-// 	const work = {
-// 		actorItemChanges: [],
-// 		targetItemChanges: [{
-// 			typeId: 'entropy' as TypeId,
-// 			count: 5,
-// 		}],
-// 		type: 'anyWork',
-// 	};
+test.only('Work - autorunning works', t => {
+	const [appleTreeCreateAction, appleTreeTgoId] = addTgoWithId({
+		inventory: [{
+			typeId: 'nutrients' as TypeId,
+			count: 50,
+		}],
+		recipeInfos: [{
+			autoRun: true,
+			recipe: {
+				input: [{
+					typeId: 'nutrients' as TypeId,
+					count: 10,
+				}],
+				output: [{
+					typeId: 'apple' as TypeId,
+					count: 1,
+				}],
+				type: 'appleGrower' as RecipeId,
+			},
+		}],
+	});
 
-// 	const hWI = handleWork(
-// 		{ tgoId: 'appleTree' as TgoId, inventory: [{
-// 			typeId: 'nutrients' as TypeId,
-// 			count: 50,
-// 		}] },
-// 		work,
-// 		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [work.tgoId] }, inventory: [], },
-// 		);
-// 	// Is a generator;
-// 	t.truthy(hWI && hWI.next);
-	
-// 	// Expect completion after 3 ticks.
-// 	const genDeepEqual = createGenDeepEqual(t, hWI);
-	
-// 	// Start execution
-// 	genDeepEqual()();
-	
-// 	// Supply the store;
-// 	const transactions = genDeepEqual(
-// 		{
-// 			tgos: {
-// 				['appleTree']: {
-// 					tgoId: 'appleTree' as TgoId,
-// 					inventory: [{
-// 						typeId: 'nutrients' as TypeId,
-// 						count: 50,
-// 					}]
-// 				},
-// 				['tradeWorkCommittedItems']: {
-// 					...workInstanceCommittedItemsTgo,
-// 				},
-// 			} as TgosState,
-// 			itemTypes: {
-// 				nutrients: {
-// 					typeId: 'nutrients' as TypeId,
-// 					stackable: true,
-// 					positiveOnly: true,
-// 				},
-// 				apple: {
-// 					typeId: 'apple' as TypeId,
-// 					stackable: true,
-// 					positiveOnly: true,
-// 				},
-// 			} as ItemTypesState,
-// 		} as unknown as RootStateType as any
-// 	)(put(transaction(
-// 		{
-// 			tgoId: 'appleTree' as TgoId,
-// 			items: [{
-// 				typeId: 'nutrients' as TypeId,
-// 				count: 0,
-// 			}]
-// 		},
-// 		{
-// 			tgoId: 'tradeWorkCommittedItems' as TgoId,
-// 			items: [{
-// 				typeId: 'nutrients' as TypeId,
-// 				count: 10,
-// 			}]
-// 		}
-// 	)), false);
+	const storeTester = setupStoreTester();
+	storeTester.dispatch(appleTreeCreateAction);
 
-// 	genDeepEqual()(undefined, true);
-// // test('Work - same item type in actor and target', t => {
-// 	// This requires two inventories for work.
+	storeTester.dispatch(itemTypeAdd({
+		typeId: 'nutrients' as TypeId,
+		stackable: true,
+		positiveOnly: true,
+	}));
 
-// 	let hWI2 = handleWork(
-// 		{ tgoId: 'appleTree' as TgoId, activeGoals: [], inventory: [{
-// 			typeId: 'nutrients' as TypeId,
-// 			count: 40,
-// 		}] },
-// 		{ tgoId: 'goal' as TgoId, goal: { requirements: [], workTgoIds: [workInstance.tgoId] }, inventory: [], },
-// 		workInstance,
-// 		);
-// 	// Is a generator;
-// 	t.truthy(hWI2 && hWI2.next);
-	
-// 	// Expect completion after 3 ticks.
-// 	const genDeepEqual2 = createGenDeepEqual(t, hWI2);
-	
-// 	// Start execution
-// 	genDeepEqual2()();
+	storeTester.dispatch(itemTypeAdd({
+		typeId: 'apple' as TypeId,
+		stackable: true,
+		positiveOnly: true,
+	}));
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
 
-// 	// Supply the store;
-// 	const transactions2 = genDeepEqual2(
-// 		{
-// 			tgos: {
-// 				['appleTree']: {
-// 					tgoId: 'appleTree' as TgoId,
-// 					inventory: [{
-// 						typeId: 'nutrients' as TypeId,
-// 						count: 40,
-// 					}]
-// 				},
-// 				['tradeWorkCommittedItems']: {
-// 					...workInstanceCommittedItemsTgo,
-// 					inventory: [{
-// 						typeId: 'nutrients' as TypeId,
-// 						count: 10,
-// 					}]
-// 				},
-// 			} as TgosState,
-// 			itemTypes: {
-// 				nutrients: {
-// 					typeId: 'nutrients' as TypeId,
-// 					stackable: true,
-// 					positiveOnly: true,
-// 				},
-// 				apple: {
-// 					typeId: 'apple' as TypeId,
-// 					stackable: true,
-// 					positiveOnly: true,
-// 				},
-// 			} as ItemTypesState,
-// 		} as unknown as RootStateType as any
-// 	)(put(transaction(
-// 		{
-// 			tgoId: 'appleTree' as TgoId,
-// 			items: [{
-// 				typeId: 'apple' as TypeId,
-// 				count: 1,
-// 			}]
-// 		}
-// 	)), false);
-
-// 	genDeepEqual2()([{
-// 		tgoId: 'appleTree' as TgoId,
-// 		awardItems: [{
-// 			typeId: 'apple' as TypeId,
-// 			count: 1,
-// 		}]
-// 	}], true);
-// });
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory, [
+		{
+			typeId: 'nutrients' as TypeId,
+			count: 40,
+		},
+		{
+			typeId: 'apple' as TypeId,
+			count: 1,
+		},
+	]);
+	t.true(Object.keys(storeTester.getState().tgos).length === 1); // Only the initial worker TgoId remains.
+});
 
 test.todo('Work - work with multiple input inventories');
 
 test.todo('Work - Deletes both the committedRequiredItems and committedAwerdedItems objects after completion');
+
+test.todo('Work - cancelling redeems correctly');
 
 test('Work - hierarchy', async t => {
 	const upperBodyTgo: ComponentWorkDoer = {

@@ -409,30 +409,71 @@ const finalizeWork = function* (owner: ComponentInventory, work: ComponentWork) 
 	yield* put(removeTgo(work.tgoId));
 };
 
-const handleWorksForOwner = function* (owner: TgoType & ComponentWorkDoer & ComponentInventory) {
-	const s= yield* select();
-	if (owner.inventory.length <= 0) {
-		return false;
-	}
-
-	const works = owner.inventory
-		.filter((ii): ii is InventoryItem & { tgoId: TgoId } => ii.tgoId !== undefined)
-		.map(ii => s.tgos[ii.tgoId])
-		.filter(isComponentWork);
-
-	const activeWork = works[0];
-	if (!activeWork)
-		return true;
-
+const handleWorkWithCompletions = function* (owner: TgoType & ComponentWorkDoer & ComponentInventory, work: ComponentWork & Partial<ComponentInventory>) {
 	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
-	const workResult = yield* handleWork(owner, activeWork);
+	const workResult = yield* handleWork(owner, work);
 
 	if (['completed', 'error'].includes(workResult)) {
-		yield* call(finalizeWork, owner, activeWork);
-		return (works.length === 1); // Completed All Works?
+		yield* call(finalizeWork, owner, work);
+		return 'ended';
+	}
+	return 'ongoing';
+}
+
+const handleWorkDoer = function* (owner: TgoType & ComponentWorkDoer & ComponentInventory) {
+	{
+		const s= yield* select();
+
+		// Create autorun works that don't exist.
+		yield* all(
+			owner.recipeInfos
+				.filter(recipeInfo => recipeInfo.autoRun)
+				.map(({recipe}) => recipe)
+				.filter(autoRecipe => 
+					!(getInventoryTgoIds(s, owner)
+						.filter(isComponentWork)
+						.some(work => work.workRecipe.type === autoRecipe.type)
+					)
+				).map(missingAutoRecipe => put(createWork({
+					recipe: missingAutoRecipe,
+					workerTgoId: owner.tgoId,
+					inputInventoryTgoIds: [ owner.tgoId ],
+					outputInventoryTgoId: owner.tgoId,
+				})))
+		);
 	}
 
-	return false;
+	{
+		const s= yield* select();
+
+		const ownerAfterAutoRecipes = s.tgos[owner.tgoId];
+		if (!hasComponentInventory(ownerAfterAutoRecipes) || !hasComponentWorkDoer(ownerAfterAutoRecipes)) {
+			return false;
+		}
+		
+		if (ownerAfterAutoRecipes.inventory.length <= 0) {
+			return false;
+		}
+
+		const works = getInventoryTgoIds(s, ownerAfterAutoRecipes)
+			.filter(isComponentWork);
+
+		yield* all(
+			works.map(w => call(handleWorkWithCompletions, ownerAfterAutoRecipes, w))
+		);
+	}
+
+	{
+		const s= yield* select();
+		const ownerAfterWorkTicks = s.tgos[owner.tgoId];
+		if (!hasComponentInventory(ownerAfterWorkTicks) || !hasComponentWorkDoer(ownerAfterWorkTicks)) {
+			return false;
+		}
+		
+		const works = getInventoryTgoIds(s, ownerAfterWorkTicks)
+			.filter(isComponentWork);
+		return (works.length === 0); // Completed All Works?
+	}
 }
 
 const handleWorkTick = function* () {
@@ -441,7 +482,7 @@ const handleWorkTick = function* () {
 		.filter(hasComponentWorkDoer)
 		.filter(hasComponentInventory);
 
-	for (const workOwner of workOwners) yield* call(handleWorksForOwner, workOwner);
+	for (const workDoer of workOwners) yield* call(handleWorkDoer, workDoer);
 };
 
 const inventoryItemRequirementFulfilled = (owned: InventoryItem, required: InventoryItem) =>
