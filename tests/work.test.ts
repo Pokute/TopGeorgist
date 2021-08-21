@@ -236,7 +236,7 @@ test('Work - simple item change', async t => {
 	);
 });
 
-test.only('Work - autorunning works', t => {
+test('Work - autorunning works', t => {
 	const [appleTreeCreateAction, appleTreeTgoId] = addTgoWithId({
 		inventory: [{
 			typeId: 'nutrients' as TypeId,
@@ -285,6 +285,45 @@ test.only('Work - autorunning works', t => {
 		},
 	]);
 	t.true(Object.keys(storeTester.getState().tgos).length === 1); // Only the initial worker TgoId remains.
+
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory, [
+		{
+			typeId: 'nutrients' as TypeId,
+			count: 0,
+		},
+		{
+			typeId: 'apple' as TypeId,
+			count: 5,
+		},
+	]);
+	t.true(Object.keys(storeTester.getState().tgos).length === 1); // Only the initial worker TgoId remains.
+
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory?.find(({ typeId }) => typeId === 'nutrients' as TypeId), {
+		typeId: 'nutrients' as TypeId,
+		count: 0,
+	});
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory?.find(({ typeId }) => typeId === 'apple' as TypeId), {
+		typeId: 'apple' as TypeId,
+		count: 5,
+	});
+	t.true(Object.keys(storeTester.getState().tgos).length === 3); // The initial worker, incomplete work and committedInventory
+
+	storeTester.dispatch(tick()); // Tick creates the works from auto recipes.
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory?.find(({ typeId }) => typeId === 'nutrients' as TypeId), {
+		typeId: 'nutrients' as TypeId,
+		count: 0,
+	});
+	t.deepEqual(storeTester.getState().tgos[appleTreeTgoId]?.inventory?.find(({ typeId }) => typeId === 'apple' as TypeId), {
+		typeId: 'apple' as TypeId,
+		count: 5,
+	});
+	t.true(Object.keys(storeTester.getState().tgos).length === 3); // No additional tgos for works etc. are made.
 });
 
 test.todo('Work - work with multiple input inventories');

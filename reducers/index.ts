@@ -10,13 +10,14 @@ import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
 import { mapReducer } from '../concerns/map.js';
 import tgos, { TgosState } from './tgos.js';
-import { tickerReducer } from '../concerns/ticker.js';
+import { tick, tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
 import { createGoal, addGoals } from '../concerns/goal.js';
 import { add as addTgo } from '../actions/tgos.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { AllActions } from '../allActions.js';
+import { createWork, workCreatorReducer, workDoersTickReducer } from '../concerns/work.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -49,17 +50,34 @@ const combinedReducers = combineReducers({
 });
 
 
-function transactionReducerZ(state: RootStateType, action: AllActions) {
+function bigReducers(state: RootStateType, action: AllActions) {
 	switch (action.type) {
 		case getType(transaction): {
 			const newTgosState = transactionReducer(state.tgos, state.itemTypes, action);
-			if (newTgosState !== state.tgos) {
-				return {
-					...state,
-					tgos: newTgosState,
-				};
-			}
-			else return state;
+			if (newTgosState === state.tgos) return state;
+
+			return {
+				...state,
+				tgos: newTgosState,
+			};
+		}
+		case getType(createWork): {
+			const newTgosState = workCreatorReducer(state.tgos, action);
+			if (newTgosState === state.tgos) return state;
+
+			return {
+				...state,
+				tgos: newTgosState,
+			};
+		}
+		case getType(tick): {
+			const newTgosState = workDoersTickReducer(state.tgos, state.itemTypes);
+			if (newTgosState === state.tgos) return state;
+
+			return {
+				...state,
+				tgos: newTgosState,
+			};
 		}
 		default: return state
 	}
@@ -67,7 +85,7 @@ function transactionReducerZ(state: RootStateType, action: AllActions) {
 
 const rootReducer: Reducer<RootStateType, AnyAction> = (state: RootStateType | undefined, action: AnyAction) => {
 	const intermediateState = combinedReducers(state, action);
-	const finalState = transactionReducerZ(intermediateState, action);
+	const finalState = bigReducers(intermediateState, action);
 	return finalState;
 }
 
