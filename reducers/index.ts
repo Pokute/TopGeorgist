@@ -15,6 +15,8 @@ import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
 import { createGoal, addGoals } from '../concerns/goal.js';
 import { add as addTgo } from '../actions/tgos.js';
+import { transaction, transactionReducer } from '../concerns/transaction.js';
+import { AllActions } from '../allActions.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -46,7 +48,30 @@ const combinedReducers = combineReducers({
 	views,
 });
 
+
+function transactionReducerZ(state: RootStateType, action: AllActions) {
+	switch (action.type) {
+		case getType(transaction): {
+			const newTgosState = transactionReducer(state.tgos, state.itemTypes, action);
+			if (newTgosState !== state.tgos) {
+				return {
+					...state,
+					tgos: newTgosState,
+				};
+			}
+			else return state;
+		}
+		default: return state
+	}
+}
+
 const rootReducer: Reducer<RootStateType, AnyAction> = (state: RootStateType | undefined, action: AnyAction) => {
+	const intermediateState = combinedReducers(state, action);
+	const finalState = transactionReducerZ(intermediateState, action);
+	return finalState;
+}
+
+const oldRootReducer: Reducer<RootStateType, AnyAction> = (state: RootStateType | undefined, action: AnyAction) => {
 	if (!state) {
 		return combinedReducers(state, action)
 	}

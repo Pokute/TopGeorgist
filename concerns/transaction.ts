@@ -1,13 +1,11 @@
-import { put, all, call, takeEvery }  from 'typed-redux-saga';
+import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
 import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
 import * as taskQueueActions from '../actions/taskQueue.js';
-import { TypeId, ItemType } from '../reducers/itemType.js';
-import { TgosState, getTgoByIdFromRootState } from '../reducers/tgos.js';
-import { ItemTypesState } from '../reducers/itemTypes.js';
-import { select } from '../redux-saga-helpers.js';
+import tgos, { getTgoByIdFromRootState } from '../reducers/tgos.js';
+import { RootStateType } from '../reducers/index.js';
 
 // Actions:
 
@@ -43,126 +41,6 @@ export interface TransactionParticipant {
 	readonly items: Inventory;
 };
 
-export type TransactionActionType = ActionType<typeof transactionActions>;
-
-export const transactionSaga = function* ({ payload: { participants } }: ReturnType<typeof transactionActions.transaction>) {
-	if (!participants.every((p) => {
-		if (!p) return false;
-		if (!p.tgoId) return false;
-		return true;
-	})) {
-		throw new Error('Transaction - Participant list has invalid participants.');
-	}
-
-	const { itemTypes, tgos } = yield* select(({ itemTypes, tgos }) => ({ itemTypes, tgos }));
-
-	const getTgoById = getTgoByIdFromRootState(tgos);
-
-	const getTgoForParticipants = <T extends TransactionParticipant>({ tgoId, ...rest }: T) => ({
-		...rest,
-		tgoId,
-		tgo: getTgoById(tgoId),
-	})
-	const participantsWithTgo = participants
-		.map(getTgoForParticipants);
-	if (participantsWithTgo.some(({ tgo }) => !tgo))
-		throw new Error('Participant tgoId does not have tgo!');
-	
-	const verifiedParticipantsWithTgo = participantsWithTgo.map(({ tgo, ...rest }) => ({
-		...rest,
-		tgo: tgo!,
-	}));
-
-	const createDummyInventory = <T extends Partial<ComponentInventory>>(tgo: T) => ({
-		...tgo,
-		inventory: tgo.inventory || [],
-	});
-	const createDummyInventoriesForParticipants = <T extends typeof verifiedParticipantsWithTgo[0]>({ tgo, ...rest }: T) => ({
-		...rest,
-		tgo: createDummyInventory(tgo),
-	});
-	const participantsWithInventories = verifiedParticipantsWithTgo.map(createDummyInventoriesForParticipants);
-
-	const getInventoryCountOfTypeId = (inventory: Inventory, { typeId, tgoId }: InventoryItem) =>
-		(
-			inventory.find(ii => (ii.typeId == 'tgoId' && ii.tgoId == tgoId) || (ii.typeId != 'tgoId' && ii.typeId == typeId))
-			|| { count: 0 }
-		).count
-
-	const participantsWithItemBalance = participantsWithInventories
-		.map(participant => ({
-			...participant,
-			itemsBalance: participant.items.map(item => ({
-				...item,
-				finalCount: getInventoryCountOfTypeId(participant.tgo.inventory, item) + item.count,
-			})),
-		}));
-
-	const addItemType = ({ typeId, ...rest}: typeof participantsWithItemBalance[0]['itemsBalance'][0]) => ({
-		...rest,
-		typeId,
-		type: itemTypes[typeId],
-	});
-
-	const participantsWithItemBalanceTypes = participantsWithItemBalance.map(participant => ({
-		...participant,
-		itemsBalance: participant.itemsBalance.map(addItemType),
-	}));
-	
-	const itemBalancesWithoutTypes = participantsWithItemBalanceTypes.flatMap(({ itemsBalance }) => itemsBalance.filter(({ type }) => !type));
-
-	if (itemBalancesWithoutTypes.length > 0) {
-		throw new Error(`Transaction item of type "${itemBalancesWithoutTypes[0].typeId}" ${itemBalancesWithoutTypes.length > 1 ? `and (${itemBalancesWithoutTypes.length - 1} others) ` : ''}doesn\'t have a matching item type (store.itemTypes["${itemBalancesWithoutTypes[0].typeId}"]).`);
-	}
-	
-	const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
-		...rest,
-		itemsBalance: itemsBalance.map(({ type, ...itemsRest }) => ({
-			...itemsRest,
-			type: type!,
-		})),
-	}));
-	
-	type ItemBalance = typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0];
-
-	// TODO: Support virtual inventories!
-	const verifyStackable = ({ finalCount, type: { stackable } }: ItemBalance ) => stackable || ( finalCount === 0 || finalCount === 1);
-	const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
-	const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);
-
-	const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
-
-	const flattenedItemsBalance = participantsWithItemBalanceVerifiedTypes
-		.map(({ itemsBalance }) => itemsBalance)
-		.flat();
-
-	const stackableFails = flattenedItemsBalance.filter(item => !verifyStackable(item));
-	if (stackableFails.length > 0)
-		throw new Error(`Transaction requirements - stackable not met for items: ${JSON.stringify(stackableFails)}`);
-
-	const positiveOnlyFails = flattenedItemsBalance.filter(item => !verifyPositiveOnly(item));
-	if (positiveOnlyFails.length > 0)
-		throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
-
-	const isIntegerFails = flattenedItemsBalance.filter(item => !verifyIsInteger(item));
-	if (isIntegerFails.length > 0)
-		throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
-
-	const createInventoryAddForParticipant = ({ tgoId, items }: { tgoId: TgoId, items: Inventory }) =>
-		items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
-	const inventoryAdds: ReturnType<typeof inventoryActions.add>[] = participantsWithItemBalanceVerifiedTypes
-		.map(createInventoryAddForParticipant).flat(1);
-	yield* all(inventoryAdds.map(a => put(a)));
-};
-
-const transactionSagaCatcher = function* (action: ReturnType<typeof transactionActions.transaction>) {
-	try {
-		yield* transactionSaga(action);
-	} catch (e) {
-		console.error('Transaction failed with:', e);
-	}
-}
-
 const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
 	yield* put(taskQueueActions.addTaskQueue(
 		tgoId,
@@ -189,6 +67,128 @@ const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visi
 };
 
 export const transactionRootSaga = function* () {
-	yield* takeEvery('TRANSACTION', transactionSagaCatcher);
 	yield* takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
+};
+
+// Reducer:
+
+export const transactionReducer = (
+	tgosState: RootStateType['tgos'],
+	itemTypesState: RootStateType['itemTypes'],
+	{ payload: { participants } }: ActionType<typeof transaction>
+): RootStateType['tgos'] => {
+	try {
+		if (!participants.every((p) => {
+			if (!p) return false;
+			if (!p.tgoId) return false;
+			return true;
+		})) {
+			throw new Error('Transaction - Participant list has invalid participants.');
+		}
+
+		const getTgoById = getTgoByIdFromRootState(tgosState);
+
+		const getTgoForParticipants = <T extends TransactionParticipant>({ tgoId, ...rest }: T) => ({
+			...rest,
+			tgoId,
+			tgo: getTgoById(tgoId),
+		})
+		const participantsWithTgo = participants
+			.map(getTgoForParticipants);
+		if (participantsWithTgo.some(({ tgo }) => !tgo))
+			throw new Error('Participant tgoId does not have tgo!');
+		
+		const verifiedParticipantsWithTgo = participantsWithTgo.map(({ tgo, ...rest }) => ({
+			...rest,
+			tgo: tgo!,
+		}));
+	
+		const createDummyInventory = <T extends Partial<ComponentInventory>>(tgo: T) => ({
+			...tgo,
+			inventory: tgo.inventory || [],
+		});
+		const createDummyInventoriesForParticipants = <T extends typeof verifiedParticipantsWithTgo[0]>({ tgo, ...rest }: T) => ({
+			...rest,
+			tgo: createDummyInventory(tgo),
+		});
+		const participantsWithInventories = verifiedParticipantsWithTgo.map(createDummyInventoriesForParticipants);
+	
+		const getInventoryCountOfTypeId = (inventory: Inventory, { typeId, tgoId }: InventoryItem) =>
+			(
+				inventory.find(ii => (ii.typeId == 'tgoId' && ii.tgoId == tgoId) || (ii.typeId != 'tgoId' && ii.typeId == typeId))
+				|| { count: 0 }
+			).count
+	
+		const participantsWithItemBalance = participantsWithInventories
+			.map(participant => ({
+				...participant,
+				itemsBalance: participant.items.map(item => ({
+					...item,
+					finalCount: getInventoryCountOfTypeId(participant.tgo.inventory, item) + item.count,
+				})),
+			}));
+	
+		const addItemType = ({ typeId, ...rest}: typeof participantsWithItemBalance[0]['itemsBalance'][0]) => ({
+			...rest,
+			typeId,
+			type: itemTypesState[typeId],
+		});
+	
+		const participantsWithItemBalanceTypes = participantsWithItemBalance.map(participant => ({
+			...participant,
+			itemsBalance: participant.itemsBalance.map(addItemType),
+		}));
+		
+		const itemBalancesWithoutTypes = participantsWithItemBalanceTypes.flatMap(({ itemsBalance }) => itemsBalance.filter(({ type }) => !type));
+	
+		if (itemBalancesWithoutTypes.length > 0) {
+			throw new Error(`Transaction item of type "${itemBalancesWithoutTypes[0].typeId}" ${itemBalancesWithoutTypes.length > 1 ? `and (${itemBalancesWithoutTypes.length - 1} others) ` : ''}doesn\'t have a matching item type (store.itemTypes["${itemBalancesWithoutTypes[0].typeId}"]).`);
+		}
+		
+		const participantsWithItemBalanceVerifiedTypes = participantsWithItemBalanceTypes.map(({ itemsBalance, ...rest }) => ({
+			...rest,
+			itemsBalance: itemsBalance.map(({ type, ...itemsRest }) => ({
+				...itemsRest,
+				type: type!,
+			})),
+		}));
+		
+		type ItemBalance = typeof participantsWithItemBalanceVerifiedTypes[0]['itemsBalance'][0];
+	
+		// TODO: Support virtual inventories!
+		const verifyStackable = ({ finalCount, type: { stackable } }: ItemBalance ) => stackable || ( finalCount === 0 || finalCount === 1);
+		const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
+		const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);
+	
+		const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
+	
+		const flattenedItemsBalance = participantsWithItemBalanceVerifiedTypes
+			.map(({ itemsBalance }) => itemsBalance)
+			.flat();
+	
+		const stackableFails = flattenedItemsBalance.filter(item => !verifyStackable(item));
+		if (stackableFails.length > 0)
+			throw new Error(`Transaction requirements - stackable not met for items: ${JSON.stringify(stackableFails)}`);
+	
+		const positiveOnlyFails = flattenedItemsBalance.filter(item => !verifyPositiveOnly(item));
+		if (positiveOnlyFails.length > 0)
+			throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
+	
+		const isIntegerFails = flattenedItemsBalance.filter(item => !verifyIsInteger(item));
+		if (isIntegerFails.length > 0)
+			throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
+	
+		const createInventoryAddForParticipant = ({ tgoId, items }: { tgoId: TgoId, items: Inventory }) =>
+			items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
+		const inventoryAdds: ReturnType<typeof inventoryActions.add>[] = participantsWithItemBalanceVerifiedTypes
+			.map(createInventoryAddForParticipant).flat(1);
+
+		return inventoryAdds.reduce(
+			(currentTgosState, inventoryAdd) => tgos(currentTgosState, inventoryAdd),
+			tgosState
+		);
+	} catch (e) {
+		console.error('Transaction failed with:', e);
+		return tgosState;
+	}
 };
