@@ -11,8 +11,6 @@ import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
 import isServer from '../isServer.js';
 import { TypeId } from '../reducers/itemType.js';
 import tgos, { getTgoByIdFromRootState } from '../reducers/tgos.js';
-import { selectTgo } from './tgos.js';
-import { select } from '../redux-saga-helpers.js';
 
 // Actions:
 
@@ -122,42 +120,6 @@ export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is
 // On completion, actor collects the output from work.
 // 
 
-const handleCancelWork = function* ({ payload: { workDoerTgoId, workTgoId }}: ActionType<typeof cancelWork>) {
-	const s= yield* select();
-	const workDoer = s.tgos[workDoerTgoId];
-	const work = s.tgos[workTgoId];
-	if (
-		!isComponentWork(work)
-		|| !hasComponentInventory(workDoer)
-		|| !workDoer.inventory.some(ii => ii.tgoId === workTgoId)
-		|| !hasComponentInventory(work)
-	) return false;
-
-	const redeem = (to?: TgoType, from?: TgoType) => {
-		if (!hasComponentInventory(to) || !hasComponentInventory(from))
-			return [];
-
-		const redeemableInventoryItems = from.inventory.filter(ii => s.itemTypes[ii.typeId].redeemable)
-		if (redeemableInventoryItems.length === 0)
-			return [];
-
-		return [transaction({
-			tgoId: from.tgoId,
-			items: redeemableInventoryItems.map(ii => ({...ii, count: ii.count * -1})),
-		},
-		{
-			tgoId: to.tgoId,
-			items: redeemableInventoryItems,
-		})];
-	};
-
-	yield* all(
-		Object.entries(work.workInputCommittedItemsTgoId)
-			.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(s.tgos[inputTgoId], s.tgos[inputCommittedInventoryTgoId]))
-			.flat()
-	);
-}
-
 /*
 	If actor commits items
 		Creates an inventory to track actor committed items
@@ -195,7 +157,6 @@ export const getInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory
 
 export const workRootSaga = function* () {
 	if (!isServer) return;
-	yield* takeEvery(getType(cancelWork), handleCancelWork);
 };
 
 // Reducer:
@@ -433,6 +394,48 @@ const workWithCompletionsReducer = (
 
 	return afterCommittingTgosState;
 };
+
+const workCancelReducer = (
+	tgosState: RootStateType['tgos'],
+	itemTypesState: RootStateType['itemTypes'],
+	workDoerTgoId: TgoId,
+	workTgoId: TgoId
+): RootStateType['tgos'] => {
+	const workDoer = tgosState[workDoerTgoId];
+	const work = tgosState[workTgoId];
+	if (
+		!isComponentWork(work)
+		|| !hasComponentInventory(workDoer)
+		|| !workDoer.inventory.some(ii => ii.tgoId === workTgoId)
+		|| !hasComponentInventory(work)
+	) return tgosState;
+
+	const redeem = (to?: TgoType, from?: TgoType) => {
+		if (!hasComponentInventory(to) || !hasComponentInventory(from))
+			return [];
+
+		const redeemableInventoryItems = from.inventory.filter(ii => itemTypesState[ii.typeId].redeemable)
+		if (redeemableInventoryItems.length === 0)
+			return [];
+
+		return [transaction({
+			tgoId: from.tgoId,
+			items: redeemableInventoryItems.map(ii => ({...ii, count: ii.count * -1})),
+		},
+		{
+			tgoId: to.tgoId,
+			items: redeemableInventoryItems,
+		})];
+	};
+
+	return Object.entries(work.workInputCommittedItemsTgoId)
+		.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(tgosState[inputTgoId], tgosState[inputCommittedInventoryTgoId]))
+		.flat()
+		.reduce(
+			(currentTgosState, currentTransaction) => transactionReducer(currentTgosState, itemTypesState, currentTransaction),
+			tgosState
+		);
+}
 
 const workDoerTickReducer = (
 	tgosState: RootStateType['tgos'],
