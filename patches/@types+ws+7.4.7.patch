@@ -1,148 +1,14 @@
 diff --git a/node_modules/@types/ws/index.d.ts b/node_modules/@types/ws/index.d.ts
-index d2adbcf..db2e8ee 100644
+index d2adbcf..6ca18ca 100644
 --- a/node_modules/@types/ws/index.d.ts
 +++ b/node_modules/@types/ws/index.d.ts
 @@ -1,4 +1,4 @@
 -// Type definitions for ws 7.4
-+// Type definitions for ws 8.0
++// Type definitions for ws 8.2
  // Project: https://github.com/websockets/ws
  // Definitions by: Paul Loyd <https://github.com/loyd>
  //                 Margus Lamp <https://github.com/mlamp>
-@@ -7,6 +7,7 @@
- //                 teidesu <https://github.com/teidesu>
- //                 Bartosz Wojtkowiak <https://github.com/wojtkowiak>
- //                 Kyle Hensel <https://github.com/k-yle>
-+//                 Pokute <https://github.com/Pokute>
- // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
- 
- /// <reference types="node" />
-@@ -21,12 +22,122 @@ import {
-     Server as HTTPServer,
- } from "http";
- import { Server as HTTPSServer } from "https";
--import { Socket } from "net";
--import { Duplex, DuplexOptions } from "stream";
--import { SecureContextOptions } from "tls";
-+import { NetConnectOpts, Socket as netSocket } from "net";
-+import { Duplex, DuplexOptions, Writable } from "stream";
-+import { SecureContextOptions, TLSSocket } from "tls";
- import { URL } from "url";
- import { ZlibOptions } from "zlib";
- 
-+
-+/**
-+ * VerifyClientCallbackSync is a synchronous callback used to inspect the
-+ * incoming message. The return value (boolean) of the function determines
-+ * whether or not to accept the handshake.
-+ */
-+type VerifyClientCallbackSync = (info: { origin: string; secure: boolean; req: IncomingMessage }) => boolean;
-+
-+/**
-+ * VerifyClientCallbackAsync is an asynchronous callback used to inspect the
-+ * incoming message. The return value (boolean) of the function determines
-+ * whether or not to accept the handshake.
-+ */
-+    type VerifyClientCallbackAsync = (
-+    info: { origin: string; secure: boolean; req: IncomingMessage },
-+    callback: (res: boolean, code?: number, message?: string, headers?: OutgoingHttpHeaders) => void,
-+) => void;
-+
-+
-+interface PerMessageDeflateOptions {
-+    serverNoContextTakeover?: boolean | undefined;
-+    clientNoContextTakeover?: boolean | undefined;
-+    serverMaxWindowBits?: number | undefined;
-+    clientMaxWindowBits?: number | undefined;
-+    zlibDeflateOptions?: {
-+        flush?: number | undefined;
-+        finishFlush?: number | undefined;
-+        chunkSize?: number | undefined;
-+        windowBits?: number | undefined;
-+        level?: number | undefined;
-+        memLevel?: number | undefined;
-+        strategy?: number | undefined;
-+        dictionary?: Buffer | Buffer[] | DataView | undefined;
-+        info?: boolean | undefined;
-+    } | undefined;
-+    zlibInflateOptions?: ZlibOptions | undefined;
-+    threshold?: number | undefined;
-+    concurrencyLimit?: number | undefined;
-+}
-+
-+interface AddressInfo {
-+    address: string;
-+    family: string;
-+    port: number;
-+}
-+
-+interface ServerOptions {
-+    host?: string | undefined;
-+    port?: number | undefined;
-+    backlog?: number | undefined;
-+    server?: HTTPServer | HTTPSServer | undefined;
-+    verifyClient?: VerifyClientCallbackAsync | VerifyClientCallbackSync | undefined;
-+    handleProtocols?: (protocols: Set<string>, request: IncomingMessage) => string | false;
-+    path?: string | undefined;
-+    noServer?: boolean | undefined;
-+    clientTracking?: boolean | undefined;
-+    perMessageDeflate?: boolean | PerMessageDeflateOptions | undefined;
-+    maxPayload?: number | undefined;
-+}
-+
-+// WebSocket Server
-+export class WebSocketServer extends EventEmitter {
-+    options: ServerOptions;
-+    path: string;
-+    clients: Set<WebSocket>;
-+
-+    constructor(options?: ServerOptions, callback?: () => void);
-+
-+    address(): AddressInfo | string;
-+    close(cb?: (err?: Error) => void): void;
-+    handleUpgrade(
-+        request: IncomingMessage,
-+        socket: netSocket,
-+        upgradeHead: Buffer,
-+        callback: (client: WebSocket, request: IncomingMessage) => void,
-+    ): void;
-+    shouldHandle(request: IncomingMessage): boolean | Promise<boolean>;
-+
-+    // Events
-+    on(event: "connection", cb: (this: WebSocketServer, socket: WebSocket, request: IncomingMessage) => void): this;
-+    on(event: "error", cb: (this: WebSocketServer, error: Error) => void): this;
-+    on(event: "headers", cb: (this: WebSocketServer, headers: string[], request: IncomingMessage) => void): this;
-+    on(event: "close" | "listening", cb: (this: WebSocketServer) => void): this;
-+    on(event: string | symbol, listener: (this: WebSocketServer, ...args: any[]) => void): this;
-+
-+    once(event: "connection", cb: (this: WebSocketServer, socket: WebSocket, request: IncomingMessage) => void): this;
-+    once(event: "error", cb: (this: WebSocketServer, error: Error) => void): this;
-+    once(event: "headers", cb: (this: WebSocketServer, headers: string[], request: IncomingMessage) => void): this;
-+    once(event: "close" | "listening", cb: (this: WebSocketServer) => void): this;
-+    once(event: string | symbol, listener: (...args: any[]) => void): this;
-+
-+    off(event: "connection", cb: (this: WebSocketServer, socket: WebSocket, request: IncomingMessage) => void): this;
-+    off(event: "error", cb: (this: WebSocketServer, error: Error) => void): this;
-+    off(event: "headers", cb: (this: WebSocketServer, headers: string[], request: IncomingMessage) => void): this;
-+    off(event: "close" | "listening", cb: (this: WebSocketServer) => void): this;
-+    off(event: string | symbol, listener: (this: WebSocketServer, ...args: any[]) => void): this;
-+
-+    addListener(event: "connection", cb: (client: WebSocket, request: IncomingMessage) => void): this;
-+    addListener(event: "error", cb: (err: Error) => void): this;
-+    addListener(event: "headers", cb: (headers: string[], request: IncomingMessage) => void): this;
-+    addListener(event: "close" | "listening", cb: () => void): this;
-+    addListener(event: string | symbol, listener: (...args: any[]) => void): this;
-+
-+    removeListener(event: "connection", cb: (client: WebSocket) => void): this;
-+    removeListener(event: "error", cb: (err: Error) => void): this;
-+    removeListener(event: "headers", cb: (headers: string[], request: IncomingMessage) => void): this;
-+    removeListener(event: "close" | "listening", cb: () => void): this;
-+    removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
-+}
-+
- // WebSocket socket.
- declare class WebSocket extends EventEmitter {
-     /** The connection is not yet open. */
-@@ -59,7 +170,7 @@ declare class WebSocket extends EventEmitter {
+@@ -59,7 +59,7 @@ declare class WebSocket extends EventEmitter {
      /** The connection is closed. */
      readonly CLOSED: 3;
  
@@ -151,7 +17,7 @@ index d2adbcf..db2e8ee 100644
      onerror: (event: WebSocket.ErrorEvent) => void;
      onclose: (event: WebSocket.CloseEvent) => void;
      onmessage: (event: WebSocket.MessageEvent) => void;
-@@ -71,7 +182,7 @@ declare class WebSocket extends EventEmitter {
+@@ -71,7 +71,7 @@ declare class WebSocket extends EventEmitter {
          options?: WebSocket.ClientOptions | ClientRequestArgs,
      );
  
@@ -160,7 +26,7 @@ index d2adbcf..db2e8ee 100644
      ping(data?: any, mask?: boolean, cb?: (err: Error) => void): void;
      pong(data?: any, mask?: boolean, cb?: (err: Error) => void): void;
      send(data: any, cb?: (err?: Error) => void): void;
-@@ -85,43 +196,37 @@ declare class WebSocket extends EventEmitter {
+@@ -85,43 +85,35 @@ declare class WebSocket extends EventEmitter {
      // HTML5 WebSocket events
      addEventListener(
          method: "message",
@@ -186,7 +52,7 @@ index d2adbcf..db2e8ee 100644
 +        cb: (event: WebSocket.Event) => void,
          options?: WebSocket.EventListenerOptions,
      ): void;
-     addEventListener(method: string, listener: () => void, options?: WebSocket.EventListenerOptions): void;
+-    addEventListener(method: string, listener: () => void, options?: WebSocket.EventListenerOptions): void;
  
 -    removeEventListener(method: "message", cb?: (event: { data: any; type: string; target: WebSocket }) => void): void;
 -    removeEventListener(
@@ -203,7 +69,6 @@ index d2adbcf..db2e8ee 100644
 +    removeEventListener(method: "close", cb: (event: WebSocket.CloseEvent) => void): void;
 +    removeEventListener(method: "error", cb: (event: WebSocket.ErrorEvent) => void): void;
 +    removeEventListener(method: "open", cb: (event: WebSocket.Event) => void): void;
-+    removeEventListener(method: string, listener: () => void): void;
  
      // Events
 -    on(event: "close", listener: (this: WebSocket, code: number, reason: string) => void): this;
@@ -211,11 +76,11 @@ index d2adbcf..db2e8ee 100644
      on(event: "error", listener: (this: WebSocket, err: Error) => void): this;
      on(event: "upgrade", listener: (this: WebSocket, request: IncomingMessage) => void): this;
 -    on(event: "message", listener: (this: WebSocket, data: WebSocket.Data) => void): this;
-+    on(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary?: boolean) => void): this;
++    on(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary: boolean) => void): this;
      on(event: "open", listener: (this: WebSocket) => void): this;
      on(event: "ping" | "pong", listener: (this: WebSocket, data: Buffer) => void): this;
      on(
-@@ -130,10 +235,10 @@ declare class WebSocket extends EventEmitter {
+@@ -130,10 +122,10 @@ declare class WebSocket extends EventEmitter {
      ): this;
      on(event: string | symbol, listener: (this: WebSocket, ...args: any[]) => void): this;
  
@@ -224,11 +89,11 @@ index d2adbcf..db2e8ee 100644
      once(event: "error", listener: (this: WebSocket, err: Error) => void): this;
      once(event: "upgrade", listener: (this: WebSocket, request: IncomingMessage) => void): this;
 -    once(event: "message", listener: (this: WebSocket, data: WebSocket.Data) => void): this;
-+    once(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary?: boolean) => void): this;
++    once(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary: boolean) => void): this;
      once(event: "open", listener: (this: WebSocket) => void): this;
      once(event: "ping" | "pong", listener: (this: WebSocket, data: Buffer) => void): this;
      once(
-@@ -142,10 +247,10 @@ declare class WebSocket extends EventEmitter {
+@@ -142,10 +134,10 @@ declare class WebSocket extends EventEmitter {
      ): this;
      once(event: string | symbol, listener: (this: WebSocket, ...args: any[]) => void): this;
  
@@ -237,11 +102,11 @@ index d2adbcf..db2e8ee 100644
      off(event: "error", listener: (this: WebSocket, err: Error) => void): this;
      off(event: "upgrade", listener: (this: WebSocket, request: IncomingMessage) => void): this;
 -    off(event: "message", listener: (this: WebSocket, data: WebSocket.Data) => void): this;
-+    off(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary?: boolean) => void): this;
++    off(event: "message", listener: (this: WebSocket, data: WebSocket.RawData, isBinary: boolean) => void): this;
      off(event: "open", listener: (this: WebSocket) => void): this;
      off(event: "ping" | "pong", listener: (this: WebSocket, data: Buffer) => void): this;
      off(
-@@ -154,10 +259,10 @@ declare class WebSocket extends EventEmitter {
+@@ -154,10 +146,10 @@ declare class WebSocket extends EventEmitter {
      ): this;
      off(event: string | symbol, listener: (this: WebSocket, ...args: any[]) => void): this;
  
@@ -250,11 +115,11 @@ index d2adbcf..db2e8ee 100644
      addListener(event: "error", listener: (err: Error) => void): this;
      addListener(event: "upgrade", listener: (request: IncomingMessage) => void): this;
 -    addListener(event: "message", listener: (data: WebSocket.Data) => void): this;
-+    addListener(event: "message", listener: (data: WebSocket.RawData, isBinary?: boolean) => void): this;
++    addListener(event: "message", listener: (data: WebSocket.RawData, isBinary: boolean) => void): this;
      addListener(event: "open", listener: () => void): this;
      addListener(event: "ping" | "pong", listener: (data: Buffer) => void): this;
      addListener(
-@@ -166,10 +271,10 @@ declare class WebSocket extends EventEmitter {
+@@ -166,10 +158,10 @@ declare class WebSocket extends EventEmitter {
      ): this;
      addListener(event: string | symbol, listener: (...args: any[]) => void): this;
  
@@ -263,13 +128,16 @@ index d2adbcf..db2e8ee 100644
      removeListener(event: "error", listener: (err: Error) => void): this;
      removeListener(event: "upgrade", listener: (request: IncomingMessage) => void): this;
 -    removeListener(event: "message", listener: (data: WebSocket.Data) => void): this;
-+    removeListener(event: "message", listener: (data: WebSocket.RawData, isBinary?: boolean) => void): this;
++    removeListener(event: "message", listener: (data: WebSocket.RawData, isBinary: boolean) => void): this;
      removeListener(event: "open", listener: () => void): this;
      removeListener(event: "ping" | "pong", listener: (data: Buffer) => void): this;
      removeListener(
-@@ -180,6 +285,11 @@ declare class WebSocket extends EventEmitter {
+@@ -179,7 +171,14 @@ declare class WebSocket extends EventEmitter {
+     removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
  }
  
++import WebSocketAlias = WebSocket;
++
  declare namespace WebSocket {
 +    /**
 +     * Data represents the raw message payload received over the WebSocket.
@@ -279,420 +147,37 @@ index d2adbcf..db2e8ee 100644
      /**
       * Data represents the message payload received over the WebSocket.
       */
-@@ -190,23 +300,6 @@ declare namespace WebSocket {
-      */
-     type CertMeta = string | string[] | Buffer | Buffer[];
- 
--    /**
--     * VerifyClientCallbackSync is a synchronous callback used to inspect the
--     * incoming message. The return value (boolean) of the function determines
--     * whether or not to accept the handshake.
--     */
--    type VerifyClientCallbackSync = (info: { origin: string; secure: boolean; req: IncomingMessage }) => boolean;
--
--    /**
--     * VerifyClientCallbackAsync is an asynchronous callback used to inspect the
--     * incoming message. The return value (boolean) of the function determines
--     * whether or not to accept the handshake.
--     */
--    type VerifyClientCallbackAsync = (
--        info: { origin: string; secure: boolean; req: IncomingMessage },
--        callback: (res: boolean, code?: number, message?: string, headers?: OutgoingHttpHeaders) => void,
--    ) => void;
--
-     interface ClientOptions extends SecureContextOptions {
-         protocol?: string | undefined;
-         followRedirects?: boolean | undefined;
-@@ -225,28 +318,8 @@ declare namespace WebSocket {
-         maxPayload?: number | undefined;
+@@ -246,7 +245,7 @@ declare namespace WebSocket {
+         concurrencyLimit?: number | undefined;
      }
- 
--    interface PerMessageDeflateOptions {
--        serverNoContextTakeover?: boolean | undefined;
--        clientNoContextTakeover?: boolean | undefined;
--        serverMaxWindowBits?: number | undefined;
--        clientMaxWindowBits?: number | undefined;
--        zlibDeflateOptions?: {
--            flush?: number | undefined;
--            finishFlush?: number | undefined;
--            chunkSize?: number | undefined;
--            windowBits?: number | undefined;
--            level?: number | undefined;
--            memLevel?: number | undefined;
--            strategy?: number | undefined;
--            dictionary?: Buffer | Buffer[] | DataView | undefined;
--            info?: boolean | undefined;
--        } | undefined;
--        zlibInflateOptions?: ZlibOptions | undefined;
--        threshold?: number | undefined;
--        concurrencyLimit?: number | undefined;
--    }
  
 -    interface OpenEvent {
 +    interface Event {
          type: string;
          target: WebSocket;
      }
-@@ -275,79 +348,292 @@ declare namespace WebSocket {
-     interface EventListenerOptions {
-         once?: boolean | undefined;
-     }
-+}
- 
--    interface ServerOptions {
--        host?: string | undefined;
--        port?: number | undefined;
--        backlog?: number | undefined;
--        server?: HTTPServer | HTTPSServer | undefined;
--        verifyClient?: VerifyClientCallbackAsync | VerifyClientCallbackSync | undefined;
+@@ -282,12 +281,13 @@ declare namespace WebSocket {
+         backlog?: number | undefined;
+         server?: HTTPServer | HTTPSServer | undefined;
+         verifyClient?: VerifyClientCallbackAsync | VerifyClientCallbackSync | undefined;
 -        handleProtocols?: any;
--        path?: string | undefined;
--        noServer?: boolean | undefined;
--        clientTracking?: boolean | undefined;
--        perMessageDeflate?: boolean | PerMessageDeflateOptions | undefined;
--        maxPayload?: number | undefined;
--    }
-+export class Receiver extends Writable {
-+    /**
-+     * Creates a Receiver instance.
-+     *
-+     * @param {Object} [options] Options object
-+     * @param {String} [options.binaryType=nodebuffer] The type for binary data
-+     * @param {Object} [options.extensions] An object containing the negotiated
-+     *     extensions
-+     * @param {Boolean} [options.isServer=false] Specifies whether to operate in
-+     *     client or server mode
-+     * @param {Number} [options.maxPayload=0] The maximum allowed message length
-+     * @param {Boolean} [options.skipUTF8Validation=false] Specifies whether or
-+     *     not to skip UTF-8 validation for text and close messages
-+     */
-+    constructor(options: {
-+        binaryType: 'nodebuffer' | 'arraybuffer' | 'fragments',
-+        extensions: {},
-+        isServer: boolean,
-+        maxPayload: number,
-+        skipUTF8Validation: boolean,
-+    });
++        handleProtocols?: (protocols: Set<string>, request: IncomingMessage) => string | false;
+         path?: string | undefined;
+         noServer?: boolean | undefined;
+         clientTracking?: boolean | undefined;
+         perMessageDeflate?: boolean | PerMessageDeflateOptions | undefined;
+         maxPayload?: number | undefined;
++        skipUTF8Validation?: boolean | undefined;
+     }
  
--    interface AddressInfo {
--        address: string;
--        family: string;
--        port: number;
--    }
-+    /**
-+     * Implements `Writable.prototype._write()`.
-+     *
-+     * @param {Buffer} chunk The chunk of data to write
-+     * @param {String} encoding The character encoding of `chunk`
-+     * @param {Function} cb Callback
-+     * @private
-+     */
-+    _write(chunk: Parameters<typeof Writable['prototype']['_write']>[0], encoding: Parameters<typeof Writable['prototype']['_write']>[1], cb: Parameters<typeof Writable['prototype']['_write']>[2]): void;
+     interface AddressInfo {
+@@ -346,6 +346,9 @@ declare namespace WebSocket {
+         removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
+     }
  
--    // WebSocket Server
--    class Server extends EventEmitter {
--        options: ServerOptions;
--        path: string;
--        clients: Set<WebSocket>;
--
--        constructor(options?: ServerOptions, callback?: () => void);
--
--        address(): AddressInfo | string;
--        close(cb?: (err?: Error) => void): void;
--        handleUpgrade(
--            request: IncomingMessage,
--            socket: Socket,
--            upgradeHead: Buffer,
--            callback: (client: WebSocket, request: IncomingMessage) => void,
--        ): void;
--        shouldHandle(request: IncomingMessage): boolean | Promise<boolean>;
--
--        // Events
--        on(event: "connection", cb: (this: Server, socket: WebSocket, request: IncomingMessage) => void): this;
--        on(event: "error", cb: (this: Server, error: Error) => void): this;
--        on(event: "headers", cb: (this: Server, headers: string[], request: IncomingMessage) => void): this;
--        on(event: "close" | "listening", cb: (this: Server) => void): this;
--        on(event: string | symbol, listener: (this: Server, ...args: any[]) => void): this;
--
--        once(event: "connection", cb: (this: Server, socket: WebSocket, request: IncomingMessage) => void): this;
--        once(event: "error", cb: (this: Server, error: Error) => void): this;
--        once(event: "headers", cb: (this: Server, headers: string[], request: IncomingMessage) => void): this;
--        once(event: "close" | "listening", cb: (this: Server) => void): this;
--        once(event: string | symbol, listener: (...args: any[]) => void): this;
--
--        off(event: "connection", cb: (this: Server, socket: WebSocket, request: IncomingMessage) => void): this;
--        off(event: "error", cb: (this: Server, error: Error) => void): this;
--        off(event: "headers", cb: (this: Server, headers: string[], request: IncomingMessage) => void): this;
--        off(event: "close" | "listening", cb: (this: Server) => void): this;
--        off(event: string | symbol, listener: (this: Server, ...args: any[]) => void): this;
--
--        addListener(event: "connection", cb: (client: WebSocket, request: IncomingMessage) => void): this;
--        addListener(event: "error", cb: (err: Error) => void): this;
--        addListener(event: "headers", cb: (headers: string[], request: IncomingMessage) => void): this;
--        addListener(event: "close" | "listening", cb: () => void): this;
--        addListener(event: string | symbol, listener: (...args: any[]) => void): this;
--
--        removeListener(event: "connection", cb: (client: WebSocket) => void): this;
--        removeListener(event: "error", cb: (err: Error) => void): this;
--        removeListener(event: "headers", cb: (headers: string[], request: IncomingMessage) => void): this;
--        removeListener(event: "close" | "listening", cb: () => void): this;
--        removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
--    }
-+    /**
-+     * Consumes `n` bytes from the buffered data.
-+     *
-+     * @param {Number} n The number of bytes to consume
-+     * @return {Buffer} The consumed bytes
-+     * @private
-+     */
-+    consume(n: number): Buffer;
++    class WebSocketServer extends Server {}
++    class WebSocket extends WebSocketAlias {}
 +
-+    /**
-+     * Starts the parsing loop.
-+     *
-+     * @param {Function} cb Callback
-+     * @private
-+     */
-+    startLoop(cb: Function): void;
-+
-+    /**
-+     * Reads the first two bytes of a frame.
-+     *
-+     * @return {(RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    getInfo(): RangeError | undefined;
-+
-+    /**
-+     * Gets extended payload length (7+16).
-+     *
-+     * @return {(RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    getPayloadLength16(): RangeError | undefined;
- 
--    // WebSocket stream
--    function createWebSocketStream(websocket: WebSocket, options?: DuplexOptions): Duplex;
-+    /**
-+     * Gets extended payload length (7+64).
-+     *
-+     * @return {(RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    getPayloadLength64(): RangeError | undefined;
-+    /**
-+     * Payload length has been read.
-+     *
-+     * @return {(RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    haveLength(): RangeError | undefined;
-+
-+    /**
-+     * Reads mask bytes.
-+     *
-+     * @private
-+     */
-+    getMask(): void;
-+
-+    /**
-+     * Reads data bytes.
-+     *
-+     * @param {Function} cb Callback
-+     * @return {(Error|RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    getData(cb: Function): Error | RangeError | undefined;
-+
-+    /**
-+     * Decompresses data.
-+     *
-+     * @param {Buffer} data Compressed data
-+     * @param {Function} cb Callback
-+     * @private
-+     */
-+    decompress<T>(data: Buffer, cb: (...args: any[]) => T): T;
-+
-+    /**
-+     * Handles a data message.
-+     *
-+     * @return {(Error|undefined)} A possible error
-+     * @private
-+     */
-+    dataMessage(): Error | undefined;
-+
-+    /**
-+     * Handles a control message.
-+     *
-+     * @param {Buffer} data Data to handle
-+     * @return {(Error|RangeError|undefined)} A possible error
-+     * @private
-+     */
-+    controlMessage(data: Buffer): Error | RangeError | undefined;
-+}
-+
-+export class Sender {
-+    /**
-+     * Creates a Sender instance.
-+     *
-+     * @param {(net.Socket|tls.Socket)} socket The connection socket
-+     * @param {Object} [extensions] An object containing the negotiated extensions
-+     */
-+    constructor(socket: netSocket | TLSSocket, extensions: {});
-+
-+    /**
-+     * Frames a piece of data according to the HyBi WebSocket protocol.
-+     *
-+     * @param {Buffer} data The data to frame
-+     * @param {Object} options Options object
-+     * @param {Number} options.opcode The opcode
-+     * @param {Boolean} [options.readOnly=false] Specifies whether `data` can be
-+     *     modified
-+     * @param {Boolean} [options.fin=false] Specifies whether or not to set the
-+     *     FIN bit
-+     * @param {Boolean} [options.mask=false] Specifies whether or not to mask
-+     *     `data`
-+     * @param {Boolean} [options.rsv1=false] Specifies whether or not to set the
-+     *     RSV1 bit
-+     * @return {Buffer[]} The framed data as a list of `Buffer` instances
-+     * @public
-+     */
-+    static frame(data: Buffer, options: {
-+        opcode: number,
-+        readOnly: boolean,
-+        fin: boolean,
-+        mask: boolean,
-+        rsv1: boolean
-+    }): Array<Buffer>;
-+
-+    /**
-+     * Sends a close message to the other peer.
-+     *
-+     * @param {Number} [code] The status code component of the body
-+     * @param {(String|Buffer)} [data] The message component of the body
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask the message
-+     * @param {Function} [cb] Callback
-+     * @public
-+     */
-+    close(code: number, data: Buffer | string, mask: boolean, cb: Function): void;
-+
-+    /**
-+     * Frames and sends a close message.
-+     *
-+     * @param {Buffer} data The message to send
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask `data`
-+     * @param {Function} [cb] Callback
-+     * @private
-+     */
-+    doClose(data: Buffer, mask: boolean, cb: Function): void;
-+
-+    /**
-+     * Sends a ping message to the other peer.
-+     *
-+     * @param {*} data The message to send
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask `data`
-+     * @param {Function} [cb] Callback
-+     * @public
-+     */
-+    ping(data: any, mask: boolean, cb: Function): void;
-+
-+    /**
-+     * Frames and sends a ping message.
-+     *
-+     * @param {Buffer} data The message to send
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask `data`
-+     * @param {Boolean} [readOnly=false] Specifies whether `data` can be modified
-+     * @param {Function} [cb] Callback
-+     * @private
-+     */
-+    doPing(data: Buffer, mask: boolean, readOnly: boolean, cb: Function): void;
-+
-+    /**
-+     * Sends a pong message to the other peer.
-+     *
-+     * @param {*} data The message to send
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask `data`
-+     * @param {Function} [cb] Callback
-+     * @public
-+     */
-+    pong(data: any, mask: boolean, cb: Function): void;
-+
-+    /**
-+     * Frames and sends a pong message.
-+     *
-+     * @param {Buffer} data The message to send
-+     * @param {Boolean} [mask=false] Specifies whether or not to mask `data`
-+     * @param {Boolean} [readOnly=false] Specifies whether `data` can be modified
-+     * @param {Function} [cb] Callback
-+     * @private
-+     */
-+    doPong(data: Buffer, mask: boolean, readOnly: boolean, cb: Function): void;
-+
-+    /**
-+     * Sends a data message to the other peer.
-+     *
-+     * @param {*} data The message to send
-+     * @param {Object} options Options object
-+     * @param {Boolean} [options.compress=false] Specifies whether or not to
-+     *     compress `data`
-+     * @param {Boolean} [options.binary=false] Specifies whether `data` is binary
-+     *     or text
-+     * @param {Boolean} [options.fin=false] Specifies whether the fragment is the
-+     *     last one
-+     * @param {Boolean} [options.mask=false] Specifies whether or not to mask
-+     *     `data`
-+     * @param {Function} [cb] Callback
-+     * @public
-+     */
-+    send(data: any, options: { compress: boolean, binary: boolean, fin: boolean, mask: boolean }, cb: Function): void;
-+
-+    /**
-+     * Dispatches a data message.
-+     *
-+     * @param {Buffer} data The message to send
-+     * @param {Boolean} [compress=false] Specifies whether or not to compress
-+     *     `data`
-+     * @param {Object} options Options object
-+     * @param {Number} options.opcode The opcode
-+     * @param {Boolean} [options.readOnly=false] Specifies whether `data` can be
-+     *     modified
-+     * @param {Boolean} [options.fin=false] Specifies whether or not to set the
-+     *     FIN bit
-+     * @param {Boolean} [options.mask=false] Specifies whether or not to mask
-+     *     `data`
-+     * @param {Boolean} [options.rsv1=false] Specifies whether or not to set the
-+     *     RSV1 bit
-+     * @param {Function} [cb] Callback
-+     * @private
-+     */
-+    dispatch(data: any, compress: boolean, options: { readonly: boolean, fin: boolean, mask: boolean, rsv1: boolean }, cb: Function): void;
-+    /**
-+     * Executes queued send operations.
-+     *
-+     * @private
-+     */
-+    dequeue(): void;
-+
-+    /**
-+     * Enqueues a send operation.
-+     *
-+     * @param {Array} params Send operation parameters.
-+     * @private
-+     */
-+    enqueue(params: Array<any>): void;
-+
-+    /**
-+     * Sends a frame.
-+     *
-+     * @param {Buffer[]} list The frame to send
-+     * @param {Function} [cb] Callback
-+     * @private
-+     */
-+    sendFrame(list: Array<Buffer>, cb: Function): void;
+     // WebSocket stream
+     function createWebSocketStream(websocket: WebSocket, options?: DuplexOptions): Duplex;
  }
- 
--export = WebSocket;
-+// WebSocket stream
-+export function createWebSocketStream(websocket: WebSocket, options?: DuplexOptions): Duplex;
-+
-+export default WebSocket;
