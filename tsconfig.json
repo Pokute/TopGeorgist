@@ -3,14 +3,18 @@
 		"outDir": "./compiled/",
 		"sourceMap": true,
 		"strictNullChecks": true,
-		"module": "esnext",
-		"moduleResolution": "node",
+		"module": "ESNext",
+		"moduleResolution": "Node",
 		"jsx": "react",
 		"target": "es2019",
 		"allowJs": true,
 		"strict": true,
 		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+        "lib": [
+            "ES2021"
+        ],
+        "resolveJsonModule": true
 	},
 	"compileOnSave": true,
 	"files": [
