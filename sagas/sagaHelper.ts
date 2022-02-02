@@ -26,11 +26,12 @@ export const tryWrapTakeEvery = <A extends Action> (pattern: ActionPattern<A>, w
 				const action = yield* take(pattern)
 				yield* call(worker, action);
 			} catch (error) {
-				yield* put(wrapEveryErrorReportAction({
-					actionPattern: pattern,
-					workerName: worker.name,
-					error
-				}));
+				if (error instanceof Error)
+					yield* put(wrapEveryErrorReportAction({
+						actionPattern: pattern,
+						workerName: worker.name,
+						error
+					}));
 			}
 		}
 	});

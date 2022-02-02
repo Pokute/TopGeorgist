@@ -13,7 +13,9 @@ export const frame = createAction('FRAME',
 
 // Sagas:
 
-const reqWinFrame = () => new Promise(resolve => window.requestAnimationFrame(resolve));
+const reqWinFrame = (!isServer && window)
+	? () => new Promise(resolve => window.requestAnimationFrame(resolve))
+	: () => {};
 
 const frameLoop = function* () {
 	while (true) {

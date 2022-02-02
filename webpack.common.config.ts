@@ -12,6 +12,10 @@ export default {
 			'.ts',
 			'.tsx',
 		],
+		fallback: {
+			'crypto': false,
+			'path': false,
+		} as const
 	},
 	module: {
 		rules: [
@@ -44,3 +48,4 @@ export default {
 		],
 	},
 };
+ 

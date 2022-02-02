@@ -12,6 +12,7 @@ import { set as allSet } from '../actions/allSet.js';
 import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayerTgoId } from '../actions/defaults.js';
 import { WithClient } from '../actions/withClient.js';
 import { select } from '../redux-saga-helpers.js';
+import { WebSocket } from 'ws';
 
 // Actions:
 

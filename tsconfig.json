@@ -12,7 +12,8 @@
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
         "lib": [
-            "ES2021"
+            "ES2021",
+			"DOM"
         ],
         "resolveJsonModule": true
 	},
