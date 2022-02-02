@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -50,10 +50,9 @@ const renderCanvasMap = ({
 }) => {
 	if (!canvas) return;
 	if (!tileSet) return;
+	const ctx = canvas.getContext('2d');
+	if (!ctx) return;
 
-	const tryCanvas = canvas.getContext('2d');
-	if (!tryCanvas) return;
-	const ctx = tryCanvas as CanvasRenderingContext2D;
 	for (let y = Math.floor(minTile.y); y < Math.ceil(maxTile.y); y++)
 		for (let x = Math.floor(minTile.x); x < Math.ceil(maxTile.x); x++) {
 			const tile = (
@@ -130,7 +129,6 @@ const renderCanvas = ({
 	if (!canvas) return;
 	// console.log(minTile, maxTile);
 
-	const ctx = canvas.getContext('2d');
 	renderCanvasMap({ minTile, maxTile, map, tileSet, canvas });
 	renderCanvasTgos({ minTile, maxTile, tgosState, canvas, tileSize: map.tileSize });
 };
@@ -140,6 +138,7 @@ export interface Type {
 	readonly map: MapType,
 	readonly minTile: MapPosition,
 	readonly maxTile: MapPosition,
+	readonly panView: (panAmount: MapPosition) => void;
 }
 
 type Props = Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>;
@@ -152,20 +151,44 @@ const GameRenderer = ({
 	tgosState,
 	tileSet,
 	onClick,
+	panView,
 }: Props) => {
 	const canvas = useRef<HTMLCanvasElement | null>(null);
 
+	const [mapDrag, setMapDrag] = useState<undefined | MapPosition>(undefined);
+
 	const onMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
-		if (event.button == 2) {
-			event.stopPropagation();
-			event.preventDefault();
+		switch (event.button) {
+			case 1:
+				setMapDrag({
+					x: 20,
+					y: 20,
+				} as MapPosition)
+				break;
+			case 2:
+				event.stopPropagation();
+				event.preventDefault();
+				break;
+			default:
 		}
 	}
 
 	const onMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
-		if (event.button == 2) {
-			event.stopPropagation();
-			event.preventDefault();
+		switch (event.button) {
+			case 1:
+				setMapDrag(undefined);
+				break;
+			case 2:
+				event.stopPropagation();
+				event.preventDefault();
+				break;
+			default:
+		}
+	}
+
+	const onMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+		if (mapDrag) {
+			panView({ x: -event.movementX / map.tileSize, y: -event.movementY / map.tileSize } as MapPosition);
 		}
 	}
 
@@ -193,7 +216,9 @@ const GameRenderer = ({
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseUp={onMouseUp}
+			onMouseMove={onMouseMove}
 			onContextMenu={onContextMenu}
+			onAuxClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
 		/>
 	);
 };

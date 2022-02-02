@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import GameRenderer from './gameRenderer.react.js';
@@ -29,6 +29,9 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 		const caloriesItem = props.player.inventory.find(i => i.typeId === 'calories');
 		if (caloriesItem) displayedCalories = caloriesItem.count;
 	}
+
+	const [viewPan, setViewPan] = useState<MapPosition>({ x: 0, y: 0 } as MapPosition);
+
 	return (
 		<div>
 			<GameRenderer
@@ -36,9 +39,13 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 				map={props.map}
 				{...getMinMax(
 					document.getElementById(props.view.canvasId) as HTMLCanvasElement,
-					props.center,
+					{
+						x: props.center.x + viewPan.x,
+						y: props.center.y + viewPan.y,
+					}  as MapPosition,
 					props.map,
 				)}
+				panView={({ x, y }) => setViewPan({ x: viewPan.x + x, y: viewPan.y + y } as MapPosition)}
 			/>
 			<Category
 				title={'Visitables'}
