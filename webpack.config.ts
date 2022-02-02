@@ -11,11 +11,13 @@ const config: webpack.Configuration = {
 	target: 'web',
 	output: {
 		filename: 'static/topGeorgist.bundle.js',
-		publicPath: '',
+		publicPath: '/',
 	},
 	...commonConfig,
 	devtool: 'source-map',
-	watch: true,
+	watchOptions: {
+		poll: true,
+	},
 };
 
 export default config;

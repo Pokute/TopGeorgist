@@ -10,7 +10,7 @@ const app = express();
 const devMiddleware = webpackDevMiddleware(
 	webpack(webpackConfig),
 	{
-		publicPath: '',
+		publicPath: webpackConfig.output?.publicPath,
 		// compress: true,
 		// hot: true,
 		// stats: 'errors-only',
