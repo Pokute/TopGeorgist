@@ -160,8 +160,6 @@ export const transactionReducer = (
 		const verifyPositiveOnly = ({ finalCount, type: { positiveOnly } }: ItemBalance ) => !positiveOnly || finalCount >= 0;
 		const verifyIsInteger = ({ finalCount, type: { isInteger } }: ItemBalance ) => !isInteger || finalCount === Math.floor(finalCount);
 	
-		const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
-	
 		const flattenedItemsBalance = participantsWithItemBalanceVerifiedTypes
 			.map(({ itemsBalance }) => itemsBalance)
 			.flat();
@@ -170,14 +168,20 @@ export const transactionReducer = (
 		if (stackableFails.length > 0)
 			throw new Error(`Transaction requirements - stackable not met for items: ${JSON.stringify(stackableFails)}`);
 	
-		const positiveOnlyFails = flattenedItemsBalance.filter(item => !verifyPositiveOnly(item));
-		if (positiveOnlyFails.length > 0)
-			throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
-	
 		const isIntegerFails = flattenedItemsBalance.filter(item => !verifyIsInteger(item));
 		if (isIntegerFails.length > 0)
 			throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
-	
+
+		const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
+		const flattenedItemsBalanceWithoutVirtualInventories = participantsWithItemBalanceVerifiedTypes
+			.filter(notParticipantWithVirtualInventoryFilter)
+			.map(({ itemsBalance }) => itemsBalance)
+			.flat();
+				
+		const positiveOnlyFails = flattenedItemsBalanceWithoutVirtualInventories.filter(item => !verifyPositiveOnly(item));
+		if (positiveOnlyFails.length > 0)
+			throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
+
 		const createInventoryAddForParticipant = ({ tgoId, items }: { tgoId: TgoId, items: Inventory }) =>
 			items.map(item => inventoryActions.add(tgoId, item.typeId, item.count));
 		const inventoryAdds: ReturnType<typeof inventoryActions.add>[] = participantsWithItemBalanceVerifiedTypes

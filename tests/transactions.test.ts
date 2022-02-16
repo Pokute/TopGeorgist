@@ -292,7 +292,7 @@ test('./sagas/transaction.ts: transaction - multi-participant, insufficient reso
 });
 
 // There's no support for this in transactions for virtual inventories at this time.
-test.failing('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', async t => {
+test('./sagas/transaction.ts: transaction - virtual inventories can have negative values of positiveOnly types', async t => {
 	const initialInventory = [
 		{
 			typeId: 'food' as TypeId,
