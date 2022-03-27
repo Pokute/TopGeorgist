@@ -9,7 +9,7 @@ import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../concerns/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
 import { TgoId } from '../../reducers/tgo.js';
-import { MapPosition } from '../../concerns/map.js';
+import { MapPosition, mapPosition } from '../../concerns/map.js';
 import { select } from '../../redux-saga-helpers.js';
 
 export const claimLand = createAction('RENT_OFFICE_CLAIM_LAND', ({
@@ -37,7 +37,7 @@ const claimLandsaga = function* ({ payload: { position, tgoId, visitableTgoId }}
 
 	const existingClaim = s.government.claims
 		.find(c => (
-			(c.position.x === position.x) && (c.position.y === position.y)
+			mapPosition.matching(c.position, position)
 		));
 	if (existingClaim) return false;
 

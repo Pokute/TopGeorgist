@@ -7,7 +7,7 @@ const getMinMax = (canvasElement?: HTMLCanvasElement, center?: MapPosition, map?
 		minTile: { x: 0, y: 0 } as MapPosition,
 		maxTile: { x: 0, y: 0 } as MapPosition,
 	};
-	if (!center || center.x === undefined || center.y === undefined) throw new TypeError('Undefined/bad center');
+	if (center?.x === undefined || center?.y === undefined) throw new TypeError('Undefined/bad center');
 	const c = canvasElement!;
 	const size = {
 		x: c.width,

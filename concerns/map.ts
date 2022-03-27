@@ -1,7 +1,6 @@
 import { createAction, ActionType, getType } from 'typesafe-actions';
 import { MersenneTwister19937, nativeMath, integer as randomInteger } from 'random-js';
 
-import isServer from '../isServer.js'
 import { Opaque } from '../typings/global.d.js';
 
 // Actions:
@@ -35,36 +34,44 @@ export type MapPosition = Opaque<{
 	readonly y: number,
 }, 'MapPosition'>;
 
+export const mapPosition = Object.assign(
+	function createMapPosition(x: number, y: number): MapPosition {
+		return ({
+			x, y
+		}) as MapPosition;
+	},
+	({
+		matching: function({ x, y }: MapPosition, { x: x2, y: y2 }: MapPosition) {
+			return (x == x2) && (y == y2);
+		},
+		isZero: function({ x, y }: MapPosition) {
+			return x === 0 && y === 0;
+		},
+		subtract: function({ x, y }: MapPosition, { x: x2, y: y2 }: MapPosition) {
+			return {
+				x: x - x2,
+				y: y - y2,
+			} as MapPosition;
+		},
+		distance: function(a: MapPosition, b: MapPosition) {
+			const difference = mapPosition.subtract(a, b);
+			return Math.sqrt(Math.pow(difference.x, 2) + Math.pow(difference.y, 2));
+		},
+		distanceManhattan: function(a: MapPosition, b: MapPosition) {
+			const difference = mapPosition.subtract(a, b);
+			return Math.abs(difference.x) + Math.abs(difference.y);
+		},
+
+		zero: function() {
+			return { x: 0, y: 0 };
+		},
+	})
+);
+
 export type MapSize = Opaque<{
 	readonly x: number,
 	readonly y: number,
 }, 'MapSize'>;
-
-type PositionDistanceEuclidean = { distance: number };
-type PositionDistanceManhattan = { distanceManhattan: number };
-type PositionDistance = PositionDistanceEuclidean | PositionDistanceManhattan;
-const isDistanceEuclidean = (distance: PositionDistance): distance is PositionDistanceEuclidean =>
-	distance.hasOwnProperty('distance');
-
-export const getPositionOffset = (a: MapPosition, b: MapPosition): MapPosition => ({
-	x: a.x - b.x,
-	y: a.y - b.y,
-} as MapPosition);
-export const getPositionDistanceManhattan = (a: MapPosition, b: MapPosition) => {
-	const offset = getPositionOffset(a, b)
-	return {
-		x: Math.abs(offset.x),
-		y: Math.abs(offset.y),
-	}
-};
-
-export const positionMatches = (a: MapPosition, b: MapPosition, distance: PositionDistance = { distanceManhattan: 0 }) => {
-	const distanceManhattan = getPositionDistanceManhattan(a, b);
-	const usedDistance = isDistanceEuclidean(distance)
-		? Math.sqrt(Math.pow(distanceManhattan.x, 2) + Math.pow(distanceManhattan.y, 2))
-		: distanceManhattan.x + distanceManhattan.y;
-	return (usedDistance == 0);
-};
 
 type TileDataType = number;
 

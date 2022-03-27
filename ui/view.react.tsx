@@ -7,7 +7,7 @@ import { getMinMax } from '../utils/view.js';
 import { ViewType } from '../reducers/view.js';
 import { TgoId } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
-import { MapType, MapSize, MapPosition } from '../concerns/map.js';
+import { MapType, MapSize, mapPosition, MapPosition } from '../concerns/map.js';
 import Category from './Category.js';
 import { hasComponentVisitable } from '../data/components_new.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
@@ -74,8 +74,7 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 		player,
 		visitables: player && hasComponentPosition(player) ?
 			Object.values(state.tgos)
-				.filter(tgo => hasComponentPosition(tgo) && (tgo.position.x === player.position.x)
-					&& (tgo.position.y === player.position.y))
+				.filter(tgo => hasComponentPosition(tgo) && mapPosition.matching(tgo.position, player.position))
 				.filter(hasComponentVisitable)
 				.filter(hasComponentLabel)
 			: [],

@@ -10,6 +10,7 @@ import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
 import { hasComponentPosition } from '../components/position.js';
 import { select } from '../redux-saga-helpers.js';
+import { mapPosition } from '../concerns/map.js';
 
 const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<typeof plantableActions.plant>) {
 	const s = yield* select();
@@ -22,7 +23,7 @@ const plant = function* ({ payload: { actorTgoId, targetTypeId }}: ActionType<ty
 
 	const freePlot = Object.values(s.tgos)
 		.filter(tgo => (
-			hasComponentPosition(tgo) && tgo.position && (tgo.position.x === plantPosition.x) && (tgo.position.y === plantPosition.y)
+			hasComponentPosition(tgo) && tgo.position && mapPosition.matching(tgo.position, plantPosition)
 		))
 		.every(tgo => !hasComponentMapGridOccipier(tgo))
 	if (!freePlot) return false;

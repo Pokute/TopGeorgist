@@ -14,7 +14,7 @@ import { setPosition } from '../components/position.js';
 import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
 import { getType } from 'typesafe-actions';
 import { tick } from '../concerns/ticker.js';
-import { positionMatches, getPositionOffset, getPositionDistanceManhattan, MapPosition } from '../concerns/map.js';
+import { mapPosition } from '../concerns/map.js';
 import { select } from '../redux-saga-helpers.js';
 
 // const handleGoalRequirementDelivery = function* (actorTgoId: TgoId, requirement: RequirementDelivery) {
@@ -32,8 +32,7 @@ import { select } from '../redux-saga-helpers.js';
 // 			}
 
 // 			let completed = false;
-// 			if (deliveryTgo.position.x === requirement.targetPosition.x &&
-// 				deliveryTgo.position.y === requirement.targetPosition.y) {
+// 			if (positionsMatch(deliveryTgo.position, requirement.targetPosition)) {
 // 				completed = true;
 // 			}
 // 			return [completed, deliveryTgoId]
@@ -216,7 +215,7 @@ const handleGoalRequirementConsume = function* (actorTgo: ComponentInventory, go
 const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTgo: ComponentGoal,  { targetPosition }: RequirementMove) {
 	const s= yield* select();
 
-	if (positionMatches(actorTgo.position, targetPosition)) {
+	if (mapPosition.matching(actorTgo.position, targetPosition)) {
 		// The goal requirement completed.
 		yield* cleanUpGoal(actorTgo, goalTgo);
 		return true
@@ -252,7 +251,7 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 			return false;
 		const actorWorkOutput = workOutput[0].awardItems;
 		for (let positionChange = 0; positionChange < (actorWorkOutput.find(ii => ii.typeId == 'position') || { count: 0 }).count; positionChange++) {
-			const positionOffset = getPositionOffset(actorTgo.position, targetPosition);
+			const positionOffset = mapPosition.subtract(actorTgo.position, targetPosition);
 			const currentPos = ((yield* select()) as RootStateType).tgos[actorTgo.tgoId]!.position!;
 			const change = {
 				x: -1 * Math.sign(positionOffset.x),
@@ -260,13 +259,13 @@ const handleGoalRequirementMove = function* (actorTgo: ComponentPosition, goalTg
 			};
 			// yield* put(res);
 			yield* put(setPosition(actorTgo.tgoId, { x: currentPos.x + change.x, y: currentPos.y + change.y } as MapPosition));
-			if (positionMatches(actorTgo.position, targetPosition)) {
+			if (mapPosition.matching(actorTgo.position, targetPosition)) {
 				yield* cleanUpGoal(actorTgo, goalTgo);
 				break;
 			}
 		}
 		yield* put(removeWork(goalTgo.tgoId, workTgo.tgoId));
-		if (positionMatches(actorTgo.position, targetPosition)) {
+		if (mapPosition.matching(actorTgo.position, targetPosition)) {
 			yield* cleanUpGoal(actorTgo, goalTgo);
 			return true;
 		}
