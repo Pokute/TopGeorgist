@@ -8,6 +8,7 @@ import { RootStateType } from '../reducers/index.js';
 import InventoryReact from './inventory.react.js';
 import { TgoId } from '../reducers/tgo.js';
 import Category from './Category.js';
+import MapPosition from './MapPosition.js';
 
 const RenderWork = ({ workTgoId }: { workTgoId: TgoId }) => {
 	const wiTgo = useSelector((store: RootStateType) => store.tgos[workTgoId]);
@@ -50,11 +51,11 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData: string }) =
 		<span>{`${tgoData}`}</span>
 		{tgo.goal.requirements.map(req => {
 			switch(req.type) {
-				// case 'RequirementMove': {
-				// 	return (<span key={req.type}>
-				// 		{`Req move to: ${req.targetPosition.x}, ${req.targetPosition.y}`}
-				// 	</span>);
-				// }
+				case 'RequirementMove': {
+					return (<span key={req.type}>
+						{`Req move to: `}<MapPosition {...req.targetPosition} />
+					</span>);
+				}
 				default:
 					return (<span key={req.type}>
 						{`unknown type`}
@@ -80,7 +81,7 @@ const InventoryTgo = ({ i }: { i: InventoryItem }) => {
 		return (<span>{`Tgo not found for id ${i.tgoId}`}</span>);
 	}
 
-	const tgoData = `TgoId: ${i.tgoId}. Count: ${i.count}.`;
+	const tgoData = `TgoId: ${i.tgoId}.${i.count !== undefined && `Count: ${i.count}.`}`;
 
 	if (isComponentGoal(tgo)) {
 		return (<RenderGoal
