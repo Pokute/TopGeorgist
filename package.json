@@ -62,10 +62,11 @@
     "redux-saga-tester": "^1.0.874",
     "sinon": "^7.3.2",
     "source-map-loader": "^0.2.3",
-    "ts-loader": "^9.1.2",
-    "ts-node": "^10.4.0",
+    "ts-loader": "^9.4.2",
+    "ts-node": "^10.9.1",
     "typescript": "npm:@typescript-deploys/pr-build@4.6.0-pr-43617-23",
     "webpack": "^5.68.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-middleware": "^5.3.1"
   },
   "browser": {
@@ -74,12 +75,13 @@
   "scripts": {
     "compile-local": "node ./node_modules/typescript/bin/tsc --esModuleInterop",
     "build": "webpack --display-error-details --config webpack.config.js",
-    "server-min": "node --experimental-specifier-resolution=node --inspect --loader ts-node/esm server.ts",
-    "webserver-min": "node --experimental-specifier-resolution=node --inspect --loader ts-node/esm expressServer.ts",
+    "server-min": "node --experimental-specifier-resolution=node --inspect=:9229 --loader ts-node/esm server.ts",
+    "webserver-min": "node --experimental-specifier-resolution=node --inspect=:9230 --loader ts-node/esm expressServer.ts",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
     "test-transaction": "ava -vs tests/transactions.test.ts",
     "test-saga": "ava -vs tests/sagaThrow.test.ts",
+    "test-js": "ava -vs tests/testjs.test.js",
     "testnyc": "nyc ava -vs",
     "postinstall": "patch-package"
   },
@@ -97,6 +99,6 @@
       "--loader=ts-node/esm",
       "--experimental-specifier-resolution=node"
     ],
-    "timeout": "20s"
+    "timeout": "60s"
   }
 }

@@ -24,16 +24,15 @@
 			"url": "http://localhost:24321/index.html",
 			"webRoot": "${workspaceFolder}",
 			"port": 9222,
-			"breakOnLoad": false,
 		},
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Launch express",
+			"name": "Launch webserver",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
-				"express"
+				"webserver-min"
 			]
 		},
 		{
@@ -43,9 +42,8 @@
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
-				"server"
+				"server-min"
 			],
-			"port": 9229,
 		},
 	],
 	"compounds": [
@@ -53,7 +51,7 @@
 			"name": "Servers&client",
 			"configurations": [
 				"Launch Chrome against localhost",
-				"Launch express",
+				"Launch webserver",
 				"Launch gameserver",
 			],
 		}
