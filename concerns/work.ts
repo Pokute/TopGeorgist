@@ -76,7 +76,7 @@ export type ComponentWorkDoer =
 		// readonly recipeInfos: Record<RecipeId, {
 		readonly recipeInfos: ReadonlyArray<{
 			readonly recipe: Recipe,
-			readonly autoRun: boolean,
+			readonly autoRun?: boolean,
 		}>,
 	};
 
@@ -164,13 +164,19 @@ export const workRootSaga = function* () {
 export const workCreatorReducer = (
 	tgosState: RootStateType['tgos'],
 	{ payload: { recipe, workerTgoId, inputInventoryTgoIds, outputInventoryTgoId, /* goalTgoId, */ }}: ActionType<typeof createWork>
-): RootStateType['tgos'] => {
+): [RootStateType['tgos'], Error?] => {
 	if (inputInventoryTgoIds.some(inputInventoryTgoId => !tgosState[inputInventoryTgoId])) {
-		throw new Error('Tgos matching inputInventoryTgoIds in handleCreateWork not found!');
+		return [
+			tgosState,
+			new Error('Tgos matching inputInventoryTgoIds in handleCreateWork not found!')
+		];
 	}
 
 	if (outputInventoryTgoId && !tgosState[outputInventoryTgoId]) {
-		throw new Error('Tgo matching outputInventoryTgoId in handleCreateWork not found!');
+		return [
+			tgosState,
+			new Error('Tgos matching outputInventoryTgoId in handleCreateWork not found!')
+		];
 	}
 
 	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
@@ -226,10 +232,11 @@ export const workCreatorReducer = (
 		)
 	];
 
-	return actions.reduce(
+	return [
+		actions.reduce(
 		(currentTgosState, action) => tgos(currentTgosState, action),
 		tgosState
-	);
+	)];
 
 	// Add the WorkTgoId to Goal inventory
 	// yield* put(inventoryAddTgoId(
@@ -241,7 +248,7 @@ export const workCreatorReducer = (
 	// yield* put(goalAddWork(goalTgoId, newWorkAction.payload.tgo.tgoId));
 };
 
-const workWithCompletionsReducer = (
+export const workWithCompletionsReducer = (
 	tgosState: RootStateType['tgos'],
 	itemTypesState: RootStateType['itemTypes'],
 	workDoerTgoId: TgoId,
@@ -448,6 +455,7 @@ const workDoerTickReducer = (
 		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
 
 	const tgosAfterAutoRecipeCreate = workDoer.recipeInfos
+		.filter(() => false)
 		.filter(recipeInfo => recipeInfo.autoRun)
 		.map(({recipe}) => recipe)
 		.reduce(
@@ -463,7 +471,7 @@ const workDoerTickReducer = (
 								workerTgoId: workDoer.tgoId,
 								inputInventoryTgoIds: [ workDoer.tgoId ],
 								outputInventoryTgoId: workDoer.tgoId,
-							}));
+							}))[0];
 						}
 				}
 				return currentTgosState;

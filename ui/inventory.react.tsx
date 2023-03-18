@@ -33,10 +33,10 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 					? (<InventoryTgo i={i} />)
 					: (<span>{`${i.typeId} : ${i.count}`}</span>)
 				}
-				<InventoryItem
+				{/* <InventoryItem
 					ii={i}
 					possibleRecipes={Object.values(recipes)}
-				/>
+				/> */}
 				{/* {((props.itemTypes[i.typeId] || {}) // Find the itemType
 					.actions || []) // and with it's actions...
 					.map(a =>

@@ -5,6 +5,7 @@ import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../sagas/buildings/rentOffice.js';
+import { move } from './recipes.js';
 
 export const createPlayerAction = () => tgosActions.add({
 	player: true,
@@ -21,13 +22,11 @@ export const createPlayerAction = () => tgosActions.add({
 			typeId: 'calories' as TypeId,
 			count: 2000,
 		},
+	],
+	recipeInfos: [
 		{
-			typeId: 'money' as TypeId,
-			count: 500,
-		},
-		{
-			typeId: 'pineApple' as TypeId,
-			count: 10,
+			recipe: move,
+//			autoRun: true, // Generate PositionChanges only when needed.
 		},
 	],
 });

@@ -8,16 +8,21 @@ import defaults, { Type as DefaultsType } from './defaults.js';
 import { frameReducer } from '../concerns/frame.js';
 import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
-import { mapReducer } from '../concerns/map.js';
+import { mapPosition, MapPosition, mapReducer } from '../concerns/map.js';
 import tgos, { TgosState } from './tgos.js';
 import { tick, tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
-import { createGoal, addGoals } from '../concerns/goal.js';
+import { createGoal, addGoals, hasComponentGoalDoer, goalDoersTickReducer } from '../concerns/goal.js';
 import { add as addTgo } from '../actions/tgos.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { AllActions } from '../allActions.js';
 import { createWork, workCreatorReducer, workDoersTickReducer } from '../concerns/work.js';
+import { moveGoal } from '../actions/moveGoal.js';
+import { ComponentInventory, hasComponentInventory, InventoryItem } from '../concerns/inventory.js';
+import { TypeId } from './itemType.js';
+import { createTupleFilter } from '../concerns/tgos.js';
+import { ComponentPosition, hasComponentPosition } from '../components/position.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -49,6 +54,38 @@ const combinedReducers = combineReducers({
 	views,
 });
 
+const applyMovement = (tgosState: TgosState) =>
+	({
+		...tgosState,
+		...Object.fromEntries(
+			Object.entries(tgosState)
+			.filter(createTupleFilter(hasComponentInventory))
+			.filter(createTupleFilter(hasComponentPosition))
+			.filter(createTupleFilter(hasComponentGoalDoer))
+			.map<[string, ComponentInventory & ComponentPosition, InventoryItem?, MapPosition?]>(
+				([tgoId, tgo]) => [
+						tgoId,
+						tgo,
+						tgo.inventory.find(ii => ii.typeId === 'movementAmount' as TypeId),
+						(() => {
+							const goal = tgo.activeGoals[0] && tgosState[tgo.activeGoals[0]]?.goal?.requirements[0];
+							if (goal?.type === 'RequirementMove') {
+								return goal.targetPosition;
+							}
+
+							return undefined;
+						})(),
+				]
+			)
+			.filter(([tgoId, tgo, movementAmountInventoryItem, targetPosition]) =>
+				(movementAmountInventoryItem?.count ?? 0) > 0 && targetPosition !== undefined)
+			.map(([tgoId, tgo, movementAmount, targetPosition]) => [tgoId, ({
+				...tgo,
+				position: mapPosition.sum(tgo.position, mapPosition.signedTowards(tgo.position, targetPosition!)),
+				inventory: tgo.inventory.filter(ii => ii.typeId !== 'movementAmount' as TypeId),
+			})])
+		),
+	});
 
 function bigReducers(state: RootStateType, action: AllActions) {
 	switch (action.type) {
@@ -62,21 +99,78 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			};
 		}
 		case getType(createWork): {
-			const newTgosState = workCreatorReducer(state.tgos, action);
-			if (newTgosState === state.tgos) return state;
+			const [afterCreateWorkTgosState, error] = workCreatorReducer(state.tgos, action);
+			if (afterCreateWorkTgosState === state.tgos) {
+				if (error) {
+					console.error(error);
+				}
+				return state;
+			}
 
 			return {
 				...state,
-				tgos: newTgosState,
+				tgos: afterCreateWorkTgosState,
 			};
 		}
 		case getType(tick): {
-			const newTgosState = workDoersTickReducer(state.tgos, state.itemTypes);
-			if (newTgosState === state.tgos) return state;
+			const afterWorkTgosState = workDoersTickReducer(state.tgos, state.itemTypes);
+
+			const afterGoalTgosState = goalDoersTickReducer(afterWorkTgosState, state.itemTypes);
+
+			const afterApplyMovementTgosState = applyMovement(afterGoalTgosState);
+
+			if (afterApplyMovementTgosState === state.tgos) return state;
 
 			return {
 				...state,
-				tgos: newTgosState,
+				tgos: afterApplyMovementTgosState,
+			};
+		}
+
+		case getType(moveGoal): {
+			const {tgoId: moverTgoId, position: targetPosition} = action.payload;
+			const moverTgo = state.tgos[moverTgoId];
+			if (!hasComponentGoalDoer(moverTgo) || !hasComponentInventory(moverTgo)) {
+				console.error(`Tried to move ${moverTgoId} but it either has not goaldoer or no inventory`);
+				return state;
+			}
+
+			const goalTgo = addTgo({
+				goal: {
+					title: 'Move to position',
+					workTgoIds: [],
+					requirements: [
+						{
+							type: "RequirementMove",
+							targetPosition,
+						},
+					],
+				}
+			});
+			const goalTgoId = goalTgo.payload.tgo.tgoId;
+			const stateWithGoalTgo = rootReducer(state, goalTgo);
+			// Add the tgoId to player inventory
+			// Add the tgoId to active goals.
+			return {
+				...stateWithGoalTgo,
+				tgos: {
+					...stateWithGoalTgo.tgos,
+					[moverTgoId]: {
+						...moverTgo,
+						inventory: [
+							...moverTgo.inventory,
+							{
+								typeId: 'tgoId' as TypeId,
+								tgoId: goalTgoId,
+								count: 1,
+							}
+						],
+						activeGoals: [
+							...moverTgo.activeGoals,
+							goalTgoId,
+						],
+					},
+				},
 			};
 		}
 		default: return state

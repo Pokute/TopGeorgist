@@ -47,6 +47,12 @@ export const mapPosition = Object.assign(
 		isZero: function({ x, y }: MapPosition) {
 			return x === 0 && y === 0;
 		},
+		sum: function({ x, y }: MapPosition, { x: x2, y: y2 }: MapPosition) {
+			return {
+				x: x + x2,
+				y: y + y2,
+			} as MapPosition;
+		},
 		subtract: function({ x, y }: MapPosition, { x: x2, y: y2 }: MapPosition) {
 			return {
 				x: x - x2,
@@ -61,9 +67,16 @@ export const mapPosition = Object.assign(
 			const difference = mapPosition.subtract(a, b);
 			return Math.abs(difference.x) + Math.abs(difference.y);
 		},
+		signedTowards: function(from: MapPosition, to: MapPosition): MapPosition {
+			const difference = mapPosition.subtract(to, from);
+			return {
+				x: Math.sign(difference.x),
+				y: Math.sign(difference.y),
+			} as MapPosition;
+		},
 
 		zero: function() {
-			return { x: 0, y: 0 };
+			return { x: 0, y: 0 } as MapPosition;
 		},
 	})
 );

@@ -5,6 +5,7 @@ import { serverConnectionActions } from './actions/serverConnection';
 import { transactionActions } from './concerns/transaction';
 import * as defaultsActions from './actions/defaults';
 import { workActions } from './concerns/work';
+import { moveGoal } from './actions/moveGoal';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -12,6 +13,7 @@ const allActions = {
 	serverConnection: serverConnectionActions,
 	transaction: transactionActions,
 	work: workActions,
+	moveGoal,
 }
 
 export type AllActions = ActionType<typeof allActions>;

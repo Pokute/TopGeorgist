@@ -14,7 +14,7 @@ export const move: Recipe = {
 		},
 	],
 	output: [{
-		typeId: 'position' as TypeId,
+		typeId: 'movementAmount' as TypeId,
 		count: 1,
 	}],
 };

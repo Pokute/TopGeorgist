@@ -74,9 +74,9 @@ export const items: InitialItemTypesState = {
 		isStorable: false,
 		positiveOnly: false,
 	},
-	position: {
-		label: 'Position',
-		isStorable: false,
+	movementAmount: {
+		label: 'MovementAmount',
+		isStorable: true, // For now since we process it in a separate step.
 	},
 	work: {
 		label: 'Work',

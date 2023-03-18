@@ -7,8 +7,8 @@ export type ComponentPosition = TgoRoot & {
 	readonly position: MapPosition,
 };
 
-export const hasComponentPosition = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPosition>) =>
-tgo && (tgo.position !== undefined) && (tgo.position.x !== undefined) && (tgo.position.y != undefined);
+export const hasComponentPosition = <BaseT extends TgoType>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentPosition>) =>
+(tgo !== undefined) && (tgo.position !== undefined) && (tgo.position.x !== undefined) && (tgo.position.y != undefined);
 
 export const setPosition = createAction('TGO_SET_POSITION',
 	(tgoId: TgoId, position: ComponentPosition['position']) => ({
