@@ -286,11 +286,6 @@ const handleGoalRequirement = function* (actorTgo: TgoRoot, goalTgo: ComponentGo
 	return false;
 };
 
-const handleGoal = function* (actorTgo: TgoRoot, goalTgo: ComponentGoal) {
-	yield* handleGoalRequirement(actorTgo, goalTgo, goalTgo.goal.requirements[0]);
-	return true;
-};
-
 const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 	const s = yield* select();
 	const actorTgo = s.tgos[actorTgoId];
@@ -314,33 +309,3 @@ const handleCancelGoal = function* (actorTgoId: TgoId, goalTgoId: TgoId) {
 	// yield* all(redeemedWorksAction.map(a => put(a)))
 	yield* put(redeem(actorTgo, goalTgo));
 }
-
-const handleGoalsForOwner = function* (owner: TgoType & ComponentGoalDoer & ComponentInventory) {
-	const s= yield* select();
-	if (owner.activeGoals.length <= 0) {
-		return false;
-	}
-
-	const activeGoal = s.tgos[owner.activeGoals[0]];
-	if (!isComponentGoal(activeGoal)) return false;
-
-	// yield* handleGoalIds(owner.tgoId, owner.activeGoals[0]);
-	yield* handleGoal(owner, activeGoal);
-	return true;
-}
-
-const handleGoalTick = function* () {
-	const s= yield* select();
-	// console.log(Object.values(s.tgos)[Object.values(s.tgos).length - 1]);
-	const goalOwners = Object.values(s.tgos)
-		.filter(hasComponentGoalDoer)
-		.filter(hasComponentInventory);
-
-	for (const goalOwner of goalOwners) yield* call(handleGoalsForOwner, goalOwner);
-};
-
-const queueListeners = function* () {
-	yield* takeEvery(getType(tick), handleGoalTick);
-};
-
-export default queueListeners;

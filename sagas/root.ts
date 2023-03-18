@@ -2,7 +2,6 @@ import { accountRootSaga } from '../concerns/account.js';
 import buildingGovernment from './buildings/government.js';
 import buildingRentOffice from './buildings/rentOffice.js';
 import client from './client.js';
-import goal from './goal.js';
 import goalCreator from './goalCreator.js';
 import serverConnection from './ServerConnection.js';
 import consumable from './consumable.js';
@@ -21,7 +20,6 @@ const rootSaga = function* () {
 	yield* buildingGovernment();
 	yield* buildingRentOffice();
 	yield* client();
-	yield* goal();
 	yield* goalCreator();
 	yield* serverConnection();
 	yield* consumable();
