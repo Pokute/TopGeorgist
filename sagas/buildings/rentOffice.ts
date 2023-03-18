@@ -4,7 +4,6 @@ import { ActionType, getType, createAction } from 'typesafe-actions';
 import * as governmentActions from '../../actions/government.js';
 import { inventoryActions } from '../../concerns/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
-import { checkOnVisitableLocation } from '../../utils/visitable.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { hasComponentInventory } from '../../concerns/inventory.js';
 import { TypeId } from '../../reducers/itemType.js';
@@ -33,7 +32,7 @@ const claimLandsaga = function* ({ payload: { position, tgoId, visitableTgoId }}
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
 		return false;
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
+	if (!mapPosition.matching(actorTgo.position, visitableTgo.position)) return false;
 
 	const existingClaim = s.government.claims
 		.find(c => (
@@ -65,7 +64,7 @@ const payRentSaga = function* ({
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
 		return false;
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
+	if (!mapPosition.matching(actorTgo.position, visitableTgo.position)) return false;
 
 	const citizen = s.government.citizens[tgoId];
 	if (!citizen) return false;

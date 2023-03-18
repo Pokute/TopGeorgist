@@ -2,10 +2,10 @@ import { put, takeEvery }  from 'typed-redux-saga';
 import * as governmentActions from '../../actions/government.js';
 import { inventoryActions } from '../../concerns/inventory.js';
 import { transaction } from '../../concerns/transaction.js';
-import { checkOnVisitableLocation } from '../../utils/visitable.js';
 import { hasComponentPosition } from '../../components/position.js';
 import { TypeId } from '../../reducers/itemType.js';
 import { select } from '../../redux-saga-helpers.js';
+import { mapPosition } from '../../concerns/map.js';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s = yield* select();
@@ -14,7 +14,7 @@ const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any)
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
 		return false;
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) {
+	if (!mapPosition.matching(actorTgo.position, visitableTgo.position)) {
 		return false;
 	}
 
@@ -31,7 +31,7 @@ const claimStipend = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	if (!hasComponentPosition(actorTgo) || !hasComponentPosition(visitableTgo))
 		return false;
 
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) {
+	if (!mapPosition.matching(actorTgo.position, visitableTgo.position)) {
 		return false;
 	}
 

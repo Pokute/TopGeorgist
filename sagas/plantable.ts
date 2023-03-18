@@ -4,7 +4,6 @@ import * as plantableActions from '../actions/plantable.js';
 import * as tgosActions from '../actions/tgos.js';
 import * as taskQueueActions from '../actions/taskQueue.js';
 import { transaction } from '../concerns/transaction.js';
-import { checkOnVisitableLocation } from '../utils/visitable.js';
 import { ActionType, getType } from 'typesafe-actions';
 import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
@@ -93,7 +92,7 @@ const harvest = function* ({ payload: { tgoId: actorTgoId, visitableTgoId: targe
 		return false;
 
 	if (!actorTgo || !hasComponentInventory(visitableTgo) || !plantTypeId) return false;
-	if (!checkOnVisitableLocation(actorTgo, visitableTgo)) return false;
+	if (!mapPosition.matching(actorTgo.position, visitableTgo.position)) return false;
 
 	const visitableItems = visitableTgo.inventory.find(i => i.typeId === plantTypeId);
 	if (!visitableItems) return false;
