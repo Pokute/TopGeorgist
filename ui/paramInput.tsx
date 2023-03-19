@@ -20,7 +20,7 @@ export interface ParamType {
 	},
 };
 
-export interface TypeMap {
+export interface TypeMap {
 	readonly [typeName: string]: ParamType,
 };
 

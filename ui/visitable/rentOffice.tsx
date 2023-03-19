@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { RootStateType } from '../../reducers/index.js';
+import MapPosition from '../MapPosition.js';
 
 const VisitableRentOffice = (props: ReturnType<typeof mapStoreToProps>) => (
 	<ul>
@@ -10,13 +11,13 @@ const VisitableRentOffice = (props: ReturnType<typeof mapStoreToProps>) => (
 			? <li>{'You have no claims since you are not a citizen'}</li>
 			: (<li>
 				<ul>
-					<li>{'Your claims:'}</li>
 					<li>
 						{`Total rent debt: ${props.citizenClaims.reduce((total, c) => total + c.rentDebt, 0)}`}
 					</li>
+					<li>{'Your claims:'}</li>
 					{props.citizenClaims.map(c => (
 						<li key={`${c.position.x},${c.position.y}`}>
-							{`Claim - Position: ${c.position.x},${c.position.y} Outstanding rent: ${c.rentDebt}`}
+							{`Claim - ${<MapPosition {...c.position} />} Outstanding rent: ${c.rentDebt}`}
 						</li>
 					))}
 				</ul>
