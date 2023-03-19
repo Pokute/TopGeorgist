@@ -22,6 +22,14 @@ export const createPlayerAction = () => tgosActions.add({
 			typeId: 'calories' as TypeId,
 			count: 2000,
 		},
+		{
+			typeId: 'money' as TypeId,
+			count: 500,
+		},
+		{
+			typeId: 'pineApple' as TypeId,
+			count: 10,
+		},
 	],
 	recipeInfos: [
 		{

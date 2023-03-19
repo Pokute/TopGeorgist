@@ -17,7 +17,9 @@ const VisitableRentOffice = (props: ReturnType<typeof mapStoreToProps>) => (
 					<li>{'Your claims:'}</li>
 					{props.citizenClaims.map(c => (
 						<li key={`${c.position.x},${c.position.y}`}>
-							{`Claim - ${<MapPosition {...c.position} />} Outstanding rent: ${c.rentDebt}`}
+							{`Claim - `}
+							<MapPosition {...c.position} />
+							{`Outstanding rent: ${c.rentDebt}`}
 						</li>
 					))}
 				</ul>
