@@ -26,7 +26,7 @@ const handleViewRawClick = function* ({ payload: { mapPosition, viewId }}: Actio
 	}
 
 	if (topAction.popOnClick) {
-		yield* put(viewActions.clickActionStack.pop());
+		yield* put(viewActions.clickActionStack.pop(viewId));
 	}
 
 	return true;

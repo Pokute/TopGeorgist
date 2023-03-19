@@ -42,9 +42,9 @@ export default (state: ViewsState = initialState, action: ViewAction | ViewsActi
 			};
 		}
 		default:
-			const a1 = viewActions.clickActionStack.push;
-			const agt = getType(a1);
-			if (isActionOf(a1, action)) {
+			if (isActionOf(viewActions.clickActionStack.push, action)
+				|| isActionOf(viewActions.clickActionStack.pop, action)
+			) {
 				const newViewState = viewReducer(state[action.payload.viewId], action);
 				if (newViewState !== state[action.payload.viewId]) {
 					return {

@@ -45,6 +45,6 @@ export const clickActionStack = {
 		})
 	)(),
 	pop: createAction('VIEW_CLICK_ACTION_STACK_POP',
-		() => ({})
+		(viewId: ViewId) => ({viewId})
 	)(),
 };
