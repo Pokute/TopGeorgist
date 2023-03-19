@@ -93,8 +93,11 @@ Milestone 3:
 	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
 	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
-	☐ Fix eating, planting, buying, selling for new goals.
-		✔ New consuming goal / requirement.
+	☐ Re-implement broken stuff:
+		☐ Eating
+		☐ Seed extraction
+		☐ Planting
+		☐ Harvesting
 
 Milestone 4:
 
@@ -111,7 +114,7 @@ Milestone 4:
 	☐ Hot reload?
 	☐ Progressbar Storybook tests.
 	✔ React-Redux -> 7.1
-		☐ Convert to redux hooks.
+		✔ Convert to redux hooks as we go.
 
 Milestone 5:
 
@@ -144,6 +147,9 @@ Milestone 5:
 	☐ Consider using dotenv https://github.com/motdotla/dotenv
 	☐ Reset reconnection timer on window focus / click event.
 	☐ Investigate µWebSockets. https://github.com/uNetworking/uWebSockets.js
+
+Unseen future:
+	☐ Implement eating, planting, buying, selling automatically by goals.
 
 Stories:
 

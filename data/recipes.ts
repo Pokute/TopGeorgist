@@ -39,6 +39,27 @@ export const consume: Recipe = {
 	],
 };
 
+export const digestHydrocarbons = {
+	type: 'digestHydrocarbons' as RecipeId,
+	input: [
+		{
+			typeId: 'hydrocarbons' as TypeId,
+			count: 100,
+		},
+		{
+			typeId: 'tick' as TypeId,
+			count: 2,
+		},
+	],
+	output: [
+		{
+			typeId: 'calories' as TypeId,
+			count: 100,
+		},
+	],
+
+}
+
 export const harvest: Recipe = {
 	type: 'harvest' as RecipeId,
 	input: [

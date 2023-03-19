@@ -34,9 +34,6 @@ export const items: InitialItemTypesState = {
 		label: 'Pineapple',
 		stackable: true,
 		isInteger: false,
-		components: [
-			'consumable',
-		],
 		inventory: [
 			{
 				typeId: 'hydrocarbons' as TypeId,
@@ -45,9 +42,6 @@ export const items: InitialItemTypesState = {
 		],
 	},
 	pineAppleShoot: {
-		components: [
-			'plantable',
-		],
 		label: 'Pineapple shoot',
 		stackable: true,
 		isInteger: true,

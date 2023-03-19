@@ -5,7 +5,6 @@ import { InventoryItem, hasComponentInventory, ComponentInventory } from '../con
 import { ComponentWork, isComponentWork } from '../concerns/work.js';
 import { ComponentGoal, isComponentGoal } from '../concerns/goal.js';
 import { RootStateType } from '../reducers/index.js';
-import InventoryReact from './inventory.react.js';
 import { TgoId, TgoType } from '../reducers/tgo.js';
 import Category from './Category.js';
 import MapPosition from './MapPosition.js';

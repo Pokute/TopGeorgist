@@ -1,17 +1,21 @@
-import { Action, ComponentList } from './components.js';
 import { TgoType, TgoRoot } from '../reducers/tgo.js';
 import { TaskQueueType } from '../reducers/taskQueue.js';
 import { ComponentPosition } from '../components/position.js';
+import { TypeId } from '../reducers/itemType.js';
+import { Parameter } from '../ui/paramInput.js';
 
-// Common
-
-type ComponentId = keyof ComponentList;
-type ComponentProps = {
-	readonly [extraProp: string]: any,
-};
-type ComponentType = ComponentId | [ ComponentId, ComponentProps ];
-
-// Specific
+export interface Action {
+	readonly label: string,
+	readonly parameters?: ReadonlyArray<Parameter>,
+	readonly onClick: {
+		readonly type: string,
+		readonly items?: ReadonlyArray<{
+			readonly typeId: TypeId,
+			readonly count: number,
+		}>,
+		readonly [extra: string]: any,
+	},
+}
 
 export type ComponentRentOffice = 
 	ComponentPosition & {
@@ -76,7 +80,7 @@ export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tg
 
 export type ComponentComponents = 
 TgoRoot & {
-	readonly components: ReadonlyArray<ComponentType>,
+	readonly components: ReadonlyArray<Readonly<['inventoryChange', { typeId: TypeId, perTick: number }]>>,
 };
 
 export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>

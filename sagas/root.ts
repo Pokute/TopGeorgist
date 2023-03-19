@@ -4,7 +4,6 @@ import buildingRentOffice from './buildings/rentOffice.js';
 import client from './client.js';
 import goalCreator from './goalCreator.js';
 import serverConnection from './ServerConnection.js';
-import consumable from './consumable.js';
 import { frameRootSaga } from '../concerns/frame.js';
 import net from './net.js';
 import plant from './plantable.js';
@@ -14,6 +13,7 @@ import { tickerRootSaga } from '../concerns/ticker.js';
 import { transactionRootSaga } from '../concerns/transaction.js';
 import view from './view.js';
 import { workRootSaga } from '../concerns/work.js';
+import { consumerRootSaga } from '../concerns/consumer.js';
 
 const rootSaga = function* () {
 	yield* accountRootSaga();
@@ -22,7 +22,6 @@ const rootSaga = function* () {
 	yield* client();
 	yield* goalCreator();
 	yield* serverConnection();
-	yield* consumable();
 	yield* frameRootSaga();
 	yield* net();
 	yield* plant();
@@ -32,6 +31,7 @@ const rootSaga = function* () {
 	yield* transactionRootSaga();
 	yield* view();
 	yield* workRootSaga();
+	yield* consumerRootSaga();
 };
 
 export default rootSaga;

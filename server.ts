@@ -25,6 +25,7 @@ import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
 import { setRunning as tickerSetRunning } from './concerns/ticker.js';
 import { claimLand, payRent } from './sagas/buildings/rentOffice.js';
+import { consumerActions } from './concerns/consumer.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -98,8 +99,6 @@ try {
 						case getType(createAccountWithTokenClientSalted):
 						case getType(requestChangePasswordClientSalted):
 						// case getType(setGoals):
-						case 'CONSUMABLE_CONSUME':
-						case 'CONSUMABLE_INTO_SEEDS':
 						case getType(transaction):
 						case 'PLANT':
 						case 'HARVEST':
@@ -110,6 +109,7 @@ try {
 						case getType(payRent):
 						case getType(moveGoal):
 						case getType(consumeGoal):
+						case getType(consumerActions.consume):
 							store.dispatch(data.action);
 							break;
 						default:

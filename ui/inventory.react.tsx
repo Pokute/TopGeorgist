@@ -1,31 +1,29 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { Action } from '../data/components.js';
 import * as netActions from '../actions/net.js';
-import { TypeId } from '../reducers/itemType.js';
-import { TgoId } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import InventoryTgo from './InventoryTgo.js';
 import recipes from '../data/recipes.js';
-import { hasComponentInventory } from '../concerns/inventory.js';
+import { ComponentInventory } from '../concerns/inventory.js';
 import InventoryItem from './InventoryItem.react.js';
+import { consumerActions, consumerIsTypeConsumable } from '../concerns/consumer.js';
+import { ItemTypesState } from '../reducers/itemTypes.js';
+import { hasComponentConsumer } from '../concerns/consumer.js';
 
-export interface Type {
-	// readonly inventory: ReadonlyArray<InventoryItem>,
-	// readonly itemTypes: ItemTypesState,
-	readonly ownerTgoId?: TgoId,
-	// readonly onComponentActionClick(action: Action, typeId: TypeId): () => void,
+interface Type {
+	readonly ownerTgo: ComponentInventory,
 };
 
-const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType<typeof mapDispatchToProps>) => props.ownerTgoId && props.inventory ?
-(
-	<Category
+export default ({ ownerTgo } : Type) => {
+	const dispatch = useDispatch();
+	const itemTypes = useSelector<RootStateType, ItemTypesState>(s => s.itemTypes)
+
+	return (<Category
 		title={'Inventory'}
 	>
-		{props.inventory.map(i => (
+		{ownerTgo.inventory.map(i => (
 			<div
 				key={i.tgoId || i.typeId}
 			>
@@ -33,65 +31,19 @@ const Inventory = (props: Type & ReturnType<typeof mapStoreToProps> & ReturnType
 					? (<InventoryTgo i={i} />)
 					: (<span>{`${i.typeId} : ${i.count}`}</span>)
 				}
-				{/* <InventoryItem
+				<InventoryItem
 					ii={i}
 					possibleRecipes={Object.values(recipes)}
-				/> */}
-				{/* {((props.itemTypes[i.typeId] || {}) // Find the itemType
-					.actions || []) // and with it's actions...
-					.map(a =>
-						<button
-							key={a.label}
-							onClick={props.onActionClick(a)}
-						>
-							{a.label}
-						</button>
-					)
-				} */}
-				{/* {props.itemTypes[i.typeId] && // Find the itemType
-					props.itemTypes[i.typeId]!.components &&
-					props.itemTypes[i.typeId]!.components! // and with it's actions...
-					.map<ComponentWithParams>(cEntry => Array.isArray(cEntry) ? cEntry : [ cEntry, undefined ])
-					.map<[Partial<ComponentActionable>, {}]>(([cId, params]) => ({ ...components[cId], params }))
-					.filter<[ComponentActionable, {}]>((arr): arr is [ComponentActionable, {}] => arr[0].actions !== undefined)
-					.map<[ComponentActionable['actions'], {}]>(([component, params]) => [component.actions, params])
-					.flat()
-					.map(action => Object.entries(action))
-					.reduce((arr, c) => [...arr, ...c], [])
-					.map(([caId, ca]) =>
-						<button
-							key={ca.label}
-							onClick={props.onComponentActionClick(ca, i.typeId)}
-						>
-							{ca.label}
-						</button>
-					)
-				} */}
+				/>
+				{hasComponentConsumer(ownerTgo)
+					&& consumerIsTypeConsumable(ownerTgo, itemTypes[i.typeId])
+					&& <button onClick={() => dispatch(netActions.send(consumerActions.consume({
+						tgoId: ownerTgo.tgoId!,
+						consumedItem: { typeId: i.typeId, count: 1 }
+				})))}>
+					consume
+				</button>}
 			</div>
 		))}
-	</Category>
-)
-: null;
-
-const mapStoreToProps = (store: RootStateType, passedProps: Type) => ({
-	inventory: passedProps.ownerTgoId
-		? store.tgos[passedProps.ownerTgoId].inventory
-		: undefined,
-	itemTypes: store.itemTypes,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch, passedProps: Type) => ({
-	// onActionClick: (action: Action) => (() => dispatch(action.onClick(passedProps.ownerTgoId))),
-	onComponentActionClick: (action: Action, targetTypeId: TypeId) => (
-		() => dispatch(netActions.send({
-			type: action.onClick.type,
-			payload: {
-				...action.onClick,
-				tgoId: passedProps.ownerTgoId,
-				targetTypeId,
-			},
-		}))
-	),
-});
-
-export default connect(mapStoreToProps, mapDispatchToProps)(Inventory);
+	</Category>)
+};

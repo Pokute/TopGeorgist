@@ -1,5 +1,4 @@
 import { ItemTypesState } from './itemTypes.js';
-import { ComponentArray } from '../data/components.js';
 import { Inventory } from '../concerns/inventory.js';
 import { Opaque } from '../typings/global.d.js';
 
@@ -10,7 +9,6 @@ type OptionalFields = {
 	readonly label?: string,
 	readonly building?: boolean,
 	readonly growsIntoTypeId?: TypeId,
-	readonly components?: ComponentArray,
 	readonly isTgoId?: boolean,
 	readonly inventory?: Inventory,
 };

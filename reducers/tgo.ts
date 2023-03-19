@@ -12,6 +12,7 @@ import { setPosition, ComponentPosition, PositionActionType, reducer as position
 import { ComponentPlayer } from '../components/player.js';
 import { ComponentLabel } from '../components/label.js';
 import { ComponentUniqueLabel } from '../components/uniqueLabel.js';
+import { ComponentConsumer } from '../concerns/consumer.js'
 import { GoalActionType } from '../concerns/goal.js';
 
 export type TgoActionType = ActionType<typeof tgoActions>
@@ -49,6 +50,7 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentWork>
 	& Partial<ComponentGoalDoer>
 	& Partial<ComponentWorkDoer>
+	& Partial<ComponentConsumer>
 );
 
 export interface TgoRoot {

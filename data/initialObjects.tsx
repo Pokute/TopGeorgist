@@ -5,14 +5,12 @@ import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../sagas/buildings/rentOffice.js';
-import { move } from './recipes.js';
+import { move, digestHydrocarbons } from './recipes.js';
 
-export const createPlayerAction = () => tgosActions.add({
+const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
 	components: [
-		['inventoryChange', { typeId: 'calories', perTick: -0.5 }],
-		'consumer',
-		'player',
+		['inventoryChange', { typeId: 'calories' as TypeId, perTick: -0.5 }],
 	],
 	activeGoals: [],
 	position: { x: 5, y: 5 } as MapPosition,
@@ -36,8 +34,19 @@ export const createPlayerAction = () => tgosActions.add({
 			recipe: move,
 //			autoRun: true, // Generate PositionChanges only when needed.
 		},
+		{
+			recipe: digestHydrocarbons,
+			autoRun: true,
+		}
 	],
-});
+	consumer: {
+		allowList: [
+			'hydrocarbons' as TypeId,
+		],
+	},
+} as const;
+
+export const createPlayerAction = () => tgosActions.add(defaultPlayerTgo);
 
 export const storeGeneralAction = () => tgosActions.add({
 	label: 'General Store',
