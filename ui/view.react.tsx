@@ -9,10 +9,10 @@ import { TgoId } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
 import { MapType, MapSize, mapPosition, MapPosition } from '../concerns/map.js';
 import Category from './Category.js';
-import { hasComponentVisitable } from '../data/components_new.js';
+import { ComponentVisitable, hasComponentVisitable } from '../data/components_new.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
-import { hasComponentPosition } from '../components/position.js';
-import { hasComponentLabel } from '../components/label.js';
+import { ComponentPosition, hasComponentPosition } from '../components/position.js';
+import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 
 export interface Type {
 	readonly view: ViewType,
@@ -50,11 +50,11 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 			<Category
 				title={'Visitables'}
 			>
-				{props.visitables.map(v => (
+				{props.player && props.visitables.map(v => (
 					<VisitableUI
 						key={v.label}
 						visitable={v}
-						visitor={props.player}
+						visitor={props.player!}
 					/>
 				))}
 			</Category>
@@ -62,7 +62,11 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 	);
 };
 
-const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
+const mapStoreToProps = (state: RootStateType, passedProps: Type): {
+	player?: ComponentPosition,
+	visitables: Array<ComponentVisitable & ComponentLabel>,
+	center: MapPosition,
+} => {
 	const tgos = Object.values(state.tgos);
 	const labeled = tgos
 		.filter(hasComponentLabel)
@@ -71,7 +75,7 @@ const mapStoreToProps = (state: RootStateType, passedProps: Type) => {
 	const player = state.defaults.playerTgoId ? state.tgos[state.defaults.playerTgoId] : undefined;
 	const followedTgo = passedProps.view.followTgoId && state.tgos[passedProps.view.followTgoId];
 	return {
-		player,
+		player: hasComponentPosition(player) ? player : undefined,
 		visitables: player && hasComponentPosition(player) ?
 			Object.values(state.tgos)
 				.filter(tgo => hasComponentPosition(tgo) && mapPosition.matching(tgo.position, player.position))

@@ -61,7 +61,7 @@ export const ParamInputPositionReact = ({ parameter, onPositionSelect }: TypePro
 				required
 				onChange={parseNum('y')}
 			/>
-			<button onClick={onPositionSelect(setPos)}>Select position</button>
+			<button type="button" onClick={onPositionSelect(setPos)}>Select position</button>
 		</div>
 	)
 };

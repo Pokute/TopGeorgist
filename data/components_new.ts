@@ -50,8 +50,8 @@ export const hasComponentMapGridOccipier = <BaseT extends TgoType>(tgo: BaseT) :
 	tgo && (tgo.mapGridOccupier !== undefined && tgo.mapGridOccupier === true);
 
 export type ComponentVisitable = 
-TgoRoot & {
-	readonly visitable?: {
+ComponentPosition & {
+	readonly visitable: {
 		readonly label: string,
 		readonly actions?: ReadonlyArray<Action>,
 	},
