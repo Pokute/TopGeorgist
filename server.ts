@@ -24,7 +24,7 @@ import { consumeGoal } from './actions/consumeGoal.js';
 import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
 import { setRunning as tickerSetRunning } from './concerns/ticker.js';
-import { claimLand, payRent } from './sagas/buildings/rentOffice.js';
+import { claimLand, payRent } from './concerns/rentOffice.js';
 import { consumerActions } from './concerns/consumer.js';
 
 // Start the server

@@ -29,6 +29,7 @@ export const items: InitialItemTypesState = {
 	money: {
 		label: 'Money',
 		stackable: true,
+		positiveOnly: true,
 	},
 	pineApple: {
 		label: 'Pineapple',

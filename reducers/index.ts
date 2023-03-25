@@ -23,6 +23,7 @@ import { ComponentInventory, hasComponentInventory, InventoryItem } from '../con
 import { TypeId } from './itemType.js';
 import { createTupleFilter } from '../concerns/tgos.js';
 import { ComponentPosition, hasComponentPosition } from '../components/position.js';
+import { payRent, payRentReducer } from '../concerns/rentOffice.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -173,6 +174,8 @@ function bigReducers(state: RootStateType, action: AllActions) {
 				},
 			};
 		}
+		case getType(payRent):
+			return payRentReducer(state, action);
 		default: return state
 	}
 }

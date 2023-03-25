@@ -4,7 +4,7 @@ import { Parameter } from '../ui/paramInput.js';
 import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
-import { payRent, claimLand } from '../sagas/buildings/rentOffice.js';
+import { payRent, claimLand } from '../concerns/rentOffice.js';
 import { move, digestHydrocarbons } from './recipes.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {

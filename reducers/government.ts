@@ -3,6 +3,7 @@ import { ActionType, getType } from 'typesafe-actions';
 import * as allSetActions from '../actions/allSet.js';
 import { tick } from '../concerns/ticker.js';
 import * as governmentActions from '../actions/government.js';
+import { RentOfficeAction, rentOfficeActions, rentOfficeReducer } from '../concerns/rentOffice.js';
 import { TgoId } from './tgo.js';
 import { MapPosition } from '../concerns/map.js';
 
@@ -38,18 +39,12 @@ export interface ClaimStateType {
 	readonly rentDebt: number,
 };
 
-const initialClaimState = {
-	tgoId: undefined,
-	position: undefined,
-	rentDebt: 0,
-};
-
 const rentPerTick = 0.5;
 
 type GovernmentAction = ActionType<typeof governmentActions>;
 type AllSetAction = ActionType<typeof allSetActions>;
 
-export default (state: GovernmentStateType = initialState, action: GovernmentAction | ActionType<typeof tick> | AllSetAction): GovernmentStateType => {
+export default (state: GovernmentStateType = initialState, action: GovernmentAction | RentOfficeAction | ActionType<typeof tick> | AllSetAction): GovernmentStateType => {
 	switch (action.type) {
 		case (getType(governmentActions.addCitizen)):
 			const citizen = state.citizens[action.payload];
@@ -83,23 +78,6 @@ export default (state: GovernmentStateType = initialState, action: GovernmentAct
 				rentModulus: totalMoney - (moneyPerCitizen * citizenCount),
 			};
 		}
-		case (getType(governmentActions.addRentModulus)):
-			return {
-				...state,
-				rentModulus: state.rentModulus + action.payload,
-			};
-		case (getType(governmentActions.rent)):
-			return {
-				...state,
-				claims: [
-					...state.claims,
-					{
-						...initialClaimState,
-						tgoId: action.payload.tgoId,
-						position: action.payload.position,
-					},
-				],
-			};
 		case (getType(governmentActions.addStipend)): {
 			const citizen = state.citizens[action.payload.tgoId];
 			if (!citizen) return state;
@@ -122,6 +100,10 @@ export default (state: GovernmentStateType = initialState, action: GovernmentAct
 					rentDebt: c.rentDebt + rentPerTick,
 				})),
 			};
+		case (getType(rentOfficeActions.rent)):
+		case (getType(rentOfficeActions.addRentModulus)):
+		case (getType(rentOfficeActions.addRentDebt)):
+			return rentOfficeReducer(state, action);
 		case (getType(allSetActions.set)):
 			return action.payload.government;
 		default:

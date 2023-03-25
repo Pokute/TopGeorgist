@@ -1,6 +1,6 @@
 import { accountRootSaga } from '../concerns/account.js';
 import buildingGovernment from './buildings/government.js';
-import buildingRentOffice from './buildings/rentOffice.js';
+import { rentOfficeRootSaga } from '../concerns/rentOffice.js';
 import client from './client.js';
 import goalCreator from './goalCreator.js';
 import serverConnection from './ServerConnection.js';
@@ -18,7 +18,7 @@ import { consumerRootSaga } from '../concerns/consumer.js';
 const rootSaga = function* () {
 	yield* accountRootSaga();
 	yield* buildingGovernment();
-	yield* buildingRentOffice();
+	yield* rentOfficeRootSaga();
 	yield* client();
 	yield* goalCreator();
 	yield* serverConnection();
