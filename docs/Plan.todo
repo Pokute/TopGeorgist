@@ -93,11 +93,13 @@ Milestone 3:
 	✔ Webpack 3 -> 4 migration @done(18-04-01 03:33)
 	✔ Express server running webpack and file serving. @done(18-04-01 03:37)
 	✔ Storybook (@storybook/react-native) https://github.com/storybooks/storybook @done(18-04-05 23:59)
-	☐ Re-implement broken stuff:
+	✔ Re-implement broken stuff:
 		✔ Eating
-		☐ Seed extraction
-		☐ Planting
-		☐ Harvesting
+		✔ Seed extraction
+		✔ Planting
+		✔ Harvesting
+		☐ Plant growing
+		✔ Replace plantable with deployable
 	✔ Bugs:
 		✔ Fix selecting a claimable tile also claiming it with the same click.
 		✔ Fix rent paying not resetting outstanding rent.
@@ -105,6 +107,8 @@ Milestone 3:
 
 Milestone 4:
 
+	☐ Redux persistent storage
+	☐ Automatic reconnect for client
 	☐ Farming overhaul
 		☐ Progress can be seen
 		☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.

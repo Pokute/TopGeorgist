@@ -53,7 +53,8 @@ export const consumeFromInventory = (consumer: ComponentConsumer, consumedInvent
 	if (countConsumed <= 0) return undefined;
 
 	if (!consumerIsTypeConsumable(consumer, consumedType)) return undefined;
-	const gainedItems = consumedType.inventory.filter(ii => consumer.consumer.allowList?.includes(ii.typeId));
+//	const gainedItems = consumedType.inventory.filter(ii => consumer.consumer.allowList?.includes(ii.typeId)); // all items.
+	const gainedItems = consumedType.inventory; // Only allowList items.
 	if (gainedItems.length === 0) return undefined;
 
 	return transaction({

@@ -49,7 +49,7 @@ const LeaderBoard = () => {
 export default ({ visitable, visitor }: Type) => {
 	return (
 		<div>
-			<p>{visitable.label}</p>
+			<p>{visitable.visitable.label}</p>
 			{(visitable.visitable.actions ?? [])
 				.map(va => (
 					<ActionUI

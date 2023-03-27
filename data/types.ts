@@ -40,6 +40,10 @@ export const items: InitialItemTypesState = {
 				typeId: 'hydrocarbons' as TypeId,
 				count: 500,
 			},
+			{
+				typeId: 'pineAppleShoot' as TypeId,
+				count: 1,
+			},
 		],
 	},
 	pineAppleShoot: {
@@ -47,6 +51,7 @@ export const items: InitialItemTypesState = {
 		stackable: true,
 		isInteger: true,
 		building: true,
+		deployable: true,
 		growsIntoTypeId: 'pineApple' as TypeId,
 	},
 	player: {

@@ -14,6 +14,7 @@ import { ComponentLabel } from '../components/label.js';
 import { ComponentUniqueLabel } from '../components/uniqueLabel.js';
 import { ComponentConsumer } from '../concerns/consumer.js'
 import { GoalActionType } from '../concerns/goal.js';
+import { ComponentDeployable } from '../concerns/deployable.js';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [
@@ -51,6 +52,7 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentGoalDoer>
 	& Partial<ComponentWorkDoer>
 	& Partial<ComponentConsumer>
+	& Partial<ComponentDeployable>
 );
 
 export interface TgoRoot {

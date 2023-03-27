@@ -7,6 +7,7 @@ import * as defaultsActions from './actions/defaults';
 import { workActions } from './concerns/work';
 import { moveGoal } from './actions/moveGoal';
 import { payRent, rentOfficeActions } from './concerns/rentOffice';
+import { deployableActions } from './concerns/deployable.js'
 
 const allActions = {
 	defaults: defaultsActions,
@@ -16,7 +17,8 @@ const allActions = {
 	work: workActions,
 	moveGoal,
 	rentOffice: rentOfficeActions,
-	payRent, 
+	payRent,
+	deployableActions,
 };
 
 export type AllActions = ActionType<typeof allActions>;

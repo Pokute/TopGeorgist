@@ -8,6 +8,7 @@ export type TypeId = Opaque<string, 'TypeId'>;
 type OptionalFields = {
 	readonly label?: string,
 	readonly building?: boolean,
+	readonly deployable?: boolean,
 	readonly growsIntoTypeId?: TypeId,
 	readonly isTgoId?: boolean,
 	readonly inventory?: Inventory,
