@@ -18,6 +18,9 @@ const config: webpack.Configuration = {
 	watchOptions: {
 		poll: true,
 	},
+	experiments: {
+		topLevelAwait: true,
+	},
 };
 
 export default config;

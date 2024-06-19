@@ -26,6 +26,14 @@
 			"port": 9222,
 		},
 		{
+			"type": "msedge",
+			"request": "launch",
+			"name": "Launch Edge against localhost",
+			"url": "http://localhost:24321/index.html",
+			"webRoot": "${workspaceFolder}",
+			"port": 9222,
+		},
+		{
 			"type": "node",
 			"request": "launch",
 			"name": "Launch webserver",

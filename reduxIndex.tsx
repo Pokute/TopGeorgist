@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { store } from './store.js';
+import { store } from './storeClient.js';
 import TopGeorgist from './ui/topGeorgist.react.js';
 import init from './topGeorgist.js';
 import * as viewsActions from './actions/views.js';

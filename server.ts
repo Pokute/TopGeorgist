@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { WebSocketServer as WSS } from 'ws';
 
 import config from './config.js';
-import { store } from './store.js';
+import { store } from './storeServer.js';
 import createItemTypes from './data/types.js';
 import initialObjectActions from './data/initialObjects.js';
 import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted, requestChangePasswordClientSalted } from './concerns/account.js';
@@ -31,7 +31,7 @@ import { deployableActions } from './concerns/deployable.js';
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
 
-console.log('Started server');
+console.log('Started game server');
 
 try {
 // When a connection is established
