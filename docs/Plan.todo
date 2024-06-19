@@ -98,7 +98,7 @@ Milestone 3:
 		✔ Seed extraction
 		✔ Planting
 		✔ Harvesting
-		☐ Plant growing
+		✔ Plant growing
 		✔ Replace plantable with deployable
 	✔ Bugs:
 		✔ Fix selecting a claimable tile also claiming it with the same click.
@@ -107,7 +107,7 @@ Milestone 3:
 
 Milestone 4:
 
-	☐ Redux persistent storage
+	✔ Redux persistent storage
 	☐ Automatic reconnect for client
 	☐ Farming overhaul
 		☐ Progress can be seen
@@ -118,9 +118,7 @@ Milestone 4:
 		☐ More sinks
 	☐ Rendering overhaul - support for custom renderers for items.
 		☐ Add graphics for most items.
-	☐ Client automatic reconnect.
 	☐ Hot reload?
-	☐ Progressbar Storybook tests.
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
 

@@ -3,7 +3,7 @@ import buildingGovernment from './buildings/government.js';
 import { rentOfficeRootSaga } from '../concerns/rentOffice.js';
 import client from './client.js';
 import goalCreator from './goalCreator.js';
-import serverConnection from './ServerConnection.js';
+import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
 import { frameRootSaga } from '../concerns/frame.js';
 import net from './net.js';
 import plant from './plantable.js';
@@ -21,7 +21,7 @@ const rootSaga = function* () {
 	yield* rentOfficeRootSaga();
 	yield* client();
 	yield* goalCreator();
-	yield* serverConnection();
+	yield* serverConnectionSaga();
 	yield* frameRootSaga();
 	yield* net();
 	yield* plant();

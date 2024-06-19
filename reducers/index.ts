@@ -2,7 +2,7 @@ import { combineReducers, AnyAction, Reducer } from 'redux'
 import { getType, ActionType } from 'typesafe-actions';
 
 import { accountListReducer } from '../concerns/account.js';
-import serverConnection, { ServerConnectionStateType } from './serverConnection.js';
+import { serverConnectionReducer, ServerConnectionStateType } from '../concerns/clientToServerConnection.js';
 import clients, { ClientsState } from './clients.js';
 import defaults, { Type as DefaultsType } from './defaults.js';
 import { frameReducer } from '../concerns/frame.js';
@@ -43,7 +43,7 @@ export interface RootStateType {
 
 const combinedReducers = combineReducers({
 	accounts: accountListReducer,
-	serverConnection,
+	serverConnection: serverConnectionReducer,
 	clients,
 	defaults,
 	frame: frameReducer,

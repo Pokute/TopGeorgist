@@ -1,7 +1,7 @@
 import { ActionType } from 'typesafe-actions'
 
 import { tickerActions } from './concerns/ticker'
-import { serverConnectionActions } from './actions/serverConnection';
+import { serverConnectionActions } from './concerns/clientToServerConnection';
 import { transactionActions } from './concerns/transaction';
 import * as defaultsActions from './actions/defaults';
 import { workActions } from './concerns/work';
