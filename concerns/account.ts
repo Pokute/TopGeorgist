@@ -12,7 +12,7 @@ import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayer
 import { WithClient } from '../actions/withClient.js';
 import { select } from '../redux-saga-helpers.js';
 import { setConnected } from './clientToServerConnection.js';
-import * as netActions from '../actions/net.js';
+import * as netActions from './infra/net.js';
 
 // Actions:
 

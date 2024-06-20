@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 
-import * as netActions from '../actions/net.js';
+import * as netActions from '../concerns/infra/net.js';
 import VisitableGovernmentBuilding from './visitable/governmentBuilding.js';
 import VisitableRentOffice from './visitable/rentOffice.js';
 import { TgoType } from '../reducers/tgo.js';

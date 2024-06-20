@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as netActions from '../actions/net.js';
+import * as netActions from '../concerns/infra/net.js';
 import ParamInput, { packParam } from './paramInput.js';
 import { Action } from '../data/components_new.js';
 

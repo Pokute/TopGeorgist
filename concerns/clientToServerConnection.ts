@@ -6,7 +6,7 @@ import { take as rawTake, takeEvery, put, call, fork, delay, race } from 'typed-
 
 import isServer from '../isServer.js'
 import config from '../config.js';
-import * as netActions from '../actions/net.js';
+import * as netActions from './infra/net.js';
 import { select, take } from '../redux-saga-helpers.js';
 
 const connectionTimeout = 5000;

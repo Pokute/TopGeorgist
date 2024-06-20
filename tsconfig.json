@@ -31,8 +31,9 @@
 		"utils/**/*",
 		"data/**/*",
 		"tests/**/*",
-		"typings/**/*"
-	],
+		"typings/**/*",
+		"concerns/**/*"
+],
 	"exclude": [
 		"node_modules"
 	]

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import * as netActions from '../../actions/net.js';
+import * as netActions from '../../concerns/infra/net.js';
 import { requestChangePasswordClientSalted } from "../../concerns/account.js";
 import { RootStateType } from "../../reducers/index.js";
 

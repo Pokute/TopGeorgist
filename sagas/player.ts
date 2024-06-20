@@ -5,7 +5,7 @@ import { accountActions, accountsActions } from '../concerns/account.js';
 import isServer from '../isServer.js'
 import { set as allSet } from '../actions/allSet.js';
 import * as defaultsActions from '../actions/defaults.js';
-import * as netActions from '../actions/net.js';
+import * as netActions from '../concerns/infra/net.js';
 import * as taskQueueActions from '../actions/taskQueue.js';
 import * as tgoActions from '../actions/tgo.js';
 import * as playerActions from '../actions/player.js';

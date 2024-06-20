@@ -5,7 +5,7 @@ import client from './client.js';
 import goalCreator from './goalCreator.js';
 import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
 import { frameRootSaga } from '../concerns/frame.js';
-import net from './net.js';
+import { netRootSaga } from '../concerns/infra/net.js';
 import plant from './plantable.js';
 import player from './player.js';
 import taskQueue from './taskQueue.js';
@@ -23,7 +23,7 @@ const rootSaga = function* () {
 	yield* goalCreator();
 	yield* serverConnectionSaga();
 	yield* frameRootSaga();
-	yield* net();
+	yield* netRootSaga();
 	yield* plant();
 	yield* player();
 	yield* taskQueue();

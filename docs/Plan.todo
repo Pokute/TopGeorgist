@@ -121,6 +121,7 @@ Milestone 4:
 	☐ Hot reload?
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
+	☐ Investigate aliases for import to avoid relative paths.
 
 Milestone 5:
 

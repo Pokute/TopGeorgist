@@ -1,17 +1,34 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { createAction, ActionType, getType } from 'typesafe-actions';
+import { AnyAction } from 'redux';
 import { takeEvery, put }  from 'typed-redux-saga';
 
-import * as netActions from '../actions/net.js';
-import { accountsActions } from '../concerns/account.js';
-import * as viewActions from '../actions/view.js';
-import { mapActions } from '../concerns/map.js';
-import * as tileSetsActions from '../actions/tileSets.js';
-import * as tgoActions from '../actions/tgo.js';
-import * as tgosActions from '../actions/tgos.js';
-import { moveGoal } from '../actions/moveGoal.js';
-import { MapPosition } from '../concerns/map.js';
-import { ViewId } from '../reducers/view.js';
-import { select } from '../redux-saga-helpers.js';
+import * as netActions from '../../concerns/infra/net.js';
+import { accountsActions } from '../../concerns/account.js';
+import * as viewActions from '../../actions/view.js';
+import { mapActions } from '../../concerns/map.js';
+import * as tileSetsActions from '../../actions/tileSets.js';
+import * as tgoActions from '../../actions/tgo.js';
+import * as tgosActions from '../../actions/tgos.js';
+import { moveGoal } from '../../actions/moveGoal.js';
+import { MapPosition } from '../../concerns/map.js';
+import { ViewId } from '../../reducers/view.js';
+import { select } from '../../redux-saga-helpers.js';
+
+// Actions:
+
+export const send = createAction('NET_SEND',
+	(sendAction: AnyAction) => ({
+		sendAction,
+	})
+)();
+
+export const receiveMessage = createAction('NET_MESSAGE',
+	(messageData: any) => ({
+		messageData,
+	})
+)();
+ 
+// Sagas:
 
 const netSend = function* (action: ActionType<typeof netActions.send>) {
 	const clienToServerSocket = (yield* select()).serverConnection.websocket;
@@ -59,9 +76,7 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 	};
 };
 
-const netListener = function* () {
+export const netRootSaga = function* () {
 	yield* takeEvery(getType(netActions.send), netSend);
 	yield* takeEvery(getType(netActions.receiveMessage), receiveMessageListener);
 };
-
-export default netListener;

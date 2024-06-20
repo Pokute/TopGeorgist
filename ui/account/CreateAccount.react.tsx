@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import * as netActions from '../../actions/net.js';
+import * as netActions from '../../concerns/infra/net.js';
 import { createAccountWithTokenClientSalted } from "../../concerns/account.js";
 
 export default () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as netActions from '../actions/net.js';
+import * as netActions from '../concerns/infra/net.js';
 import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import InventoryTgo from './InventoryTgo.js';
