@@ -8,13 +8,27 @@ const ConnectionInfo = ({ serverConnection: connection }: ReturnType<typeof mapS
 	<Category
 		title={'Connection'}
 	>
-		<div>
-			Websocket:
-			{connection.websocket
-				? 'defined'
-				: 'undefined'
+		<ul>
+			<li>
+				Websocket:
+				{connection.websocket
+					? 'defined'
+					: 'undefined'
+				}
+			</li>
+			<li>
+				Connection:
+				{connection.connected
+					? 'connected'
+					: 'not connected'
+				}
+			</li>
+			{!connection.connected &&
+				<li>
+					Current retry delay: {connection.reconnectionDelay}
+				</li>
 			}
-		</div>
+		</ul>
 	</Category>
 );
 

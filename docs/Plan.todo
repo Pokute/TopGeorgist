@@ -108,9 +108,9 @@ Milestone 3:
 Milestone 4:
 
 	✔ Redux persistent storage
-	☐ Automatic reconnect for client
+	✔ Automatic reconnect for client
 	☐ Farming overhaul
-		☐ Progress can be seen
+		☐ Progress can be seen. Progressbar?
 		☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
@@ -151,7 +151,8 @@ Milestone 5:
 	☐ Password changing.
 	☐ Save serverside password salt more securely.
 	☐ Consider using dotenv https://github.com/motdotla/dotenv
-	☐ Reset reconnection timer on window focus / click event.
+	☐ Reset reconnection timer on window/tab focus event.
+	☐ Manual reconnect with a button or just any interaction.
 	☐ Investigate µWebSockets. https://github.com/uNetworking/uWebSockets.js
 
 Unseen future:
