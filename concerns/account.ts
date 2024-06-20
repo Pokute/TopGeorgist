@@ -1,7 +1,6 @@
 import { Opaque } from '../typings/global.d.js';
 import forge from 'node-forge';
 import { v4 as uuidv4 } from 'uuid';
-import { AnyAction } from 'redux';
 import { createAction, ActionType, getType } from 'typesafe-actions';
 import { put, takeEvery }  from 'typed-redux-saga';
 
@@ -12,7 +11,8 @@ import { set as allSet } from '../actions/allSet.js';
 import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayerTgoId } from '../actions/defaults.js';
 import { WithClient } from '../actions/withClient.js';
 import { select } from '../redux-saga-helpers.js';
-import { WebSocket } from 'ws';
+import { setConnected } from './clientToServerConnection.js';
+import * as netActions from '../actions/net.js';
 
 // Actions:
 
@@ -286,22 +286,30 @@ const handleRequestChangePasswordClientSalted = function* ({ payload: { username
 	}));
 };
 
+const sendTokenOnConnect = function* () {
+	const token = window.localStorage.getItem('AccountToken');
+	if (token) {
+		yield* put(netActions.send(loginWithToken({ token })))
+	}
+};
+
 export const accountRootSaga = function* () {
-	if (!isServer) return;
-	yield* takeEvery(getType(accountsActions.accountRequestWithClient), handleAccountCreateRequestWithClient);
-	yield* takeEvery(`${getType(loginClientSalted)}_WITH_CLIENT`, handleAccountLogin);
-	yield* takeEvery(`${getType(loginWithToken)}_WITH_CLIENT`, handleAccountLoginWithToken);
-	yield* takeEvery(getType(createAccountWithTokenClientSalted), handleAccountCreateWithToken);
-	yield* takeEvery(getType(requestChangePasswordClientSalted), handleRequestChangePasswordClientSalted);
+	if (isServer) {
+		yield* takeEvery(getType(accountsActions.accountRequestWithClient), handleAccountCreateRequestWithClient);
+		yield* takeEvery(`${getType(loginClientSalted)}_WITH_CLIENT`, handleAccountLogin);
+		yield* takeEvery(`${getType(loginWithToken)}_WITH_CLIENT`, handleAccountLoginWithToken);
+		yield* takeEvery(getType(createAccountWithTokenClientSalted), handleAccountCreateWithToken);
+		yield* takeEvery(getType(requestChangePasswordClientSalted), handleRequestChangePasswordClientSalted);
+	} else {
+		// client
+		yield* takeEvery(getType(setConnected), sendTokenOnConnect);
+	}
 };
 
 // Account Reducer:
 
 export type AccountId = Opaque<string, 'AccountId'>;
 export type Token = string;
-export interface extendedSocket extends WebSocket {
-	sendAction(action:AnyAction): void,
-};
 
 export interface AccountType {
 	readonly accountId: AccountId,

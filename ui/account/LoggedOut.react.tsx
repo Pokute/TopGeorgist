@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { loginClientSalted, loginWithToken } from '../../concerns/account.js';
+import { loginClientSalted } from '../../concerns/account.js';
 import * as netActions from '../../actions/net.js';
 
 export default () => {
@@ -16,12 +16,6 @@ export default () => {
 			dispatch(netActions.send(loginClientSalted({ username, password })));
 		}
 	};
-	useEffect(() => {
-		const token = window.localStorage.getItem('AccountToken');
-		if (token) {
-			dispatch(netActions.send(loginWithToken({ token })))
-		}
-	}, []);
 	const [ accountFieldsVisible, setAccountFieldsVisible ] = useState(false);
 	return (
 		<div>
