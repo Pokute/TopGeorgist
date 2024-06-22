@@ -53,6 +53,26 @@
 				"server-min"
 			],
 		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch webserver-compiled",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"webserver-compiled"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch gameserver-compiled",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"server-compiled"
+			],
+		},
 	],
 	"compounds": [
 		{

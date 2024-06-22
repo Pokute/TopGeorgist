@@ -77,6 +77,8 @@
     "build": "webpack --config compiled/webpack.config.js",
     "server-min": "node --experimental-specifier-resolution=node --inspect=:9229 --loader ts-node/esm server.ts",
     "webserver-min": "node --experimental-specifier-resolution=node --inspect=:9230 --loader ts-node/esm expressServer.ts",
+    "server-compiled": "node compiled/server.js",
+    "webserver-compiled": "node compiled/expressServerCompiled.js",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
     "test-transaction": "ava -vs tests/transactions.test.ts",
