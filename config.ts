@@ -1,10 +1,10 @@
 const config = {
 	gameServer: {
-		host: 'localhost',
+		host: 'topgeorgist-game.onrender.com',
 		port: 24320,
 	},
 	httpServer: {
-		host: 'localhost',
+		host: '0.0.0.0',
 		port: 24321,
 	},
 };
