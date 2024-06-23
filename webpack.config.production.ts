@@ -1,25 +1,19 @@
 import * as webpack from 'webpack';
 
 import commonConfig from './webpack.common.config.js';
-import path from 'path';
 
 const config: webpack.Configuration = {
-	mode: 'development',
+	mode: 'production',
 	entry: [
-		// './topGeorgist'
-		'./reduxIndex.tsx',
+		'./reduxIndex.js',
 	],
 	target: 'web',
 	output: {
-		path: path.resolve(new URL('.', import.meta.url).pathname, 'dist'),
 		filename: 'static/topGeorgist.bundle.js',
 		publicPath: '/',
 	},
 	...commonConfig,
 	devtool: 'source-map',
-	watchOptions: {
-		poll: true,
-	},
 	experiments: {
 		topLevelAwait: true,
 	},
