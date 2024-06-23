@@ -5,7 +5,7 @@ const config = {
 	},
 	httpServer: {
 		host: '0.0.0.0',
-		port: 24321,
+		port: 80,
 	},
 };
 

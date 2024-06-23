@@ -9,6 +9,7 @@ const config: webpack.Configuration = {
 	],
 	target: 'web',
 	output: {
+		path.resolve(new URL('.', import.meta.url).pathname, 'dist')
 		filename: 'static/topGeorgist.bundle.js',
 		publicPath: '/',
 	},
