@@ -31,7 +31,7 @@ import { deployableActions } from './concerns/deployable.js';
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
 
-console.log('Started game server');
+console.log(`Started game server. Binding to ${config.gameServer.bind}:${config.gameServer.port}`);
 
 try {
 // When a connection is established

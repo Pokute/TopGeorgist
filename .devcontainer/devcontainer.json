@@ -21,12 +21,22 @@
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
+		80,
+		8080,
 		24320,
 		24321
 	],
 
 	// Use 'portsAttributes' to set default properties for specific forwarded ports. More info: https://code.visualstudio.com/docs/remote/devcontainerjson-reference.
 	"portsAttributes": {
+		"8080": {
+			"label": "Gameserver8",
+			"onAutoForward": "silent"
+		},
+		"80": {
+			"label": "Webserver8",
+			"onAutoForward": "notify"
+		},
 		"24320": {
 			"label": "Gameserver",
 			"onAutoForward": "silent"

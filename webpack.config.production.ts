@@ -10,8 +10,8 @@ const config: webpack.Configuration = {
 	],
 	target: 'web',
 	output: {
-		path: path.resolve(new URL('.', import.meta.url).pathname, 'dist'),
-		filename: 'static/topGeorgist.bundle.js',
+		path: path.resolve(new URL('.', import.meta.url).pathname, '..', 'dist', 'static'),
+		filename: 'topGeorgist.bundle.js',
 		publicPath: '/',
 	},
 	...commonConfig,
