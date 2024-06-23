@@ -51,7 +51,7 @@ const listenConnect = function* ({}: ActionType<typeof serverConnectionActions.c
 		state.serverConnection.websocket.disconnect();
 	}
 
-	const ws = new WebSocket(`ws://${config.gameServer.host}:${config.gameServer.port}`);
+	const ws = new WebSocket(`wss://${config.gameServer.host}:${config.gameServer.port}`);
 	const clientToServerWS = new WebSocketWrapper(ws);
 
 	if (!clientToServerWS)
