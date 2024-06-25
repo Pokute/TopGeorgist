@@ -1,10 +1,17 @@
 import ResolveTypeScriptPlugin from 'resolve-typescript-plugin';
+import Module from "node:module";
+
+const require = Module.createRequire(import.meta.url);
+const Dotenv = require('dotenv-webpack');
 
 export default {
+	plugins: [
+		new Dotenv(),
+	],
 	resolve: {
 		// fullySpecified: true,
 		plugins: [
-			new ((ResolveTypeScriptPlugin as any).default)()
+			new ((ResolveTypeScriptPlugin as any).default)(),
 		],
 		extensions: [
 			'.js',

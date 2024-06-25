@@ -6,3 +6,5 @@ static/topGeorgist.bundle.js.map
 storage
 compiled
 .nyc_output
+dist/static/*
+.env

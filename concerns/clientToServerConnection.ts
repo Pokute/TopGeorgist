@@ -51,7 +51,10 @@ const listenConnect = function* ({}: ActionType<typeof serverConnectionActions.c
 		state.serverConnection.websocket.disconnect();
 	}
 
-	const ws = new WebSocket(`wss://${config.gameServer.host}:${config.gameServer.port}`);
+	const protocol = process.env.REACT_APP_GAME_SERVER_PROTOCOL || 'ws';
+	const host = process.env.REACT_APP_GAME_SERVER_HOST || 'localhost'
+	const port = process.env.REACT_APP_GAME_SERVER_PORT || (protocol == 'ws' ? 80 : 443);
+	const ws = new WebSocket(`${protocol}://${host}:${port}`);
 	const clientToServerWS = new WebSocketWrapper(ws);
 
 	if (!clientToServerWS)

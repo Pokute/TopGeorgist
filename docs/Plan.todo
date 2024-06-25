@@ -126,6 +126,8 @@ Milestone 4:
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
 	☐ Investigate aliases for import to avoid relative paths.
+	☐ Publishing
+	☐ Server hosting.
 
 Milestone 5:
 
@@ -146,13 +148,10 @@ Milestone 5:
 	☐ Refactor client init/mainloop code.
 	☐ Refactor server init/mainloop code.
 	☐ Move netActions.send to a redux-saga that listens to all applicable actions?
-	☐ Publishing
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop
 		☐ reducer-reducer?
 		☐ Need for redux-thunk?
-	☐ Server hosting.
-		☐ Where?
 	☐ Password changing.
 	☐ Save serverside password salt more securely.
 	☐ Consider using dotenv https://github.com/motdotla/dotenv
