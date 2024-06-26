@@ -126,8 +126,8 @@ Milestone 4:
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
 	☐ Investigate aliases for import to avoid relative paths.
-	☐ Publishing
-	☐ Server hosting.
+	✔ Publishing
+	✔ Server hosting.
 
 Milestone 5:
 

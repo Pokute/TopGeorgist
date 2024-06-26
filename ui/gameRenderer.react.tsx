@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { SetStateAction, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -156,14 +156,20 @@ const GameRenderer = ({
 	const canvas = useRef<HTMLCanvasElement | null>(null);
 
 	const [mapDrag, setMapDrag] = useState<undefined | MapPosition>(undefined);
+	const usePointerLock = false;
 
-	const onMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+	const onPointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
 		switch (event.button) {
 			case 1:
 				setMapDrag({
 					x: 20,
 					y: 20,
 				} as MapPosition)
+				event.stopPropagation();
+				event.preventDefault();
+				(event.target as Element).setPointerCapture(event.pointerId);
+				if (usePointerLock)
+					(event.target as Element).requestPointerLock();
 				break;
 			case 2:
 				event.stopPropagation();
@@ -173,10 +179,15 @@ const GameRenderer = ({
 		}
 	}
 
-	const onMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
+	const onPointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {
 		switch (event.button) {
 			case 1:
 				setMapDrag(undefined);
+				event.stopPropagation();
+				event.preventDefault();
+				(event.target as Element).releasePointerCapture(event.pointerId);
+				if (usePointerLock)
+					document.exitPointerLock();
 				break;
 			case 2:
 				event.stopPropagation();
@@ -186,7 +197,7 @@ const GameRenderer = ({
 		}
 	}
 
-	const onMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+	const onPointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
 		if (mapDrag) {
 			panView({ x: -event.movementX / map.tileSize, y: -event.movementY / map.tileSize } as MapPosition);
 		}
@@ -213,10 +224,14 @@ const GameRenderer = ({
 			id={`view-canvas-${view.viewId}`}
 			width={1000}
 			height={600}
+			className={[
+				'viewCanvas',
+				mapDrag && 'dragging',
+			].join(' ')}
 			onClick={onClick}
-			onMouseDown={onMouseDown}
-			onMouseUp={onMouseUp}
-			onMouseMove={onMouseMove}
+			onPointerDown={onPointerDown}
+			onPointerUp={onPointerUp}
+			onPointerMove={onPointerMove}
 			onContextMenu={onContextMenu}
 			onAuxClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
 		/>
@@ -231,7 +246,7 @@ const mapStoreToProps = (store: RootStateType) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, { view: v, map, minTile }: Type) => ({
-	onClick: (event: React.MouseEvent<HTMLCanvasElement>) => {
+	onClick: (event: React.PointerEvent<HTMLCanvasElement>) => {
 		if (!v) return;
 		if (!map) return;
 
