@@ -122,6 +122,7 @@ Milestone 4:
 		☐ More sinks
 	☐ Rendering overhaul - support for custom renderers for items.
 		☐ Add graphics for most items.
+	☐ UI cleanup.
 	☐ Hot reload?
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
