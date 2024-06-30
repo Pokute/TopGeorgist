@@ -9,6 +9,7 @@ import { hasComponentMapGridOccipier } from '../data/components_new.js';
 import { mapPosition } from './map.js';
 import { transaction } from './transaction.js';
 import { ComponentInventory } from './inventory.js';
+import { harvest } from '../actions/plantable.js';
 
 export type ComponentDeployable = TgoRoot & {
 	readonly deployable?: boolean,
@@ -48,8 +49,9 @@ const deploy = (state: RootStateType, actorTgo: ComponentPosition & ComponentInv
 export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, deployedTypeId }}: ActionType<typeof deployType>): RootStateType => {
 	const actor = selectTgo(state, tgoId);
 	const targetType = state.itemTypes[deployedTypeId]
-	if (!hasComponentPosition(actor) || !targetType?.growsIntoTypeId)
+	if (!hasComponentPosition(actor) || !targetType?.deployable)
 		return state;
+	const deploysIntoTypeId = targetType.deployable.deploysIntoTypeId ?? deployedTypeId;
 
 	const freePlot = Object.values(state.tgos)
 		.filter(tgo => (
@@ -75,26 +77,27 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 		mapGridOccupier: true,
 		position: actor.position,
 		presentation: { color: 'orange' },
+		label: targetType.label,
 		visitable: {
-			label: `Growing here: ${targetType.label}`,
+			label: `Here: ${targetType.label}`,
 			actions: [
 				{
-					label: 'Harvest',
+					label: targetType.deployable.collectVerb ?? 'Pick up',
 					onClick: {
-						type: 'HARVEST',
-						plantTypeId: targetType.growsIntoTypeId,
+						type: getType(harvest),
+						plantTypeId: deploysIntoTypeId,
 					},
 				},
 			],
 		},
 		inventory: [
 			{
-				typeId: targetType.growsIntoTypeId,
-				count: 0.25,
+				typeId: deploysIntoTypeId,
+				count: targetType.deployable.deployCount ?? 1,
 			},
 		],
 		components: [
-			['inventoryChange', { typeId: targetType.growsIntoTypeId, perTick: (1 / 256) }],
+			['inventoryChange', { typeId: deploysIntoTypeId, perTick: (1 / 256) }],
 		],
 	});
 	const deployedTgoId = addDeployedAction.payload.tgo.tgoId;

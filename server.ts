@@ -27,6 +27,7 @@ import { setRunning as tickerSetRunning } from './concerns/ticker.js';
 import { claimLand, payRent } from './concerns/rentOffice.js';
 import { consumerActions } from './concerns/consumer.js';
 import { deployableActions } from './concerns/deployable.js';
+import { harvest } from './actions/plantable.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -101,7 +102,7 @@ try {
 						case getType(requestChangePasswordClientSalted):
 						// case getType(setGoals):
 						case getType(transaction):
-						case 'HARVEST':
+						case getType(harvest):
 						case 'STORE_TRANSACTION_REQUEST':
 						case 'GOVERNMENT_CLAIM_CITIZENSHIP':
 						case 'GOVERNMENT_CLAIM_STIPEND':

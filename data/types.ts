@@ -51,8 +51,11 @@ export const items: InitialItemTypesState = {
 		stackable: true,
 		isInteger: true,
 		building: true,
-		deployable: true,
-		growsIntoTypeId: 'pineApple' as TypeId,
+		deployable: {
+			deploysIntoTypeId: 'pineApple' as TypeId,
+			collectVerb: 'harvest',
+			deployCount: 0.25,
+		},
 	},
 	player: {
 		label: 'Player',
@@ -87,7 +90,7 @@ export const items: InitialItemTypesState = {
 		label: 'TgoId',
 		stackable: false,
 		isTgoId: true,
-	}
+	},
 };
 
 export const createItemTypeAction = (typeId: string, item: InitialItemType) =>

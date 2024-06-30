@@ -116,6 +116,7 @@ Milestone 4:
 			☐ Store sells cannery
 			☐ Store sells can blanks.
 			☐ Store buys canned pineapples
+		☐ Rename harvest action -> collect
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
 	☐ Economy
@@ -144,6 +145,7 @@ Milestone 5:
 	☐ Buildings
 		☐ Barracks
 			☐ Has beds that cost to use
+	☐ Buying/selling having modifiable amount.
 	☐ UI mouse selection stack can override cursor shape.
 	☐ Better map generation.
 	☐ Refactor client init/mainloop code.
@@ -162,6 +164,8 @@ Milestone 5:
 
 Unseen future:
 	☐ Implement eating, planting, buying, selling automatically by goals.
+	☐ Sanity checks for items and types, check for typos etc.
+	☐ Client reconnect gracefully handles a server with different state (no accounts, etc)
 
 Stories:
 
