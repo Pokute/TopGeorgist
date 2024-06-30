@@ -13,6 +13,8 @@ import { moveGoal } from '../../actions/moveGoal.js';
 import { MapPosition } from '../../concerns/map.js';
 import { ViewId } from '../../reducers/view.js';
 import { select } from '../../redux-saga-helpers.js';
+import itemTypes from '../../reducers/itemTypes.js';
+import * as itemTypesActions from '../../actions/itemTypes.js';
 
 // Actions:
 
@@ -55,6 +57,7 @@ const receiveMessageListener = function* ({payload: { messageData }}: ActionType
 			if (newState.tileSets) yield* put(tileSetsActions.set(newState.tileSets));
 			if (newState.tgos) yield* put(tgosActions.setAll(newState.tgos));
 			if (newState.accounts) yield* put(accountsActions.setAll(newState.accounts));
+			if (newState.itemTypes) yield* put(itemTypesActions.setAll(newState.itemTypes));
 			break;
 		case 'DEFAULTS_SET_PLAYER':
 			const defaultPlayerTgoId = (yield* select()).defaults.playerTgoId;

@@ -14,6 +14,8 @@ type ItemTypesAction = ActionType<typeof itemsTypeActions>;
 
 export default (state: ItemTypesState = initialState, action: ItemTypesAction): ItemTypesState => {
 	switch (action.type) {
+		case getType(itemsTypeActions.setAll):
+			return action.payload.itemTypes;
 		case getType(itemsTypeActions.add):
 			if (Object.keys(state).includes(action.payload.itemType.typeId)) {
 				console.warn(`Overrided item type ${action.payload.itemType.typeId}`);
