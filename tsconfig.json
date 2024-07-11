@@ -9,7 +9,6 @@
 		"target": "es2019",
 		"allowJs": true,
 		"strict": true,
-		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
         "lib": [
             "ES2021",

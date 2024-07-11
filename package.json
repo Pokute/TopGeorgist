@@ -51,7 +51,6 @@
     "@types/redux-saga-tester": "^1.0.3",
     "@types/sinon": "^7.0.13",
     "@types/uuid": "^3.4.9",
-    "@types/webpack": "^5.28.0",
     "@types/ws": "^8.5.10",
     "ava": "^4.3.3",
     "dotenv-webpack": "^8.1.0",
