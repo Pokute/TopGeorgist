@@ -68,7 +68,7 @@
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
     "typescript": "npm:@typescript-deploys/pr-build@4.6.0-pr-43617-23",
-    "webpack": "^5.92.1",
+    "webpack": "^5.94.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-middleware": "^5.3.1"
   },
