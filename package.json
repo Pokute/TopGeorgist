@@ -15,7 +15,7 @@
     "browser-or-node": "^1.1.0",
     "classnames": "^2.2.5",
     "css-loader": "^5.2.4",
-    "express": "^4.17.2",
+    "express": "^4.20.0",
     "import-to-array": "^1.0.0",
     "node-forge": "^1.2.1",
     "null-loader": "^0.1.1",
