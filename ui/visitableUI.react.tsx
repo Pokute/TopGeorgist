@@ -7,6 +7,8 @@ import { hasComponentStatsBoard, hasComponentRentOffice, hasComponentGovernmentB
 import { ComponentLabel } from '../components/label.js';
 import { ComponentPosition } from '../components/position.js';
 import StatsBoard from './visitable/StatsBoard.js';
+import { hasComponentInventory } from '../concerns/inventory.js';
+import InventoryReact from './inventory.react.js';
 
 export interface Type {
 	readonly visitable: ComponentLabel & ComponentVisitable,
@@ -28,6 +30,10 @@ export default ({ visitable, visitor }: Type) => {
 						}}
 					/>
 				))
+			}
+			{hasComponentInventory(visitable)
+				? <InventoryReact ownerTgo={visitable} />
+				: null
 			}
 			{hasComponentStatsBoard(visitable)
 				? <StatsBoard />
