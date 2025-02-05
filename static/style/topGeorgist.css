@@ -1,6 +1,7 @@
 .category {
 	border-style: solid;
 	border-color: black;
+	padding: 0.5em;
 }
 
 .category .category-title {

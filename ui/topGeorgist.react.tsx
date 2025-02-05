@@ -5,9 +5,7 @@ import AccountInfo from './account/AccountInfo.js';
 import ConnectionInfo from './ConnectionInfo.js';
 import PlayerContainer from './playerContainer.react.js';
 import View from './view.react.js';
-import Inventory from './inventory.react.js';
 import { RootStateType } from '../reducers/index.js';
-import { hasComponentInventory } from '../concerns/inventory.js';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>
@@ -18,12 +16,9 @@ const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 				key={v.viewId}
 			/>
 		))}
-		<ConnectionInfo />
-		<AccountInfo />
 		<PlayerContainer />
-		{hasComponentInventory(props.defaultPlayerTgo)
-			&& <Inventory ownerTgo={props.defaultPlayerTgo} />
-		}
+		<AccountInfo />
+		<ConnectionInfo />
 	</div>
 );
 

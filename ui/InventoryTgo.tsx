@@ -1,58 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { InventoryItem, hasComponentInventory, ComponentInventory } from '../concerns/inventory.js';
-import { ComponentWork, isComponentWork } from '../concerns/work.js';
+import { InventoryItem } from '../concerns/inventory.js';
+import { isComponentWork } from '../concerns/work.js';
 import { ComponentGoal, isComponentGoal } from '../concerns/goal.js';
 import { RootStateType } from '../reducers/index.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
 import Category from './Category.js';
 import MapPosition from './MapPosition.js';
-
-const RenderWork = ({ tgo, tgoData }: { tgo: ComponentWork, tgoData?: string }) /*({ workTgoId }: { workTgoId: TgoId })*/ => {
-	const inputCommittedInventoryTgos = useSelector(
-		(store: RootStateType) =>
-			Object.entries(tgo.workInputCommittedItemsTgoId ?? {})
-				.map<[TgoId, TgoType]>(([committerTgoId, committedInventoryTgoId]) => [committerTgoId as TgoId, store.tgos[committedInventoryTgoId] as ComponentInventory])
-	);
-	const outputInventoryTgo = useSelector((store: RootStateType) => tgo.workOutputInventoryTgoId ? store.tgos[tgo.workOutputInventoryTgoId] : undefined)
-//	const wiTgo = useSelector((store: RootStateType) => store.tgos[workTgoId]);
-	// if (isComponentWork(wiTgo)) {
-		return (
-			<Category
-				title='Work'
-			>
-				<div>Recipe: {tgo.workRecipe.type}</div>
-				<div>Target: {tgo.workOutputInventoryTgoId}</div>
-				<div>
-					InputsCommited:
-					{inputCommittedInventoryTgos.map(([committerTgoId, committedInventoryTgo]) =>
-						committedInventoryTgo.inventory && (<div key={committerTgoId}>
-							<span>{`source: ${committerTgoId}`}</span>
-							<ul>
-								{committedInventoryTgo.inventory.map(ii => (
-									<li key={ii.tgoId || ii.typeId}>{`${ii.typeId}: ${ii.count}`}</li>
-								))}
-							</ul>
-						</div>)
-					)}
-				</div>
-				<div>
-					<span>outputTgoId: ${outputInventoryTgo?.tgoId} Inventory:</span>
-					<ul>
-						{outputInventoryTgo?.inventory && outputInventoryTgo.inventory.map(ii => (
-							<li key={ii.tgoId || ii.typeId}>{`${ii.typeId}: ${ii.count}`}</li>
-						))}
-					</ul>
-				</div>
-			</Category>
-		);
-	// } else {
-	// 	return (<span>
-	// 		NoWorkInv!
-	// 	</span>)
-	// }
-};
+import Work from './Work.js';
 
 const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData?: string }) => {
 	const workTgos = useSelector((store: RootStateType) => tgo.goal.workTgoIds.map(workTgoId => store.tgos[workTgoId]))
@@ -76,7 +31,7 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData?: string }) 
 				}
 			})}
 			{workTgos.map(wiTgo => (
-				<RenderWork
+				<Work
 					key={wiTgo.tgoId}
 					tgo={wiTgo}
 				/>
@@ -104,7 +59,7 @@ const InventoryTgo = ({ i }: { i: InventoryItem }) => {
 			/>)
 	}
 	if (isComponentWork(tgo)) {
-		return (<RenderWork
+		return (<Work
 				tgo={tgo}
 				tgoData={tgoData}
 			/>)

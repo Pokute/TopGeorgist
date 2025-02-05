@@ -12,19 +12,21 @@ const InventoryItem = ({
 	possibleRecipes: Array<Recipe>
 }) => {
 	const dispatch = useDispatch();
-	const iiInventory = useSelector<RootStateType, Inventory>(state => (
+	const subInventory = useSelector<RootStateType, Inventory>(state => (
 		ii.tgoId
 			? state.tgos[ii.tgoId]?.inventory
 			: state.itemTypes[ii.typeId]?.inventory
 		) ?? []);
 
-	if (!iiInventory) {
+	if (!subInventory) {
 		return null;
 	}
 
 	const validRecipes = possibleRecipes
 		.filter(recipe => recipe.output.length > 0)
-		.filter(recipe => recipe.output.every(wtic => iiInventory.some(iii => (iii.typeId === wtic.typeId) && (iii.count >= wtic.count))));
+		.filter(recipe => recipe.output.every(
+			recipeOutputIten => subInventory.some(subInventoryItem => (subInventoryItem.typeId === recipeOutputIten.typeId) && (subInventoryItem.count >= recipeOutputIten.count))
+		));
 
 	return (<>
 		{validRecipes.map(validRecipe => (

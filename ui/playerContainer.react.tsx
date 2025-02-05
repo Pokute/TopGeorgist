@@ -1,19 +1,16 @@
 import React, { ReactNode } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import CurrentPlayerInfo from './currentPlayerInfo.react.js';
 import CreatePlayerForm from './createPlayerForm.react.js';
-import { TgoId } from '../reducers/tgo.js';
+import { TgoId, TgoType } from '../reducers/tgo.js';
 import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 // import { RequirementDelivery } from '../concerns/goal.js';
-import { MapPosition } from '../concerns/map.js';
+// import { MapPosition } from '../concerns/map.js';
 
-export interface propTypes {
-	readonly defaultPlayerTgoId?: TgoId,
-}
-
-const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
+const PlayerContainer = () => {
+	const defaultPlayerTgoId = useSelector<RootStateType, TgoId | undefined>(s => s.defaults.playerTgoId);
 	return (
 		<Category
 			title={'Player'}
@@ -42,8 +39,4 @@ const PlayerContainer = ({defaultPlayerTgoId}: propTypes) => {
 	);
 };
 
-const mapStoreToProps = (store: RootStateType) => ({
-	defaultPlayerTgoId: store.defaults.playerTgoId,
-});
-
-export default connect(mapStoreToProps)(PlayerContainer);
+export default PlayerContainer;

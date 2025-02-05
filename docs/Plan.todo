@@ -112,6 +112,14 @@ Milestone 4:
 	☐ Farming overhaul
 		☐ Plant growth progress can be seen. Progressbar?
 		☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
+			? How does the growing work?
+				? Automatic recipe of 'tick+sunlight+nutrition+water+growthPotential -> hydrocarbons'?
+			? How does the growing stop?
+				? Has initial growthPotential stat that decreases every tick/growth?
+				? growthPotential decreasing even when not growing would get us lower yields on suboptimal environments.
+			? Having plants immediately harvestable is not good
+				? How to force minimum growth needed
+				? Different method of tilling/removing just planted items. Makes clear it won't produce and has a chance(?) of failing.
 		☐ Canning system
 			✔ Store sells cannery
 			✔ Store sells can blanks.

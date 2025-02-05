@@ -24,7 +24,7 @@ export default ({ ownerTgo } : Type) => {
 	const tgos = useSelector<RootStateType, TgosState>(s => s.tgos);
 
 	return (<Category
-		title={'Inventory'}
+		title={`Inventory tgoId: ${ownerTgo.tgoId}`}
 	>
 		{ownerTgo.inventory.map(i => {
 			const iTgo = (i.typeId === 'tgoId') && i.tgoId && tgos[i.tgoId];
