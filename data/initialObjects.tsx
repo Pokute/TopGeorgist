@@ -170,14 +170,14 @@ export const GovernmentAction = () => tgosActions.add({
 	},
 });
 
-export const leaderBoardAction = () => tgosActions.add({
+export const statsBoardAction = () => tgosActions.add({
 	mapGridOccupier: true,
-	label: 'Leaderboard',
-	leaderBoard: true,
+	label: 'Statsboard',
+	statsBoard: true,
 	position: { x: 4, y: 5 } as MapPosition,
 	presentation: { color: 'yellow' },
 	visitable: {
-		label: 'Leaderboard',
+		label: 'Statsboard',
 	},
 });
 
@@ -193,7 +193,7 @@ const initialObjectActions = () => [
 	storeGeneralAction(),
 	rentOfficeAction(),
 	GovernmentAction(),
-	leaderBoardAction(),
+	statsBoardAction(),
 	tileSetBasicAction(),
 ];
 

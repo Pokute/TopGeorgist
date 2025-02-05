@@ -33,13 +33,13 @@ export type ComponentGovernmentBuilding =
 export const hasComponentGovernmentBuilding = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGovernmentBuilding>) =>
 	tgo && (tgo.governmentBuilding !== undefined && tgo.governmentBuilding === true);
 
-export type ComponentLeaderBoard = 
+export type ComponentStatsBoard = 
 TgoRoot & {
-	readonly leaderBoard: true,
+	readonly statsBoard: true,
 };
 
-export const hasComponentLeaderBoard = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentLeaderBoard>) =>
-	tgo && (tgo.leaderBoard !== undefined && tgo.leaderBoard === true);
+export const hasComponentStatsBoard = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentStatsBoard>) =>
+	tgo && (tgo.statsBoard !== undefined && tgo.statsBoard === true);
 
 export type ComponentMapGridOccipier = 
 TgoRoot &  {

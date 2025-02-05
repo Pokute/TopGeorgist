@@ -6,7 +6,7 @@ import taskQueueReducer, { TaskQueueActionList, TaskQueueActionType } from './ta
 import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.js';
 import { goalReducer } from '../concerns/goal.js';
 import { /* reducer as workReducer, */ WorkActionType, ComponentWork, ComponentWorkDoer } from '../concerns/work.js';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentLeaderBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
+import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentStatsBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentTaskQueue, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../concerns/inventory.js';
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
 import { ComponentPlayer } from '../components/player.js';
@@ -37,7 +37,7 @@ export type TgoId = Opaque<string, 'TgoId'>;
 export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentRentOffice>
 	& Partial<ComponentGovernmentBuilding>
-	& Partial<ComponentLeaderBoard>
+	& Partial<ComponentStatsBoard>
 	& Partial<ComponentMapGridOccipier>
 	& Partial<ComponentPlayer>
 	& Partial<ComponentVisitable>
