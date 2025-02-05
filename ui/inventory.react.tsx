@@ -27,7 +27,7 @@ export default ({ ownerTgo } : Type) => {
 		title={'Inventory'}
 	>
 		{ownerTgo.inventory.map(i => {
-			const iTgo = (i.typeId === 'TgoId') && i.tgoId && tgos[i.tgoId];
+			const iTgo = (i.typeId === 'tgoId') && i.tgoId && tgos[i.tgoId];
 			const iType = itemTypes[i.typeId];
 			return (
 				<div
