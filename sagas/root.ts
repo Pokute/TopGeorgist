@@ -6,7 +6,6 @@ import goalCreator from './goalCreator.js';
 import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
 import { frameRootSaga } from '../concerns/frame.js';
 import { netRootSaga } from '../concerns/infra/net.js';
-import plant from './plantable.js';
 import player from './player.js';
 import taskQueue from './taskQueue.js';
 import { tickerRootSaga } from '../concerns/ticker.js';
@@ -24,7 +23,6 @@ const rootSaga = function* () {
 	yield* serverConnectionSaga();
 	yield* frameRootSaga();
 	yield* netRootSaga();
-	yield* plant();
 	yield* player();
 	yield* taskQueue();
 	yield* tickerRootSaga();

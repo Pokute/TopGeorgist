@@ -24,7 +24,7 @@ import { TypeId } from './itemType.js';
 import { createTupleFilter } from '../concerns/tgos.js';
 import { ComponentPosition, hasComponentPosition } from '../components/position.js';
 import { payRent, payRentReducer } from '../concerns/rentOffice.js';
-import { deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.js';
+import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -181,7 +181,9 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return deployTypeReducer(state, action);
 		case getType(deployTgo):
 			return deployTgoReducer(state, action);
-		default: return state
+		case getType(collect):
+			return collectReducer(state, action);
+			default: return state
 	}
 }
 

@@ -54,7 +54,7 @@ export default ({ ownerTgo } : Type) => {
 							tgoId: ownerTgo.tgoId,
 							deployedTypeId: i.typeId,
 					})))}>
-						deploy
+						{iType.deployable?.deployVerb ?? 'deploy'}
 					</button>}
 				</div>
 			);

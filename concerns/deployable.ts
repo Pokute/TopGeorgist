@@ -2,14 +2,13 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
 import { TypeId } from '../reducers/itemType.js';
 import rootReducer, { RootStateType } from '../reducers/index.js';
-import { add } from '../actions/tgos.js';
+import { add, remove as tgoRemove } from '../actions/tgos.js';
 import { selectTgo } from './tgos.js';
 import { ComponentPosition, hasComponentPosition } from '../components/position.js';
-import { hasComponentMapGridOccipier } from '../data/components_new.js';
+import { hasComponentMapGridOccipier, hasComponentVisitable } from '../data/components_new.js';
 import { mapPosition } from './map.js';
 import { transaction } from './transaction.js';
-import { ComponentInventory } from './inventory.js';
-import { harvest } from '../actions/plantable.js';
+import { ComponentInventory, hasComponentInventory } from './inventory.js';
 
 export type ComponentDeployable = TgoRoot & {
 	readonly deployable?: boolean,
@@ -34,9 +33,17 @@ export const deployTgo = createAction('DEPLOY_TGO',
 	})
 )();
 
+export const collect = createAction('COLLECT',
+	({ tgoId, visitableTgoId }: { tgoId: TgoId, visitableTgoId: TgoId }) => ({
+		tgoId,
+		visitableTgoId,
+	})
+)();
+
 export const deployableActions = {
 	deployType,
 	deployTgo,
+	collect,
 };
 export type DeployableActionType = ActionType<typeof deployableActions>;
 
@@ -84,8 +91,7 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 				{
 					label: targetType.deployable.collectVerb ?? 'Pick up',
 					onClick: {
-						type: getType(harvest),
-						plantTypeId: deploysIntoTypeId,
+						type: getType(collect),
 					},
 				},
 			],
@@ -122,4 +128,58 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 
 export const deployTgoReducer = (state: RootStateType, { payload: { tgoId, deployedTgoId }}: ActionType<typeof deployTgo>): RootStateType => {
 	return state;
+};
+
+export const collectReducer = (state: RootStateType, { payload: { tgoId: actorTgoId, visitableTgoId }}: ActionType<typeof collect>): RootStateType => {
+	const actorTgo = selectTgo(state, actorTgoId);
+	const visitableTgo = selectTgo(state, visitableTgoId);
+	if (
+		!actorTgo
+		|| !hasComponentPosition(actorTgo)
+		|| !hasComponentInventory(actorTgo)
+		|| !visitableTgo
+		|| !hasComponentPosition(visitableTgo)
+		|| !hasComponentVisitable(visitableTgo)
+		|| !mapPosition.matching(actorTgo.position, visitableTgo.position)
+	)
+		return state;
+
+	const stateWithTransaction = rootReducer(state, transaction({
+		tgoId: actorTgoId,
+		items: visitableTgo.inventory ?? [],
+	}));
+	if (stateWithTransaction === state)
+		return state;
+
+	const stateWithRemove = rootReducer(stateWithTransaction, tgoRemove(visitableTgoId));
+	if (stateWithRemove === stateWithTransaction)
+		return state;
+
+	return stateWithRemove;
+
+	// taskQueueActions.addTaskQueue(
+	// 		actorTgoId,
+	// 		[
+	// 			{
+	// 				title: `Harvesting ${plantType.label}`,
+	// 				progress: {
+	// 					time: 0,
+	// 				},
+	// 				cost: {
+	// 					time: 15,
+	// 				},
+	// 				completionAction: transactionResult,
+	// 			},
+	// 			{
+	// 				title: `Removing`,
+	// 				progress: {
+	// 					time: 0,
+	// 				},
+	// 				cost: {
+	// 					time: 0,
+	// 				},
+	// 				completionAction: remove,
+	// 			},
+	// 		],
+	// 	);
 };

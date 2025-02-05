@@ -53,6 +53,7 @@ export const items: InitialItemTypesState = {
 		building: true,
 		deployable: {
 			deploysIntoTypeId: 'pineApple' as TypeId,
+			deployVerb: 'plant',
 			collectVerb: 'harvest',
 			deployCount: 0.25,
 		},

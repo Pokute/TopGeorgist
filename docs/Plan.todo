@@ -110,13 +110,15 @@ Milestone 4:
 	✔ Redux persistent storage
 	✔ Automatic reconnect for client
 	☐ Farming overhaul
-		☐ Progress can be seen. Progressbar?
+		☐ Plant growth progress can be seen. Progressbar?
 		☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
 		☐ Canning system
 			☐ Store sells cannery
 			☐ Store sells can blanks.
+			☐ Canning machine can be deployed.
+				☐ Canning machine can be used to can pineapples.
 			☐ Store buys canned pineapples
-		☐ Rename harvest action -> collect
+		✔ Rename 'harvest' action -> generic 'collect' for deployables.
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
 	☐ Economy
@@ -124,6 +126,9 @@ Milestone 4:
 	☐ Rendering overhaul - support for custom renderers for items.
 		☐ Add graphics for most items.
 	☐ UI cleanup.
+		☐ Separate game-specific UI files from generic UI toolkit files.
+		☐ Collabsible UI items.
+		☐ Movable categories.
 	☐ Hot reload?
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.

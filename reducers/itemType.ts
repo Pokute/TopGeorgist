@@ -10,6 +10,7 @@ type OptionalFields = {
 	readonly building?: boolean,
 	readonly deployable?: {
 		readonly deploysIntoTypeId?: TypeId,
+		readonly deployVerb?: string;
 		readonly collectVerb?: string;
 		readonly deployCount?: number;
 	},
