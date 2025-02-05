@@ -80,6 +80,50 @@ export const harvest: Recipe = {
 	],
 };
 
+export const canPineApple: Recipe = {
+	type: 'canPineApple' as RecipeId,
+	input: [
+		{
+			typeId: 'calories' as TypeId,
+			count: 5,
+		},
+		{
+			typeId: 'pineApple' as TypeId,
+			count: 1,
+		},
+		{
+			typeId: 'canBlank' as TypeId,
+			count: 1,
+		},
+		{
+			typeId: 'canningWork' as TypeId, // Non-storeable
+			count: 1,
+		}
+	],
+	output: [
+		{
+			typeId: 'cannedPineApple' as TypeId,
+			count: 1,
+		},
+	],
+};
+
+export const doCanningWork : Recipe = {
+	type: 'doCanningWork' as RecipeId,
+	input: [
+		{
+			typeId: 'tick' as TypeId,
+			count: 1,
+		},
+	],
+	output: [
+		{
+			typeId: 'canningWork' as TypeId, // Non-storeable
+			count: 1,
+		}
+	],
+};
+
 export const smelt: Recipe = {
 	type: 'smelt' as RecipeId,
 	input: [
@@ -119,6 +163,8 @@ export default {
 	move,
 	consume,
 	harvest,
+	canPineApple,
+	doCanningWork,
 	smelt,
 	trade,
 } as const;

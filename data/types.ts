@@ -58,20 +58,46 @@ export const items: InitialItemTypesState = {
 			deployCount: 0.25,
 		},
 	},
+	cannery: {
+		label: 'Manual cannery',
+		stackable: true,
+		isInteger: true,
+		building: true,
+		deployable: {},
+	},
+	canBlank: {
+		label: 'Can blank',
+		stackable: true,
+		isInteger: true,
+	},
+	canUsed: {
+		label: 'Can (empty, used)',
+		stackable: true,
+		isInteger: true,
+	},
+	cannedPineApple: {
+		label: 'Canned pineapple',
+		stackable: true,
+		isInteger: true,
+		inventory: [
+			{
+				typeId: 'hydrocarbons' as TypeId,
+				count: 400,
+			},
+			{
+				typeId: 'pineAppleShoot' as TypeId,
+				count: 1,
+			},
+		],
+	},
+	canningWork: {
+		label: 'Canning work',
+		isStorable: false,
+		positiveOnly: false,
+	},
 	player: {
 		label: 'Player',
 		stackable: false,
-	},
-	building: {
-		label: 'Building',
-		stackable: false,
-		building: true,
-	},
-	plant: {
-		label: 'Plant',
-		stackable: false,
-		isInteger: true,
-		building: true,
 	},
 	tick: {
 		label: 'Tick',

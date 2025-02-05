@@ -62,6 +62,14 @@ export const storeGeneralAction = () => tgosActions.add({
 			typeId: 'pineApple' as TypeId,
 			count: 100,
 		},
+		{
+			typeId: 'cannery' as TypeId,
+			count: 40,
+		},
+		{
+			typeId: 'canBlank' as TypeId,
+			count: 500,
+		},
 	],
 	visitable: {
 		label: 'First Store',
@@ -97,6 +105,86 @@ export const storeGeneralAction = () => tgosActions.add({
 						},
 					],
 				},
+			},
+			{
+				label: 'buyCannery',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'cannery' as TypeId,
+							count: +1,
+						},
+						{
+							typeId: 'money' as TypeId,
+							count: -200,
+						},
+					],
+				}
+			},
+			{
+				label: 'buyCanBlanks10',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'canBlank' as TypeId,
+							count: +10,
+						},
+						{
+							typeId: 'money' as TypeId,
+							count: -50,
+						},
+					],
+				}
+			},
+			{
+				label: 'buyCanBlanks50',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'canBlank' as TypeId,
+							count: +50,
+						},
+						{
+							typeId: 'money' as TypeId,
+							count: -225,
+						},
+					],
+				}
+			},
+			{
+				label: 'sellCannedPineApple',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'cannedPineApple' as TypeId,
+							count: -1,
+						},
+						{
+							typeId: 'money' as TypeId,
+							count: 25,
+						},
+					],
+				}
+			},
+			{
+				label: 'sellCanEmpty',
+				onClick: {
+					type: 'STORE_TRANSACTION_REQUEST',
+					items: [
+						{
+							typeId: 'canEmpty' as TypeId,
+							count: -1,
+						},
+						{
+							typeId: 'money' as TypeId,
+							count: 2,
+						},
+					],
+				}
 			},
 		],
 	},
