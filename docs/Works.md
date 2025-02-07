@@ -1,6 +1,6 @@
 # How works work.
 
-Work is the process of production and should be used for almost anything from harvesting crops, buying items, moving around, participating in elections and even basic metabolism. Recipes are the blueprints of production and works are the ongoing process. Work can have two participants, the active worker and the passive target.
+Work is the process of production and should be used for almost anything from harvesting crops, buying items, moving around, participating in elections and even basic metabolism. Recipes are the blueprints of production and works are the ongoing process. Work can have two(?) participants, the active worker and the passive target.
 
 ## What's what.
 
@@ -12,14 +12,18 @@ Work is the process of production and should be used for almost anything from ha
 ### Creation
 
 Usually `createWork` action is called with following parameters:
-	* The workdoer
 	* The recipe
-	* Target object.
+	* The workdoer
+	* Input inventories.
+	* Output inventory.
 
 ### Initialisation
 
 * A work tgo is created and inserted in WorkDoer's inventory.
-* If needed, temporary tgo's for virtual inventories are created to track the committed items by both the workdoer and target.
+* If needed, temporary tgo's for virtual inventories are created.
+	* For each committer, a separate virtual inventory is created.
+	* That virtual inventory tracks committed items.
+	* On work calcellation, the items in virtual inventory are given back.
 
 ### Ticking
 
@@ -28,15 +32,15 @@ This is run every tick.
 * First we calculate all the items that are needed, the `input` to fulfill the requirements and their item info.
 * Then we find the committedItems inventories to see all the items committed by both the worker and the target.
 * We subtract committed items from required items to find the missing item count.
-* If missing item count is zero
-	* Create transaction for adding the `output` to `target` inventory.
-	* Commit the transaction.
-* else missing items still remain
+* If missing items still remain
 	* (Should work like this) Allocate required items from target inventory
 	* (Should work like this) Allocate rest of required items from workDoer inventory.
 	* Create a transaction based on allocated items
-		* If `tick`'s are required, add one tick.
+		* If `tick`'s are required, one is added from `tickSourceDummyTgoId`.
 	* Commit the transaction
+* If missing item count is zero
+	* Create transaction for adding the `output` to `target` inventory.
+	* Commit the transaction.
 
 ### Cancelling
 

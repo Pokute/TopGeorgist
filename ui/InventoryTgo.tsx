@@ -8,8 +8,9 @@ import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import MapPosition from './MapPosition.js';
 import Work from './Work.js';
+import { TgoId } from '../reducers/tgo.js';
 
-const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData?: string }) => {
+const RenderGoal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) => {
 	const workTgos = useSelector((store: RootStateType) => tgo.goal.workTgoIds.map(workTgoId => store.tgos[workTgoId]))
 		.filter(isComponentWork);
 	return (
@@ -33,6 +34,7 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData?: string }) 
 			{workTgos.map(wiTgo => (
 				<Work
 					key={wiTgo.tgoId}
+					workDoerTgoId={goalDoerTgoId}
 					tgo={wiTgo}
 				/>
 			))}
@@ -40,7 +42,7 @@ const RenderGoal = ({ tgo, tgoData }: { tgo: ComponentGoal, tgoData?: string }) 
 	)
 };
 
-const InventoryTgo = ({ i }: { i: InventoryItem }) => {
+const InventoryTgo = ({ i, parentTgoId }: { i: InventoryItem, parentTgoId?: TgoId }) => {
 	if (i.typeId !== 'tgoId' || !i.tgoId) {
 		return (<span>No tgoId!</span>);
 	}
@@ -55,12 +57,14 @@ const InventoryTgo = ({ i }: { i: InventoryItem }) => {
 	if (isComponentGoal(tgo)) {
 		return (<RenderGoal
 				tgo={tgo}
+				goalDoerTgoId={parentTgoId}
 				tgoData={tgoData}
 			/>)
 	}
 	if (isComponentWork(tgo)) {
 		return (<Work
 				tgo={tgo}
+				workDoerTgoId={parentTgoId}
 				tgoData={tgoData}
 			/>)
 	}

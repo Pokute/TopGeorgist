@@ -27,6 +27,7 @@ import { setRunning as tickerSetRunning } from './concerns/ticker.js';
 import { claimLand, payRent } from './concerns/rentOffice.js';
 import { consumerActions } from './concerns/consumer.js';
 import { deployableActions } from './concerns/deployable.js';
+import { cancelWork, createWork } from './concerns/work.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -106,6 +107,8 @@ try {
 						case 'GOVERNMENT_CLAIM_STIPEND':
 						case getType(claimLand):
 						case getType(payRent):
+						case getType(createWork):
+						case getType(cancelWork):
 						case getType(moveGoal):
 						case getType(consumeGoal):
 						case getType(consumerActions.consume):

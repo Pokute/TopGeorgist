@@ -34,7 +34,7 @@ export default ({ ownerTgo } : Type) => {
 					key={i.tgoId || i.typeId}
 				>
 					{iTgo
-						? (<InventoryTgo i={i} />)
+						? (<InventoryTgo i={i} parentTgoId={ ownerTgo.tgoId } />)
 						: (<span>{`${i.typeId} : ${i.count}`}</span>)
 					}
 					<InventoryItem

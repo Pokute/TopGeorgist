@@ -17,7 +17,7 @@ import { createGoal, addGoals, hasComponentGoalDoer, goalDoersTickReducer } from
 import { add as addTgo } from '../actions/tgos.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { AllActions } from '../allActions.js';
-import { createWork, workCreatorReducer, workDoersTickReducer } from '../concerns/work.js';
+import { cancelWork, createWork, workCancelReducer, workCreatorReducer, workDoersTickReducer } from '../concerns/work.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { ComponentInventory, hasComponentInventory, InventoryItem } from '../concerns/inventory.js';
 import { TypeId } from './itemType.js';
@@ -112,6 +112,12 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return {
 				...state,
 				tgos: afterCreateWorkTgosState,
+			};
+		}
+		case getType(cancelWork): {
+			return {
+				...state,
+				tgos: workCancelReducer(state.tgos, state.itemTypes, action),
 			};
 		}
 		case getType(tick): {

@@ -52,6 +52,7 @@ export const cancelWork = createAction('WORK_CANCEL',
 export const workActions = {
 	createWork,
 	createFromRecipe,
+	cancelWork,
 };
 export type WorkActionType = ActionType<typeof workActions>;
 
@@ -402,11 +403,10 @@ export const workWithCompletionsReducer = (
 	return afterCommittingTgosState;
 };
 
-const workCancelReducer = (
+export const workCancelReducer = (
 	tgosState: RootStateType['tgos'],
 	itemTypesState: RootStateType['itemTypes'],
-	workDoerTgoId: TgoId,
-	workTgoId: TgoId
+	{ payload: { workDoerTgoId, workTgoId }}: ActionType<typeof cancelWork>,
 ): RootStateType['tgos'] => {
 	const workDoer = tgosState[workDoerTgoId];
 	const work = tgosState[workTgoId];
@@ -414,7 +414,6 @@ const workCancelReducer = (
 		!isComponentWork(work)
 		|| !hasComponentInventory(workDoer)
 		|| !workDoer.inventory.some(ii => ii.tgoId === workTgoId)
-		|| !hasComponentInventory(work)
 	) return tgosState;
 
 	const redeem = (to?: TgoType, from?: TgoType) => {
@@ -435,13 +434,26 @@ const workCancelReducer = (
 		})];
 	};
 
-	return Object.entries(work.workInputCommittedItemsTgoId)
+	const redeemed = Object.entries(work.workInputCommittedItemsTgoId)
+		.filter(([inputTgoId]) => inputTgoId !== 'tickSourceDummyTgoId')
 		.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(tgosState[inputTgoId], tgosState[inputCommittedInventoryTgoId]))
 		.flat()
 		.reduce(
 			(currentTgosState, currentTransaction) => transactionReducer(currentTgosState, itemTypesState, currentTransaction),
 			tgosState
 		);
+		
+	const cleanupActions = [
+		...Object.values(work.workInputCommittedItemsTgoId ?? {})
+			.map(committedInventoryTgoId => removeTgo(committedInventoryTgoId)),
+		removeTgoId(workDoerTgoId, workTgoId),
+		removeTgo(workTgoId),
+	];
+
+	return cleanupActions.reduce(
+		(currentTgosState, currentAction) => tgos(currentTgosState, currentAction),
+		redeemed
+	);
 }
 
 const workDoerTickReducer = (
