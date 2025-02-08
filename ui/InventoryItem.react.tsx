@@ -2,7 +2,7 @@ import React from 'react';
 import { InventoryItem, ComponentInventory, Inventory } from '../concerns/inventory.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootStateType } from '../reducers/index.js';
-import { Recipe } from '../reducers/recipe.js';
+import { Recipe } from '../concerns/recipe.js';
 
 const InventoryItem = ({
 	ii,

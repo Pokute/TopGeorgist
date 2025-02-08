@@ -1,4 +1,4 @@
-import { Recipe, RecipeId } from '../reducers/recipe.js';
+import { Recipe, RecipeId } from '../concerns/recipe.js';
 import { TypeId } from '../reducers/itemType.js';
 
 export const move: Recipe = {

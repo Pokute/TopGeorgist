@@ -222,14 +222,25 @@ const goalDoerTickReducer = (
 		return removeGoal(tgosState, currentGoalTgoId);
 	}
 
-	// TODO: Find out resources needed to complete requirements and try to create works that would fulfill those requirements.
-	// 			For move goal, the resources would be 'movementAmount' items.
+	const getRequirementItems = (requirement: Requirement): Inventory =>
+		requirement.type === 'RequirementInventoryItems'
+			? requirement.inventoryItems
+			: requirement.type === 'RequirementMove'
+				? [{ typeId: 'movementAmount' as TypeId, count: 1 }]
+				: [];
 
-	const tgosAfterAutoRecipeCreate = goalDoer.recipeInfos
+	// TODO: There can be duplicates, so combine the inventories instead of just flat.
+	const requiredItems = currentGoal.requirements
+		.map(getRequirementItems)
+		.flat(1);
+
+	const demandedAutoRecipes = goalDoer.recipeInfos
 		.filter(recipeInfo =>
-			recipeInfo.autoRun
-			|| (currentGoal.requirements.some((req) => req.type === 'RequirementMove') && recipeInfo.recipe.output.some(output => output.typeId === 'movementAmount'))
-		)
+			recipeInfo.autoRunOnDemand
+			&& requiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
+		);
+
+	const tgosAfterAutoRecipeCreate = demandedAutoRecipes
 		.map(({recipe}) => recipe)
 		.reduce(
 			(currentTgosState, autoRecipe) => {

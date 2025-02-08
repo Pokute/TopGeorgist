@@ -9,7 +9,7 @@ import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { move, consume } from '../data/recipes.js';
 import { Inventory, InventoryItem } from '../concerns/inventory.js';
 import { transaction, TransactionParticipant } from '../concerns/transaction.js';
-import { Recipe } from '../reducers/recipe.js';
+import { Recipe } from '../concerns/recipe.js';
 import { setPosition } from '../components/position.js';
 import { remove as tgosRemove, add as tgosAdd } from '../actions/tgos.js';
 import { getType } from 'typesafe-actions';

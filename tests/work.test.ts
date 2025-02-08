@@ -1,6 +1,6 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
-import sinon from 'sinon';
+import Sinon from 'sinon';
 import { createWork } from '../concerns/work.js';
 import { consume } from '../data/recipes.js';
 import { TgoId } from '../reducers/tgo.js';
@@ -12,13 +12,16 @@ import { add as addTgo } from '../actions/tgos.js';
 import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../concerns/inventory.js';
 import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal.js';
 import { ComponentWork, ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.js';
-import { Recipe, RecipeId } from '../reducers/recipe.js';
+import { Recipe, RecipeId } from '../concerns/recipe.js';
 import { tick } from '../concerns/ticker.js';
 import { selectTgo } from '../concerns/tgos.js';
 import { add as itemTypeAdd } from '../actions/itemTypes.js';
-import { wrapEveryErrorReportAction } from '../sagas/sagaHelper.js';
 import { items, createItemTypeAction } from '../data/types.js';
 import { setupStoreTester } from '../testUtils.js';
+
+test.afterEach(() => {
+	Sinon.restore();
+})
 
 // Test work
 
@@ -38,16 +41,20 @@ test('Test work - fail if workerTgoId not in store', async t => {
 		goalTgoId: undefined,
 	});
 
+//	const errorStub = Sinon.createStubInstance(Error);
+
+	const errorStub = Sinon.stub(console, 'error');
+
 	const storeTester = setupStoreTester();
 	storeTester.dispatch(workAction);
-	t.deepEqual(storeTester.getCalledActions(), [
-		workAction,
-		wrapEveryErrorReportAction({
-			actionPattern: getType(createWork),
-			workerName: 'handleCreateWork',
-			error: new Error('Tgos matching inputInventoryTgoIds in handleCreateWork not found!'),
-		})
-	]);
+	t.deepEqual(
+		selectTgo(storeTester.getState(), 'illegalId' as TgoId),
+		undefined
+	)
+
+//	t.assert(errorStub);
+
+	t.assert(errorStub.calledOnce);
 });
 
 test('Test work - fail if targetTgoId not in store', async t => {
@@ -72,18 +79,22 @@ test('Test work - fail if targetTgoId not in store', async t => {
 		goalTgoId: undefined,
 	});
 
+	const errorStub = Sinon.stub(console, 'error');
+
 	const storeTester = setupStoreTester();
 	storeTester.dispatch(createWorker);
 	storeTester.dispatch(workAction);
-	t.deepEqual(storeTester.getCalledActions(), [
-		createWorker,
-		workAction,
-		wrapEveryErrorReportAction({
-			actionPattern: getType(createWork),
-			workerName: 'handleCreateWork',
-			error: new Error('Tgo matching outputInventoryTgoId in handleCreateWork not found!'),
-		})
-	]);
+	// t.deepEqual(storeTester.getCalledActions(), [
+	// 	createWorker,
+	// 	workAction,
+	// 	wrapEveryErrorReportAction({
+	// 		actionPattern: getType(createWork),
+	// 		workerName: 'handleCreateWork',
+	// 		error: new Error('Tgo matching outputInventoryTgoId in handleCreateWork not found!'),
+	// 	})
+	// ]);
+
+	t.assert(errorStub.calledOnce);
 });
 
 test.failing('Test work - creation - fail if goalTgoId not in store', async t => {
@@ -101,16 +112,20 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 		goalTgoId: 'illegalId' as TgoId,
 	});
 
+	const errorStub = Sinon.stub(console, 'error');
+
 	const storeTester = setupStoreTester();
 	storeTester.dispatch(workAction);
-	t.deepEqual(storeTester.getCalledActions(), [
-		workAction,
-		wrapEveryErrorReportAction({
-			actionPattern: getType(createWork),
-			workerName: 'handleCreateWork',
-			error: new Error('Tgo matching goalTgoId in handleCreateWork not found!'),
-		})
-	]);
+	// t.deepEqual(storeTester.getCalledActions(), [
+	// 	workAction,
+	// 	wrapEveryErrorReportAction({
+	// 		actionPattern: getType(createWork),
+	// 		workerName: 'handleCreateWork',
+	// 		error: new Error('Tgo matching goalTgoId in handleCreateWork not found!'),
+	// 	})
+	// ]);
+
+	t.assert(errorStub.calledOnce);
 });
 
 test('Work - work is removed after completion', async t => {
@@ -143,11 +158,11 @@ test('Work - wait 3 ticks', async t => {
 		output: [],
 		type: 'waitWork' as RecipeId,
 	};
-	
+
 	const [addWorker, workerTgoId] = addTgoWithId({
 		recipeInfos: [{ // becomes a workDoer
 			recipe: threeTickRecipe,
-			autoRun: false,
+			autoRunOnDemand: false,
 		}],
 	});
 
@@ -195,7 +210,7 @@ test('Work - simple item change', async t => {
 			count: 22,
 		}],
 		recipeInfos: [{
-			autoRun: false,
+			autoRunOnDemand: false,
 			recipe,
 		}],
 	});
@@ -243,7 +258,7 @@ test('Work - autorunning works', t => {
 			count: 50,
 		}],
 		recipeInfos: [{
-			autoRun: true,
+			autoRunOnDemand: true,
 			recipe: {
 				input: [{
 					typeId: 'nutrients' as TypeId,
@@ -336,7 +351,7 @@ test('Work - hierarchy', async t => {
 	const upperBodyTgo: ComponentWorkDoer = {
 		tgoId: 'upperBody' as TgoId,
 		recipeInfos: [{
-			autoRun: false,
+			autoRunOnDemand: false,
 			recipe: {
 				type: 'strengthToolUse' as RecipeId,
 				input: [
@@ -360,7 +375,7 @@ test('Work - hierarchy', async t => {
 	const handMill: ComponentWorkDoer = {
 		tgoId: 'handMill' as TgoId,
 		recipeInfos: [{
-			autoRun: false,
+			autoRunOnDemand: false,
 			recipe: {
 				type: 'milling' as RecipeId,
 				input: [

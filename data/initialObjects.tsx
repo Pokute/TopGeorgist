@@ -5,7 +5,7 @@ import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../concerns/rentOffice.js';
-import { move, digestHydrocarbons } from './recipes.js';
+import { move, digestHydrocarbons, trade, calculation } from './recipes.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
@@ -32,12 +32,14 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	recipeInfos: [
 		{
 			recipe: move,
-//			autoRun: true, // Generate PositionChanges only when needed.
+			autoRunOnDemand: true,
 		},
 		{
 			recipe: digestHydrocarbons,
-			autoRun: true,
-		}
+			autoRunOnDemand: true,
+		},
+		{ recipe: calculation, autoRunOnDemand: true },
+		{ recipe: trade, autoRunOnDemand: true },
 	],
 	consumer: {
 		allowList: [

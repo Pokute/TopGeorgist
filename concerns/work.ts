@@ -1,6 +1,6 @@
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
-import { Recipe } from '../reducers/recipe.js';
+import { Recipe } from '../concerns/recipe.js';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from './inventory.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
@@ -63,9 +63,7 @@ export type ComponentWork =
 		// Worker is the tgo in whose inventory this work is.
 		readonly workRecipe: Recipe,
 		readonly workOutputInventoryTgoId?: TgoId,
-		// readonly workInputCommittedItemsTgoId?: Record<TgoId, TgoId>, // Committed items are already removed from input inventory, but can be redeemed.
 		readonly workInputCommittedItemsTgoId?: Record<string, TgoId>, // Keyed by committer TgoId. Committed items are already removed from input inventory, but can be redeemed.
-		// readonly workTargetCommittedItemsTgoId?: TgoId, // Committed items are already removed from target's inventory, but can be redeemed.
 	};
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
@@ -76,7 +74,7 @@ export type ComponentWorkDoer =
 		// readonly recipeInfos: Record<RecipeId, {
 		readonly recipeInfos: ReadonlyArray<{
 			readonly recipe: Recipe,
-			readonly autoRun?: boolean,
+			readonly autoRunOnDemand?: boolean,
 		}>,
 	};
 
@@ -463,7 +461,7 @@ const workDoerTickReducer = (
 
 	const tgosAfterAutoRecipeCreate = workDoer.recipeInfos
 		.filter(() => false)
-		.filter(recipeInfo => recipeInfo.autoRun)
+		.filter(recipeInfo => recipeInfo.autoRunOnDemand)
 		.map(({recipe}) => recipe)
 		.reduce(
 			(currentTgosState, autoRecipe) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Category from './Category.js';
-import { Recipe as RecipeType, RecipeId as RecipeIdType } from '../reducers/recipe.js';
+import { Recipe as RecipeType, RecipeId as RecipeIdType } from '../concerns/recipe.js';
 import recipes from '../data/recipes.js';
 
 const Recipe = ({ recipe }: { recipe: RecipeType }) => {
