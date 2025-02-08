@@ -1,5 +1,4 @@
 import { TgoType, TgoRoot } from '../reducers/tgo.js';
-import { TaskQueueType } from '../reducers/taskQueue.js';
 import { ComponentPosition } from '../components/position.js';
 import { TypeId } from '../reducers/itemType.js';
 import { Parameter } from '../ui/paramInput.js';
@@ -59,14 +58,6 @@ ComponentPosition & {
 
 export const hasComponentVisitable = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentVisitable>) =>
 	tgo && (tgo.visitable !== undefined);
-
-export type ComponentTaskQueue = 
-TgoRoot & {
-	readonly taskQueue: TaskQueueType,
-};
-
-export const hasComponentTaskQueue = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentTaskQueue>) =>
-	tgo && typeof tgo.taskQueue !== 'undefined';
 
 export type ComponentPresentation = 
 TgoRoot & {

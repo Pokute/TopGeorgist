@@ -2,22 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ProgressBar from './progressBar.js';
 import { RootStateType } from '../reducers/index.js';
-import { TaskType } from '../reducers/taskQueue.js';
 import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 import { TgoType } from '../reducers/tgo.js';
 import Inventory from './inventory.react.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
 
-const costMapper = (task: TaskType) => {
-	if (!task.cost) return () => 0;
+// const costMapper = (task: TaskType) => {
+// 	if (!task.cost) return () => 0;
 
-	return (({ cost: { time } }: { cost: { time: number }}) => time);
-};
+// 	return (({ cost: { time } }: { cost: { time: number }}) => time);
+// };
 
 const CurrentPlayerInfo = ({ player }: ReturnType<typeof mapStoreToProps>) => (player) ? (
 	<div>
 		{`Player name: ${player.label}`}
-		{player.taskQueue
+		{/* {player.taskQueue
 			&& <ProgressBar
 				segments={player.taskQueue.map(({ cost, progress }) => ({ cost, progress }))}
 				progress={((player.taskQueue.length > 0) && player.taskQueue[0].progress)
@@ -31,7 +30,7 @@ const CurrentPlayerInfo = ({ player }: ReturnType<typeof mapStoreToProps>) => (p
 					)
 				}
 			/>
-		}
+		} */}
 		{hasComponentInventory(player)
 			&& <Inventory ownerTgo={player} />
 		}

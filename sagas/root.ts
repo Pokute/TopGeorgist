@@ -7,7 +7,6 @@ import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
 import { frameRootSaga } from '../concerns/frame.js';
 import { netRootSaga } from '../concerns/infra/net.js';
 import player from './player.js';
-import taskQueue from './taskQueue.js';
 import { tickerRootSaga } from '../concerns/ticker.js';
 import { tradeRootSaga } from '../concerns/trade.js';
 import view from './view.js';
@@ -24,7 +23,6 @@ const rootSaga = function* () {
 	yield* frameRootSaga();
 	yield* netRootSaga();
 	yield* player();
-	yield* taskQueue();
 	yield* tickerRootSaga();
 	yield* tradeRootSaga();
 	yield* view();

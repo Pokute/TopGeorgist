@@ -2,7 +2,6 @@ import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo.js';
 import { GoalActionType, goalActionList, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
-import * as taskQueueActions from '../actions/taskQueue.js'; 
 import * as goalActions from '../concerns/goal.js'; 
 import { workActions } from '../concerns/work.js'; 
 import * as tgoActions from '../actions/tgo.js'; 
@@ -61,8 +60,6 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				|| isActionOf(inventoryActions.add, action)
 				|| isActionOf(inventoryActions.addTgoId, action)
 				|| isActionOf(inventoryActions.removeTgoId, action)
-				|| isActionOf(taskQueueActions.addTaskQueue, action)
-				|| isActionOf(taskQueueActions.setTaskQueue, action)
 				|| isActionOf(goalDoerActionList.addGoals, action)
 				|| isActionOf(goalDoerActionList.removeGoals, action)
 				|| isActionOf(goalActions.addWork, action)

@@ -130,7 +130,7 @@ Milestone 4:
 						? Figure out how this works.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
-	☐ Re-imagine TaskQueue.
+	✔ Re-imagine TaskQueue.
 		? Why TaskQueue exists?
 			* Currently used for adding delay for actions.
 			* Works for some stuff ok, but isn't really ideal.
@@ -139,7 +139,8 @@ Milestone 4:
 		? Task queue also allows sequential ordering of actions.
 		? Task queue also allows multiple actions on complete.
 		? Task queue also has some mechanism for non-time costs, but there's no complete support.
-		☐ Currently relies on saga for multi-tick behaviour. Refactor into a reducer or remove?
+		✔ Currently relies on saga for multi-tick behaviour. Refactor into a reducer or remove?
+		✔ Removed completely.
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
 	☐ Economy
@@ -176,7 +177,7 @@ Milestone 5:
 	☐ Better map generation.
 	☐ Convert game logic from sagas into reducers.
 		! Sagas can't be saved/loaded so they can't be used for multi-tick events. Better just remove them completely from game logic. Still can be used for connection code.
-		☐ sagas/taskQueue.ts
+		✔ sagas/taskQueue.ts
 		☐ concerns/consumer.js
 		☐ concerns/work.js
 		☐ concerns/transaction.js
