@@ -110,31 +110,44 @@ Milestone 4:
 	✔ Redux persistent storage
 	✔ Automatic reconnect for client
 	☐ Farming overhaul
-		☐ Plant growth progress can be seen. Progressbar?
-		☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
-			? How does the growing work?
-				? Automatic recipe of 'tick+sunlight+nutrition+water+growthPotential -> hydrocarbons'?
-			? How does the growing stop?
-				? Has initial growthPotential stat that decreases every tick/growth?
-				? growthPotential decreasing even when not growing would get us lower yields on suboptimal environments.
-			? Having plants immediately harvestable is not good
-				? How to force minimum growth needed
-				? Different method of tilling/removing just planted items. Makes clear it won't produce and has a chance(?) of failing.
+		☐ Re-implement plant growth
+			☐ Plant growth progress can be seen. Progressbar?
+			☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
+				? How does the growing work?
+					? Automatic recipe of 'tick+sunlight+nutrition+water+growthPotential -> hydrocarbons'?
+				? How does the growing stop?
+					? Has initial growthPotential stat that decreases every tick/growth?
+					? growthPotential decreasing even when not growing would get us lower yields on suboptimal environments.
+				? Having plants immediately harvestable is not good
+					? How to force minimum growth needed
+					? Different method of tilling/removing just planted items. Makes clear it won't produce and has a chance(?) of failing.
 		☐ Canning system
 			✔ Store sells cannery
 			✔ Store sells can blanks.
 			✔ Canning machine can be deployed.
 				☐ Canning machine can be used to can pineapples.
+					☐ A deployed canning machine is required to create 'canningWork'
+						? Figure out how this works.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
+	☐ Re-imagine TaskQueue.
+		? Why TaskQueue exists?
+			* Currently used for adding delay for actions.
+			* Works for some stuff ok, but isn't really ideal.
+			* No good reason why doing X should use a work that takes 1 tick, but delay it for 6 instead of work taking 6 ticks directly.
+			* Taskqueue time also can't be reduced by skills.
+		? Task queue also allows sequential ordering of actions.
+		? Task queue also allows multiple actions on complete.
+		? Task queue also has some mechanism for non-time costs, but there's no complete support.
+		☐ Currently relies on saga for multi-tick behaviour. Refactor into a reducer or remove?
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
 	☐ Economy
 		☐ More sinks
 	☐ Rendering overhaul - support for custom renderers for items.
 		☐ Add graphics for most items.
-	☐ UI cleanup.
-		☐ Separate game-specific UI files from generic UI toolkit files.
+	☐ UI improvements/cleanup.
+		☐ Separate game-specific UI files from generic UI toolkit files into different subdirectories.
 		☐ Collabsible UI items.
 		☐ Movable categories.
 	☐ Hot reload?

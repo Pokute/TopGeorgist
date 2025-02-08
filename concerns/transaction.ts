@@ -1,9 +1,7 @@
-import { put, takeEvery }  from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
 import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
-import * as taskQueueActions from '../actions/taskQueue.js';
 import tgos, { getTgoByIdFromRootState } from '../reducers/tgos.js';
 import { RootStateType } from '../reducers/index.js';
 
@@ -19,55 +17,14 @@ export const transaction = createAction('TRANSACTION',
 	}
 )();
 
-export const storeTransactionRequest = createAction('STORE_TRANSACTION_REQUEST',
-	(tgoId: TgoId, visitableTgoId: TgoId, items: ReadonlyArray<InventoryItem>) => ({
-		tgoId,
-		visitableTgoId,
-		items,
-	})
-)();
-
 export const transactionActions = {
 	transaction,
-	storeTransactionRequest,
 };
 export type WorkActionType = ActionType<typeof transactionActions>;
-
-// Sagas:
-
 
 export interface TransactionParticipant {
 	readonly tgoId: TgoId;
 	readonly items: Inventory;
-};
-
-const handleStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof transactionActions.storeTransactionRequest>) {
-	yield* put(taskQueueActions.addTaskQueue(
-		tgoId,
-		[{
-			title: `Trading`,
-			progress: {
-				time: 0,
-			},
-			cost: {
-				time: 12,
-			},
-			completionAction: transactionActions.transaction(
-				{
-					tgoId: tgoId,
-					items: items,
-				},
-				{
-					tgoId: visitableTgoId,
-					items: items.map(i => ({ ...i, count: -1 * i.count })),
-				},
-			),
-		}],
-	));
-};
-
-export const transactionRootSaga = function* () {
-	yield* takeEvery('STORE_TRANSACTION_REQUEST', handleStoreTransactionRequest);
 };
 
 // Reducer:

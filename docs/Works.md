@@ -44,7 +44,7 @@ This is run every tick.
 
 ### Cancelling
 
-Cancelling could still work, but isn't implemented right now. For this we would repay the items to their source inventories ()
+Cancelling repays the committed items to their source inventories and removes all work item and associated temp inventories.
 
 ### Finalizing
 

@@ -148,23 +148,52 @@ export const smelt: Recipe = {
 	],
 };
 
+export const calculation: Recipe = {
+	type: 'calculation' as RecipeId,
+	input: [
+		{
+			typeId: 'tick' as TypeId,
+			count: 3,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 4,
+		},
+	],
+	output: [
+		{
+			typeId: 'calculation' as TypeId,
+			count: 1,
+		},
+	],
+};
+
 export const trade: Recipe = {
 	type: 'trade' as RecipeId,
 	input: [
 		{
 			typeId: 'calculation' as TypeId,
 			count: 10,
-		}
+		},
 	],
-	output: [],
+	output: [
+		{
+			typeId: 'trade' as TypeId,
+			count: 1,
+		},
+	],
 };
 
-export default {
-	move,
-	consume,
-	harvest,
-	canPineApple,
-	doCanningWork,
-	smelt,
-	trade,
+const recipes: Record<RecipeId, Recipe> = {
+	[move.type]: move,
+	[consume.type]: consume,
+	[digestHydrocarbons.type]: digestHydrocarbons,
+	[harvest.type]: harvest,
+	[canPineApple.type]: canPineApple,
+	[doCanningWork.type]: doCanningWork,
+	[smelt.type]: smelt,
+	[calculation.type]: calculation,
+	[trade.type]: trade,
 } as const;
+
+export default recipes;

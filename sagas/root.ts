@@ -9,7 +9,7 @@ import { netRootSaga } from '../concerns/infra/net.js';
 import player from './player.js';
 import taskQueue from './taskQueue.js';
 import { tickerRootSaga } from '../concerns/ticker.js';
-import { transactionRootSaga } from '../concerns/transaction.js';
+import { tradeRootSaga } from '../concerns/trade.js';
 import view from './view.js';
 import { workRootSaga } from '../concerns/work.js';
 import { consumerRootSaga } from '../concerns/consumer.js';
@@ -26,7 +26,7 @@ const rootSaga = function* () {
 	yield* player();
 	yield* taskQueue();
 	yield* tickerRootSaga();
-	yield* transactionRootSaga();
+	yield* tradeRootSaga();
 	yield* view();
 	yield* workRootSaga();
 	yield* consumerRootSaga();

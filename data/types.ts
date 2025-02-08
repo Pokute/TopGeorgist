@@ -118,6 +118,16 @@ export const items: InitialItemTypesState = {
 		stackable: false,
 		isTgoId: true,
 	},
+	calculation: {
+		label: 'Calculation',
+		isStorable: false,
+		positiveOnly: true,
+	},
+	trade: {
+		label: 'Trade',
+		isStorable: false,
+		positiveOnly: true,
+	},
 };
 
 export const createItemTypeAction = (typeId: string, item: InitialItemType) =>

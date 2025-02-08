@@ -28,6 +28,7 @@ import { claimLand, payRent } from './concerns/rentOffice.js';
 import { consumerActions } from './concerns/consumer.js';
 import { deployableActions } from './concerns/deployable.js';
 import { cancelWork, createWork } from './concerns/work.js';
+import { tradeStoreTransactionRequest } from './concerns/trade.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -102,7 +103,7 @@ try {
 						case getType(requestChangePasswordClientSalted):
 						// case getType(setGoals):
 						case getType(transaction):
-						case 'STORE_TRANSACTION_REQUEST':
+						case getType(tradeStoreTransactionRequest):
 						case 'GOVERNMENT_CLAIM_CITIZENSHIP':
 						case 'GOVERNMENT_CLAIM_STIPEND':
 						case getType(claimLand):
