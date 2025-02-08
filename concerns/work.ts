@@ -1,4 +1,3 @@
-import { put, all, takeEvery, call } from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { Recipe } from '../reducers/recipe.js';
@@ -155,10 +154,6 @@ const inventoryTgoIds = (tgo: ComponentInventory): TgoIds =>
 
 export const getInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory) =>
 	inventoryTgoIds(tgo).map(ii => store.tgos[ii.tgoId]);
-
-export const workRootSaga = function* () {
-	if (!isServer) return;
-};
 
 // Reducer:
 

@@ -179,7 +179,7 @@ Milestone 5:
 		! Sagas can't be saved/loaded so they can't be used for multi-tick events. Better just remove them completely from game logic. Still can be used for connection code.
 		✔ sagas/taskQueue.ts
 		☐ concerns/consumer.js
-		☐ concerns/work.js
+		✔ concerns/work.js
 		☐ concerns/transaction.js
 		☐ concerns/rentOffice.js
 		☐ sagas/buildings/government.ts
@@ -228,7 +228,7 @@ Icebox:
 
 Tasks vs Goals:
 
-	Tasks currently:
+	How deleted TaskQueue and Tasks worked:
 		TGO object has a TaskQueue, inside it are Tasks.
 		Task:
 			* Title - what the players will see.
@@ -240,19 +240,9 @@ Tasks vs Goals:
 			Doesn't support Tasks that require tasks to complete. At least without wrapping one into an action.
 			Naming of advanceActions is stupid.
 
-
-
-
 	Tasks and Goals.
-		Currently tasks are 
-		Tasks are something pretty immediately executable.
+		Tasks were something pretty immediately executable.
 		Goals have uncertain completion with different possible routes.
-	Only Tasks.
-		Goals can be implemented by having bigger tasks.
-		Having multiple levels for same functionality is stupid, what's when we have multiple goals together? Saga, epic, megagoal?
-
-	Alternative:
-		Replace Task.Cost with Task.Goals?
 		
 	Alternative:
 		Replace Task.Cost with Task.Requirements?
