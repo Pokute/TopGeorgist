@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import GameRenderer from './gameRenderer.react.js';
 import VisitableUI from './visitableUI.react.js';
+import RecipesUI from './RecipesUI.js';
 import { getMinMax } from '../utils/view.js';
 import { ViewType } from '../reducers/view.js';
 import { TgoId } from '../reducers/tgo.js';
@@ -58,6 +59,7 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 					/>
 				))}
 			</Category>
+			<RecipesUI />
 		</div>
 	);
 };
