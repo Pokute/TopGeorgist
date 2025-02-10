@@ -110,6 +110,42 @@ export const reducer = (state: Inventory = initialState, action: InventoryAction
 	}
 };
 
+// Utility funcs:
+
+export const inventory = Object.assign(
+	function copyFrom(other: Inventory): Inventory {
+		return (other.map(ii => ({
+			typeId: ii.typeId,
+			tgoId: ii.tgoId,
+			count: ii.count,
+		}))) as Inventory;
+	},
+	({
+		combined: function(other: Inventory): Inventory {
+			return other.reduce<Inventory>(
+				(prev, curr) => curr.typeId === 'TgoId'
+					? [
+						...prev,
+						{ typeId: 'TgoId' as TypeId, tgoId: curr.tgoId, count: curr.count }
+					]
+					: prev.find(ii => ii.typeId === curr.typeId)
+						? [
+							...(prev.filter(ii => ii.typeId !== curr.typeId)),
+							{
+								...(prev.find(ii => ii.typeId === curr.typeId)!), 
+								count: prev.find(ii => ii.typeId === curr.typeId)?.count ?? 0 + curr.count }
+						]
+						: [
+							...prev,
+							{ ...curr }
+						],
+				[] as Inventory
+			);
+		},
+	})
+);
+
+
 // Component
 
 export type ComponentInventory = TgoRoot & {

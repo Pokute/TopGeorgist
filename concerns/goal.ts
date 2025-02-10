@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { getType, ActionType, createAction } from 'typesafe-actions';
 
-import { ComponentInventory, hasComponentInventory, Inventory, InventoryItem } from './inventory.js';
+import { ComponentInventory, hasComponentInventory, inventory, Inventory, InventoryItem } from './inventory.js';
 import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
 import { MapPosition, mapPosition } from '../concerns/map.js';
 import { createTupleFilter } from '../concerns/tgos.js';
@@ -229,15 +229,16 @@ const goalDoerTickReducer = (
 				? [{ typeId: 'movementAmount' as TypeId, count: 1 }]
 				: [];
 
-	// TODO: There can be duplicates, so combine the inventories instead of just flat.
 	const requiredItems = currentGoal.requirements
 		.map(getRequirementItems)
 		.flat(1);
+	
+	const combinedRequiredItems = inventory.combined(requiredItems);
 
 	const demandedAutoRecipes = goalDoer.recipeInfos
 		.filter(recipeInfo =>
 			recipeInfo.autoRunOnDemand
-			&& requiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
+			&& combinedRequiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
 		);
 
 	const tgosAfterAutoRecipeCreate = demandedAutoRecipes
