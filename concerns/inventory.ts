@@ -142,6 +142,14 @@ export const inventory = Object.assign(
 				[] as Inventory
 			);
 		},
+		negated: function(other: Inventory): Inventory {
+			return other.map(
+				(ii) => ({
+					...ii,
+					count: ii.count * -1,
+				})
+			);
+		},
 	})
 );
 
@@ -150,7 +158,7 @@ export const inventory = Object.assign(
 
 export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,
-	readonly isInventoryVirtual?: boolean, // Allows having negative count of any type.
+	readonly isInventoryVirtual?: boolean, // Allows having negative count of any type or what would be "physically" impossible.
 };
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>
