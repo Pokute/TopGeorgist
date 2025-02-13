@@ -26,7 +26,7 @@ export const tradeStoreTransactionRequest = createAction('TRADE_STORE_TRANSACTIO
 
 const tradeCost = [{
 	typeId: 'trade' as TypeId,
-	count: 1,
+	count: -1,
 }];
 
 export const handleTradeStoreTransactionRequest = function* ({ payload: { tgoId, items, visitableTgoId } }: ReturnType<typeof tradeStoreTransactionRequest>) {

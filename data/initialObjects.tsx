@@ -6,6 +6,7 @@ import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../concerns/rentOffice.js';
 import { move, digestHydrocarbons, trade, calculation } from './recipes.js';
+import { tradeStoreTransactionRequest } from '../concerns/trade.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
@@ -79,7 +80,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'buyPineapple',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'pineApple' as TypeId,
@@ -95,7 +96,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'sellPineapple',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'pineApple' as TypeId,
@@ -111,7 +112,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'buyCannery',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'cannery' as TypeId,
@@ -127,7 +128,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'buyCanBlanks10',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'canBlank' as TypeId,
@@ -143,7 +144,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'buyCanBlanks50',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'canBlank' as TypeId,
@@ -159,7 +160,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'sellCannedPineApple',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'cannedPineApple' as TypeId,
@@ -175,7 +176,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			{
 				label: 'sellCanEmpty',
 				onClick: {
-					type: 'STORE_TRANSACTION_REQUEST',
+					type: getType(tradeStoreTransactionRequest),
 					items: [
 						{
 							typeId: 'canEmpty' as TypeId,
