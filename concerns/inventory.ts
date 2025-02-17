@@ -133,7 +133,7 @@ export const inventory = Object.assign(
 							...(prev.filter(ii => ii.typeId !== curr.typeId)),
 							{
 								...(prev.find(ii => ii.typeId === curr.typeId)!), 
-								count: prev.find(ii => ii.typeId === curr.typeId)?.count ?? 0 + curr.count }
+								count: (prev.find(ii => ii.typeId === curr.typeId)?.count ?? 0) + curr.count }
 						]
 						: [
 							...prev,
@@ -149,6 +149,9 @@ export const inventory = Object.assign(
 					count: ii.count * -1,
 				})
 			);
+		},
+		zeroCountsRemoved: function(other: Inventory): Inventory {
+			return other.filter(ii => ii.count !== 0);
 		},
 	})
 );
