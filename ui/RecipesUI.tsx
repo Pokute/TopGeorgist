@@ -24,7 +24,7 @@ const RecipesUI = ({ player, visitables } : ReturnType<typeof mapStoreToProps> &
 	if (!player)
 		return null;
 
-	// const validRecipes = Object.values(recipes).reduce()
+	// TODO: filter to just list valid recipes.
 
 	return (<Category
 		title={'Recipes'}
@@ -43,6 +43,7 @@ const RecipesUI = ({ player, visitables } : ReturnType<typeof mapStoreToProps> &
 									player.tgoId,
 									...visitables.map(v => v.tgoId)
 								],
+								outputInventoryTgoId: player.tgoId,
 							})))}
 						>
 							{r.type}

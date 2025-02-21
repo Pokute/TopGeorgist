@@ -4,7 +4,7 @@ import { Opaque } from '../typings/global.d.js';
 import * as tgoActions from '../actions/tgo.js'; 
 import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.js';
 import { goalReducer } from '../concerns/goal.js';
-import { /* reducer as workReducer, */ WorkActionType, ComponentWork, ComponentWorkDoer } from '../concerns/work.js';
+import { WorkActionType, ComponentWork, ComponentWorkDoer, ComponentWorkIssuer } from '../concerns/work.js';
 import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentStatsBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../concerns/inventory.js';
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
@@ -48,6 +48,7 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentWork>
 	& Partial<ComponentGoalDoer>
 	& Partial<ComponentWorkDoer>
+	& Partial<ComponentWorkIssuer>
 	& Partial<ComponentConsumer>
 	& Partial<ComponentDeployable>
 );
@@ -88,10 +89,6 @@ export default (state: TgoType, action: PositionActionType | TgoActionType | Inv
 				const newGoal = goalReducer(state.goal, action as GoalActionType);
 				if (newGoal !== usedState.goal) usedState = { ...usedState, goal: newGoal };
 			}
-			// if (isComponentWork(state)) {
-			// 	const newWork = workReducer(state.work, action as WorkActionType);
-			// 	if (newWork !== usedState.work) usedState = { ...usedState, work: newWork };
-			// }
 			return usedState;
 		}
 	}

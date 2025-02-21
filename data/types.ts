@@ -64,6 +64,7 @@ export const items: InitialItemTypesState = {
 		isInteger: true,
 		building: true,
 		deployable: {},
+		// Should be providing canneryWork or a possibility to do it.
 	},
 	canBlank: {
 		label: 'Can blank',
@@ -86,6 +87,10 @@ export const items: InitialItemTypesState = {
 			},
 			{
 				typeId: 'pineAppleShoot' as TypeId,
+				count: 1,
+			},
+			{
+				typeId: 'canUsed' as TypeId,
 				count: 1,
 			},
 		],
@@ -122,11 +127,13 @@ export const items: InitialItemTypesState = {
 		label: 'Calculation',
 		isStorable: false,
 		positiveOnly: true,
+		redeemable: false,
 	},
 	trade: {
 		label: 'Trade',
 		isStorable: false,
 		positiveOnly: true,
+		redeemable: false,
 	},
 };
 

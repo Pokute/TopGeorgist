@@ -1,15 +1,12 @@
 import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo.js';
-import { GoalActionType, goalActionList, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
-import * as goalActions from '../concerns/goal.js'; 
-import { workActions } from '../concerns/work.js'; 
+import { GoalActionType, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
 import * as tgoActions from '../actions/tgo.js'; 
 import * as tgosActions from '../actions/tgos.js'; 
 import { InventoryActionType } from '../concerns/inventory.js';
-import { hasComponentPlayer } from '../components/player.js';
 import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } from '../concerns/inventory.js';
-import { setPosition, hasComponentPosition, reducer as positionReducer, positionActions } from '../components/position.js';
+import { setPosition, hasComponentPosition, reducer as positionReducer } from '../components/position.js';
 
 export type TgosState = {
 	readonly [tgoId: string]: TgoType;
@@ -62,8 +59,6 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 				|| isActionOf(inventoryActions.removeTgoId, action)
 				|| isActionOf(goalDoerActionList.addGoals, action)
 				|| isActionOf(goalDoerActionList.removeGoals, action)
-				|| isActionOf(goalActions.addWork, action)
-				|| isActionOf(goalActions.removeWork, action)
 			) {
 				const newTgoState = tgoReducer(state[action.payload.tgoId], action);
 				if (newTgoState !== state[action.payload.tgoId]) {

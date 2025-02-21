@@ -1,18 +1,25 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { InventoryItem } from '../concerns/inventory.js';
+import { hasComponentInventory, InventoryItem } from '../concerns/inventory.js';
 import { isComponentWork } from '../concerns/work.js';
 import { ComponentGoal, isComponentGoal } from '../concerns/goal.js';
 import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import MapPosition from './MapPosition.js';
 import Work from './Work.js';
-import { TgoId } from '../reducers/tgo.js';
+import { TgoId, TgoType } from '../reducers/tgo.js';
+import { createTupleFilter } from '../concerns/tgos.js';
 
 const RenderGoal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) => {
-	const workTgos = useSelector((store: RootStateType) => tgo.goal.workTgoIds.map(workTgoId => store.tgos[workTgoId]))
+	const workTgos = useSelector((store: RootStateType) => tgo.worksIssued.map(({ workTgoId }) => store.tgos[workTgoId]))
 		.filter(isComponentWork);
+	const inputCommittedInventoryTgos = useSelector(
+		(store: RootStateType) =>
+			Object.entries(tgo.workInputCommittedItemsTgoId ?? {})
+				.map<[TgoId, TgoType?]>(([committerTgoId, committedInventoryTgoId]) => [committerTgoId as TgoId, committedInventoryTgoId ? store.tgos[committedInventoryTgoId] : undefined])
+				.filter(createTupleFilter(hasComponentInventory))
+	);
 	return (
 		<Category
 			title={`Goal: ${tgo.goal.title}`}
@@ -31,6 +38,21 @@ const RenderGoal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalD
 						</span>);
 				}
 			})}
+			<div>
+				InputsCommited:
+				<ul>
+				{inputCommittedInventoryTgos.map(([committerTgoId, committedInventoryTgo]) =>
+					committedInventoryTgo?.inventory && (<li key={committerTgoId}>
+						<span>{`source: ${committerTgoId}`}</span>
+						<ul>
+							{committedInventoryTgo.inventory.map(ii => (
+								<li key={ii.tgoId || ii.typeId}>{`${ii.typeId}: ${ii.count}`}</li>
+							))}
+						</ul>
+					</li>)
+				)}
+				</ul>
+			</div>
 			{workTgos.map(wiTgo => (
 				<Work
 					key={wiTgo.tgoId}

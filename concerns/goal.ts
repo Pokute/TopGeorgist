@@ -8,16 +8,16 @@ import { createTupleFilter } from '../concerns/tgos.js';
 import { TypeId } from '../reducers/itemType.js';
 import { RootStateType } from '../reducers/index.js';
 import { hasComponentPosition } from '../components/position.js';
-import { ComponentWorkDoer, createWork, hasComponentWorkDoer, isComponentWork, workCreatorReducer, workWithCompletionsReducer } from './work.js';
+import { cleanupWorkIssuerInside, ComponentWorkDoer, ComponentWorkIssuer, hasComponentWorkDoer, workIssuerCreateWorksOnRequiredItems, workIssuerGetCommittedItems } from './work.js';
 import { TgosState } from '../reducers/tgos.js';
 
 export type ComponentGoal = 
-	TgoRoot & {
+	ComponentWorkIssuer & {
 		readonly goal: Goal,
 	};
 
-export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
-	tgo && typeof tgo.goal !== 'undefined';
+export const isComponentGoal = <BaseT extends TgoType | ComponentGoal>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentGoal>) =>
+	(tgo !== undefined) && typeof tgo.goal !== 'undefined';
 
 export type ComponentGoalDoer = 
 	TgoRoot & {
@@ -36,10 +36,6 @@ export type RequirementBase<T extends string> = {
 	readonly type: T;
 };
 
-// export type RequirementIntentoryItems = RequirementBase<'RequirementInventoryItems'> & {
-// 	readonly inventoryItems: Inventory,
-// };
-
 export type RequirementIntentoryItems = RequirementBase<'RequirementInventoryItems'> & {
 	readonly inventoryItems: Inventory,
 };
@@ -56,22 +52,7 @@ export type Requirement =
 export type Goal = {
 	readonly title?: string,
 	readonly requirements: ReadonlyArray<Requirement>,
-	readonly workTgoIds: ReadonlyArray<TgoId>,
 };
-
-export const addWork = createAction('GOAL_ADD_WORK',
-	(tgoId: TgoId, workTgoId: TgoId) => ({
-		tgoId,
-		workTgoId,
-	})
-)();
-
-export const removeWork = createAction('GOAL_REMOVE_WORK',
-	(tgoId: TgoId, workTgoId: TgoId) => ({
-		tgoId,
-		workTgoId,
-	})
-)();
 
 export const setWorkTargetTgoId = createAction('GOAL_SET_TARGET_TGO_ID',
 	(tgoId: TgoId, workTargetTgoId: TgoId) => ({
@@ -81,24 +62,12 @@ export const setWorkTargetTgoId = createAction('GOAL_SET_TARGET_TGO_ID',
 )();
 
 export const goalActionList = {
-	addWork,
-	removeWork,
 	setWorkTargetTgoId,
 } as const;
 export type GoalActionType = ActionType<typeof goalActionList[keyof typeof goalActionList]>;
 
 export const goalReducer = (state: Goal, action: GoalActionType): Goal => {
 	switch (action.type) {
-		case getType(addWork):
-			return {
-				...state,
-				// workTgoIds: [...state.workTgoIds, action.payload.workTgoId]
-			};
-		case getType(removeWork):
-			return {
-				...state,
-				// workTgoIds: state.workTgoIds.filter(wi => wi !== action.payload.workTgoId),
-			};
 		default:
 			return state;
 	}
@@ -153,11 +122,50 @@ type TgoIds = ReadonlyArray<TgoInventoryItem>;
 const inventoryTgoIds = (tgo: ComponentInventory): TgoIds =>
 	tgo.inventory.filter(ii => ii.tgoId) as TgoIds;
 
+const cleanupGoal = (tgosState: TgosState, goalTgo: ComponentGoal): TgosState => {
+	const afterWorkIssuerCleanup = cleanupWorkIssuerInside(tgosState, goalTgo);
+
+	const tgosStateWithoutGoalInInventory = (tgosState: TgosState, goalTgoToRemove: ComponentGoal): TgosState =>
+		Object.fromEntries([
+			...Object.entries(tgosState)
+				.filter(([tgoId]) => tgoId !== goalTgoToRemove.tgoId),
+			...Object.entries(tgosState)
+				.filter(createTupleFilter(hasComponentInventory))
+				.filter(([tgoId, tgo]) => tgo.inventory.filter(ii => ii.tgoId == goalTgoToRemove.tgoId))
+				.map(([tgoId, tgo]) => [tgoId, ({
+					...tgo,
+					inventory: tgo.inventory.filter(ii => ii.tgoId !== goalTgoToRemove.tgoId)
+				})])
+		]);
+
+	const tgosStateWithoutActiveGoal = (tgosState: TgosState, goalTgoToRemove: ComponentGoal): TgosState => ({
+		...tgosState,
+		...(Object.fromEntries(
+				Object.entries(tgosState)
+					.filter(createTupleFilter(hasComponentGoalDoer))
+					.filter(([tgoId, tgo]) => tgo.activeGoals.filter(goalTgoId => goalTgoId == goalTgoToRemove.tgoId))
+					.map(([tgoId, tgo]) => [tgoId, ({
+						...tgo,
+						activeGoals: tgo.activeGoals.filter(goalTgoId => goalTgoId !== goalTgoToRemove.tgoId)
+					})])
+			)
+		)
+	});
+
+	const removeGoal = (tgosState: TgosState, goalTgoToRemove: ComponentGoal): TgosState =>
+		tgosStateWithoutGoalInInventory(
+			tgosStateWithoutActiveGoal(tgosState, goalTgoToRemove),
+			goalTgoToRemove
+		);
+
+	return removeGoal(afterWorkIssuerCleanup, goalTgo);
+};
+
 const goalDoerTickReducer = (
-	tgosState: RootStateType['tgos'],
+	tgosState: TgosState,
 	itemTypesState: RootStateType['itemTypes'],
 	goalDoer: ComponentGoalDoer & ComponentWorkDoer & ComponentInventory
-): RootStateType['tgos'] => {
+): TgosState => {
 	// Create autorun works that don't exist.
 
 	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
@@ -167,6 +175,9 @@ const goalDoerTickReducer = (
 	if (!currentGoalTgoId) return tgosState;
 
 	const currentGoalTgo = tgosState[currentGoalTgoId];
+	if (!isComponentGoal(currentGoalTgo)) {
+		throw new Error('currentGoalTgo is not a goal Tgo!');
+	}
 	const currentGoal = currentGoalTgo.goal;
 	if (!currentGoal) {
 		throw new Error('tgo.goal is undefined for a goal Tgo!');
@@ -185,41 +196,8 @@ const goalDoerTickReducer = (
 		}
 	};
 
-	const tgosStateWithoutGoalInInventory = (tgosState: TgosState, goalTgoToRemove: TgoId): TgosState =>
-		Object.fromEntries([
-			...Object.entries(tgosState)
-				.filter(([tgoId]) => tgoId !== goalTgoToRemove),
-			...Object.entries(tgosState)
-				.filter(createTupleFilter(hasComponentInventory))
-				.filter(([tgoId, tgo]) => tgo.inventory.filter(ii => ii.tgoId == goalTgoToRemove))
-				.map(([tgoId, tgo]) => [tgoId, ({
-					...tgo,
-					inventory: tgo.inventory.filter(ii => ii.tgoId !== goalTgoToRemove)
-				})])
-		]);
-
-	const tgosStateWithoutActiveGoal = (tgosState: TgosState, goalTgoToRemove: TgoId): TgosState => ({
-		...tgosState,
-		...(Object.fromEntries(
-				Object.entries(tgosState)
-					.filter(createTupleFilter(hasComponentGoalDoer))
-					.filter(([tgoId, tgo]) => tgo.activeGoals.filter(goalTgoId => goalTgoId == goalTgoToRemove))
-					.map(([tgoId, tgo]) => [tgoId, ({
-						...tgo,
-						activeGoals: tgo.activeGoals.filter(goalTgoId => goalTgoId !== goalTgoToRemove)
-					})])
-			)
-		)
-	});
-
-	const removeGoal = (tgosState: TgosState, goalTgoToRemove: TgoId): TgosState =>
-		tgosStateWithoutGoalInInventory(
-			tgosStateWithoutActiveGoal(tgosState, goalTgoToRemove),
-			goalTgoToRemove
-		);
-
 	if (currentGoal.requirements.every(requirementCompleted)) {
-		return removeGoal(tgosState, currentGoalTgoId);
+		return cleanupGoal(tgosState, currentGoalTgo);
 	}
 
 	const getRequirementItems = (requirement: Requirement): Inventory =>
@@ -232,56 +210,25 @@ const goalDoerTickReducer = (
 	const requiredItems = currentGoal.requirements
 		.map(getRequirementItems)
 		.flat(1);
+
+		
+	const committedItems = workIssuerGetCommittedItems(tgosState, currentGoalTgo);
 	
-	const combinedRequiredItems = inventory.combined(requiredItems);
+	const missingInput = inventory.zeroCountsRemoved(
+		inventory.combined([
+			...requiredItems,
+			...inventory.negated(committedItems)
+	]));
 
-	const demandedAutoRecipes = goalDoer.recipeInfos
-		.filter(recipeInfo =>
-			recipeInfo.autoRunOnDemand
-			&& combinedRequiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
-		);
-
-	const tgosAfterAutoRecipeCreate = demandedAutoRecipes
-		.map(({recipe}) => recipe)
-		.reduce(
-			(currentTgosState, autoRecipe) => {
-				const owner = currentTgosState[goalDoer.tgoId];
-				if (owner && hasComponentInventory(owner)) {
-					if (!getInventoryTgoIds2(currentTgosState, owner)
-						.filter(isComponentWork)
-						.some(work => work.workRecipe.type === autoRecipe.type))
-						{
-							return workCreatorReducer(currentTgosState, createWork({
-								recipe: autoRecipe,
-								workerTgoId: goalDoer.tgoId,
-								inputInventoryTgoIds: [ goalDoer.tgoId ],
-								outputInventoryTgoId: goalDoer.tgoId,
-							}))[0];
-						}
-				}
-				return currentTgosState;
-			},
-			tgosState
-		);
+	const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgosState, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId/*, goalDoer.tgoId*/);
 
 	{
 		const workDoer2 = tgosAfterAutoRecipeCreate[goalDoer.tgoId];
 		if (!hasComponentInventory(workDoer2) || !hasComponentWorkDoer(workDoer2)) {
 			return tgosState;
 		}
-	
+
 		return tgosAfterAutoRecipeCreate;
-		/*
-		const works = getInventoryTgoIds2(tgosAfterAutoRecipeCreate, workDoer2)
-			.filter(isComponentWork);
-
-		const afterWorksTgosState = works.reduce(
-			(currentTgosState, work) => workWithCompletionsReducer(currentTgosState, itemTypesState, workDoer2.tgoId, work.tgoId),
-			tgosAfterAutoRecipeCreate
-		);
-
-		return afterWorksTgosState;
-		*/
 	}
 };
 

@@ -1,6 +1,5 @@
 import * as tgosActions from '../actions/tgos.js';
 import { add as tileSetAdd } from '../actions/tileSets.js';
-import { Parameter } from '../ui/paramInput.js';
 import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
@@ -42,6 +41,7 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 		{ recipe: calculation, autoRunOnDemand: true },
 		{ recipe: trade, autoRunOnDemand: true },
 	],
+	worksIssued: [],
 	consumer: {
 		allowList: [
 			'hydrocarbons' as TypeId,

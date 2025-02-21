@@ -2,14 +2,12 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { Recipe } from '../concerns/recipe.js';
 import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId, InventoryItem } from './inventory.js';
+import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, InventoryItem, inventory } from './inventory.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
-// import { addWork as goalAddWork, removeWork } from '../concerns/goal.js';
-import isServer from '../isServer.js';
 import { TypeId } from '../reducers/itemType.js';
-import tgos, { getTgoByIdFromRootState } from '../reducers/tgos.js';
+import tgosReducer, { TgosState } from '../reducers/tgos.js';
 
 // Actions:
 
@@ -25,19 +23,19 @@ export const createWork = createAction('WORK_CREATE',
 		workerTgoId,
 		inputInventoryTgoIds,
 		outputInventoryTgoId,
-		goalTgoId,
+		workIssuerTgoId,
 	}: {
 		recipe: Recipe,
-		workerTgoId?: TgoId,
+		workerTgoId: TgoId,
 		inputInventoryTgoIds: ReadonlyArray<TgoId>,
 		outputInventoryTgoId?: TgoId
-		goalTgoId?: TgoId,
+		workIssuerTgoId?: TgoId,
 	}) => ({
 		recipe,
 		workerTgoId,
 		inputInventoryTgoIds,
 		outputInventoryTgoId,
-		goalTgoId,
+		workIssuerTgoId: workIssuerTgoId ?? workerTgoId,
 	})
 )();
 
@@ -57,21 +55,41 @@ export type WorkActionType = ActionType<typeof workActions>;
 
 // Work TGO members:
 
-export type ComponentWork = 
+// Work issuer creates new works and assigns them to a WorkDoer. Doesn't need to be a ComponentWork itself.
+// Work issuer collects the input items into workInputCommittedItemsTgoId record.
+// worksIssued are the works that the issuer has created.
+// Worker takes items from input inventories directly into the committed inventories.
+// SubWorks created by work issuer insert their output into the committed inventories.
+export type ComponentWorkIssuer =
 	TgoRoot & {
+		readonly worksIssued: ReadonlyArray<{
+			workTgoId: TgoId,
+			workDoerTgoId: TgoId,
+		}>,
+		readonly workInputCommittedItemsTgoId?: Record< // Keyed by committer TgoId. Committed items are already removed from input inventory, but can be redeemed.
+			string, // The committer TgoId.
+			TgoId | undefined // TgoId of the inventory tgo for committed items. Inventory Tgos are created and this field filled automatically when items are to be committed.
+		>,
+	};
+
+export const hasComponentWorkIssuer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkIssuer>) =>
+	tgo && (tgo.worksIssued !== undefined)
+
+export type ComponentWork = 
+	ComponentWorkIssuer & {
 		// A work is a recipe in progress. There's a separate tgoId for each work. A work must (currently) be in an inventory.
-		// Worker is the tgo in whose inventory this work is.
+		// A work must be in a workdoer's inventory to progress.
+		// WorkDoer is the tgo in whose inventory this work is.
 		readonly workRecipe: Recipe,
-		readonly workOutputInventoryTgoId?: TgoId,
-		readonly workInputCommittedItemsTgoId?: Record<string, TgoId>, // Keyed by committer TgoId. Committed items are already removed from input inventory, but can be redeemed.
+		readonly workIssuerTgoId: TgoId, // Can be different from the workDoer.
+		readonly workOutputInventoryTgoId?: TgoId, // If undefined, will output to committedItems
 	};
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
 	tgo && typeof tgo.workRecipe !== 'undefined';
 
 export type ComponentWorkDoer = 
-	TgoRoot & {
-		// readonly recipeInfos: Record<RecipeId, {
+	ComponentWorkIssuer & {
 		readonly recipeInfos: ReadonlyArray<{
 			readonly recipe: Recipe,
 			readonly autoRunOnDemand?: boolean,
@@ -81,60 +99,18 @@ export type ComponentWorkDoer =
 export const hasComponentWorkDoer = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWorkDoer>) =>
 	tgo && (tgo.recipeInfos !== undefined)
 
-// Sagas:
-
-
 // Start with work that only requires ticks.
 
-// work is the goal
-// work will advance with Transactions
+// work will advance
+//   with Transactions from input inventories
+//   or with direct insertions to committeditems by subWorks.
 // work has an inventory
 // work has an tgoId (because of inventory)
 
 // since work has an tgoId, does it have other components?
-//   - I guess no.
+//   - WorkIssuer since: Work can have requirements that have other works.
 
-// should work be in the owner's inventory?
-
-// Most of the above also applies to goals.
-
-
-// Actor is a tgo that has an inventoryitems of goals that have their own inventory items with works inside that have inventory.
-
-// const advanceWorkWithInput = function* ({work, actorTgoId, input}: {work: Work, actorTgoId: TgoId, input: InventoryItem}) {
-
-// }
-
-
-// Steps:
-//
-// Actor has a Goal (get to position)
-//   something recognises that we need position changes to complete it.
-// Actor searches his works how to generate position changes.
-// Actor creates a new work to the goal (Where?)
-// Actor repeats below until work is complete.
-//   Actor pushes (all) inventory to work through transactions.
-//   Actor can also push one tick to work through transaction.
-// On completion, actor collects the output from work.
-// 
-
-/*
-	If actor commits items
-		Creates an inventory to track actor committed items
-	If target commits items
-		Creates an inventory to track target committed items
-
-	Creates a work tgo with recipe, above inventories and goal tgoId
-
-	//Adds work as item into goal inventory
-	Adds work as a goal work.
-
-	Notes:
-		* Why does the work need to know about goal?
-			* Inform the goal on work completion.
-		* This only has very simple conditional logic. Doesn't need to be a saga at all.
-		* This doesn't work as a standalone code anyway, requires goals to trigger.
-*/
+// Work is done by workDoer, so it's in workDoer's inventory.
 
 const inventoryItemRequirementFulfilled = (owned: InventoryItem, required: InventoryItem) =>
 	owned === required
@@ -157,7 +133,7 @@ export const getInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory
 
 export const workCreatorReducer = (
 	tgosState: RootStateType['tgos'],
-	{ payload: { recipe, workerTgoId, inputInventoryTgoIds, outputInventoryTgoId, /* goalTgoId, */ }}: ActionType<typeof createWork>
+	{ payload: { recipe, workerTgoId, workIssuerTgoId, inputInventoryTgoIds, outputInventoryTgoId }}: ActionType<typeof createWork>
 ): [RootStateType['tgos'], Error?] => {
 	if (inputInventoryTgoIds.some(inputInventoryTgoId => !tgosState[inputInventoryTgoId])) {
 		return [
@@ -173,48 +149,42 @@ export const workCreatorReducer = (
 		];
 	}
 
+	if (!hasComponentWorkIssuer(tgosState[workIssuerTgoId]))
+		return [
+			tgosState,
+			new Error('Tgos matching workIssuerTgoId in handleCreateWork not found or not a workIssuer!')
+		];
+
 	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
 		const addTgoAction = addTgo(...params);
 		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
 	};
 
-	const emptyVirtualInventory = {
-		inventory: [],
-		isInventoryVirtual: true,
-	};
-
-	const workInputCommittedItemsTgoAction: Array<[TgoId, ReturnType<typeof addTgo>]> = recipe.input.length > 0
+	const workInputCommittedItemsTgoIds: ReadonlyArray<TgoId> = recipe.input.length > 0
 		? [
-			...inputInventoryTgoIds.map<[owner: TgoId, action: ReturnType<typeof addTgo>]>(inputInventoryTgoId => [inputInventoryTgoId, addTgo(emptyVirtualInventory)]),
+			...inputInventoryTgoIds,
 			...(recipe.input.find(ii => ii.typeId === 'tick' as TypeId)?.count ?? 0) > 0
 				? [
-					['tickSourceDummyTgoId' as TgoId, addTgo(emptyVirtualInventory)] as [owner: TgoId, action: ReturnType<typeof addTgo>]
+					'tickSourceDummyTgoId' as TgoId
 				]
 				: []
 		]
 		: [];
 
-	// const workTargetCommittedItemsTgoAction = recipe.output.length > 0
-	// 	? addTgo(emptyVirtualInventory)
-	// 	: undefined;
-	// if (workTargetCommittedItemsTgoAction)
-	// 	yield* put(workTargetCommittedItemsTgoAction)
-
-	// Add a Work TgoId
+	// Add a Work Tgo
 	const [addWorkAction, workTgoId] = addTgoWithId({
 		workRecipe: recipe,
-		// workInputInventoryTgoIds: recipe.input.length > 0 ? inputInventoryTgoIds : [],
+		workIssuerTgoId,
 		workOutputInventoryTgoId: recipe.output.length > 0 ? outputInventoryTgoId : undefined,
-		workInputCommittedItemsTgoId: workInputCommittedItemsTgoAction.length > 0
+		workInputCommittedItemsTgoId: workInputCommittedItemsTgoIds.length > 0
 			? Object.fromEntries(
-				workInputCommittedItemsTgoAction.map(([tgoId, createInventoryAction]) => [tgoId, createInventoryAction.payload.tgo.tgoId]) ?? []
+				workInputCommittedItemsTgoIds.map(tgoId => [tgoId, undefined])
 			)
 			: undefined,
-		// workTargetCommittedItemsTgoId: workTargetCommittedItemsTgoAction?.payload.tgo.tgoId,
+		worksIssued: [],
 	});
 
 	const actions = [
-		...workInputCommittedItemsTgoAction.map(([, action]) => action),
 		addWorkAction,
 		...(
 			(workerTgoId &&
@@ -226,20 +196,145 @@ export const workCreatorReducer = (
 		)
 	];
 
-	return [
-		actions.reduce(
-		(currentTgosState, action) => tgos(currentTgosState, action),
+	const tgosStateWithActions = actions.reduce(
+		(currentTgosState, action) => tgosReducer(currentTgosState, action),
 		tgosState
-	)];
+	);
 
-	// Add the WorkTgoId to Goal inventory
-	// yield* put(inventoryAddTgoId(
-	// 	goalTgoId,
-	// 	newWorkAction.payload.tgo.tgoId
-	// ));
+	const workIssuer = tgosStateWithActions[workIssuerTgoId];
+	if (!hasComponentWorkIssuer(workIssuer))
+		return [
+			tgosState,
+			new Error('Tgos matching workIssuerTgoId in handleCreateWork not found or not a workIssuer! This should really not happen')
+		];
+	const tgosStateWithIssuerModified: TgosState = {
+		...tgosStateWithActions,
+		[workIssuerTgoId]: {
+			...workIssuer,
+			worksIssued: [
+				...workIssuer.worksIssued,
+				{
+					workDoerTgoId: workerTgoId,
+					workTgoId: workTgoId,
+				},
+			],
+		},
+	};
 
-	// Add the WorkTgoId as a goal work
-	// yield* put(goalAddWork(goalTgoId, newWorkAction.payload.tgo.tgoId));
+	return [tgosStateWithIssuerModified];
+};
+
+export const cleanupWorkIssuerInside = (tgos: TgosState, workIssuerTgo: ComponentWorkIssuer) => {
+	if (!hasComponentWorkIssuer(workIssuerTgo))
+		throw new Error('Work issuer is not a work issuer.');
+	// Remove issued works.
+	const afterIssuedWorksRemove = workIssuerTgo.worksIssued.reduce(
+		(currentTgosState, workIssued) => isComponentWork(currentTgosState[workIssued.workTgoId])
+			? cleanupWork(currentTgosState, currentTgosState[workIssued.workTgoId] as ComponentWork, workIssued.workDoerTgoId)
+			: currentTgosState,
+		tgos
+	);
+
+	// Remove committedInventories
+	const cleanupActions = [
+		...Object.values(workIssuerTgo.workInputCommittedItemsTgoId ?? {})
+			.filter(function (committedInventoryTgoId): committedInventoryTgoId is TgoId { return (committedInventoryTgoId !== undefined); })
+			.map(committedInventoryTgoId => removeTgo(committedInventoryTgoId)),
+	];
+
+	const afterActions = cleanupActions.reduce(
+		(currentTgosState, currentAction) => tgosReducer(currentTgosState, currentAction),
+		afterIssuedWorksRemove
+	);
+
+	return afterActions;
+}
+
+export const cleanupWorkIssuer = (tgos: TgosState, workIssuerTgo: ComponentWorkIssuer): TgosState => {
+	const afterInner = cleanupWorkIssuerInside(tgos, workIssuerTgo);
+	const cleanupActions = [
+		removeTgo(workIssuerTgo.tgoId),
+	];
+
+	const afterActions = cleanupActions.reduce(
+		(currentTgosState, currentAction) => tgosReducer(currentTgosState, currentAction),
+		afterInner
+	);
+
+	return afterActions;
+};
+
+export const cleanupWork = (tgos: TgosState, workTgo: ComponentWork, workDoerTgoId: TgoId): TgosState => {
+	const afterCleanupWorkIssuer = cleanupWorkIssuer(tgos, workTgo);
+
+	// Remove work from workIssuer's worksIssued list.
+	const issuerTgo = afterCleanupWorkIssuer[workTgo.workIssuerTgoId];
+	if (!hasComponentWorkIssuer(issuerTgo))
+		return afterCleanupWorkIssuer;
+
+	const tgosAfterIssuerRemove: TgosState = {
+		...afterCleanupWorkIssuer,
+		[issuerTgo.tgoId]: {
+			...issuerTgo,
+			worksIssued: issuerTgo.worksIssued.filter(wi => wi.workTgoId !== workTgo.tgoId),
+		},
+	};
+
+	// Remove work from workDoer inventory and from tgos
+	const cleanupActions = [
+		inventoryRemoveTgoId(workDoerTgoId, workTgo.tgoId),
+		removeTgo(workTgo.tgoId),
+	];
+
+	const afterActions = cleanupActions.reduce(
+		(currentTgosState, currentAction) => tgosReducer(currentTgosState, currentAction),
+		tgosAfterIssuerRemove
+	);
+
+	return afterActions;
+};
+
+// Makes sure that a workInputCommittedItemsTgoId inventory exists for the tgoIds.
+const ensureItemsCommittedInventoriesForTgoIds = (tgosState: TgosState, workIssuer: ComponentWorkIssuer, tgoIds: ReadonlyArray<TgoId>): TgosState => {
+	const worksMissingCommittedInventories = tgoIds
+		.filter(tgoId => (workIssuer.workInputCommittedItemsTgoId ?? {})[tgoId] === undefined);
+
+	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
+		const addTgoAction = addTgo(...params);
+		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+	};
+
+	const emptyVirtualInventoryTgo: Pick<ComponentInventory, 'inventory' | 'isInventoryVirtual'> = {
+		inventory: [],
+		isInventoryVirtual: true,
+	};
+	
+	const committedItemsInventoriesCreateActions = worksMissingCommittedInventories.map(tgoId => ({
+		tgoId,
+		addInventoryTgoAction: addTgoWithId(emptyVirtualInventoryTgo),
+	}));
+	
+	const workIssuerWithNewWorkInputCommittedItems: typeof workIssuer = {
+		...workIssuer,
+		workInputCommittedItemsTgoId: {
+			...workIssuer.workInputCommittedItemsTgoId,
+			...Object.fromEntries(
+				committedItemsInventoriesCreateActions.map(({ tgoId, addInventoryTgoAction: inventoryAction }) => [ tgoId, inventoryAction[1] ])
+			)
+		}
+	}
+
+	const afterNewWorkTgo: TgosState = {
+		...tgosState,
+		[workIssuerWithNewWorkInputCommittedItems.tgoId]: workIssuerWithNewWorkInputCommittedItems,
+	};
+
+	const afterCommittedInventoryAdd: TgosState = committedItemsInventoriesCreateActions.reduce(
+		(currentTgosState, addTgoAction) => tgosReducer(currentTgosState, addTgoAction.addInventoryTgoAction[0]),
+		afterNewWorkTgo
+	);
+
+	return afterCommittedInventoryAdd;
 };
 
 export const workWithCompletionsReducer = (
@@ -248,44 +343,18 @@ export const workWithCompletionsReducer = (
 	workDoerTgoId: TgoId,
 	workTgoId: TgoId
 ): RootStateType['tgos'] => {
-	const workDoer = tgosState[workDoerTgoId];
-	if (!workDoer || !hasComponentWorkDoer(workDoer) || !hasComponentInventory(workDoer)) {
-		throw new Error();
-	}
 	const workTgo = tgosState[workTgoId];
-	if (!workTgo || !isComponentWork(workTgo)) {
+	if (!isComponentWork(workTgo)) {
 		throw new Error();
 	}
 
-	const committedInventories = Object.values(workTgo.workInputCommittedItemsTgoId ?? {})
-		.map(workInputTgoIdCommittedInventoryTgoId => tgosState[workInputTgoIdCommittedInventoryTgoId]?.inventory ?? []);
-
-	const committedItems = committedInventories
-		.flat(1)
-		.reduce<Inventory>(
-			((inv, cii) => {
-				const existingInventoryItem: InventoryItem = inv.find(ii => ii.typeId === cii.typeId) ?? {
-					typeId: cii.typeId,
-					count: 0,
-				};
-				return [
-					...inv.filter(ii => ii.typeId != cii.typeId),
-					{
-						typeId: existingInventoryItem.typeId,
-						count: existingInventoryItem.count + cii.count,
-					},
-				];
-			}),
-			[]
-		);
-
-	const missingInput = workTgo.workRecipe.input
-		.map(ii => ({
-			...ii,
-			count: ii.count -
-				(committedItems.find(({ typeId: committedTypeId }) => committedTypeId === ii.typeId)?.count ?? 0)
-		}))
-		.filter(ii => ii.count !== 0);
+	const committedItems = workIssuerGetCommittedItems(tgosState, workTgo);
+	
+	const missingInput = inventory.zeroCountsRemoved(
+		inventory.combined([
+			...workTgo.workRecipe.input,
+			...inventory.negated(committedItems)
+	]));
 
 	const participantsWithCommitables = Object.keys(workTgo.workInputCommittedItemsTgoId ?? {})
 		.filter(tgoId => tgoId)
@@ -301,6 +370,7 @@ export const workWithCompletionsReducer = (
 					}],
 				} as ComponentInventory,
 		}))
+		.filter(({ tgo }) => tgo !== undefined) // SubWorks may already have completed their work. Thus only the committedItems inventory remains.
 		.map(participant => ({
 			...participant,
 			committableRequiredInventoryTypes: missingInput
@@ -347,6 +417,12 @@ export const workWithCompletionsReducer = (
 			},
 			[missingInput, []]
 		);
+	
+	const afterEnsureCommittedItemInventories = ensureItemsCommittedInventoriesForTgoIds(tgosState, workTgo, participantsWithItemsToCommit.map(p => p.tgoId));
+	const workTgoWithNewWorkInputCommittedItems = afterEnsureCommittedItemInventories[workTgoId];
+	if (!isComponentWork(workTgoWithNewWorkInputCommittedItems)) {
+		throw new Error();
+	}
 
 	const inputTransactions = participantsWithItemsToCommit // remove from input
 		.filter(({ tgoId }) => tgoId !== 'tickSourceDummyTgoId') // Skip the tick source, it's not a real Tgo.
@@ -356,18 +432,18 @@ export const workWithCompletionsReducer = (
 		}));
 	const committedInventoryTransactions = participantsWithItemsToCommit // Add to committed
 		.map(p => ({ // Add items to committed items.
-			tgoId: workTgo.workInputCommittedItemsTgoId[p.tgoId],
+			tgoId: workTgoWithNewWorkInputCommittedItems.workInputCommittedItemsTgoId[p.tgoId]!, // We just created inventory so we know it exists.
 			items: p.itemsToCommit
 		}));
 
 	const transactions = [
-		...inputTransactions,
-		...committedInventoryTransactions,
-	];
+			...inputTransactions,
+			...committedInventoryTransactions,
+		];
 
 	const afterCommittingTgosState = transactions.reduce(
 		(currentTgosState, currentTransaction) => transactionReducer(currentTgosState, itemTypesState, transaction(currentTransaction)),
-		tgosState
+		afterEnsureCommittedItemInventories
 	);
 
 	const allRequirementsFulfilled = missedRequiredItems.length === 0;
@@ -375,25 +451,120 @@ export const workWithCompletionsReducer = (
 	if (allRequirementsFulfilled) {
 		// Send the reward of work.
 
-		const afterRewardTgosState = transactionReducer(afterCommittingTgosState, itemTypesState, transaction({
-			tgoId: workTgo.workOutputInventoryTgoId ?? workDoerTgoId,
-			items: workTgo.workRecipe.output,
-		}));
+		if (workTgo.workRecipe.output.length > 0) {
+			if (workTgo.workOutputInventoryTgoId !== undefined) {
+				const afterRewardTgosState = transactionReducer(afterCommittingTgosState, itemTypesState, transaction({
+					tgoId: workTgo.workOutputInventoryTgoId,
+					items: workTgo.workRecipe.output,
+				}));
+				return cleanupWork(afterRewardTgosState, workTgo, workDoerTgoId);
+			}
 
-		const cleanupActions = [
-			...Object.values(workTgo.workInputCommittedItemsTgoId ?? {})
-				.map(committedInventoryTgoId => removeTgo(committedInventoryTgoId)),
-			removeTgoId(workDoerTgoId, workTgoId),
-			removeTgo(workTgoId),
-		];
+			const issuerTgo = afterCommittingTgosState[workTgo.workIssuerTgoId];
+			if (!hasComponentWorkIssuer(issuerTgo))
+				throw new Error('WorkIssuer not found.');
+			const afterEnsuredOutputCommittingInventory = ensureItemsCommittedInventoriesForTgoIds(afterCommittingTgosState, issuerTgo, [workTgoId]);
+			const issuerTgoAfterEnsuringCommittingInventory = afterEnsuredOutputCommittingInventory[workTgo.workIssuerTgoId];
+			if (!hasComponentWorkIssuer(issuerTgoAfterEnsuringCommittingInventory))
+				throw new Error('WorkIssuer not found.');
+			const afterRewardTgosState = transactionReducer(afterEnsuredOutputCommittingInventory, itemTypesState, transaction({
+				tgoId: issuerTgoAfterEnsuringCommittingInventory.workInputCommittedItemsTgoId[workTgoId]!,
+				items: workTgo.workRecipe.output,
+			}));
+			return cleanupWork(afterRewardTgosState, workTgo, workDoerTgoId);
+		}
 
-		return cleanupActions.reduce(
-			(currentTgosState, currentAction) => tgos(currentTgosState, currentAction),
-			afterRewardTgosState
-		);
+		const tgosAfterCleanup = cleanupWork(afterCommittingTgosState, workTgo, workDoerTgoId);
+		return tgosAfterCleanup;
 	}
 
-	return afterCommittingTgosState;
+	if (missedRequiredItems.filter(({ typeId }) => typeId !== 'tick').length === 0)
+		return afterCommittingTgosState;
+
+	return workIssuerCreateWorksOnRequiredItems(
+		afterCommittingTgosState,
+		workTgoId,
+		missedRequiredItems,
+		workDoerTgoId
+	);
+};
+
+export const workIssuerCreateWorksOnRequiredItems = (
+	tgosState: TgosState,
+	workIssuerTgoId: TgoId,
+	requiredItems: Inventory,
+	workDoerTgoId: TgoId = workIssuerTgoId,
+	overrideTargetInventoryTgoId?: TgoId, // Specifying this will skip creating committedItems Inventories.
+) => {
+	const workDoer = tgosState[workDoerTgoId];
+	if (!hasComponentWorkDoer(workDoer) || !hasComponentInventory(workDoer)) {
+		throw new Error();
+	}
+	const workIssuer = tgosState[workIssuerTgoId];
+	if (!hasComponentWorkIssuer(workIssuer)) {
+		throw new Error();
+	}
+
+	const activeRecipes = workIssuer.worksIssued
+		.map(({ workTgoId }) => tgosState[workTgoId])
+		.filter(isComponentWork)
+		.map(({ workRecipe }) => workRecipe);
+
+	const activeRecipeOutputs = activeRecipes
+		.map(({ output }) => output)
+		.flat()
+		.filter(({ count }) => count > 0);
+
+	// Find out which required items already have subworks.
+	const missedRequiredItemsWithoutActiveWork = requiredItems
+		.filter(({ typeId }) => !activeRecipeOutputs.some(({ typeId: recipeOutputTypeId }) => recipeOutputTypeId === typeId ));
+
+	// Filter workDoer's recipes that are possible have autoRun recipes to fulfill the requirements.
+	const possibleRequiredItemsWithoutActiveWork = missedRequiredItemsWithoutActiveWork
+		.filter(({ typeId }) => workDoer.recipeInfos
+			.filter(({ autoRunOnDemand }) => autoRunOnDemand)
+			.some(({ recipe }) => recipe.output.some(({ typeId: recipeOutputTypeId }) =>  recipeOutputTypeId === typeId))
+		);
+
+	if (possibleRequiredItemsWithoutActiveWork.length === 0)
+		return tgosState;
+
+	console.log(`missed required items: `, possibleRequiredItemsWithoutActiveWork);
+
+	if (overrideTargetInventoryTgoId !== undefined) {
+		const tgosAfterAutoRecipeCreate = createWorksOnRequiredItems(
+			tgosState,
+			workDoerTgoId,
+			possibleRequiredItemsWithoutActiveWork,
+			overrideTargetInventoryTgoId,
+			workIssuerTgoId
+		);
+
+		return tgosAfterAutoRecipeCreate;
+	}
+
+	const tgosAfterAutoRecipeCreate = createWorksOnRequiredItems(
+		tgosState,
+		workDoerTgoId,
+		possibleRequiredItemsWithoutActiveWork,
+		undefined, // Let the works create the output committed items inventory themselves.
+		workIssuerTgoId
+	);
+
+	return tgosAfterAutoRecipeCreate;
+};
+
+export const workIssuerGetCommittedItems = (
+	tgosState: TgosState,
+	workIssuer: ComponentWorkIssuer,
+): Inventory => {
+	const committedInventories = Object.values(workIssuer.workInputCommittedItemsTgoId ?? {})
+		.filter(function (committedInventoryTgoId): committedInventoryTgoId is TgoId { return (committedInventoryTgoId !== undefined); })
+		.map(workInputTgoIdCommittedInventoryTgoId => tgosState[workInputTgoIdCommittedInventoryTgoId]?.inventory ?? []);
+
+	return inventory.zeroCountsRemoved(
+		inventory.combined(committedInventories.flat(1))
+	);
 };
 
 export const workCancelReducer = (
@@ -429,54 +600,57 @@ export const workCancelReducer = (
 
 	const redeemed = Object.entries(work.workInputCommittedItemsTgoId)
 		.filter(([inputTgoId]) => inputTgoId !== 'tickSourceDummyTgoId')
-		.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(tgosState[inputTgoId], tgosState[inputCommittedInventoryTgoId]))
+		.map(([inputTgoId, inputCommittedInventoryTgoId]) => redeem(tgosState[inputTgoId], inputCommittedInventoryTgoId ? tgosState[inputCommittedInventoryTgoId] : undefined))
 		.flat()
 		.reduce(
 			(currentTgosState, currentTransaction) => transactionReducer(currentTgosState, itemTypesState, currentTransaction),
 			tgosState
 		);
-		
-	const cleanupActions = [
-		...Object.values(work.workInputCommittedItemsTgoId ?? {})
-			.map(committedInventoryTgoId => removeTgo(committedInventoryTgoId)),
-		removeTgoId(workDoerTgoId, workTgoId),
-		removeTgo(workTgoId),
-	];
 
-	return cleanupActions.reduce(
-		(currentTgosState, currentAction) => tgos(currentTgosState, currentAction),
-		redeemed
-	);
+	const tgosAfterCleanup = cleanupWork(redeemed, work, workDoerTgoId);
+	return tgosAfterCleanup;
 }
 
-const workDoerTickReducer = (
-	tgosState: RootStateType['tgos'],
-	itemTypesState: RootStateType['itemTypes'],
-	workDoer: ComponentWorkDoer & ComponentInventory
-): RootStateType['tgos'] => {
-	// Create autorun works that don't exist.
+export const createWorksOnRequiredItems = (
+	tgosState: TgosState,
+	workDoerTgoId: TgoId,
+	requiredItems: Inventory,
+	targetInventoryTgoId?: TgoId,
+	workIssuerTgoId: TgoId = workDoerTgoId,
+) => {
+	const combinedRequiredItems = inventory.combined(requiredItems);
+
+	const workDoer = tgosState[workDoerTgoId];
+	if (!hasComponentInventory(workDoer) || !hasComponentWorkDoer(workDoer))
+		return tgosState;
+
+	const demandedAutoRecipes = workDoer.recipeInfos
+		.filter(recipeInfo =>
+			recipeInfo.autoRunOnDemand
+			&& combinedRequiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
+		);
 
 	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
 		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
 
-	const tgosAfterAutoRecipeCreate = workDoer.recipeInfos
-		.filter(() => false)
-		.filter(recipeInfo => recipeInfo.autoRunOnDemand)
-		.map(({recipe}) => recipe)
+	const createWorkActions = demandedAutoRecipes.map(({ recipe: autoRecipe }) => createWork({
+		recipe: autoRecipe,
+		workerTgoId: workDoer.tgoId,
+		inputInventoryTgoIds: [ workDoer.tgoId ],
+		outputInventoryTgoId: targetInventoryTgoId,
+		workIssuerTgoId,
+	}));
+
+	const tgosAfterAutoRecipeCreate = createWorkActions
 		.reduce(
-			(currentTgosState, autoRecipe) => {
+			(currentTgosState, createWorkAction) => {
 				const owner = currentTgosState[workDoer.tgoId];
 				if (owner && hasComponentInventory(owner)) {
 					if (!getInventoryTgoIds2(currentTgosState, owner)
 						.filter(isComponentWork)
-						.some(work => work.workRecipe.type === autoRecipe.type))
+						.some(work => work.workRecipe.type === createWorkAction.type))
 						{
-							return workCreatorReducer(currentTgosState, createWork({
-								recipe: autoRecipe,
-								workerTgoId: workDoer.tgoId,
-								inputInventoryTgoIds: [ workDoer.tgoId ],
-								outputInventoryTgoId: workDoer.tgoId,
-							}))[0];
+							return workCreatorReducer(currentTgosState, createWorkAction)[0];
 						}
 				}
 				return currentTgosState;
@@ -484,17 +658,31 @@ const workDoerTickReducer = (
 			tgosState
 		);
 
+	return tgosAfterAutoRecipeCreate;
+}
+
+const workDoerTickReducer = (
+	tgosState: RootStateType['tgos'],
+	itemTypesState: RootStateType['itemTypes'],
+	workDoer: ComponentWorkDoer & ComponentInventory
+): RootStateType['tgos'] => {
+	
+	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
+		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
+	
+	// Possibly create forced autorun works that don't exist.
 	{
-		const workDoer2 = tgosAfterAutoRecipeCreate[workDoer.tgoId];
+		const workDoer2 = tgosState[workDoer.tgoId];
+		// const workDoer2 = tgosAfterAutoRecipeCreate[workDoer.tgoId];
 		if (!hasComponentInventory(workDoer2) || !hasComponentWorkDoer(workDoer2)) {
 			return tgosState;
 		}
-		const works = getInventoryTgoIds2(tgosAfterAutoRecipeCreate, workDoer2)
+		const works = getInventoryTgoIds2(tgosState, workDoer2)
 			.filter(isComponentWork);
 
 		const afterWorksTgosState = works.reduce(
 			(currentTgosState, work) => workWithCompletionsReducer(currentTgosState, itemTypesState, workDoer2.tgoId, work.tgoId),
-			tgosAfterAutoRecipeCreate
+			tgosState
 		);
 
 		return afterWorksTgosState;
