@@ -1,14 +1,17 @@
 import { Dispatch } from 'redux';
 import { add } from '../actions/itemTypes.js';
-import { InitialItemType, TypeId } from '../reducers/itemType.js';
+import { InitialItemType, OptionalFields, RequiredFields, TypeId } from '../reducers/itemType.js';
+import { ComponentWorkDoer } from '../concerns/work.js';
+import { growPineapple } from './recipes.js';
 
-const defaultType = {
+const defaultType: Omit<RequiredFields & OptionalFields, 'typeId'> = {
 	stackable: true,
 	isInteger: true,
 	positiveOnly: true,
 	building: false,
 	isStorable: true,
 	redeemable: true,
+	collectable: true,
 };
 
 export type InitialItemTypesState = {
@@ -52,18 +55,36 @@ export const items: InitialItemTypesState = {
 		isInteger: true,
 		building: true,
 		deployable: {
-			deploysIntoTypeId: 'pineApple' as TypeId,
+			deployInventory: [
+				{ typeId: 'pineApple' as TypeId, count: 1/8, },
+				{ typeId: 'growthPotential' as TypeId, count: 3-(1/8), },
+			],
+			deployAdditionals: {
+				recipeInfos: [{
+					recipe: growPineapple, autoRun: 'OnInputs',
+				},],
+				worksIssued: [],
+			} as Omit<ComponentWorkDoer, 'tgoId'>,
 			deployVerb: 'plant',
 			collectVerb: 'harvest',
-			deployCount: 0.25,
 		},
+	},
+	growthPotential: {
+		label: 'Growth potential',
+		stackable: true,
+		isInteger: false,
+		collectable: false,
 	},
 	cannery: {
 		label: 'Manual cannery',
 		stackable: true,
 		isInteger: true,
 		building: true,
-		deployable: {},
+		deployable: {
+			deployInventory: [
+				{ typeId: 'cannery' as TypeId, count: 1, },
+			],
+		},
 		// Should be providing canneryWork or a possibility to do it.
 	},
 	canBlank: {
@@ -111,7 +132,8 @@ export const items: InitialItemTypesState = {
 	},
 	movementAmount: {
 		label: 'MovementAmount',
-		isStorable: true, // For now since we process it in a separate step.
+		isStorable: false,
+		redeemable: false,
 	},
 	work: {
 		label: 'Work',

@@ -4,8 +4,10 @@ Which should be higher level - Goals or Contracts?
 
 ## Goals
 
-`ComponentGoal`: A tgo is a Goal. Check with `isComponentGoal()`.
+`ComponentGoal`: A tgo is a Goal. Check with `isComponentGoal()`. Is also a `ComponentWorkIssuer`.
 `ComponentGoalDoer`: A tgo can do Goal related items. Check with `hasComponentGoalDoer`.
+
+`ComponentWorkIssuer`: A tgo that can create new Works for `workDoer`s. All `workDoer`s are also `workIssuer`s. Check with `hasComponentWorkIssuer`.
 
 Goals define what we want the end-state to be. More commonly in inventory change goals.
 
@@ -42,26 +44,10 @@ When can recipes be executed? Some recipes definitely require tools, like a forg
 
 See `Works.md`.
 
-Move work practically uses a single inventory.
-
-Works live in inventories:
-
-* Either in a Tgo With `ComponentWorkDoer`'s inventory, where the works are done directly.
-* Or inside GoalTgo's inventory. In this case it's the goal that activates that work.
-
-* Work lifecycle.
-	* Q: What creates works?
-		* Maybe manual?
-		* Goals?
-	* Works are terminated on completion.
-	* Q: Creating a new work for each minimal amont of work is feels very inefficient. I don't mind being inefficient, but I don't think making possibly tens of new, single-tick works per tick for each player seems overkill.
-	* Goals could control many work lifespans if they don't make multiple works.
-
 # Other concerns
 
 * There could be multiple goals with same type of work.
 * What are the priorities of those?
-* Do goals run the work or do works work "by themselves"?
 * Parallel works are possible with similar inputs. How to prevent those two from double-using limited resources (like thinking power or hand dexterity)?
 	* A: Have separate workers inside the "Player" that have their own inventory/buffer of "thinking power". Player has a brain -> it generates up to 10 thinking power each tick.
 		* Easier to have a buffer that doesn't exhaust immediately. But do we need this?

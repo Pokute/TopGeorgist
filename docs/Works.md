@@ -4,9 +4,10 @@ Work is the process of production and should be used for almost anything from ha
 
 ## What's what.
 
-`ComponentWork`: A tgo, usually contained in a `workDoer`'s inventory. Check with `isComponentWork()`.
-`ComponentWorkDoer`: A tgo that can process Works residing in his inventory. Check with `hasComponentWorkDoer`.
+`ComponentWork`: A tgo, usually contained in a `workDoer`'s inventory. Check with `isComponentWork()`. Is also a `ComponentWorkIssuer` since it can create subworks.
+`ComponentWorkDoer`: A tgo that can process Works residing in his inventory. Check with `hasComponentWorkDoer`. Is also a `ComponentWorkIssuer`.
 `ComponentWorkIssuer`: A tgo that can create new Works for `workDoer`s. All `workDoer`s are also `workIssuer`s. Check with `hasComponentWorkIssuer`.
+`ComponentGoal`: A goal. Is also a `ComponentWorkIssuer` since it can create subworks.
 
 ## The logic in high level.
 
@@ -16,12 +17,13 @@ Usually `createWork` action is called with following parameters:
 	* The recipe
 	* The workDoer
 	* Input inventories.
-	* Output inventory.
-	* The workIssuer, which can often be the workDoer.
+	* (optional) Output inventory. If no output is defined, uses a temporary committedItems inventory.
+	* (optional) The workIssuer, defaults to the workDoer.
 
 ### Initialisation
 
 * A work tgo is created and inserted in WorkDoer's inventory.
+* For workIssuer, the work tgo is added to worksIssued array. The work has a workIssuerTgoId that points to the workIssuer.
 * If needed, temporary tgo's for virtual inventories are created.
 	* For each committer, a separate virtual inventory is created.
 	* That virtual inventory tracks committed items.
@@ -35,11 +37,11 @@ This is run every tick.
 * Then we find the committedItems inventories to see all the items committed by both the worker and the target.
 * We subtract committed items from required items to find the missing item count.
 * If missing items still remain
-	* (Should work like this) Allocate required items from target inventory
-	* (Should work like this) Allocate rest of required items from workDoer inventory.
-	* Create a transaction based on allocated items
+	* Make a transaction of items from input inventory into committedItems inventory.
 		* If `tick`'s are required, one is added from `tickSourceDummyTgoId`.
-	* Commit the transaction
+	* Commit the transaction.
+* If still missing items
+	* Find applicable recipes for the workDoer that could provide the missing items.
 * If missing item count is zero
 	* Create transaction for adding the `output` to `target` inventory.
 	* Commit the transaction.
@@ -62,29 +64,10 @@ When the work completes, the work tgo and all it's related inventories are delet
 * * Solution would be that by default, works should input temporary items in their own inventory.
 * * When multiple things require some resource, there could be two different works created for producing that resource, but it one produces that resource, it's practically up to chance which requirer snatches that resource up first.
 
-For the calories->calculation->trade chain.
-
-1) Trades are requested and work for 'trade' recipe is created.
-2) 'trade' work runs and notices that 'calculation' items are required which were not found in player's inventory.
-3) 'trade' work creates work for 'calculation' recipe. Output of that work will be put into work's inventory(?).
-4) 'calculation' work runs by taking 'calories' from player's inventory and 'tick's.
-5) 'calculation' works are completed a few times, but at some point, player runs out of 'calories'
-6) ??? Does 'calculation' just wait until player itself gets more calories?
-7) ??? Or does 'calculation' automatically 'consume' items. But if that happens, how does the overflow of 'calories' get back to 'player' (though this should be automatic after the work has finished, but waiting for it / relying on it is not ideal)
-8) Finally all 'calculation' works are finished and trade is done. All works are destroyed, their inventories are moved to 'player' for items that are storable.
-
-If subwork's output 'calculation' is put directly into parent work's inventory, how are the item commits tracked?
-How this works, is that 'calculation' will not be committed directly.
-However, on 'trade' work tick, it could look at 'calculationWork' 's output inventory and find 'calculation' there. But it 'tradeWork' 's own inventory, so it just moves it from there to committed inventory. And on work cancellation it could try to redeem to 'calculationWork's outout inventory which is it's own inventory. What a mess.
-
-**Let's do this:** SubWork's output could instead be deposited directly into parentWork's committedItems. This also works as a kind of inventory.
+*SubWork's output is instead deposited directly into parentWork's committedItems. This also works as a kind of inventory.
 Side effects items don't work for that really, so these would need a separate mechanism.
 
 On work cancellation/completion, redeems/surplus/sideoutputs could be moved upward either to the issuer's inventory or workDoer's inventory...
-
-## Current bugs.
-
-* If both the `workDoer` and `target` inventories have required `input` items, double-commit might happen.
 
 ## Limitations.
 
@@ -94,12 +77,6 @@ On work cancellation/completion, redeems/surplus/sideoutputs could be moved upwa
 ## Work transferability.
 
 Work must be inside WorkDoer's inventory for any work to progress. However, in-progress work can be transferred to another inventory, but it might not continue inside that other inventory.
-
-## Unsorted bullet points.
-
-Work is an application of recipe. Work is always done by a single Tgo.
-Works must be inside inventories.
-Works inside inventories of ComponentWorkDoer are processed each tick.
 
 ## Other improvements under consideration.
 
@@ -135,35 +112,3 @@ Works inside inventories of ComponentWorkDoer are processed each tick.
 		* Either dummy world item (Prospecting marker) or just ComponentWork with ComponentPosition.
 	* Repairing a screwdriver.
 		* Maybe work is inside screwdriver's inventory or placed within the WorkDoer's (repairman) inventory?
-
-# Multi-work chain
-
-The current example is buying/selling at a shop. Currently trading requires `trade` items which are created with `trade` recipe.
-Those in turn require `calculation` items created with `calculation` from `tick`s and `calories`. Obviously automatically creating a single work from a single recipe is not enough.
-
-Additionally, considering how complex the recipe network is going to be, manual work creation would be overwhelming.
-
-How automatic work creation is currently done:
-
-* Goals create them
-	* Currently only goal of type `RequirementMove` is properly implemented
-	* While goal is not completed and when goal tick is triggered, a list of required items for the goal is enumerated.
-		* This list is only one level deep.
-	* For each item in required items list, we find if there's a recipe that can be automatically generated for it.
-	* Works are automatically generated with those recipes. 
-
-**Since works can also require other works, there becomes a need to move work creation away from goal code into a separate concern!**
-
-Let's put aside how the initial work is created and think how the work-chain is created and used instead:
-
-* Work chains should be created by works themselves, but in which way?
-	* Directly?
-		* But then some works are created by works and some not.
-	* Indirectly through some requiredItems interface?
-		* Easier to have a single concern responsible for work creation.
-* In which inventory does the work go?
-* Work chains put intermediary items into virtual inventories?
-	* Solves the problem of `isStorable: false` items where the items would need to go through intermediary inventories.
-	* Solves the problem of multiple requiring works/goals trying to claim the same items.
-* Work chains put side-effect items into either workDoer's inventory or the environment.
-

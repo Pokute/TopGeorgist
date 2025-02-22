@@ -30,16 +30,10 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 		},
 	],
 	recipeInfos: [
-		{
-			recipe: move,
-			autoRunOnDemand: true,
-		},
-		{
-			recipe: digestHydrocarbons,
-			autoRunOnDemand: true,
-		},
-		{ recipe: calculation, autoRunOnDemand: true },
-		{ recipe: trade, autoRunOnDemand: true },
+		{ recipe: move, autoRun: 'OnDemand', },
+		{ recipe: digestHydrocarbons, autoRun: 'OnInputs', },
+		{ recipe: calculation, autoRun: 'OnDemand' },
+		{ recipe: trade, autoRun: 'OnDemand' },
 	],
 	worksIssued: [],
 	consumer: {

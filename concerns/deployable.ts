@@ -58,7 +58,6 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 	const targetType = state.itemTypes[deployedTypeId]
 	if (!hasComponentPosition(actor) || !targetType?.deployable)
 		return state;
-	const deploysIntoTypeId = targetType.deployable.deploysIntoTypeId ?? deployedTypeId;
 
 	const freePlot = Object.values(state.tgos)
 		.filter(tgo => (
@@ -96,34 +95,13 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 				},
 			],
 		},
-		inventory: [
-			{
-				typeId: deploysIntoTypeId,
-				count: targetType.deployable.deployCount ?? 1,
-			},
-		],
-		components: [
-			['inventoryChange', { typeId: deploysIntoTypeId, perTick: (1 / 256) }],
-		],
+		inventory: Array.from(targetType.deployable.deployInventory),
+		...targetType.deployable.deployAdditionals
 	});
 	const deployedTgoId = addDeployedAction.payload.tgo.tgoId;
 	const stateWithDeployedTgo = rootReducer(stateWithTransaction, addDeployedAction);
 
 	return stateWithDeployedTgo;
-
-	// yield* put(taskQueueActions.addTaskQueue(
-	// 	actorTgoId,
-	// 	[{
-	// 		title: `Planting ${plantableType.label}`,
-	// 		progress: {
-	// 			time: 0,
-	// 		},
-	// 		cost: {
-	// 			time: 50,
-	// 		},
-	// 		completionAction: planting,
-	// 	}],
-	// ));
 };
 
 export const deployTgoReducer = (state: RootStateType, { payload: { tgoId, deployedTgoId }}: ActionType<typeof deployTgo>): RootStateType => {
@@ -146,7 +124,8 @@ export const collectReducer = (state: RootStateType, { payload: { tgoId: actorTg
 
 	const stateWithTransaction = rootReducer(state, transaction({
 		tgoId: actorTgoId,
-		items: visitableTgo.inventory ?? [],
+		items: (visitableTgo.inventory ?? [])
+			.filter(ii => state.itemTypes[ii.typeId].collectable),
 	}));
 	if (stateWithTransaction === state)
 		return state;
@@ -156,30 +135,4 @@ export const collectReducer = (state: RootStateType, { payload: { tgoId: actorTg
 		return state;
 
 	return stateWithRemove;
-
-	// taskQueueActions.addTaskQueue(
-	// 		actorTgoId,
-	// 		[
-	// 			{
-	// 				title: `Harvesting ${plantType.label}`,
-	// 				progress: {
-	// 					time: 0,
-	// 				},
-	// 				cost: {
-	// 					time: 15,
-	// 				},
-	// 				completionAction: transactionResult,
-	// 			},
-	// 			{
-	// 				title: `Removing`,
-	// 				progress: {
-	// 					time: 0,
-	// 				},
-	// 				cost: {
-	// 					time: 0,
-	// 				},
-	// 				completionAction: remove,
-	// 			},
-	// 		],
-	// 	);
 };

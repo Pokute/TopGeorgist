@@ -112,7 +112,8 @@ Milestone 4:
 	☐ Farming overhaul
 		☐ Re-implement plant growth
 			☐ Plant growth progress can be seen. Progressbar?
-			☐ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
+			✔ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
+				✔ Implemented with a simple growthPotential inventory item.
 				? How does the growing work?
 					? Automatic recipe of 'tick+sunlight+nutrition+water+growthPotential -> hydrocarbons'?
 				? How does the growing stop?
@@ -130,6 +131,9 @@ Milestone 4:
 						? Figure out how this works.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
+	✔ Work and goal internals rework.
+		✔ Works and Goals properly start subworks.
+		✔ Proper usage of temporary inventories.
 	✔ Re-imagine TaskQueue.
 		? Why TaskQueue exists?
 			* Currently used for adding delay for actions.

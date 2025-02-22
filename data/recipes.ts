@@ -48,7 +48,7 @@ export const digestHydrocarbons = {
 		},
 		{
 			typeId: 'tick' as TypeId,
-			count: 2,
+			count: 5,
 		},
 	],
 	output: [
@@ -57,8 +57,27 @@ export const digestHydrocarbons = {
 			count: 100,
 		},
 	],
+};
 
-}
+export const growPineapple: Recipe = {
+	type: 'growPineapple' as RecipeId,
+	input: [
+		{
+			typeId: 'growthPotential' as TypeId,
+			count: 1/256,
+		},
+		{
+			typeId: 'tick' as TypeId,
+			count: 10,
+		},
+	],
+	output: [
+		{
+			typeId: 'pineApple' as TypeId,
+			count: 1/256,
+		}
+	],
+};
 
 export const harvest: Recipe = {
 	type: 'harvest' as RecipeId,
@@ -96,7 +115,7 @@ export const canPineApple: Recipe = {
 			count: 1,
 		},
 		{
-			typeId: 'canningWork' as TypeId, // Non-storeable
+			typeId: 'canningWork' as TypeId,
 			count: 1,
 		}
 	],
@@ -113,14 +132,18 @@ export const doCanningWork : Recipe = {
 	input: [
 		{
 			typeId: 'tick' as TypeId,
-			count: 1,
+			count: 8,
+		},
+		{
+			typeId: 'calories' as TypeId,
+			count: 12,
 		},
 	],
 	output: [
 		{
-			typeId: 'canningWork' as TypeId, // Non-storeable
+			typeId: 'canningWork' as TypeId,
 			count: 1,
-		}
+		},
 	],
 };
 
@@ -188,6 +211,7 @@ const recipes: Record<RecipeId, Recipe> = {
 	[move.type]: move,
 	[consume.type]: consume,
 	[digestHydrocarbons.type]: digestHydrocarbons,
+	[growPineapple.type]: growPineapple,
 	[harvest.type]: harvest,
 	[canPineApple.type]: canPineApple,
 	[doCanningWork.type]: doCanningWork,

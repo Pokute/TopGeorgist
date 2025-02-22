@@ -92,7 +92,10 @@ export type ComponentWorkDoer =
 	ComponentWorkIssuer & {
 		readonly recipeInfos: ReadonlyArray<{
 			readonly recipe: Recipe,
-			readonly autoRunOnDemand?: boolean,
+			readonly autoRun?:
+				| 'Always' // Always keep a work around.
+				| 'OnDemand' // Autogenerate work when there's demand for it.
+				| 'OnInputs', // Autogenerate work if inputs are available.
 		}>,
 	};
 
@@ -522,32 +525,18 @@ export const workIssuerCreateWorksOnRequiredItems = (
 	// Filter workDoer's recipes that are possible have autoRun recipes to fulfill the requirements.
 	const possibleRequiredItemsWithoutActiveWork = missedRequiredItemsWithoutActiveWork
 		.filter(({ typeId }) => workDoer.recipeInfos
-			.filter(({ autoRunOnDemand }) => autoRunOnDemand)
+			.filter(({ autoRun }) => autoRun === 'OnDemand')
 			.some(({ recipe }) => recipe.output.some(({ typeId: recipeOutputTypeId }) =>  recipeOutputTypeId === typeId))
 		);
 
 	if (possibleRequiredItemsWithoutActiveWork.length === 0)
 		return tgosState;
 
-	console.log(`missed required items: `, possibleRequiredItemsWithoutActiveWork);
-
-	if (overrideTargetInventoryTgoId !== undefined) {
-		const tgosAfterAutoRecipeCreate = createWorksOnRequiredItems(
-			tgosState,
-			workDoerTgoId,
-			possibleRequiredItemsWithoutActiveWork,
-			overrideTargetInventoryTgoId,
-			workIssuerTgoId
-		);
-
-		return tgosAfterAutoRecipeCreate;
-	}
-
 	const tgosAfterAutoRecipeCreate = createWorksOnRequiredItems(
 		tgosState,
 		workDoerTgoId,
 		possibleRequiredItemsWithoutActiveWork,
-		undefined, // Let the works create the output committed items inventory themselves.
+		overrideTargetInventoryTgoId,
 		workIssuerTgoId
 	);
 
@@ -611,30 +600,18 @@ export const workCancelReducer = (
 	return tgosAfterCleanup;
 }
 
-export const createWorksOnRequiredItems = (
+const createWorksForRecipes = (
 	tgosState: TgosState,
-	workDoerTgoId: TgoId,
-	requiredItems: Inventory,
+	workDoer: ComponentWorkDoer & ComponentInventory,
+	recipes: ReadonlyArray<Recipe>,
 	targetInventoryTgoId?: TgoId,
-	workIssuerTgoId: TgoId = workDoerTgoId,
+	workIssuerTgoId: TgoId = workDoer.tgoId,
 ) => {
-	const combinedRequiredItems = inventory.combined(requiredItems);
-
-	const workDoer = tgosState[workDoerTgoId];
-	if (!hasComponentInventory(workDoer) || !hasComponentWorkDoer(workDoer))
-		return tgosState;
-
-	const demandedAutoRecipes = workDoer.recipeInfos
-		.filter(recipeInfo =>
-			recipeInfo.autoRunOnDemand
-			&& combinedRequiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
-		);
-
 	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
 		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
 
-	const createWorkActions = demandedAutoRecipes.map(({ recipe: autoRecipe }) => createWork({
-		recipe: autoRecipe,
+	const createWorkActions = recipes.map(recipe => createWork({
+		recipe,
 		workerTgoId: workDoer.tgoId,
 		inputInventoryTgoIds: [ workDoer.tgoId ],
 		outputInventoryTgoId: targetInventoryTgoId,
@@ -659,6 +636,34 @@ export const createWorksOnRequiredItems = (
 		);
 
 	return tgosAfterAutoRecipeCreate;
+};
+
+export const createWorksOnRequiredItems = (
+	tgosState: TgosState,
+	workDoerTgoId: TgoId,
+	requiredItems: Inventory,
+	targetInventoryTgoId?: TgoId,
+	workIssuerTgoId: TgoId = workDoerTgoId,
+) => {
+	const combinedRequiredItems = inventory.combined(requiredItems);
+
+	const workDoer = tgosState[workDoerTgoId];
+	if (!hasComponentInventory(workDoer) || !hasComponentWorkDoer(workDoer))
+		return tgosState;
+
+	const demandedAutoRecipes = workDoer.recipeInfos
+		.filter(recipeInfo =>
+			recipeInfo.autoRun == 'OnDemand'
+			&& combinedRequiredItems.some((req) => recipeInfo.recipe.output.some(output => output.typeId === req.typeId))
+		).map(recipeInfo => recipeInfo.recipe);
+
+	return createWorksForRecipes(
+		tgosState,
+		workDoer,
+		demandedAutoRecipes,
+		targetInventoryTgoId,
+		workIssuerTgoId,
+	);
 }
 
 const workDoerTickReducer = (
@@ -669,24 +674,44 @@ const workDoerTickReducer = (
 	
 	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
 		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
-	
-	// Possibly create forced autorun works that don't exist.
-	{
-		const workDoer2 = tgosState[workDoer.tgoId];
-		// const workDoer2 = tgosAfterAutoRecipeCreate[workDoer.tgoId];
-		if (!hasComponentInventory(workDoer2) || !hasComponentWorkDoer(workDoer2)) {
-			return tgosState;
-		}
-		const works = getInventoryTgoIds2(tgosState, workDoer2)
-			.filter(isComponentWork);
 
-		const afterWorksTgosState = works.reduce(
-			(currentTgosState, work) => workWithCompletionsReducer(currentTgosState, itemTypesState, workDoer2.tgoId, work.tgoId),
-			tgosState
-		);
+	const autoRunRecipes = [
+		...workDoer.recipeInfos.filter(recipeInfo => recipeInfo.autoRun === 'Always'),
+		...workDoer.recipeInfos.filter(recipeInfo => recipeInfo.autoRun === 'OnInputs')
+			.filter(recipeInfo => inventory.combined([
+					...workDoer.inventory,
+					...inventory.negated(recipeInfo.recipe.input)
+				]).every(ii => ii.count >= 0 || ii.typeId === 'tick')
+			),
+	];
 
-		return afterWorksTgosState;
+	const activeWorks = workDoer.inventory
+		.filter(ii => ii.typeId === 'tgoId' && ii.tgoId)
+		.map(ii => tgosState[ii.tgoId!]).filter(isComponentWork);
+	const recipesToStart = autoRunRecipes.filter(recipeInfo =>
+		!activeWorks.some(activeWork => activeWork.workRecipe.type === recipeInfo.recipe.type)
+	).map(recipeInfo => recipeInfo.recipe);
+
+	const tgosAfterAutoRecipeCreate = createWorksForRecipes(
+		tgosState,
+		workDoer,
+		recipesToStart,
+		workDoer.tgoId,
+	);
+
+	const workDoer2 = tgosAfterAutoRecipeCreate[workDoer.tgoId];
+	if (!hasComponentInventory(workDoer2) || !hasComponentWorkDoer(workDoer2)) {
+		return tgosAfterAutoRecipeCreate;
 	}
+	const works = getInventoryTgoIds2(tgosAfterAutoRecipeCreate, workDoer2)
+		.filter(isComponentWork);
+
+	const afterWorksTgosState = works.reduce(
+		(currentTgosState, work) => workWithCompletionsReducer(currentTgosState, itemTypesState, workDoer2.tgoId, work.tgoId),
+		tgosAfterAutoRecipeCreate
+	);
+
+	return afterWorksTgosState;
 };
 
 export const workDoersTickReducer = (
