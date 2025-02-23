@@ -10,7 +10,7 @@ import { TypeId } from '../reducers/itemType.js';
 import { TgosState } from '../reducers/tgos.js';
 import { add as addTgo } from '../actions/tgos.js';
 import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../concerns/inventory.js';
-import { addWork as goalAddWork, removeWork, addGoals, createGoal } from '../concerns/goal.js';
+import { addGoals, createGoal } from '../concerns/goal.js';
 import { ComponentWork, ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.js';
 import { Recipe, RecipeId } from '../concerns/recipe.js';
 import { tick } from '../concerns/ticker.js';
@@ -38,7 +38,7 @@ test('Test work - fail if workerTgoId not in store', async t => {
 		workerTgoId: 'illegalId' as TgoId,
 		inputInventoryTgoIds: ['illegalId' as TgoId],
 		outputInventoryTgoId: undefined,
-		goalTgoId: undefined,
+		workIssuerTgoId: undefined,
 	});
 
 //	const errorStub = Sinon.createStubInstance(Error);
@@ -76,7 +76,7 @@ test('Test work - fail if targetTgoId not in store', async t => {
 		workerTgoId: workerTgoId,
 		inputInventoryTgoIds: [workerTgoId],
 		outputInventoryTgoId: 'illegalId' as TgoId,
-		goalTgoId: undefined,
+		workIssuerTgoId: undefined,
 	});
 
 	const errorStub = Sinon.stub(console, 'error');
@@ -109,7 +109,7 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 		workerTgoId: 'illegalId' as TgoId,
 		inputInventoryTgoIds: ['illegalId' as TgoId],
 		outputInventoryTgoId: createTarget.payload.tgo.tgoId,
-		goalTgoId: 'illegalId' as TgoId,
+		workIssuerTgoId: 'illegalId' as TgoId,
 	});
 
 	const errorStub = Sinon.stub(console, 'error');
@@ -138,7 +138,7 @@ test('Work - work is removed after completion', async t => {
 		},
 		workerTgoId: workerTgoId,
 		inputInventoryTgoIds: [workerTgoId],
-		goalTgoId: undefined,
+		workIssuerTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -162,7 +162,7 @@ test('Work - wait 3 ticks', async t => {
 	const [addWorker, workerTgoId] = addTgoWithId({
 		recipeInfos: [{ // becomes a workDoer
 			recipe: threeTickRecipe,
-			autoRunOnDemand: false,
+			autoRun: 'Always',
 		}],
 	});
 
@@ -173,7 +173,7 @@ test('Work - wait 3 ticks', async t => {
 		workerTgoId: workerTgoId,
 		inputInventoryTgoIds: [workerTgoId],
 		outputInventoryTgoId: workerTgoId,
-		goalTgoId: undefined,
+		workIssuerTgoId: undefined,
 	});
 
 	const storeTester = setupStoreTester();
@@ -210,7 +210,7 @@ test('Work - simple item change', async t => {
 			count: 22,
 		}],
 		recipeInfos: [{
-			autoRunOnDemand: false,
+			autoRun: 'OnDemand',
 			recipe,
 		}],
 	});
@@ -232,7 +232,7 @@ test('Work - simple item change', async t => {
 		workerTgoId: workDoerTgoId,
 		inputInventoryTgoIds: [workDoerTgoId],
 		outputInventoryTgoId: workDoerTgoId,
-		goalTgoId: undefined,
+		workIssuerTgoId: undefined,
 	}));
 	storeTester.dispatch(tick());
 	storeTester.dispatch(tick());
@@ -258,7 +258,7 @@ test('Work - autorunning works', t => {
 			count: 50,
 		}],
 		recipeInfos: [{
-			autoRunOnDemand: true,
+			autoRun: 'OnInputs',
 			recipe: {
 				input: [{
 					typeId: 'nutrients' as TypeId,
@@ -351,7 +351,7 @@ test('Work - hierarchy', async t => {
 	const upperBodyTgo: ComponentWorkDoer = {
 		tgoId: 'upperBody' as TgoId,
 		recipeInfos: [{
-			autoRunOnDemand: false,
+			autoRun: 'OnDemand',
 			recipe: {
 				type: 'strengthToolUse' as RecipeId,
 				input: [
@@ -370,12 +370,13 @@ test('Work - hierarchy', async t => {
 				}],
 			},
 		}],
+		worksIssued: [],
 	};
 
 	const handMill: ComponentWorkDoer = {
 		tgoId: 'handMill' as TgoId,
 		recipeInfos: [{
-			autoRunOnDemand: false,
+			autoRun: 'OnDemand',
 			recipe: {
 				type: 'milling' as RecipeId,
 				input: [
@@ -394,6 +395,7 @@ test('Work - hierarchy', async t => {
 				}],
 			},
 		}],
+		worksIssued: [],
 	}
 
 	const playerTgo: ComponentInventory = {
@@ -431,7 +433,6 @@ test('Work - hierarchy', async t => {
 					count: 3,
 				}],
 			}],
-			workTgoIds: [],
 		}
 	);
 
