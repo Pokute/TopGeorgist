@@ -7,7 +7,7 @@ Which should be higher level - Goals or Contracts?
 `ComponentGoal`: A tgo is a Goal. Check with `isComponentGoal()`. Is also a `ComponentWorkIssuer`.
 `ComponentGoalDoer`: A tgo can do Goal related items. Check with `hasComponentGoalDoer`.
 
-`ComponentWorkIssuer`: A tgo that can create new Works for `workDoer`s. All `workDoer`s are also `workIssuer`s. Check with `hasComponentWorkIssuer`.
+`ComponentWorkIssuer`: A tgo that can create new Works for `workDoer`s. Check with `hasComponentWorkIssuer`.
 
 Goals define what we want the end-state to be. More commonly in inventory change goals.
 

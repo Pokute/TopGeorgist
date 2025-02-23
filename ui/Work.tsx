@@ -13,7 +13,8 @@ const Work = ({ tgo, workDoerTgoId, tgoData }: { tgo: ComponentWork, workDoerTgo
 	const inputCommittedInventoryTgos = useSelector(
 		(store: RootStateType) =>
 			Object.entries(tgo.workInputCommittedItemsTgoId ?? {})
-				.map<[TgoId, TgoType]>(([committerTgoId, committedInventoryTgoId]) => [committerTgoId as TgoId, store.tgos[committedInventoryTgoId] as ComponentInventory])
+				.filter(([committerTgoId, committedInventoryTgoId]) => committedInventoryTgoId)
+				.map<[TgoId, TgoType]>(([committerTgoId, committedInventoryTgoId]) => [committerTgoId as TgoId, store.tgos[committedInventoryTgoId!] as ComponentInventory])
 	);
 	const outputInventoryTgo = useSelector((store: RootStateType) => tgo.workOutputInventoryTgoId ? store.tgos[tgo.workOutputInventoryTgoId] : undefined)
 	const dispatch = useDispatch();
@@ -21,13 +22,27 @@ const Work = ({ tgo, workDoerTgoId, tgoData }: { tgo: ComponentWork, workDoerTgo
 	// if (isComponentWork(wiTgo)) {
 		return (
 			<Category
-				title='Work'
+				title={`Work ${tgo.tgoId}`}
 			>
-				{workDoerTgoId && <button
-					onClick={() => dispatch(netActions.send(workActions.cancelWork(workDoerTgoId, tgo.tgoId)))}
-				>
-					Cancel
-				</button>}
+				{workDoerTgoId && <>
+					<button
+						onClick={() => dispatch(netActions.send(workActions.cancelWork(workDoerTgoId, tgo.tgoId)))}
+					>
+						Cancel
+					</button>
+					{tgo.workPaused
+						? <button
+							onClick={() => dispatch(netActions.send(workActions.resumeWork(workDoerTgoId, tgo.tgoId)))}
+						>
+							Resume
+						</button>
+						: <button
+							onClick={() => dispatch(netActions.send(workActions.pauseWork(workDoerTgoId, tgo.tgoId)))}
+						>
+							Pause
+						</button>
+					}
+				</>}
 				<RecipeId recipeId={tgo.workRecipe.type} />
 				<div>Target: {tgo.workOutputInventoryTgoId}</div>
 				<div>

@@ -27,7 +27,7 @@ import { setRunning as tickerSetRunning } from './concerns/ticker.js';
 import { claimLand, payRent } from './concerns/rentOffice.js';
 import { consumerActions } from './concerns/consumer.js';
 import { deployableActions } from './concerns/deployable.js';
-import { cancelWork, createWork } from './concerns/work.js';
+import { cancelWork, createWork, pauseWork, resumeWork } from './concerns/work.js';
 import { tradeStoreTransactionRequest } from './concerns/trade.js';
 
 // Start the server
@@ -110,6 +110,8 @@ try {
 						case getType(payRent):
 						case getType(createWork):
 						case getType(cancelWork):
+						case getType(pauseWork):
+						case getType(resumeWork):
 						case getType(moveGoal):
 						case getType(consumeGoal):
 						case getType(consumerActions.consume):

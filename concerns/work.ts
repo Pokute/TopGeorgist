@@ -46,10 +46,26 @@ export const cancelWork = createAction('WORK_CANCEL',
 	})
 )();
 
+export const pauseWork = createAction('WORK_PAUSE',
+	(workDoerTgoId: TgoId, workTgoId: TgoId) => ({
+		workDoerTgoId,
+		workTgoId,
+	})
+)();
+
+export const resumeWork = createAction('WORK_RESUME',
+	(workDoerTgoId: TgoId, workTgoId: TgoId) => ({
+		workDoerTgoId,
+		workTgoId,
+	})
+)();
+
 export const workActions = {
 	createWork,
 	createFromRecipe,
 	cancelWork,
+	pauseWork,
+	resumeWork,
 };
 export type WorkActionType = ActionType<typeof workActions>;
 
@@ -83,6 +99,7 @@ export type ComponentWork =
 		readonly workRecipe: Recipe,
 		readonly workIssuerTgoId: TgoId, // Can be different from the workDoer.
 		readonly workOutputInventoryTgoId?: TgoId, // If undefined, will output to committedItems
+		readonly workPaused?: boolean,
 	};
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
@@ -600,6 +617,32 @@ export const workCancelReducer = (
 	return tgosAfterCleanup;
 }
 
+export const workPauseReducer = (
+	tgosState: RootStateType['tgos'],
+	{ payload: { workDoerTgoId, workTgoId }}: ActionType<typeof pauseWork>,
+): RootStateType['tgos'] => {
+	return {
+		...tgosState,
+		[workTgoId]: {
+			...tgosState[workTgoId],
+			workPaused: true,
+		},
+	};
+};
+
+export const workResumeReducer = (
+	tgosState: RootStateType['tgos'],
+	{ payload: { workDoerTgoId, workTgoId }}: ActionType<typeof resumeWork>,
+): RootStateType['tgos'] => {
+	return {
+		...tgosState,
+		[workTgoId]: {
+			...tgosState[workTgoId],
+			workPaused: false,
+		},
+	};
+};
+
 const createWorksForRecipes = (
 	tgosState: TgosState,
 	workDoer: ComponentWorkDoer & ComponentInventory,
@@ -704,7 +747,8 @@ const workDoerTickReducer = (
 		return tgosAfterAutoRecipeCreate;
 	}
 	const works = getInventoryTgoIds2(tgosAfterAutoRecipeCreate, workDoer2)
-		.filter(isComponentWork);
+		.filter(isComponentWork)
+		.filter(work => !work.workPaused);
 
 	const afterWorksTgosState = works.reduce(
 		(currentTgosState, work) => workWithCompletionsReducer(currentTgosState, itemTypesState, workDoer2.tgoId, work.tgoId),
@@ -720,7 +764,7 @@ export const workDoersTickReducer = (
 ): RootStateType['tgos'] => {
 	const workDoers = Object.values(tgosState)
 		.filter(hasComponentWorkDoer)
-		.filter(hasComponentInventory)
+		.filter(hasComponentInventory);
 	
 	return workDoers.reduce(
 		(tgos, workDoer) => workDoerTickReducer(tgos, itemTypesState, workDoer),

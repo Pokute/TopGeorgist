@@ -8,21 +8,16 @@ import defaults, { Type as DefaultsType } from './defaults.js';
 import { frameReducer } from '../concerns/frame.js';
 import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
-import { mapPosition, MapPosition, mapReducer } from '../concerns/map.js';
+import { mapReducer } from '../concerns/map.js';
 import tgos, { TgosState } from './tgos.js';
 import { tick, tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
-import { createGoal, addGoals, hasComponentGoalDoer, goalDoersTickReducer } from '../concerns/goal.js';
-import { add as addTgo } from '../actions/tgos.js';
+import { goalDoersTickReducer } from '../concerns/goal.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { AllActions } from '../allActions.js';
-import { cancelWork, createWork, workCancelReducer, workCreatorReducer, workDoersTickReducer } from '../concerns/work.js';
+import { cancelWork, createWork, pauseWork, resumeWork, workCancelReducer, workCreatorReducer, workDoersTickReducer, workPauseReducer, workResumeReducer } from '../concerns/work.js';
 import { moveGoal } from '../actions/moveGoal.js';
-import { ComponentInventory, hasComponentInventory, InventoryItem } from '../concerns/inventory.js';
-import { TypeId } from './itemType.js';
-import { createTupleFilter } from '../concerns/tgos.js';
-import { ComponentPosition, hasComponentPosition } from '../components/position.js';
 import { payRent, payRentReducer } from '../concerns/rentOffice.js';
 import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.js';
 import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.js';
@@ -86,6 +81,18 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return {
 				...state,
 				tgos: workCancelReducer(state.tgos, state.itemTypes, action),
+			};
+		}
+		case getType(pauseWork): {
+			return {
+				...state,
+				tgos: workPauseReducer(state.tgos, action),
+			};
+		}
+		case getType(resumeWork): {
+			return {
+				...state,
+				tgos: workResumeReducer(state.tgos, action),
 			};
 		}
 		case getType(tick): {

@@ -131,6 +131,9 @@ Milestone 4:
 						? Figure out how this works.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
+	☐ Trade complexity:
+		✔ Trading requiring 'trade' item, which itself requires 'computation' items.
+		☐ Figure out a good way to autogenerate 'trade' items when trying to buy stuff.
 	✔ Work and goal internals rework.
 		✔ Works and Goals properly start subworks.
 		✔ Proper usage of temporary inventories.
@@ -147,6 +150,7 @@ Milestone 4:
 		✔ Removed completely.
 	☐ Government/Rent office bureucracy
 	☐ Goals pausing and canceling.
+	✔ Work pausing and canceling.
 	☐ Economy
 		☐ More sinks
 	☐ Rendering overhaul - support for custom renderers for items.
