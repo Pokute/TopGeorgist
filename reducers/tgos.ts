@@ -1,7 +1,7 @@
 import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo.js';
-import { GoalActionType, GoalDoerActionType, goalDoerActionList } from '../concerns/goal.js';
+import { GoalActionType, GoalDoerActionType, goalActionList, goalDoerActionList, goalReducer } from '../concerns/goal.js';
 import * as tgoActions from '../actions/tgo.js'; 
 import * as tgosActions from '../actions/tgos.js'; 
 import { InventoryActionType } from '../concerns/inventory.js';
@@ -68,6 +68,15 @@ export default (state: TgosState = initialState, action: TgosAction | TgoActionT
 					};
 				}
 			}
+			if (isActionOf(goalActionList.pauseGoal, action)
+				|| isActionOf(goalActionList.resumeGoal, action)
+			) {
+				return {
+					...state,
+					[action.payload.goalTgoId]: tgoReducer(state[action.payload.goalTgoId], action)
+				};
+			}
+
 		return state;
 	}
 };

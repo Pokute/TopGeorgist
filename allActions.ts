@@ -8,6 +8,7 @@ import { workActions } from './concerns/work';
 import { moveGoal } from './actions/moveGoal';
 import { payRent, rentOfficeActions } from './concerns/rentOffice';
 import { deployableActions } from './concerns/deployable.js'
+import { goalActionList } from './concerns/goal';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -15,6 +16,7 @@ const allActions = {
 	serverConnection: serverConnectionActions,
 	transaction: transactionActions,
 	work: workActions,
+	goal: goalActionList,
 	moveGoal,
 	rentOffice: rentOfficeActions,
 	payRent,

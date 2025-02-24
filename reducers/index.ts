@@ -13,7 +13,7 @@ import tgos, { TgosState } from './tgos.js';
 import { tick, tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
-import { goalDoersTickReducer } from '../concerns/goal.js';
+import { cancelGoal, goalCancelReducer, goalDoersTickReducer } from '../concerns/goal.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { AllActions } from '../allActions.js';
 import { cancelWork, createWork, pauseWork, resumeWork, workCancelReducer, workCreatorReducer, workDoersTickReducer, workPauseReducer, workResumeReducer } from '../concerns/work.js';
@@ -93,6 +93,12 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return {
 				...state,
 				tgos: workResumeReducer(state.tgos, action),
+			};
+		}
+		case getType(cancelGoal): {
+			return {
+				...state,
+				tgos: goalCancelReducer(state.tgos, action),
 			};
 		}
 		case getType(tick): {

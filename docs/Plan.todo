@@ -109,9 +109,8 @@ Milestone 4:
 
 	✔ Redux persistent storage
 	✔ Automatic reconnect for client
-	☐ Farming overhaul
-		☐ Re-implement plant growth
-			☐ Plant growth progress can be seen. Progressbar?
+	✔ Farming overhaul
+		✔ Re-implement plant growth
 			✔ Pineapples grow edible, but hydrocarbons doesn't increase after certain point.
 				✔ Implemented with a simple growthPotential inventory item.
 				? How does the growing work?
@@ -149,7 +148,7 @@ Milestone 4:
 		✔ Currently relies on saga for multi-tick behaviour. Refactor into a reducer or remove?
 		✔ Removed completely.
 	☐ Government/Rent office bureucracy
-	☐ Goals pausing and canceling.
+	✔ Goals pausing and canceling.
 	✔ Work pausing and canceling.
 	☐ Economy
 		☐ More sinks
@@ -171,6 +170,8 @@ Milestone 5:
 	☐ Player
 		☐ New "energy" stat.
 		☐ Doing different actions use "energy"
+		☐ Slow passive energy regen.
+		☐ Find out a way to cap energy?
 		☐ Calorie burn regenerates energy.
 		☐ Can sleep
 			☐ Can be done anywhere.
@@ -182,6 +183,7 @@ Milestone 5:
 			☐ Has beds that cost to use
 	☐ Buying/selling having modifiable amount.
 	☐ UI mouse selection stack can override cursor shape.
+	☐ Plant growth progress can be seen. Progressbar?
 	☐ Better map generation.
 	☐ Convert game logic from sagas into reducers.
 		! Sagas can't be saved/loaded so they can't be used for multi-tick events. Better just remove them completely from game logic. Still can be used for connection code.

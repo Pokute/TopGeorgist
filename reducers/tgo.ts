@@ -86,8 +86,7 @@ export default (state: TgoType, action: PositionActionType | TgoActionType | Inv
 				if (newGoals !== usedState.activeGoals) usedState = { ...usedState, activeGoals: newGoals };
 			}
 			if (isComponentGoal(state)) {
-				const newGoal = goalReducer(state.goal, action as GoalActionType);
-				if (newGoal !== usedState.goal) usedState = { ...usedState, goal: newGoal };
+				usedState = goalReducer(state, action as GoalActionType);
 			}
 			return usedState;
 		}

@@ -52,6 +52,7 @@ export type Requirement =
 export type Goal = {
 	readonly title?: string,
 	readonly requirements: ReadonlyArray<Requirement>,
+	readonly goalPaused?: boolean,
 };
 
 export const setWorkTargetTgoId = createAction('GOAL_SET_TARGET_TGO_ID',
@@ -61,16 +62,65 @@ export const setWorkTargetTgoId = createAction('GOAL_SET_TARGET_TGO_ID',
 	})
 )();
 
+export const cancelGoal = createAction('GOAL/CANCEL',
+	(goalDoerTgoId: TgoId, goalTgoId: TgoId) => ({
+		goalDoerTgoId,
+		goalTgoId,
+	})
+)();
+
+export const pauseGoal = createAction('GOAL/PAUSE',
+	(goalDoerTgoId: TgoId, goalTgoId: TgoId) => ({
+		goalDoerTgoId,
+		goalTgoId,
+	})
+)();
+
+export const resumeGoal = createAction('GOAL/RESUME',
+	(goalDoerTgoId: TgoId, goalTgoId: TgoId) => ({
+		goalDoerTgoId,
+		goalTgoId,
+	})
+)();
+
 export const goalActionList = {
 	setWorkTargetTgoId,
+	cancelGoal,
+	pauseGoal,
+	resumeGoal,
 } as const;
 export type GoalActionType = ActionType<typeof goalActionList[keyof typeof goalActionList]>;
 
-export const goalReducer = (state: Goal, action: GoalActionType): Goal => {
+export const goalReducer = (state: ComponentGoal, action: GoalActionType): ComponentGoal => {
 	switch (action.type) {
+		case getType(pauseGoal): {
+			return {
+				...state,
+				goal: {
+					...state.goal,
+					goalPaused: true,
+				},
+			};
+		}
+		case getType(resumeGoal): {
+			return {
+				...state,
+				goal: {
+					...state.goal,
+					goalPaused: false,
+				},
+			};
+		}
 		default:
 			return state;
 	}
+};
+
+export const goalCancelReducer = (state: TgosState, action: ActionType<typeof cancelGoal>): TgosState => {
+	const goalTgo = state[action.payload.goalTgoId];
+	if (!isComponentGoal(goalTgo))
+		return state;
+	return cleanupGoal(state, goalTgo);
 };
 
 export type GoalTgosType = ReadonlyArray<TgoId>;
@@ -182,6 +232,8 @@ const goalDoerTickReducer = (
 	if (!currentGoal) {
 		throw new Error('tgo.goal is undefined for a goal Tgo!');
 	}
+	if (currentGoal.goalPaused)
+		return tgosState;
 
 	const requirementCompleted = (requirement: Requirement) => {
 		switch (requirement.type) {

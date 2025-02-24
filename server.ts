@@ -29,6 +29,7 @@ import { consumerActions } from './concerns/consumer.js';
 import { deployableActions } from './concerns/deployable.js';
 import { cancelWork, createWork, pauseWork, resumeWork } from './concerns/work.js';
 import { tradeStoreTransactionRequest } from './concerns/trade.js';
+import { cancelGoal, pauseGoal, resumeGoal } from './concerns/goal.js';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });
@@ -114,6 +115,9 @@ try {
 						case getType(resumeWork):
 						case getType(moveGoal):
 						case getType(consumeGoal):
+						case getType(cancelGoal):
+						case getType(pauseGoal):
+						case getType(resumeGoal):
 						case getType(consumerActions.consume):
 						case getType(deployableActions.deployType):
 						case getType(deployableActions.deployTgo):
