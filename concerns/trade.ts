@@ -1,7 +1,7 @@
 import { createAction, getType } from 'typesafe-actions';
 import { TypeId } from '../reducers/itemType.js';
 import { transactionActions } from './transaction.js';
-import { InventoryItem } from './inventory.js';
+import { inventory, InventoryItem } from './inventory.js';
 import { TgoId } from '../reducers/tgo.js';
 import { put, takeEvery } from 'typed-redux-saga';
 import isServer from '../isServer.js';
@@ -41,7 +41,7 @@ export const handleTradeStoreTransactionRequest = function* ({ payload: { tgoId,
 		},
 		{
 			tgoId: visitableTgoId,
-			items: items.map(i => ({ ...i, count: -1 * i.count })),
+			items: inventory.negated(items),
 		},
 	));
 };

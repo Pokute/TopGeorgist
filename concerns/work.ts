@@ -365,7 +365,7 @@ export const workWithCompletionsReducer = (
 ): RootStateType['tgos'] => {
 	const workTgo = tgosState[workTgoId];
 	if (!isComponentWork(workTgo)) {
-		throw new Error();
+		throw new Error(`workWithCompleationsReducer: tgo ${workTgo.tgoId} is not a ComponentWork.`);
 	}
 
 	const committedItems = workIssuerGetCommittedItems(tgosState, workTgo);

@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { add } from '../actions/itemTypes.js';
 import { InitialItemType, OptionalFields, RequiredFields, TypeId } from '../reducers/itemType.js';
 import { ComponentWorkDoer } from '../concerns/work.js';
-import { growPineapple } from './recipes.js';
+import { growPineapple, provideCanneryTool } from './recipes.js';
 
 const defaultType: Omit<RequiredFields & OptionalFields, 'typeId'> = {
 	stackable: true,
@@ -84,6 +84,12 @@ export const items: InitialItemTypesState = {
 			deployInventory: [
 				{ typeId: 'cannery' as TypeId, count: 1, },
 			],
+			deployAdditionals: {
+				recipeInfos: [{
+					recipe: provideCanneryTool, autoRun: 'Always',
+				},],
+				worksIssued: [],
+			} as Omit<ComponentWorkDoer, 'tgoId'>,
 		},
 		// Should be providing canneryWork or a possibility to do it.
 	},
@@ -119,6 +125,10 @@ export const items: InitialItemTypesState = {
 	canningWork: {
 		label: 'Canning work',
 		isStorable: false,
+		positiveOnly: false,
+	},
+	canneryTool: {
+		label: 'Cannery tool',
 		positiveOnly: false,
 	},
 	player: {

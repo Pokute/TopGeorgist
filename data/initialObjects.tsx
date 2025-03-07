@@ -4,7 +4,7 @@ import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../concerns/rentOffice.js';
-import { move, digestHydrocarbons, trade, calculation } from './recipes.js';
+import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple } from './recipes.js';
 import { tradeStoreTransactionRequest } from '../concerns/trade.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
@@ -34,6 +34,8 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 		{ recipe: digestHydrocarbons, autoRun: 'OnInputs', },
 		{ recipe: calculation, autoRun: 'OnDemand' },
 		{ recipe: trade, autoRun: 'OnDemand' },
+		{ recipe: doCanningWork, autoRun: 'OnDemand' },
+		{ recipe: canPineApple, autoRun: 'OnDemand' },
 	],
 	worksIssued: [],
 	consumer: {

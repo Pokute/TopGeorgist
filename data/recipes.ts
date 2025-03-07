@@ -138,10 +138,30 @@ export const doCanningWork : Recipe = {
 			typeId: 'calories' as TypeId,
 			count: 12,
 		},
+		{
+			typeId: 'canneryTool' as TypeId,
+			count: 1,
+		},
 	],
 	output: [
 		{
 			typeId: 'canningWork' as TypeId,
+			count: 1,
+		},
+	],
+};
+
+export const provideCanneryTool : Recipe = {
+	type: 'provideCanneryTool' as RecipeId,
+	input: [
+		{
+			typeId: 'tick' as TypeId,
+			count: 1,
+		},
+	],
+	output: [
+		{
+			typeId: 'canneryTool' as TypeId,
 			count: 1,
 		},
 	],
