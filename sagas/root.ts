@@ -2,7 +2,6 @@ import { accountRootSaga } from '../concerns/account.js';
 import buildingGovernment from './buildings/government.js';
 import { rentOfficeRootSaga } from '../concerns/rentOffice.js';
 import client from './client.js';
-import goalCreator from './goalCreator.js';
 import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
 import { frameRootSaga } from '../concerns/frame.js';
 import { netRootSaga } from '../concerns/infra/net.js';
@@ -14,17 +13,17 @@ import { consumerRootSaga } from '../concerns/consumer.js';
 
 const rootSaga = function* () {
 	yield* accountRootSaga();
-	yield* buildingGovernment();
-	yield* rentOfficeRootSaga();
 	yield* client();
-	yield* goalCreator();
 	yield* serverConnectionSaga();
 	yield* frameRootSaga();
 	yield* netRootSaga();
 	yield* player();
 	yield* tickerRootSaga();
-	yield* tradeRootSaga();
 	yield* view();
+	// Refactor below into reducers eventually
+	yield* buildingGovernment();
+	yield* rentOfficeRootSaga();
+	yield* tradeRootSaga();
 	yield* consumerRootSaga();
 };
 

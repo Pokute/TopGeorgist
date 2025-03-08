@@ -194,7 +194,7 @@ Milestone 5:
 		☐ concerns/rentOffice.js
 		☐ sagas/buildings/government.ts
 		✔ sagas/goal.ts
-		☐ sagas/goalCreator.ts
+		✔ sagas/goalCreator.ts
 	☐ Refactor client init/mainloop code.
 	☐ Refactor server init/mainloop code.
 	☐ Move netActions.send to a redux-saga that listens to all applicable actions?

@@ -20,7 +20,6 @@ import { extendedSocket } from './reducers/client.js';
 import { withClient } from './actions/withClient.js';
 // import { setGoals } from './actions/goals.js';
 import { moveGoal } from './actions/moveGoal.js';
-import { consumeGoal } from './actions/consumeGoal.js';
 import { RootStateType } from './reducers/index.js';
 import { transaction } from './concerns/transaction.js';
 import { setRunning as tickerSetRunning } from './concerns/ticker.js';
@@ -116,7 +115,6 @@ try {
 						case getType(resumeWork):
 						case getType(moveGoal):
 						case getType(itemReqGoal):
-						case getType(consumeGoal):
 						case getType(cancelGoal):
 						case getType(pauseGoal):
 						case getType(resumeGoal):

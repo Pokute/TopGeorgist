@@ -6,14 +6,12 @@ import * as tgoActions from '../actions/tgo.js';
 import * as netActions from '../concerns/infra/net.js';
 // import { setGoals } from '../concerns/goal.js';
 import { moveGoal } from '../actions/moveGoal.js';
-import { consumeGoal } from '../actions/consumeGoal.js';
 import { itemReqGoal } from '../concerns/itemReqGoal.js';
 
 const sentTypes = {
 	// setGoals,
 	moveGoal,
 	itemReqGoal,
-	consumeGoal,
 } as const;
 
 const sendAction = function* (action: ActionType<typeof sentTypes>) {
