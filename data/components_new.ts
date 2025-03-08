@@ -68,11 +68,3 @@ TgoRoot & {
 
 export const hasComponentPresentation = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentPresentation>) =>
 	tgo && typeof tgo.presentation !== 'undefined';
-
-export type ComponentComponents = 
-TgoRoot & {
-	readonly components: ReadonlyArray<Readonly<['inventoryChange', { typeId: TypeId, perTick: number }]>>,
-};
-
-export const hasComponentComponents = <BaseT extends TgoType>(tgo: BaseT) : tgo is (BaseT & Required<ComponentComponents>) =>
-	tgo && Array.isArray(tgo.components);

@@ -9,9 +9,6 @@ import { tradeStoreTransactionRequest } from '../concerns/trade.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
-	components: [
-		['inventoryChange', { typeId: 'calories' as TypeId, perTick: -0.5 }],
-	],
 	activeGoals: [],
 	position: { x: 5, y: 5 } as MapPosition,
 	presentation: { color: 'red' },

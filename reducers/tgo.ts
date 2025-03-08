@@ -5,7 +5,7 @@ import * as tgoActions from '../actions/tgo.js';
 import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.js';
 import { goalReducer } from '../concerns/goal.js';
 import { WorkActionType, ComponentWork, ComponentWorkDoer, ComponentWorkIssuer } from '../concerns/work.js';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentStatsBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentPresentation, ComponentComponents } from '../data/components_new.js';
+import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentStatsBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentPresentation } from '../data/components_new.js';
 import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../concerns/inventory.js';
 import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
 import { ComponentPlayer } from '../components/player.js';
@@ -43,7 +43,6 @@ export type TgoPartials = (Partial<ComponentPosition>
 	& Partial<ComponentUniqueLabel>
 	& Partial<ComponentInventory>
 	& Partial<ComponentPresentation>
-	& Partial<ComponentComponents>
 	& Partial<ComponentGoal>
 	& Partial<ComponentWork>
 	& Partial<ComponentGoalDoer>
