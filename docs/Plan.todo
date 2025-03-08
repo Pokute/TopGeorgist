@@ -193,7 +193,7 @@ Milestone 5:
 		☐ concerns/transaction.js
 		☐ concerns/rentOffice.js
 		☐ sagas/buildings/government.ts
-		☐ sagas/goal.ts
+		✔ sagas/goal.ts
 		☐ sagas/goalCreator.ts
 	☐ Refactor client init/mainloop code.
 	☐ Refactor server init/mainloop code.
