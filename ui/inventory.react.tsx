@@ -6,7 +6,7 @@ import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import InventoryTgo from './InventoryTgo.js';
 import recipes from '../data/recipes.js';
-import { ComponentInventory } from '../concerns/inventory.js';
+import { ComponentInventory, Inventory } from '../concerns/inventory.js';
 import InventoryItem from './InventoryItem.react.js';
 import { consumerActions, consumerIsTypeConsumable } from '../concerns/consumer.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
@@ -18,15 +18,15 @@ interface Type {
 	readonly ownerTgo: ComponentInventory,
 };
 
-export default ({ ownerTgo } : Type) => {
+export const InventoryReactItems = ({ ownerTgo, inventory, extra }: Partial<Type> & { inventory: Inventory, extra?: string }) => {
 	const dispatch = useDispatch();
 	const itemTypes = useSelector<RootStateType, ItemTypesState>(s => s.itemTypes)
 	const tgos = useSelector<RootStateType, TgosState>(s => s.tgos);
 
 	return (<Category
-		title={`Inventory tgoId: ${ownerTgo.tgoId}`}
+		title={`Inventory ${extra ?? ''}`}
 	>
-		{ownerTgo.inventory.map(i => {
+		{inventory.map(i => {
 			const iTgo = (i.typeId === 'tgoId') && i.tgoId && tgos[i.tgoId];
 			const iType = itemTypes[i.typeId];
 			return (
@@ -34,7 +34,7 @@ export default ({ ownerTgo } : Type) => {
 					key={i.tgoId || i.typeId}
 				>
 					{iTgo
-						? (<InventoryTgo i={i} parentTgoId={ ownerTgo.tgoId } />)
+						? (<InventoryTgo i={i} parentTgoId={ ownerTgo?.tgoId } />)
 						: (<span>{`${i.typeId} : ${i.count}`}</span>)
 					}
 					<InventoryItem
@@ -49,7 +49,7 @@ export default ({ ownerTgo } : Type) => {
 					})))}>
 						consume
 					</button>}
-					{(/*(iTgo && hasComponentDeployable(iTgo)) || */iType.deployable) &&
+					{(/*(iTgo && hasComponentDeployable(iTgo)) || */iType?.deployable && ownerTgo) &&
 						<button onClick={() => dispatch(netActions.send(deployableActions.deployType({
 							tgoId: ownerTgo.tgoId,
 							deployedTypeId: i.typeId,
@@ -60,4 +60,12 @@ export default ({ ownerTgo } : Type) => {
 			);
 		})}
 	</Category>)
+};
+
+export default ({ ownerTgo } : Type) => {
+	return (<InventoryReactItems
+		ownerTgo={ownerTgo}
+		inventory={ownerTgo.inventory}
+		extra={`tgoId: ${ownerTgo.tgoId}`}
+	/>);
 };

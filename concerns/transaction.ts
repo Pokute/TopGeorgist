@@ -1,4 +1,4 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { ActionType, createAction } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
 import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
@@ -59,29 +59,19 @@ export const transactionReducer = (
 			...rest,
 			tgo: tgo!,
 		}));
-	
-		const createDummyInventory = <T extends Partial<ComponentInventory>>(tgo: T) => ({
-			...tgo,
-			inventory: tgo.inventory || [],
-		});
-		const createDummyInventoriesForParticipants = <T extends typeof verifiedParticipantsWithTgo[0]>({ tgo, ...rest }: T) => ({
-			...rest,
-			tgo: createDummyInventory(tgo),
-		});
-		const participantsWithInventories = verifiedParticipantsWithTgo.map(createDummyInventoriesForParticipants);
-	
+
 		const getInventoryCountOfTypeId = (inventory: Inventory, { typeId, tgoId }: InventoryItem) =>
 			(
 				inventory.find(ii => (ii.typeId == 'tgoId' && ii.tgoId == tgoId) || (ii.typeId != 'tgoId' && ii.typeId == typeId))
 				|| { count: 0 }
 			).count
 	
-		const participantsWithItemBalance = participantsWithInventories
+		const participantsWithItemBalance = verifiedParticipantsWithTgo
 			.map(participant => ({
 				...participant,
 				itemsBalance: participant.items.map(item => ({
 					...item,
-					finalCount: getInventoryCountOfTypeId(participant.tgo.inventory, item) + item.count,
+					finalCount: getInventoryCountOfTypeId(participant.tgo.inventory ?? [], item) + item.count,
 				})),
 			}));
 	
@@ -129,13 +119,13 @@ export const transactionReducer = (
 		if (isIntegerFails.length > 0)
 			throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
 
-		const notParticipantWithVirtualInventoryFilter = ({ tgo: { isInventoryVirtual }}: { tgo: ComponentInventory } ) => !isInventoryVirtual;
-		const flattenedItemsBalanceWithoutVirtualInventories = participantsWithItemBalanceVerifiedTypes
-			.filter(notParticipantWithVirtualInventoryFilter)
+		const participantWithPositiveOnlyInventoryFilter = (tgo: Partial<ComponentInventory>) => tgo.inventory && tgo.inventoryIsPhysical;
+		const flattenedItemsWithPositiveOnlyInventories = participantsWithItemBalanceVerifiedTypes
+			.filter(participantWithPositiveOnlyInventoryFilter)
 			.map(({ itemsBalance }) => itemsBalance)
 			.flat();
-				
-		const positiveOnlyFails = flattenedItemsBalanceWithoutVirtualInventories.filter(item => !verifyPositiveOnly(item));
+
+		const positiveOnlyFails = flattenedItemsWithPositiveOnlyInventories.filter(item => !verifyPositiveOnly(item));
 		if (positiveOnlyFails.length > 0)
 			throw new Error(`Transaction requirements - positiveOnly not met for items: ${JSON.stringify(positiveOnlyFails)}`);
 

@@ -161,7 +161,8 @@ export const inventory = Object.assign(
 
 export type ComponentInventory = TgoRoot & {
 	readonly inventory: Inventory,
-	readonly isInventoryVirtual?: boolean, // Allows having negative count of any type or what would be "physically" impossible.
+	readonly inventoryIsStorableOnly: boolean, // Whether only item types with isStorable: true can be stored in this inventory.
+	readonly inventoryIsPhysical: boolean, // Whether items represent actual in-game items, storable or not. Non-physical inventories are for counting and allow negative counts.
 };
 
 export const hasComponentInventory = <BaseT extends TgoType>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentInventory>) =>

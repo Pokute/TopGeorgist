@@ -10,6 +10,7 @@ import { ComponentGoal, goalActionList } from '../concerns/goal.js';
 import MapPosition from './MapPosition.js';
 import { isComponentWork } from '../concerns/work.js';
 import Work from './Work.js';
+import { InventoryReactItems } from './inventory.react.js';
 
 const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) /*({ workTgoId }: { workTgoId: TgoId })*/ => {
 	const workTgos = useSelector((store: RootStateType) => tgo.worksIssued.map(({ workTgoId }) => store.tgos[workTgoId]))
@@ -27,19 +28,6 @@ const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgo
 			<Category
 				title={`Goal: ${tgo.goal.title} :${tgo.tgoId}`}
 			>
-				{tgo.goal.requirements.map(req => {
-					switch(req.type) {
-						case 'RequirementMove': {
-							return (<span key={req.type}>
-								{`Req move to: `}<MapPosition {...req.targetPosition} />
-							</span>);
-						}
-						default:
-							return (<span key={req.type}>
-								{`unknown type`}
-							</span>);
-					}
-				})}
 				{goalDoerTgoId && <>
 					<button
 						onClick={() => dispatch(netActions.send(goalActionList.cancelGoal(goalDoerTgoId, tgo.tgoId)))}
@@ -59,6 +47,26 @@ const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgo
 						</button>
 					}
 				</>}
+				{tgo.goal.requirements.map(req => {
+					switch(req.type) {
+						case 'RequirementMove': {
+							return (<span key={req.type}>
+								{`Req move to: `}<MapPosition {...req.targetPosition} />
+							</span>);
+						}
+						case 'RequirementInventoryItems':
+							return (
+								<React.Fragment key={req.type}>
+									Req for items:
+									<InventoryReactItems inventory={req.inventoryItems} />
+								</React.Fragment>
+							);
+						default:
+							return (<span key={(req as any).type}>
+								{`unknown type ${(req as any).type}`}
+							</span>);
+					}
+				})}
 				<div>
 					InputsCommited:
 					<ul>

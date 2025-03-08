@@ -420,6 +420,8 @@ test('Work - hierarchy', async t => {
 				count: 3,
 			},
 		],
+		inventoryIsPhysical: true,
+		inventoryIsStorableOnly: true,
 	};
 	const createPlayerTgo = addTgo(playerTgo);
 

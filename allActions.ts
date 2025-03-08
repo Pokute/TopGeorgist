@@ -9,6 +9,7 @@ import { moveGoal } from './actions/moveGoal';
 import { payRent, rentOfficeActions } from './concerns/rentOffice';
 import { deployableActions } from './concerns/deployable.js'
 import { goalActionList } from './concerns/goal';
+import { itemReqGoal } from './concerns/itemReqGoal';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -18,6 +19,7 @@ const allActions = {
 	work: workActions,
 	goal: goalActionList,
 	moveGoal,
+	itemReqGoal,
 	rentOffice: rentOfficeActions,
 	payRent,
 	deployableActions,

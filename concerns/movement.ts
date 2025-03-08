@@ -94,7 +94,7 @@ export const moveGoalReducer = (state: RootStateType, action: ReturnType<typeof 
 			title: 'Move to position',
 			requirements: [
 				{
-					type: "RequirementMove",
+					type: 'RequirementMove',
 					targetPosition,
 				},
 			],

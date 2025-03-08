@@ -308,7 +308,7 @@ test('./sagas/transaction.ts: transaction - virtual inventories can have negativ
 
 	const createEaterTgo = addTgo({
 		inventory: initialInventory,
-		isInventoryVirtual: true,
+		inventoryIsPhysical: true,
 	});
 	const { tgoId: eaterTgoId } = createEaterTgo.payload.tgo;
 	const storeTester = setupStoreTester();

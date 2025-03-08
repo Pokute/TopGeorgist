@@ -7,11 +7,14 @@ import * as netActions from '../concerns/infra/net.js';
 // import { setGoals } from '../concerns/goal.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { consumeGoal } from '../actions/consumeGoal.js';
+import { itemReqGoal } from '../concerns/itemReqGoal.js';
 
 const sentTypes = {
 	// setGoals,
 	moveGoal,
-};
+	itemReqGoal,
+	consumeGoal,
+} as const;
 
 const sendAction = function* (action: ActionType<typeof sentTypes>) {
 	yield* put(netActions.send(action));
@@ -22,11 +25,7 @@ const clientListener = function* () {
 
 	// This will send all following actions to the server
 	yield* takeEvery(
-		[
-			// getType(setGoals),
-			getType(moveGoal),
-			getType(consumeGoal),
-		],
+		Object.values(sentTypes).map(getType),
 		sendAction,
 	);
 };

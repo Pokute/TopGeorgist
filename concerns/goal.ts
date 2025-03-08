@@ -36,7 +36,7 @@ export type RequirementBase<T extends string> = {
 	readonly type: T;
 };
 
-export type RequirementIntentoryItems = RequirementBase<'RequirementInventoryItems'> & {
+export type RequirementInventoryItems = RequirementBase<'RequirementInventoryItems'> & {
 	readonly inventoryItems: Inventory,
 };
 
@@ -44,10 +44,38 @@ export type RequirementMove = RequirementBase<'RequirementMove'> & {
 	targetPosition: MapPosition,
 }
 
+
+// export type RequirementDeliveryTargetTgoId = TgoId;
+// export type RequirementDeliveryTargetPosition = MapPosition;
+
+// export type RequirementDeliveryTarget = RequirementDeliveryTargetPosition | RequirementDeliveryTargetTgoId;
+
+// export interface RequirementDelivery {
+// 	readonly type: 'RequirementDelivery',
+// 	readonly targetPosition: RequirementDeliveryTarget,
+// 	readonly tgoIds: ReadonlyArray<TgoId>,
+// 	readonly inventoryItems: Inventory,
+// };
+
 export type Requirement =
-	| RequirementIntentoryItems // We need to acquire items to complete
-	| RequirementMove
+	| RequirementInventoryItems // We need to acquire items to complete
+	| RequirementMove // Simplified requirement for testing
+	// | RequirementDelivery // We must deliver something somewhere
 ;
+
+export const isRequirementInventoryItems = (requirement: Requirement): requirement is RequirementInventoryItems =>
+	requirement.type === 'RequirementInventoryItems'
+
+export const isRequirementMove = (requirement: Requirement): requirement is RequirementMove =>
+	requirement.type === 'RequirementMove'
+
+// export function isRequirementDelivery(requirement: Requirement): requirement is RequirementDelivery {
+// 	const requirementDelivery = requirement as RequirementDelivery;
+// 	return (requirementDelivery.targetPosition !== undefined && (
+// 		(requirementDelivery.tgoIds && requirementDelivery.tgoIds.length > 0) ||
+// 		(requirementDelivery.inventoryItems && requirementDelivery.inventoryItems.length > 0)
+// 	));
+// };
 
 export type Goal = {
 	readonly title?: string,
@@ -229,9 +257,6 @@ const goalDoerTickReducer = (
 		throw new Error('currentGoalTgo is not a goal Tgo!');
 	}
 	const currentGoal = currentGoalTgo.goal;
-	if (!currentGoal) {
-		throw new Error('tgo.goal is undefined for a goal Tgo!');
-	}
 	if (currentGoal.goalPaused)
 		return tgosState;
 
@@ -263,7 +288,6 @@ const goalDoerTickReducer = (
 		.map(getRequirementItems)
 		.flat(1);
 
-		
 	const committedItems = workIssuerGetCommittedItems(tgosState, currentGoalTgo);
 	
 	const missingInput = inventory.zeroCountsRemoved(
@@ -274,14 +298,7 @@ const goalDoerTickReducer = (
 
 	const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgosState, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId/*, goalDoer.tgoId*/);
 
-	{
-		const workDoer2 = tgosAfterAutoRecipeCreate[goalDoer.tgoId];
-		if (!hasComponentInventory(workDoer2) || !hasComponentWorkDoer(workDoer2)) {
-			return tgosState;
-		}
-
-		return tgosAfterAutoRecipeCreate;
-	}
+	return tgosAfterAutoRecipeCreate;
 };
 
 export const goalDoersTickReducer = (

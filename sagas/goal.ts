@@ -45,39 +45,6 @@ import { select } from '../redux-saga-helpers.js';
 // 			, [[], []]);
 // }
 
-const completeWorkInput = function* (actorTgoId: TgoId, input: InventoryItem) {
-	// if (input.typeId === 'tick') {
-	// 	if (input.count <= 0)
-	// 		return true;
-	// 	const getCurrentTick = function*() { return ((yield* select()) as RootStateType).ticker.currentTick; }
-	// 	const endTick = (yield* getCurrentTick()) + input.count;
-	// 	while (yield (getCurrentTick() < endTick)) {
-	// 		yield false;
-	// 	}
-	// 	return true;
-	// } else {
-	// 	const s: RootStateType = yield* select();
-	// 	const actorTgo = s.tgos[actorTgoId];
-	// 	if (!hasComponentInventory(actorTgo)) {
-	// 		return false;
-	// 	}
-
-	// 	return (actorTgo.inventory.some(i => (i.typeId === input.typeId) && (i.count >= input.count)));
-	// }
-}
-
-const completeRecipe = function* (actorTgoId: TgoId, recipe: Recipe) {
-	const inputs = recipe.input.map(work => completeWorkInput(actorTgoId, work));
-	const results: ReadonlyArray<boolean> = yield* inputs;
-	if (results.every(i => i)) {
-		return transaction({
-			tgoId: actorTgoId,
-			items: [...recipe.input, ...recipe.output],
-		});
-	}
-	return false;
-};
-
 const initGoal = function* (
 	actorTgo: TgoRoot & Partial<ComponentGoalDoer> & Partial<ComponentInventory>,
 	goalTgo: ComponentGoal,

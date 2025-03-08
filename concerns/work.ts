@@ -324,9 +324,10 @@ const ensureItemsCommittedInventoriesForTgoIds = (tgosState: TgosState, workIssu
 		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
 	};
 
-	const emptyVirtualInventoryTgo: Pick<ComponentInventory, 'inventory' | 'isInventoryVirtual'> = {
+	const emptyVirtualInventoryTgo: Omit<ComponentInventory, 'tgoId'> = {
 		inventory: [],
-		isInventoryVirtual: true,
+		inventoryIsPhysical: true,
+		inventoryIsStorableOnly: false,
 	};
 	
 	const committedItemsInventoriesCreateActions = worksMissingCommittedInventories.map(tgoId => ({
@@ -388,6 +389,8 @@ export const workWithCompletionsReducer = (
 						typeId: 'tick' as TypeId,
 						count: 1,
 					}],
+					inventoryIsPhysical: true,
+					inventoryIsStorableOnly: false,
 				} as ComponentInventory,
 		}))
 		.filter(({ tgo }) => tgo !== undefined) // SubWorks may already have completed their work. Thus only the committedItems inventory remains.
@@ -498,9 +501,6 @@ export const workWithCompletionsReducer = (
 		return tgosAfterCleanup;
 	}
 
-	if (missedRequiredItems.filter(({ typeId }) => typeId !== 'tick').length === 0)
-		return afterCommittingTgosState;
-
 	return workIssuerCreateWorksOnRequiredItems(
 		afterCommittingTgosState,
 		workTgoId,
@@ -525,6 +525,10 @@ export const workIssuerCreateWorksOnRequiredItems = (
 		throw new Error();
 	}
 
+	const workableRequiredItems = requiredItems.filter(({ typeId }) => typeId !== 'tick');
+	if (workableRequiredItems.length === 0)
+		return tgosState;
+
 	const activeRecipes = workIssuer.worksIssued
 		.map(({ workTgoId }) => tgosState[workTgoId])
 		.filter(isComponentWork)
@@ -536,7 +540,7 @@ export const workIssuerCreateWorksOnRequiredItems = (
 		.filter(({ count }) => count > 0);
 
 	// Find out which required items already have subworks.
-	const missedRequiredItemsWithoutActiveWork = requiredItems
+	const missedRequiredItemsWithoutActiveWork = workableRequiredItems
 		.filter(({ typeId }) => !activeRecipeOutputs.some(({ typeId: recipeOutputTypeId }) => recipeOutputTypeId === typeId ));
 
 	// Filter workDoer's recipes that are possible have autoRun recipes to fulfill the requirements.

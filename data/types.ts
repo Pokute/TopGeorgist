@@ -139,6 +139,7 @@ export const items: InitialItemTypesState = {
 		label: 'Tick',
 		isStorable: false,
 		positiveOnly: false,
+		redeemable: false,
 	},
 	movementAmount: {
 		label: 'MovementAmount',
