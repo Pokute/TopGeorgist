@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ComponentInventory } from '../concerns/inventory.js';
 import { RootStateType } from '../reducers/index.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
+import { TgoId } from '../reducers/tgo.js';
 import Category from './Category.js';
-import * as netActions from '../concerns/infra/net.js';
-import { ComponentGoal, goalActionList } from '../concerns/goal.js';
 import MapPosition from './MapPosition.js';
 import { MapPosition as MapPositionType } from '../concerns/map.js';
-import { isComponentWork } from '../concerns/work.js';
-import Work from './Work.js';
-import { InventoryReactItems } from './inventory.react.js';
 import recipes from '../data/recipes.js';
 import { TypeId } from '../reducers/itemType.js';
 import { itemReqGoal } from '../concerns/itemReqGoal.js';
@@ -47,17 +41,21 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 						onChange={(e) => setGoalInvReqType(e.target.value as any)}
 					>
 						{possibleRecipes.map(r => (
-							<option value={r.output[0].typeId} selected={r.output[0].typeId === goalInvReqType}>{types[r.output[0].typeId]?.label}</option>
+							<option value={r.output[0].typeId} selected={r.output[0].typeId === goalInvReqType}>{types[r.output[0].typeId]?.label} - {r.type}</option>
 						))}
 					</select>
-					<input type="number" value={goalInvReqAmount} onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))} />
+					<input
+						type="number"
+						value={goalInvReqAmount}
+						onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
+						min={1}
+					/>
 				</>}
 				<br />
 				<button
 					onClick={() => {
 						switch(goalType) {
 							case 'movement': {
-								const targetPosition = { x: 0, y: 0 };
 								dispatch(moveGoal(goalDoerTgoId, goalMovePosition));
 								break;
 							}
