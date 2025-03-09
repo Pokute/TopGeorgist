@@ -2,7 +2,7 @@ import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import Sinon from 'sinon';
 import { createWork } from '../concerns/work.js';
-import { consume } from '../data/recipes.js';
+import { calculation } from '../data/recipes.js';
 import { TgoId } from '../reducers/tgo.js';
 import { getType, Action } from 'typesafe-actions';
 import { RootStateType } from '../reducers/index.js';
@@ -34,7 +34,7 @@ const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof 
 
 test('Test work - fail if workerTgoId not in store', async t => {
 	const workAction = createWork({
-		recipe: consume,
+		recipe: calculation,
 		workerTgoId: 'illegalId' as TgoId,
 		inputInventoryTgoIds: ['illegalId' as TgoId],
 		outputInventoryTgoId: undefined,
@@ -72,7 +72,7 @@ test('Test work - fail if targetTgoId not in store', async t => {
 	const [createWorker, workerTgoId] = addTgoWithId({  });
 
 	const workAction = createWork({
-		recipe: consume,
+		recipe: calculation,
 		workerTgoId: workerTgoId,
 		inputInventoryTgoIds: [workerTgoId],
 		outputInventoryTgoId: 'illegalId' as TgoId,
@@ -105,7 +105,7 @@ test.failing('Test work - creation - fail if goalTgoId not in store', async t =>
 	});
 
 	const workAction = createWork({
-		recipe: consume,
+		recipe: calculation,
 		workerTgoId: 'illegalId' as TgoId,
 		inputInventoryTgoIds: ['illegalId' as TgoId],
 		outputInventoryTgoId: createTarget.payload.tgo.tgoId,

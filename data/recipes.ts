@@ -19,26 +19,6 @@ export const move: Recipe = {
 	}],
 };
 
-export const consume: Recipe = {
-	type: 'consume' as RecipeId,
-	input: [
-		{
-			typeId: 'hydrocarbons' as TypeId,
-			count: 100,
-		},
-		{
-			typeId: 'tick' as TypeId,
-			count: 2,
-		},
-	],
-	output: [
-		{
-			typeId: 'calories' as TypeId,
-			count: 100,
-		},
-	],
-};
-
 export const digestHydrocarbons = {
 	type: 'digestHydrocarbons' as RecipeId,
 	input: [
@@ -229,7 +209,6 @@ export const trade: Recipe = {
 
 const recipes: Record<RecipeId, Recipe> = {
 	[move.type]: move,
-	[consume.type]: consume,
 	[digestHydrocarbons.type]: digestHydrocarbons,
 	[growPineapple.type]: growPineapple,
 	[harvest.type]: harvest,
