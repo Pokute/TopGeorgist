@@ -59,7 +59,6 @@ const View = (props: ReturnType<typeof mapStoreToProps> & Type) => {
 					/>
 				))}
 			</Category>
-			<RecipesUI />
 		</div>
 	);
 };

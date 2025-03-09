@@ -12,7 +12,7 @@ import { isComponentWork } from '../concerns/work.js';
 import Work from './Work.js';
 import { InventoryReactItems } from './inventory.react.js';
 
-const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) /*({ workTgoId }: { workTgoId: TgoId })*/ => {
+const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) => {
 	const workTgos = useSelector((store: RootStateType) => tgo.worksIssued.map(({ workTgoId }) => store.tgos[workTgoId]))
 		.filter(isComponentWork);
 	const inputCommittedInventoryTgos = useSelector(

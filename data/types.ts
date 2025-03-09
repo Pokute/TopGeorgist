@@ -105,6 +105,7 @@ export const items: InitialItemTypesState = {
 	},
 	cannedPineApple: {
 		label: 'Canned pineapple',
+		isStorable: true,
 		stackable: true,
 		isInteger: true,
 		inventory: [
@@ -124,7 +125,7 @@ export const items: InitialItemTypesState = {
 	},
 	canningWork: {
 		label: 'Canning work',
-		isStorable: false,
+		isStorable: true,// false,
 		positiveOnly: false,
 	},
 	canneryTool: {
@@ -164,7 +165,7 @@ export const items: InitialItemTypesState = {
 	},
 	trade: {
 		label: 'Trade',
-		isStorable: false,
+		isStorable: true,// false,
 		positiveOnly: true,
 		redeemable: false,
 	},

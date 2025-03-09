@@ -24,18 +24,21 @@ export const createWork = createAction('WORK_CREATE',
 		inputInventoryTgoIds,
 		outputInventoryTgoId,
 		workIssuerTgoId,
+		outputCountInventoryTgoIds,
 	}: {
 		recipe: Recipe,
 		workerTgoId: TgoId,
 		inputInventoryTgoIds: ReadonlyArray<TgoId>,
 		outputInventoryTgoId?: TgoId
 		workIssuerTgoId?: TgoId,
+		outputCountInventoryTgoIds?: ReadonlyArray<TgoId>,
 	}) => ({
 		recipe,
 		workerTgoId,
 		inputInventoryTgoIds,
 		outputInventoryTgoId,
 		workIssuerTgoId: workIssuerTgoId ?? workerTgoId,
+		outputCountInventoryTgoIds: outputCountInventoryTgoIds ?? [],
 	})
 )();
 
@@ -100,6 +103,7 @@ export type ComponentWork =
 		readonly workIssuerTgoId: TgoId, // Can be different from the workDoer.
 		readonly workOutputInventoryTgoId?: TgoId, // If undefined, will output to committedItems
 		readonly workPaused?: boolean,
+		readonly workOutputCountInventoryTgoIds: ReadonlyArray<TgoId>,
 	};
 
 export const isComponentWork = <BaseT extends TgoType | ComponentWork>(tgo: BaseT) : tgo is (BaseT & Required<ComponentWork>) =>
@@ -153,7 +157,7 @@ export const getInventoryTgoIds = (store: RootStateType, tgo: ComponentInventory
 
 export const workCreatorReducer = (
 	tgosState: RootStateType['tgos'],
-	{ payload: { recipe, workerTgoId, workIssuerTgoId, inputInventoryTgoIds, outputInventoryTgoId }}: ActionType<typeof createWork>
+	{ payload: { recipe, workerTgoId, workIssuerTgoId, inputInventoryTgoIds, outputInventoryTgoId, outputCountInventoryTgoIds }}: ActionType<typeof createWork>
 ): [RootStateType['tgos'], Error?] => {
 	if (inputInventoryTgoIds.some(inputInventoryTgoId => !tgosState[inputInventoryTgoId])) {
 		return [
@@ -202,6 +206,7 @@ export const workCreatorReducer = (
 			)
 			: undefined,
 		worksIssued: [],
+		workOutputCountInventoryTgoIds: outputCountInventoryTgoIds,
 	});
 
 	const actions = [
@@ -475,11 +480,16 @@ export const workWithCompletionsReducer = (
 		// Send the reward of work.
 
 		if (workTgo.workRecipe.output.length > 0) {
+			const countInventoryOutputs = workTgo.workOutputCountInventoryTgoIds.map(tgoId => ({
+				tgoId,
+				items: workTgo.workRecipe.output,
+			}));
+
 			if (workTgo.workOutputInventoryTgoId !== undefined) {
 				const afterRewardTgosState = transactionReducer(afterCommittingTgosState, itemTypesState, transaction({
 					tgoId: workTgo.workOutputInventoryTgoId,
 					items: workTgo.workRecipe.output,
-				}));
+				}, ...countInventoryOutputs));
 				return cleanupWork(afterRewardTgosState, workTgo, workDoerTgoId);
 			}
 
@@ -493,7 +503,7 @@ export const workWithCompletionsReducer = (
 			const afterRewardTgosState = transactionReducer(afterEnsuredOutputCommittingInventory, itemTypesState, transaction({
 				tgoId: issuerTgoAfterEnsuringCommittingInventory.workInputCommittedItemsTgoId[workTgoId]!,
 				items: workTgo.workRecipe.output,
-			}));
+			}, ...countInventoryOutputs));
 			return cleanupWork(afterRewardTgosState, workTgo, workDoerTgoId);
 		}
 
@@ -515,6 +525,7 @@ export const workIssuerCreateWorksOnRequiredItems = (
 	requiredItems: Inventory,
 	workDoerTgoId: TgoId = workIssuerTgoId,
 	overrideTargetInventoryTgoId?: TgoId, // Specifying this will skip creating committedItems Inventories.
+	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {
 	const workDoer = tgosState[workDoerTgoId];
 	if (!hasComponentWorkDoer(workDoer) || !hasComponentInventory(workDoer)) {
@@ -558,7 +569,8 @@ export const workIssuerCreateWorksOnRequiredItems = (
 		workDoerTgoId,
 		possibleRequiredItemsWithoutActiveWork,
 		overrideTargetInventoryTgoId,
-		workIssuerTgoId
+		workIssuerTgoId,
+		outputCountInventoryTgoIds
 	);
 
 	return tgosAfterAutoRecipeCreate;
@@ -653,6 +665,7 @@ const createWorksForRecipes = (
 	recipes: ReadonlyArray<Recipe>,
 	targetInventoryTgoId?: TgoId,
 	workIssuerTgoId: TgoId = workDoer.tgoId,
+	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {
 	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
 		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
@@ -663,6 +676,7 @@ const createWorksForRecipes = (
 		inputInventoryTgoIds: [ workDoer.tgoId ],
 		outputInventoryTgoId: targetInventoryTgoId,
 		workIssuerTgoId,
+		outputCountInventoryTgoIds,
 	}));
 
 	const tgosAfterAutoRecipeCreate = createWorkActions
@@ -691,6 +705,7 @@ export const createWorksOnRequiredItems = (
 	requiredItems: Inventory,
 	targetInventoryTgoId?: TgoId,
 	workIssuerTgoId: TgoId = workDoerTgoId,
+	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {
 	const combinedRequiredItems = inventory.combined(requiredItems);
 
@@ -710,6 +725,7 @@ export const createWorksOnRequiredItems = (
 		demandedAutoRecipes,
 		targetInventoryTgoId,
 		workIssuerTgoId,
+		outputCountInventoryTgoIds
 	);
 }
 

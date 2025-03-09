@@ -6,6 +6,7 @@ import { ComponentLabel, hasComponentLabel } from '../components/label.js';
 import { TgoType } from '../reducers/tgo.js';
 import Inventory from './inventory.react.js';
 import { hasComponentInventory } from '../concerns/inventory.js';
+import { GoalCreator } from './GoalCreator.js';
 
 // const costMapper = (task: TaskType) => {
 // 	if (!task.cost) return () => 0;
@@ -34,6 +35,7 @@ const CurrentPlayerInfo = ({ player }: ReturnType<typeof mapStoreToProps>) => (p
 		{hasComponentInventory(player)
 			&& <Inventory ownerTgo={player} />
 		}
+		<GoalCreator goalDoerTgoId={player.tgoId} />
 	</div>
 )
 : null;

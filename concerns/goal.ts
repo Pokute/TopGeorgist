@@ -3,6 +3,7 @@ import { getType, ActionType, createAction } from 'typesafe-actions';
 
 import { ComponentInventory, hasComponentInventory, inventory, Inventory, InventoryItem } from './inventory.js';
 import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
+import tgosReducer from '../reducers/tgos.js';
 import { MapPosition, mapPosition } from '../concerns/map.js';
 import { createTupleFilter } from '../concerns/tgos.js';
 import { TypeId } from '../reducers/itemType.js';
@@ -10,6 +11,7 @@ import { RootStateType } from '../reducers/index.js';
 import { hasComponentPosition } from '../components/position.js';
 import { cleanupWorkIssuerInside, ComponentWorkDoer, ComponentWorkIssuer, hasComponentWorkDoer, workIssuerCreateWorksOnRequiredItems, workIssuerGetCommittedItems } from './work.js';
 import { TgosState } from '../reducers/tgos.js';
+import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
 
 export type ComponentGoal = 
 	ComponentWorkIssuer & {
@@ -38,6 +40,7 @@ export type RequirementBase<T extends string> = {
 
 export type RequirementInventoryItems = RequirementBase<'RequirementInventoryItems'> & {
 	readonly inventoryItems: Inventory,
+	readonly producedItemsCountInventoryTgoId?: TgoId,
 };
 
 export type RequirementMove = RequirementBase<'RequirementMove'> & {
@@ -230,9 +233,19 @@ const cleanupGoal = (tgosState: TgosState, goalTgo: ComponentGoal): TgosState =>
 		)
 	});
 
+	const tgosStateWithoutCountInventories = (tgosState: TgosState, goalTgoToRemove: ComponentGoal): TgosState =>
+		goalTgoToRemove.goal.requirements
+			.filter(isRequirementInventoryItems)
+			.map(req => req.producedItemsCountInventoryTgoId)
+			.filter((tgoId): tgoId is TgoId => tgoId !== undefined)
+			.map(tgoId => removeTgo(tgoId))
+			.reduce((tgos, removeTgoAction) => tgosReducer(tgos, removeTgoAction), tgosState);
+
 	const removeGoal = (tgosState: TgosState, goalTgoToRemove: ComponentGoal): TgosState =>
 		tgosStateWithoutGoalInInventory(
-			tgosStateWithoutActiveGoal(tgosState, goalTgoToRemove),
+			tgosStateWithoutActiveGoal(
+				tgosStateWithoutCountInventories(tgosState, goalTgoToRemove)
+				, goalTgoToRemove),
 			goalTgoToRemove
 		);
 
@@ -263,7 +276,15 @@ const goalDoerTickReducer = (
 	const requirementCompleted = (requirement: Requirement) => {
 		switch (requirement.type) {
 			case 'RequirementInventoryItems':
-				return false;
+				if (requirement.producedItemsCountInventoryTgoId === undefined)
+					return false;
+				const producedItemsCountInventory = tgosState[requirement.producedItemsCountInventoryTgoId];
+				if (producedItemsCountInventory?.inventory === undefined)
+					return false;
+				return (inventory.combined([
+					...requirement.inventoryItems,
+					...inventory.negated(producedItemsCountInventory.inventory)
+				]).every(ii => ii.count <= 0));
 			case 'RequirementMove': {
 				if (!hasComponentPosition(goalDoer)) return false;
 				return (mapPosition.matching(goalDoer.position, requirement.targetPosition));
@@ -296,9 +317,54 @@ const goalDoerTickReducer = (
 			...inventory.negated(committedItems)
 	]));
 
-	const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgosState, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId/*, goalDoer.tgoId*/);
+	if (missingInput.some(ii => ii.typeId === 'movementAmount')) {
+		const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgosState, currentGoalTgo.tgoId, missingInput.filter(ii => ii.typeId === 'movementAmount'), goalDoer.tgoId/*, goalDoer.tgoId*/);
+		return tgosAfterAutoRecipeCreate;
+	} else {
+		const firstRequirement = currentGoal.requirements.filter(req => req.type !== 'RequirementMove')[0];
 
-	return tgosAfterAutoRecipeCreate;
+		if (firstRequirement?.type !== 'RequirementInventoryItems')
+			return tgosState;
+
+		const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
+			const addTgoAction = addTgo(...params);
+			return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+		};
+
+		let tgos = tgosState;
+		if (firstRequirement.producedItemsCountInventoryTgoId === undefined) {
+			const [CountInvTgo, CountInvTgoId] = addTgoWithId({
+				inventory: [],
+				inventoryIsPhysical: false,
+				inventoryIsStorableOnly: false,
+			} as Omit<ComponentInventory, 'tgoId'>);
+			tgos = tgosReducer(tgos, CountInvTgo);
+			tgos = {
+				...tgos,
+				[currentGoalTgoId]: {
+					...currentGoalTgo,
+					goal: {
+						...currentGoal,
+						requirements: currentGoal.requirements.map(req => req.type === 'RequirementInventoryItems'
+							? {
+								...req,
+								producedItemsCountInventoryTgoId: CountInvTgoId,
+							}
+							: req
+						),
+					},
+				},
+			};
+		}
+		const firstRequirement2 = tgos[currentGoalTgoId].goal?.requirements[0];
+		if (firstRequirement2?.type !== 'RequirementInventoryItems')
+			return tgosState;
+
+		const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgos, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId, goalDoer.tgoId, [firstRequirement2.producedItemsCountInventoryTgoId!]);
+		return tgosAfterAutoRecipeCreate;
+	}
+
+	// return tgosAfterAutoRecipeCreate;
 };
 
 export const goalDoersTickReducer = (
