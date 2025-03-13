@@ -22,6 +22,7 @@ import { payRent, payRentReducer } from '../concerns/rentOffice.js';
 import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.js';
 import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.js';
 import { itemReqGoal, itemReqGoalReducer } from '../concerns/itemReqGoal.js';
+import { itemKeepMinGoal, itemKeepMinGoalReducer } from '../concerns/itemKeepMinGoal.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -121,6 +122,8 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return moveGoalReducer(state, action);
 		case getType(itemReqGoal):
 			return itemReqGoalReducer(state, action);
+		case getType(itemKeepMinGoal):
+			return itemKeepMinGoalReducer(state, action);
 		case getType(payRent):
 			return payRentReducer(state, action);
 		case getType(deployType):

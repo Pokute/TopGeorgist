@@ -7,28 +7,30 @@ import { TypeId } from '../reducers/itemType.js';
 import { hasComponentGoalDoer } from './goal.js';
 import { add as addTgo } from '../actions/tgos.js';
 
-export const itemReqGoal = createAction('TGO_GOAL_CREATE_ITEM_REQ',
-	(ownerTgoId: TgoId, inventory: Inventory) => ({
+export const itemKeepMinGoal = createAction('TGO_GOAL_CREATE_ITEM_KEEP_MIN_REQ',
+	(ownerTgoId: TgoId, inventory: Inventory, completeOnMinimumReached: boolean) => ({
 		tgoId: ownerTgoId,
 		inventory,
+		completeOnMinimumReached
 	})
 )();
 
-export const itemReqGoalReducer = (state: RootStateType, action: ReturnType<typeof itemReqGoal>): RootStateType => {
-	const {tgoId: itemRequesterTgoId, inventory} = action.payload;
-	const itemRequesterTgo = state.tgos[itemRequesterTgoId];
-	if (!hasComponentGoalDoer(itemRequesterTgo) || !hasComponentInventory(itemRequesterTgo)) {
-		console.error(`Tried to add itemReq Goal for ${itemRequesterTgoId} but it either has not goaldoer or no inventory`);
+export const itemKeepMinGoalReducer = (state: RootStateType, action: ReturnType<typeof itemKeepMinGoal>): RootStateType => {
+	const {tgoId: itemKeepMinRequesterTgoId, inventory, completeOnMinimumReached} = action.payload;
+	const itemKeepMinRequesterTgo = state.tgos[itemKeepMinRequesterTgoId];
+	if (!hasComponentGoalDoer(itemKeepMinRequesterTgo) || !hasComponentInventory(itemKeepMinRequesterTgo)) {
+		console.error(`Tried to add itemKeepMin Goal for ${itemKeepMinRequesterTgo} but it either has not goaldoer or no inventory`);
 		return state;
 	}
 
 	const goalTgo = addTgo({
 		goal: {
-			title: 'Get items',
+			title: 'Get minimum of items',
 			requirements: [
 				{
-					type: 'RequirementAcquireInventoryItems',
+					type: 'RequirementKeepMinimumInventoryItems',
 					inventoryItems: inventory,
+					completeOnMinimumReached
 				},
 			],
 		},
@@ -43,10 +45,10 @@ export const itemReqGoalReducer = (state: RootStateType, action: ReturnType<type
 		...stateWithGoalTgo,
 		tgos: {
 			...stateWithGoalTgo.tgos,
-			[itemRequesterTgoId]: {
-				...itemRequesterTgo,
+			[itemKeepMinRequesterTgoId]: {
+				...itemKeepMinRequesterTgo,
 				inventory: [
-					...itemRequesterTgo.inventory,
+					...itemKeepMinRequesterTgo.inventory,
 					{
 						typeId: 'tgoId' as TypeId,
 						tgoId: goalTgoId,
@@ -54,7 +56,7 @@ export const itemReqGoalReducer = (state: RootStateType, action: ReturnType<type
 					}
 				],
 				activeGoals: [
-					...itemRequesterTgo.activeGoals,
+					...itemKeepMinRequesterTgo.activeGoals,
 					goalTgoId,
 				],
 			},

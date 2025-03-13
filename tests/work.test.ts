@@ -429,7 +429,7 @@ test('Work - hierarchy', async t => {
 		createPlayerTgo.payload.tgo.tgoId,
 		{
 			requirements: [{
-				type: 'RequirementInventoryItems',
+				type: 'RequirementAcquireInventoryItems',
 				inventoryItems: [{
 					typeId: 'flour' as TypeId,
 					count: 3,

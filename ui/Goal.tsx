@@ -54,11 +54,19 @@ const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgo
 								{`Req move to: `}<MapPosition {...req.targetPosition} />
 							</span>);
 						}
-						case 'RequirementInventoryItems':
+						case 'RequirementAcquireInventoryItems':
 							return (
 								<React.Fragment key={req.type}>
 									Req for items:
 									<InventoryReactItems inventory={req.inventoryItems} />
+								</React.Fragment>
+							);
+						case 'RequirementKeepMinimumInventoryItems':
+							return (
+								<React.Fragment key={req.type}>
+									Req for minimum items:
+									<InventoryReactItems inventory={req.inventoryItems} />
+									{req.completeOnMinimumReached ? <span>completeOnMinimumReached</span> : null}
 								</React.Fragment>
 							);
 						default:

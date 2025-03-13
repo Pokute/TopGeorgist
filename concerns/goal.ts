@@ -38,9 +38,14 @@ export type RequirementBase<T extends string> = {
 	readonly type: T;
 };
 
-export type RequirementInventoryItems = RequirementBase<'RequirementInventoryItems'> & {
+export type RequirementAcquireInventoryItems = RequirementBase<'RequirementAcquireInventoryItems'> & {
 	readonly inventoryItems: Inventory,
 	readonly producedItemsCountInventoryTgoId?: TgoId,
+};
+
+export type RequirementKeepMinimumInventoryItems = RequirementBase<'RequirementKeepMinimumInventoryItems'> & {
+	readonly inventoryItems: Inventory,
+	readonly completeOnMinimumReached?: boolean,
 };
 
 export type RequirementMove = RequirementBase<'RequirementMove'> & {
@@ -61,13 +66,17 @@ export type RequirementMove = RequirementBase<'RequirementMove'> & {
 // };
 
 export type Requirement =
-	| RequirementInventoryItems // We need to acquire items to complete
+	| RequirementAcquireInventoryItems // We need to acquire items to complete
+	| RequirementKeepMinimumInventoryItems // We need to keep a minimum amount of items
 	| RequirementMove // Simplified requirement for testing
 	// | RequirementDelivery // We must deliver something somewhere
 ;
 
-export const isRequirementInventoryItems = (requirement: Requirement): requirement is RequirementInventoryItems =>
-	requirement.type === 'RequirementInventoryItems'
+export const isRequirementInventoryItems = (requirement: Requirement): requirement is RequirementAcquireInventoryItems =>
+	requirement.type === 'RequirementAcquireInventoryItems'
+
+export const isRequirementKeepMinimumInventoryItems = (requirement: Requirement): requirement is RequirementKeepMinimumInventoryItems =>
+	requirement.type === 'RequirementKeepMinimumInventoryItems'
 
 export const isRequirementMove = (requirement: Requirement): requirement is RequirementMove =>
 	requirement.type === 'RequirementMove'
@@ -275,7 +284,7 @@ const goalDoerTickReducer = (
 
 	const requirementCompleted = (requirement: Requirement) => {
 		switch (requirement.type) {
-			case 'RequirementInventoryItems':
+			case 'RequirementAcquireInventoryItems':
 				if (requirement.producedItemsCountInventoryTgoId === undefined)
 					return false;
 				const producedItemsCountInventory = tgosState[requirement.producedItemsCountInventoryTgoId];
@@ -284,6 +293,15 @@ const goalDoerTickReducer = (
 				return (inventory.combined([
 					...requirement.inventoryItems,
 					...inventory.negated(producedItemsCountInventory.inventory)
+				]).every(ii => ii.count <= 0));
+			case 'RequirementKeepMinimumInventoryItems':
+				if (!requirement.completeOnMinimumReached)
+					return false;
+				if (currentGoalTgo.inventory === undefined)
+					return false;
+				return (inventory.combined([
+					...requirement.inventoryItems,
+					...inventory.negated(currentGoalTgo.inventory)
 				]).every(ii => ii.count <= 0));
 			case 'RequirementMove': {
 				if (!hasComponentPosition(goalDoer)) return false;
@@ -299,7 +317,8 @@ const goalDoerTickReducer = (
 	}
 
 	const getRequirementItems = (requirement: Requirement): Inventory =>
-		requirement.type === 'RequirementInventoryItems'
+		(requirement.type === 'RequirementAcquireInventoryItems'
+			|| requirement.type === 'RequirementKeepMinimumInventoryItems')
 			? requirement.inventoryItems
 			: requirement.type === 'RequirementMove'
 				? [{ typeId: 'movementAmount' as TypeId, count: 1 }]
@@ -309,7 +328,11 @@ const goalDoerTickReducer = (
 		.map(getRequirementItems)
 		.flat(1);
 
-	const committedItems = workIssuerGetCommittedItems(tgosState, currentGoalTgo);
+	const committedItems = (currentGoal.requirements[0].type === 'RequirementAcquireInventoryItems')
+		? workIssuerGetCommittedItems(tgosState, currentGoalTgo)
+		: (currentGoal.requirements[0].type === 'RequirementKeepMinimumInventoryItems')
+			? goalDoer.inventory ?? []
+			: [];
 	
 	const missingInput = inventory.zeroCountsRemoved(
 		inventory.combined([
@@ -323,45 +346,49 @@ const goalDoerTickReducer = (
 	} else {
 		const firstRequirement = currentGoal.requirements.filter(req => req.type !== 'RequirementMove')[0];
 
-		if (firstRequirement?.type !== 'RequirementInventoryItems')
-			return tgosState;
+		switch (firstRequirement?.type) {
+			case 'RequirementAcquireInventoryItems':
+				const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
+					const addTgoAction = addTgo(...params);
+					return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+				};
 
-		const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
-			const addTgoAction = addTgo(...params);
-			return [addTgoAction, addTgoAction.payload.tgo.tgoId];
-		};
-
-		let tgos = tgosState;
-		if (firstRequirement.producedItemsCountInventoryTgoId === undefined) {
-			const [CountInvTgo, CountInvTgoId] = addTgoWithId({
-				inventory: [],
-				inventoryIsPhysical: false,
-				inventoryIsStorableOnly: false,
-			} as Omit<ComponentInventory, 'tgoId'>);
-			tgos = tgosReducer(tgos, CountInvTgo);
-			tgos = {
-				...tgos,
-				[currentGoalTgoId]: {
-					...currentGoalTgo,
-					goal: {
-						...currentGoal,
-						requirements: currentGoal.requirements.map(req => req.type === 'RequirementInventoryItems'
-							? {
-								...req,
-								producedItemsCountInventoryTgoId: CountInvTgoId,
-							}
-							: req
-						),
-					},
-				},
-			};
+				let tgos = tgosState;
+				if (firstRequirement.producedItemsCountInventoryTgoId === undefined) {
+					const [CountInvTgo, CountInvTgoId] = addTgoWithId({
+						inventory: [],
+						inventoryIsPhysical: false,
+						inventoryIsStorableOnly: false,
+					} as Omit<ComponentInventory, 'tgoId'>);
+					tgos = tgosReducer(tgos, CountInvTgo);
+					tgos = {
+						...tgos,
+						[currentGoalTgoId]: {
+							...currentGoalTgo,
+							goal: {
+								...currentGoal,
+								requirements: currentGoal.requirements.map(req => req.type === 'RequirementAcquireInventoryItems'
+									? {
+										...req,
+										producedItemsCountInventoryTgoId: CountInvTgoId,
+									}
+									: req
+								),
+							},
+						},
+					};
+				}
+				const firstRequirement2 = tgos[currentGoalTgoId].goal?.requirements[0];
+				if (firstRequirement2?.type !== 'RequirementAcquireInventoryItems')
+					return tgosState;
+		
+				const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgos, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId, goalDoer.tgoId, [firstRequirement2.producedItemsCountInventoryTgoId!]);
+				return tgosAfterAutoRecipeCreate;
+			case 'RequirementKeepMinimumInventoryItems':
+				return workIssuerCreateWorksOnRequiredItems(tgosState, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId, goalDoer.tgoId);
+			default:
+				return tgosState;
 		}
-		const firstRequirement2 = tgos[currentGoalTgoId].goal?.requirements[0];
-		if (firstRequirement2?.type !== 'RequirementInventoryItems')
-			return tgosState;
-
-		const tgosAfterAutoRecipeCreate = workIssuerCreateWorksOnRequiredItems(tgos, currentGoalTgo.tgoId, missingInput, goalDoer.tgoId, goalDoer.tgoId, [firstRequirement2.producedItemsCountInventoryTgoId!]);
-		return tgosAfterAutoRecipeCreate;
 	}
 
 	// return tgosAfterAutoRecipeCreate;

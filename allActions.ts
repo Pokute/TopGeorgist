@@ -10,6 +10,7 @@ import { payRent, rentOfficeActions } from './concerns/rentOffice';
 import { deployableActions } from './concerns/deployable.js'
 import { goalActionList } from './concerns/goal';
 import { itemReqGoal } from './concerns/itemReqGoal';
+import { itemKeepMinGoal } from './concerns/itemKeepMinGoal';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -20,6 +21,7 @@ const allActions = {
 	goal: goalActionList,
 	moveGoal,
 	itemReqGoal,
+	itemKeepMinGoal,
 	rentOffice: rentOfficeActions,
 	payRent,
 	deployableActions,

@@ -10,14 +10,16 @@ import recipes from '../data/recipes.js';
 import { TypeId } from '../reducers/itemType.js';
 import { itemReqGoal } from '../concerns/itemReqGoal.js';
 import { moveGoal } from '../actions/moveGoal.js';
+import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.js';
 
 export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 	const dispatch = useDispatch();
 	const types = useSelector((store: RootStateType) => store.itemTypes);
 
-	const [goalType, setGoalType] = useState<'movement' | 'inventoryRequirement'>('movement');
+	const [goalType, setGoalType] = useState<'movement' | 'inventoryRequirement' | 'InventoryKeepMinimumRequirement'>('movement');
 	const [goalInvReqType, setGoalInvReqType] = useState<TypeId | undefined>();
 	const [goalInvReqAmount, setGoalInvReqAmount] = useState<number>(1);
+	const [goalInvCompleteOnMinimumReached, setGoalInvCompleteOnMinimumReached] = useState<boolean>(false);
 	const [goalMovePosition, setGoalMovePosition] = useState<MapPositionType>({ x: 0, y: 0 } as MapPositionType);
 
 	const possibleRecipes = Object.values(recipes)
@@ -32,6 +34,7 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 				<select id="goalType" onChange={(e) => setGoalType(e.target.value as any)}>
 					<option value={'movement'} selected={goalType === 'movement'}>Movement</option>
 					<option value={'inventoryRequirement'} selected={goalType === 'inventoryRequirement'}>InventoryRequirement</option>
+					<option value={'InventoryKeepMinimumRequirement'} selected={goalType === 'InventoryKeepMinimumRequirement'}>InventoryKeepMinimumRequirement</option>
 				</select>
 				<br />
 				{goalType === 'movement' && <MapPosition x={0} y={0} __TYPE__={'MapPosition'} />}
@@ -51,6 +54,30 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 						min={1}
 					/>
 				</>}
+				{goalType === 'InventoryKeepMinimumRequirement' && <>
+					<select
+						id="goalInvReqType"
+						onChange={(e) => setGoalInvReqType(e.target.value as any)}
+					>
+						{possibleRecipes.map(r => (
+							<option value={r.output[0].typeId} selected={r.output[0].typeId === goalInvReqType}>{types[r.output[0].typeId]?.label} - {r.type}</option>
+						))}
+					</select>
+					<input
+						type="number"
+						value={goalInvReqAmount}
+						onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
+						min={1}
+					/>
+					<br />
+					<label htmlFor="goalInvCompleteOnMinimumReached">goalInvCompleteOnMinimumReached</label>
+					<input
+						id="goalInvCompleteOnMinimumReached"
+						type="checkbox"
+						checked={goalInvCompleteOnMinimumReached}
+						onChange={(e) => setGoalInvCompleteOnMinimumReached(e.target.checked)}
+					/>
+				</>}
 				<br />
 				<button
 					onClick={() => {
@@ -63,6 +90,12 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 								if (goalInvReqType === undefined)
 									return;
 								dispatch(itemReqGoal(goalDoerTgoId, [{ typeId: goalInvReqType, count: goalInvReqAmount }]));
+								break;
+							}
+							case 'InventoryKeepMinimumRequirement': {
+								if (goalInvReqType === undefined)
+									return;
+								dispatch(itemKeepMinGoal(goalDoerTgoId, [{ typeId: goalInvReqType, count: goalInvReqAmount }], goalInvCompleteOnMinimumReached));
 								break;
 							}
 						}

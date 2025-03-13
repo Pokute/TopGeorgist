@@ -3,6 +3,7 @@ import { add } from '../actions/itemTypes.js';
 import { InitialItemType, OptionalFields, RequiredFields, TypeId } from '../reducers/itemType.js';
 import { ComponentWorkDoer } from '../concerns/work.js';
 import { growPineapple, provideCanneryTool } from './recipes.js';
+import { ComponentGoalDoer } from '../concerns/goal.js';
 
 const defaultType: Omit<RequiredFields & OptionalFields, 'typeId'> = {
 	stackable: true,
@@ -86,10 +87,11 @@ export const items: InitialItemTypesState = {
 			],
 			deployAdditionals: {
 				recipeInfos: [{
-					recipe: provideCanneryTool, autoRun: 'Always',
+					recipe: provideCanneryTool, autoRun: 'OnDemand',
 				},],
 				worksIssued: [],
-			} as Omit<ComponentWorkDoer, 'tgoId'>,
+				activeGoals: [],
+			} as Omit<ComponentWorkDoer & ComponentGoalDoer, 'tgoId'>,
 		},
 		// Should be providing canneryWork or a possibility to do it.
 	},

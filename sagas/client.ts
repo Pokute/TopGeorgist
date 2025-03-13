@@ -7,11 +7,13 @@ import * as netActions from '../concerns/infra/net.js';
 // import { setGoals } from '../concerns/goal.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { itemReqGoal } from '../concerns/itemReqGoal.js';
+import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.js';
 
 const sentTypes = {
 	// setGoals,
 	moveGoal,
 	itemReqGoal,
+	itemKeepMinGoal,
 } as const;
 
 const sendAction = function* (action: ActionType<typeof sentTypes>) {
