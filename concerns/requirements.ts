@@ -132,6 +132,8 @@ export const cleanupRequirement = (tgosState: TgosState, requirement: Requiremen
 };
 
 export const requirementWorkIssuer = (tgosState: TgosState, requirement: Requirement, missingInput: Inventory, currentGoalTgo: ComponentGoal, workIssuer: ComponentWorkIssuer, workDoerTgo: ComponentWorkDoer): TgosState => {
+	if (missingInput.length === 0)
+		return tgosState;
 	let targetInventory: WorkTargetInventory | undefined = undefined;
 	let counterInventories: Array<TgoId> = [];
 	let tgosState2 = tgosState;

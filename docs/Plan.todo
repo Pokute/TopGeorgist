@@ -125,14 +125,21 @@ Milestone 4:
 			✔ Store sells cannery
 			✔ Store sells can blanks.
 			✔ Canning machine can be deployed.
-				☐ Canning machine can be used to can pineapples.
-					☐ A deployed canning machine is required to create 'canningWork'
-						? Figure out how this works.
+				✔ Canning machine can be used to can pineapples.
+					✔ A deployed canning machine is required to create 'canningWork'
+						! This is done by having a goal that ensures a minimum amount of 'canningTool'
+						! That goal creates works on demand.
+					☐ Deployed visitables can't have a goal with requirements set currently.
+						! Due to needing to create object that depends on another object
+						! Figure out a solution.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
 	☐ Trade complexity:
 		✔ Trading requiring 'trade' item, which itself requires 'computation' items.
-		☐ Figure out a good way to autogenerate 'trade' items when trying to buy stuff.
+		✔ Figure out a good way to autogenerate 'trade' items when trying to buy stuff.
+			! Trading should be specific goal. That goal has a requirement of a 'trade' item.
+			! When 'trade' item is available, a transaction is attempted.
+		☐ Add a trade goal / requirement as above.
 	✔ Work and goal internals rework.
 		✔ Works and Goals properly start subworks.
 		✔ Proper usage of temporary inventories.
@@ -147,11 +154,10 @@ Milestone 4:
 		? Task queue also has some mechanism for non-time costs, but there's no complete support.
 		✔ Currently relies on saga for multi-tick behaviour. Refactor into a reducer or remove?
 		✔ Removed completely.
-	☐ Government/Rent office bureucracy
 	✔ Goals pausing and canceling.
 	✔ Work pausing and canceling.
-	☐ Economy
-		☐ More sinks
+	✔ Economy
+		✔ More sinks (canning)
 	☐ Rendering overhaul - support for custom renderers for items.
 		☐ Add graphics for most items.
 	☐ UI improvements/cleanup.
@@ -182,6 +188,8 @@ Milestone 5:
 		☐ Barracks
 			☐ Has beds that cost to use
 	☐ Buying/selling having modifiable amount.
+	☐ Government/Rent office bureucracy
+		☐ Solve with the operations requiring craftable 'bureucracy' items.
 	☐ UI mouse selection stack can override cursor shape.
 	☐ Plant growth progress can be seen. Progressbar?
 	☐ Better map generation.

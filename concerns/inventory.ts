@@ -153,6 +153,9 @@ export const inventory = Object.assign(
 		zeroCountsRemoved: function(other: Inventory): Inventory {
 			return other.filter(ii => ii.count !== 0);
 		},
+		zeroOrLessCountsRemoved: function(other: Inventory): Inventory {
+			return other.filter(ii => ii.count > 0);
+		},
 	})
 );
 

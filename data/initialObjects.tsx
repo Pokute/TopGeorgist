@@ -4,8 +4,11 @@ import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../concerns/rentOffice.js';
-import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple } from './recipes.js';
+import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple, provideCanneryTool } from './recipes.js';
 import { tradeStoreTransactionRequest } from '../concerns/trade.js';
+import { TgoId } from '../reducers/tgo.js';
+import { ComponentGoal, ComponentGoalDoer } from '../concerns/goal.js';
+import { ComponentWorkDoer } from '../concerns/work.js';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
@@ -273,12 +276,64 @@ export const tileSetBasicAction = () => tileSetAdd({
 	},
 });
 
+const addTgoWithId = (...params: Parameters<typeof tgosActions.add>): [ReturnType<typeof tgosActions.add>, TgoId] => {
+	const addTgoAction = tgosActions.add(...params);
+	return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+};
+
+const publicCanneryActions = () => {
+	const addCanningToolGoal = addTgoWithId({
+		goal: {
+			title: 'AutoCanningTool',
+			requirements: [
+				{
+					type: 'RequirementKeepMinimumInventoryItems',
+					inventoryItems: [
+						{
+							typeId: 'canneryTool' as TypeId,
+							count: 1,
+						}
+					],
+				},
+			],
+		},
+		worksIssued: [],
+	} as Omit<ComponentGoal, 'tgoId'>);
+	return [
+		addCanningToolGoal[0],
+		tgosActions.add({
+			label: 'Public Cannery',
+			visitable: {
+				label: 'Public Cannery',
+			},
+			mapGridOccupier: true,
+			position: { x: 6, y: 8 } as MapPosition,
+			presentation: { color: 'black' },
+			inventory: [
+				{
+					typeId: 'tgoId' as TypeId,
+					tgoId: addCanningToolGoal[1],
+					count: 1,
+				}
+			],
+			activeGoals: [
+				addCanningToolGoal[1],
+			],
+			worksIssued: [],
+			recipeInfos: [
+				{ recipe: provideCanneryTool, autoRun: 'OnDemand' },
+			]
+		} as Omit<ComponentGoalDoer & ComponentWorkDoer, 'tgoId'>),
+	];
+};
+
 const initialObjectActions = () => [
 	storeGeneralAction(),
 	rentOfficeAction(),
 	GovernmentAction(),
 	statsBoardAction(),
 	tileSetBasicAction(),
+	...publicCanneryActions(),
 ];
 
 export default initialObjectActions;

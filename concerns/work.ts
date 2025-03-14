@@ -8,6 +8,9 @@ import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo, tgosReducer, TgosState } from './tgos.js';
 import { TypeId } from '../reducers/itemType.js';
 import { Opaque } from '../typings/global.d.js';
+import { hasComponentVisitable } from '../data/components_new.js';
+import { hasComponentPosition } from '../components/position.js';
+import { mapPosition } from './map.js';
 
 // Actions:
 
@@ -387,8 +390,18 @@ export const workWithCompletionsReducer = (
 			...inventory.negated(committedItems)
 	]));
 
-	const participantsWithCommitables = Object.keys(workTgo.workInputCommittedItemsTgoId ?? {})
-		.filter(tgoId => tgoId)
+	const workDoer = tgosState[workDoerTgoId];
+	const accessibleInventoryTgoIds = [
+		...Object.keys(workTgo.workInputCommittedItemsTgoId ?? {})
+			.filter(tgoId => tgoId),
+		...((hasComponentPosition(workDoer) && Object.values(tgosState)
+			.filter(hasComponentVisitable)
+			.filter(hasComponentInventory)
+			.filter(tgo => mapPosition.matching(tgo.position, workDoer.position))
+		) || [])
+			.map(tgo => tgo.tgoId),
+	];
+	const participantsWithCommitables = accessibleInventoryTgoIds
 		.map(inputTgoId => ({
 			tgoId: inputTgoId as TgoId,
 			tgo: inputTgoId !== 'tickSourceDummyTgoId' as TgoId
@@ -563,8 +576,8 @@ export const workIssuerCreateWorksOnRequiredItems = (
 	// Filter workDoer's recipes that are possible have autoRun recipes to fulfill the requirements.
 	const possibleRequiredItemsWithoutActiveWork = missedRequiredItemsWithoutActiveWork
 		.filter(({ typeId }) => workDoer.recipeInfos
-			.filter(({ autoRun }) => autoRun === 'OnDemand')
-			.some(({ recipe }) => recipe.output.some(({ typeId: recipeOutputTypeId }) =>  recipeOutputTypeId === typeId))
+				.filter(({ autoRun }) => autoRun === 'OnDemand')
+				.some(({ recipe }) => recipe.output.some(({ typeId: recipeOutputTypeId }) =>  recipeOutputTypeId === typeId))
 		);
 
 	if (possibleRequiredItemsWithoutActiveWork.length === 0)
