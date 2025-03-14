@@ -5,8 +5,8 @@ import tgosReducer, { TgosState } from '../reducers/tgos';
 import { ComponentGoal, ComponentGoalDoer } from './goal';
 import { ComponentInventory, hasComponentInventory, inventory, Inventory } from './inventory';
 import { mapPosition, MapPosition } from './map';
-import { autoCommittedItemsInventory, ComponentWorkDoer, ComponentWorkIssuer, workIssuerCreateWorksOnRequiredItems, workIssuerGetCommittedItems, WorkTargetInventory } from './work';
-import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
+import { autoCommittedItemsInventory, ComponentWorkDoer, ComponentWorkIssuer, workIssuerCreateWorksOnRequiredItems, WorkTargetInventory } from './work';
+import { add as addTgo, remove as removeTgo } from './tgos';
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = MapPosition;

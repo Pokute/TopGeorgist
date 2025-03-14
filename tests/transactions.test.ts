@@ -1,7 +1,6 @@
 import test from 'ava';
 
-import { add as addTgo } from '../actions/tgos.js';
-import { selectTgo } from '../concerns/tgos.js';
+import { add as addTgo, selectTgo } from '../concerns/tgos.js';
 import { TgoId } from '../reducers/tgo.js';
 import { add as addItemType } from '../actions/itemTypes.js';
 import { TypeId, ItemType } from '../reducers/itemType.js';

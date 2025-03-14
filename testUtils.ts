@@ -2,7 +2,7 @@ import { Action } from 'redux'
 import OrigSagaTester from 'redux-saga-tester';
 
 import { TgoType, TgoId } from './reducers/tgo.js';
-import { add as addTgo } from './actions/tgos.js';
+import { add as addTgo } from './concerns/tgos.js';
 import rootReducer from './reducers/index.js';
 import rootSaga from './sagas/root.js';
 

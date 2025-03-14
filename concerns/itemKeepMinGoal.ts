@@ -5,7 +5,7 @@ import { hasComponentInventory, Inventory } from './inventory.js';
 import rootReducer, { RootStateType } from '../reducers/index.js';
 import { TypeId } from '../reducers/itemType.js';
 import { hasComponentGoalDoer } from './goal.js';
-import { add as addTgo } from '../actions/tgos.js';
+import { add as addTgo } from './tgos.js';
 
 export const itemKeepMinGoal = createAction('TGO_GOAL_CREATE_ITEM_KEEP_MIN_REQ',
 	(ownerTgoId: TgoId, inventory: Inventory, completeOnMinimumReached: boolean) => ({

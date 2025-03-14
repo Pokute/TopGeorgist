@@ -6,7 +6,7 @@ import { TypeId } from '../reducers/itemType.js';
 import rootReducer, { RootStateType } from '../reducers/index.js';
 import { moveGoal } from '../actions/moveGoal.js';
 import { ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.js';
-import { add as addTgo } from '../actions/tgos.js';
+import { add as addTgo } from './tgos.js';
 import { hasComponentPosition, ComponentPosition } from '../components/position.js';
 import { TgosState } from '../reducers/tgos.js';
 import { MapPosition, mapPosition } from './map.js';

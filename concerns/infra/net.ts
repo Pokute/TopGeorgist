@@ -8,7 +8,7 @@ import * as viewActions from '../../actions/view.js';
 import { mapActions } from '../../concerns/map.js';
 import * as tileSetsActions from '../../actions/tileSets.js';
 import * as tgoActions from '../../actions/tgo.js';
-import * as tgosActions from '../../actions/tgos.js';
+import { tgosActions } from '../../concerns/tgos.js';
 import { moveGoal } from '../../actions/moveGoal.js';
 import { MapPosition } from '../../concerns/map.js';
 import { ViewId } from '../../reducers/view.js';

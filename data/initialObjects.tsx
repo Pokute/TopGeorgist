@@ -1,4 +1,4 @@
-import * as tgosActions from '../actions/tgos.js';
+import { tgosActions } from '../concerns/tgos.js';
 import { add as tileSetAdd } from '../actions/tileSets.js';
 import { MapPosition } from '../concerns/map.js';
 import { TypeId } from '../reducers/itemType.js';

@@ -2,7 +2,7 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
 import { TypeId } from '../reducers/itemType.js';
 import rootReducer, { RootStateType } from '../reducers/index.js';
-import { add, remove as tgoRemove } from '../actions/tgos.js';
+import { add, remove as tgoRemove } from './tgos.js';
 import { selectTgo } from './tgos.js';
 import { ComponentPosition, hasComponentPosition } from '../components/position.js';
 import { hasComponentMapGridOccipier, hasComponentVisitable } from '../data/components_new.js';

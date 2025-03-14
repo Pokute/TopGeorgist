@@ -3,7 +3,7 @@ import { ActionType, getType, isOfType, isActionOf } from 'typesafe-actions';
 import tgoReducer, { initialState as tgoInitialState, TgoType, TgoActionType, TgoId } from './tgo.js';
 import { GoalActionType, GoalDoerActionType, goalActionList, goalDoerActionList, goalReducer } from '../concerns/goal.js';
 import * as tgoActions from '../actions/tgo.js'; 
-import * as tgosActions from '../actions/tgos.js'; 
+import { tgosActions } from '../concerns/tgos.js'; 
 import { InventoryActionType } from '../concerns/inventory.js';
 import { inventoryActions, hasComponentInventory, reducer as inventoryReducer } from '../concerns/inventory.js';
 import { setPosition, hasComponentPosition, reducer as positionReducer } from '../components/position.js';

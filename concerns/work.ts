@@ -5,7 +5,7 @@ import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
 import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, InventoryItem, inventory } from './inventory.js';
 import { transaction, transactionReducer } from '../concerns/transaction.js';
 import { RootStateType } from '../reducers/index.js';
-import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
+import { add as addTgo, remove as removeTgo } from './tgos.js';
 import { TypeId } from '../reducers/itemType.js';
 import tgosReducer, { TgosState } from '../reducers/tgos.js';
 import { Opaque } from '../typings/global.d.js';
