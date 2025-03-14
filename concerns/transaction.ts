@@ -2,7 +2,7 @@ import { ActionType, createAction } from 'typesafe-actions';
 
 import { TgoId } from '../reducers/tgo.js';
 import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
-import tgos, { getTgoByIdFromRootState } from '../reducers/tgos.js';
+import { tgosReducer, getTgoByIdFromRootState } from '../concerns/tgos.js';
 import { RootStateType } from '../reducers/index.js';
 
 // Actions:
@@ -135,7 +135,7 @@ export const transactionReducer = (
 			.map(createInventoryAddForParticipant).flat(1);
 
 		return inventoryAdds.reduce(
-			(currentTgosState, inventoryAdd) => tgos(currentTgosState, inventoryAdd),
+			(currentTgosState, inventoryAdd) => tgosReducer(currentTgosState, inventoryAdd),
 			tgosState
 		);
 	} catch (e) {

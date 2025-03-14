@@ -8,9 +8,8 @@ import { moveGoal } from '../actions/moveGoal.js';
 import { ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.js';
 import { add as addTgo } from './tgos.js';
 import { hasComponentPosition, ComponentPosition } from '../components/position.js';
-import { TgosState } from '../reducers/tgos.js';
 import { MapPosition, mapPosition } from './map.js';
-import { createTupleFilter } from './tgos.js';
+import { TgosState, createTupleFilter } from './tgos.js';
 import { TgoId, TgoType } from '../reducers/tgo.js';
 import { count } from 'console';
 

@@ -1,12 +1,11 @@
 import { hasComponentPosition } from '../components/position';
 import { TypeId } from '../reducers/itemType';
 import { TgoId } from '../reducers/tgo';
-import tgosReducer, { TgosState } from '../reducers/tgos';
+import { add as addTgo, remove as removeTgo, tgosReducer, TgosState } from './tgos';
 import { ComponentGoal, ComponentGoalDoer } from './goal';
 import { ComponentInventory, hasComponentInventory, inventory, Inventory } from './inventory';
 import { mapPosition, MapPosition } from './map';
 import { autoCommittedItemsInventory, ComponentWorkDoer, ComponentWorkIssuer, workIssuerCreateWorksOnRequiredItems, WorkTargetInventory } from './work';
-import { add as addTgo, remove as removeTgo } from './tgos';
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = MapPosition;

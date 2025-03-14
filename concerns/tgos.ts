@@ -1,17 +1,18 @@
 import { v4 as uuidv4 } from 'uuid';
-import { createAction } from 'typesafe-actions';
+import { ActionType, createAction, getType, isActionOf } from 'typesafe-actions';
 
 import { RootStateType } from '../reducers/index.js';
-import { TgoId, TgoPartials, TgoType } from '../reducers/tgo.js';
-import { TgosState } from '../reducers/tgos.js';
+import * as tgoActions from '../actions/tgo.js'; 
+import tgoReducer, { TgoActionType, TgoId, TgoPartials, TgoType, initialState as tgoInitialState, } from '../reducers/tgo.js';
+import { hasComponentInventory, inventoryActions, InventoryActionType, reducer as inventoryReducer } from './inventory.js';
+import { hasComponentPosition, setPosition, reducer as positionReducer } from '../components/position.js';
+import { GoalActionType, GoalDoerActionType, goalDoerActionList, goalActionList } from './goal.js';
 
-export const selectTgo = (state: RootStateType, tgoId: TgoId) =>
-	state.tgos[tgoId];
+export type TgosState = {
+	readonly [tgoId: string]: TgoType;
+};
 
-// Using this like allows to use type guarding funcs like hasComponentInventory for arrays of tuples.
-// Example: Object.entries(tgos).filter(createTupleFilter(hasComponentInventory))
-export const createTupleFilter = <DerivedT extends BaseT, BaseT extends TgoType>(filterFunc: (tgo?: BaseT) => tgo is DerivedT) => (tgoTuple: [tgoId: string, tgoz?: BaseT]) : tgoTuple is [string, (BaseT & Required<DerivedT>)] =>
-	filterFunc(tgoTuple[1]);
+const initialState: TgosState = {};
 
 export const setAll = createAction('TGOS_SET',
 	(tgos: TgosState) => ({
@@ -40,3 +41,82 @@ export const tgosActions = {
 	add,
 	remove,
 };
+
+type TgosAction = ActionType<typeof tgosActions>;
+
+const singleTgoReducer = (state: TgosState = initialState, action: TgoActionType | InventoryActionType): TgosState => {
+	return state;
+}
+
+const componentReducers = [
+	{
+		test: hasComponentPosition,
+		reducer: positionReducer,
+	},
+	{
+		test: hasComponentInventory,
+		reducer: inventoryReducer,
+	},
+];
+
+export const tgosReducer = (state: TgosState = initialState, action: TgosAction | TgoActionType | InventoryActionType | GoalActionType | GoalDoerActionType): TgosState => {
+	if (isActionOf(tgoActions.setColor, action)) {
+		return singleTgoReducer(state, action);
+	}
+	switch (action.type) {
+		case getType(tgosActions.add):
+			return {
+				...state,
+				[action.payload.tgo.tgoId]: {
+					...tgoInitialState,
+					...action.payload.tgo,
+				},
+			};
+		case getType(tgosActions.remove): 
+		{
+			const { [action.payload.tgoId]: undefined, ...rest } = state;
+			return rest;
+		}
+		case getType(tgosActions.setAll):
+			return action.payload.tgos;
+		default:
+			if (isActionOf(setPosition, action)
+				|| isActionOf(tgoActions.setColor, action)
+				|| isActionOf(inventoryActions.add, action)
+				|| isActionOf(inventoryActions.addTgoId, action)
+				|| isActionOf(inventoryActions.removeTgoId, action)
+				|| isActionOf(goalDoerActionList.addGoals, action)
+				|| isActionOf(goalDoerActionList.removeGoals, action)
+			) {
+				const newTgoState = tgoReducer(state[action.payload.tgoId], action);
+				if (newTgoState !== state[action.payload.tgoId]) {
+					return {
+						...state,
+						[action.payload.tgoId]: newTgoState,
+					};
+				}
+			}
+			if (isActionOf(goalActionList.pauseGoal, action)
+				|| isActionOf(goalActionList.resumeGoal, action)
+			) {
+				return {
+					...state,
+					[action.payload.goalTgoId]: tgoReducer(state[action.payload.goalTgoId], action)
+				};
+			}
+
+		return state;
+	}
+};
+
+export const getTgoByIdFromRootState = (tgos: TgosState) =>
+	(tgoId: TgoId): TgoType | undefined =>
+		tgos[tgoId];
+
+export const selectTgo = (state: RootStateType, tgoId: TgoId) =>
+	state.tgos[tgoId];
+
+// Using this like allows to use type guarding funcs like hasComponentInventory for arrays of tuples.
+// Example: Object.entries(tgos).filter(createTupleFilter(hasComponentInventory))
+export const createTupleFilter = <DerivedT extends BaseT, BaseT extends TgoType>(filterFunc: (tgo?: BaseT) => tgo is DerivedT) => (tgoTuple: [tgoId: string, tgoz?: BaseT]) : tgoTuple is [string, (BaseT & Required<DerivedT>)] =>
+	filterFunc(tgoTuple[1]);

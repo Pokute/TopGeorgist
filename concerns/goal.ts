@@ -2,10 +2,9 @@ import { getType, ActionType, createAction } from 'typesafe-actions';
 
 import { ComponentInventory, hasComponentInventory, inventory, InventoryItem } from './inventory.js';
 import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
-import { createTupleFilter } from '../concerns/tgos.js';
+import { TgosState, createTupleFilter } from '../concerns/tgos.js';
 import { RootStateType } from '../reducers/index.js';
 import { cleanupWorkIssuerInside, ComponentWorkDoer, ComponentWorkIssuer, hasComponentWorkDoer } from './work.js';
-import { TgosState } from '../reducers/tgos.js';
 import { Requirement, cleanupRequirement, getRequirementProducedItems, getRequirementItems, requirementIsCompleted, requirementWorkIssuer } from './requirements.js';
 
 export type ComponentGoal = 

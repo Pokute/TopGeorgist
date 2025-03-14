@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import * as viewActions from '../actions/view.js';
 import { ViewType } from '../reducers/view.js';
 import { RootStateType } from '../reducers/index.js';
-import { TgosState } from '../reducers/tgos.js';
+import { TgosState } from '../concerns/tgos.js';
 import { TileType } from '../reducers/tile.js';
 import { TileSetType } from '../reducers/tileSet.js';
 import { MapType, MapPosition } from '../concerns/map.js';

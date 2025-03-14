@@ -6,7 +6,7 @@ import { RootStateType } from '../reducers/index.js';
 import Category from './Category.js';
 import recipes from '../data/recipes.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
-import { TgosState } from '../reducers/tgos.js';
+import { TgosState } from '../concerns/tgos.js';
 import { createWork } from '../concerns/work.js';
 import { ComponentPosition, hasComponentPosition } from '../components/position.js';
 import { ComponentVisitable, hasComponentVisitable } from '../data/components_new.js';

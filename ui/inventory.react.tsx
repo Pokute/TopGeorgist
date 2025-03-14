@@ -12,7 +12,7 @@ import { consumerActions, consumerIsTypeConsumable } from '../concerns/consumer.
 import { ItemTypesState } from '../reducers/itemTypes.js';
 import { hasComponentConsumer } from '../concerns/consumer.js';
 import { deployableActions, hasComponentDeployable } from '../concerns/deployable.js';
-import { TgosState } from '../reducers/tgos.js';
+import { TgosState } from '../concerns/tgos.js';
 
 interface Type {
 	readonly ownerTgo: ComponentInventory,

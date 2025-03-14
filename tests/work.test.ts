@@ -7,7 +7,6 @@ import { TgoId } from '../reducers/tgo.js';
 import { getType, Action } from 'typesafe-actions';
 import { RootStateType } from '../reducers/index.js';
 import { TypeId } from '../reducers/itemType.js';
-import { TgosState } from '../reducers/tgos.js';
 import { add as addTgo, selectTgo } from '../concerns/tgos.js';
 import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../concerns/inventory.js';
 import { addGoals, createGoal } from '../concerns/goal.js';

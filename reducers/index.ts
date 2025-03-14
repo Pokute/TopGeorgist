@@ -9,7 +9,7 @@ import { frameReducer } from '../concerns/frame.js';
 import government, { GovernmentStateType } from './government.js';
 import itemTypes, { ItemTypesState } from './itemTypes.js';
 import { mapReducer } from '../concerns/map.js';
-import tgos, { TgosState } from './tgos.js';
+import { tgosReducer, TgosState } from '../concerns/tgos.js';
 import { tick, tickerReducer } from '../concerns/ticker.js';
 import tileSets, { TileSetsState } from './tileSets.js';
 import views, { ViewsState } from './views.js';
@@ -48,7 +48,7 @@ const combinedReducers = combineReducers({
 	government,
 	itemTypes,
 	map: mapReducer,
-	tgos,
+	tgos: tgosReducer,
 	ticker: tickerReducer,
 	tileSets,
 	views,
