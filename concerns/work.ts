@@ -8,6 +8,7 @@ import { RootStateType } from '../reducers/index.js';
 import { add as addTgo, remove as removeTgo } from '../actions/tgos.js';
 import { TypeId } from '../reducers/itemType.js';
 import tgosReducer, { TgosState } from '../reducers/tgos.js';
+import { Opaque } from '../typings/global.d.js';
 
 // Actions:
 
@@ -29,7 +30,7 @@ export const createWork = createAction('WORK_CREATE',
 		recipe: Recipe,
 		workerTgoId: TgoId,
 		inputInventoryTgoIds: ReadonlyArray<TgoId>,
-		outputInventoryTgoId?: TgoId
+		outputInventoryTgoId: WorkTargetInventory,
 		workIssuerTgoId?: TgoId,
 		outputCountInventoryTgoIds?: ReadonlyArray<TgoId>,
 	}) => ({
@@ -72,6 +73,10 @@ export const workActions = {
 };
 export type WorkActionType = ActionType<typeof workActions>;
 
+export type AutoCommittedItemsInventoryType = Opaque<string, '__autoCommittedItemsInventory__'>;
+export const autoCommittedItemsInventory: AutoCommittedItemsInventoryType = 'autoCommittedItemsInventory' as AutoCommittedItemsInventoryType;
+export type WorkTargetInventory = TgoId | AutoCommittedItemsInventoryType;
+
 // Work TGO members:
 
 // Work issuer creates new works and assigns them to a WorkDoer. Doesn't need to be a ComponentWork itself.
@@ -101,7 +106,7 @@ export type ComponentWork =
 		// WorkDoer is the tgo in whose inventory this work is.
 		readonly workRecipe: Recipe,
 		readonly workIssuerTgoId: TgoId, // Can be different from the workDoer.
-		readonly workOutputInventoryTgoId?: TgoId, // If undefined, will output to committedItems
+		readonly workOutputInventoryTgoId: WorkTargetInventory,
 		readonly workPaused?: boolean,
 		readonly workOutputCountInventoryTgoIds: ReadonlyArray<TgoId>,
 	};
@@ -166,7 +171,8 @@ export const workCreatorReducer = (
 		];
 	}
 
-	if (outputInventoryTgoId && !tgosState[outputInventoryTgoId]) {
+	if (outputInventoryTgoId !== autoCommittedItemsInventory
+		&& (outputInventoryTgoId && !tgosState[outputInventoryTgoId])) {
 		return [
 			tgosState,
 			new Error('Tgos matching outputInventoryTgoId in handleCreateWork not found!')
@@ -485,9 +491,9 @@ export const workWithCompletionsReducer = (
 				items: workTgo.workRecipe.output,
 			}));
 
-			if (workTgo.workOutputInventoryTgoId !== undefined) {
+			if (workTgo.workOutputInventoryTgoId !== 'autoCommittedItemsInventory') {
 				const afterRewardTgosState = transactionReducer(afterCommittingTgosState, itemTypesState, transaction({
-					tgoId: workTgo.workOutputInventoryTgoId,
+					tgoId: workTgo.workOutputInventoryTgoId as TgoId,
 					items: workTgo.workRecipe.output,
 				}, ...countInventoryOutputs));
 				return cleanupWork(afterRewardTgosState, workTgo, workDoerTgoId);
@@ -515,7 +521,8 @@ export const workWithCompletionsReducer = (
 		afterCommittingTgosState,
 		workTgoId,
 		missedRequiredItems,
-		workDoerTgoId
+		workDoerTgoId,
+		autoCommittedItemsInventory
 	);
 };
 
@@ -524,7 +531,7 @@ export const workIssuerCreateWorksOnRequiredItems = (
 	workIssuerTgoId: TgoId,
 	requiredItems: Inventory,
 	workDoerTgoId: TgoId = workIssuerTgoId,
-	overrideTargetInventoryTgoId?: TgoId, // Specifying this will skip creating committedItems Inventories.
+	overrideTargetInventoryTgoId: WorkTargetInventory,
 	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {
 	const workDoer = tgosState[workDoerTgoId];
@@ -663,7 +670,7 @@ const createWorksForRecipes = (
 	tgosState: TgosState,
 	workDoer: ComponentWorkDoer & ComponentInventory,
 	recipes: ReadonlyArray<Recipe>,
-	targetInventoryTgoId?: TgoId,
+	targetInventoryTgoId: WorkTargetInventory,
 	workIssuerTgoId: TgoId = workDoer.tgoId,
 	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {
@@ -703,7 +710,7 @@ export const createWorksOnRequiredItems = (
 	tgosState: TgosState,
 	workDoerTgoId: TgoId,
 	requiredItems: Inventory,
-	targetInventoryTgoId?: TgoId,
+	targetInventoryTgoId: WorkTargetInventory,
 	workIssuerTgoId: TgoId = workDoerTgoId,
 	outputCountInventoryTgoIds: ReadonlyArray<TgoId> = [],
 ) => {

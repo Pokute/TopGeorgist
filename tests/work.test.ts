@@ -1,7 +1,7 @@
 import util from 'util';
 import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
 import Sinon from 'sinon';
-import { createWork } from '../concerns/work.js';
+import { autoCommittedItemsInventory, createWork } from '../concerns/work.js';
 import { calculation } from '../data/recipes.js';
 import { TgoId } from '../reducers/tgo.js';
 import { getType, Action } from 'typesafe-actions';
@@ -37,7 +37,7 @@ test('Test work - fail if workerTgoId not in store', async t => {
 		recipe: calculation,
 		workerTgoId: 'illegalId' as TgoId,
 		inputInventoryTgoIds: ['illegalId' as TgoId],
-		outputInventoryTgoId: undefined,
+		outputInventoryTgoId: autoCommittedItemsInventory,
 		workIssuerTgoId: undefined,
 	});
 
@@ -139,6 +139,7 @@ test('Work - work is removed after completion', async t => {
 		workerTgoId: workerTgoId,
 		inputInventoryTgoIds: [workerTgoId],
 		workIssuerTgoId: undefined,
+		outputInventoryTgoId: workerTgoId,
 	});
 
 	const storeTester = setupStoreTester();
