@@ -156,6 +156,7 @@ Milestone 4:
 		✔ Removed completely.
 	✔ Goals pausing and canceling.
 	✔ Work pausing and canceling.
+	☐ Visitables access restrictioning.
 	✔ Economy
 		✔ More sinks (canning)
 	☐ Rendering overhaul - support for custom renderers for items.
@@ -170,6 +171,7 @@ Milestone 4:
 	☐ Investigate aliases for import to avoid relative paths.
 	✔ Publishing
 	✔ Server hosting.
+	✔ Github link.
 
 Milestone 5:
 
@@ -191,8 +193,10 @@ Milestone 5:
 	☐ Government/Rent office bureucracy
 		☐ Solve with the operations requiring craftable 'bureucracy' items.
 	☐ UI mouse selection stack can override cursor shape.
-	☐ Plant growth progress can be seen. Progressbar?
+
+	☐ Plant growth progress visibility improvement. Progressbar?
 	☐ Better map generation.
+	☐ Convert consume into goal.
 	☐ Convert game logic from sagas into reducers.
 		! Sagas can't be saved/loaded so they can't be used for multi-tick events. Better just remove them completely from game logic. Still can be used for connection code.
 		✔ sagas/taskQueue.ts
@@ -206,6 +210,9 @@ Milestone 5:
 	☐ Refactor client init/mainloop code.
 	☐ Refactor server init/mainloop code.
 	☐ Move netActions.send to a redux-saga that listens to all applicable actions?
+	☐ Convert all JSON to JSON5 for infinity support etc.
+		☐ WS message payloads.
+		☐ Persistence storage.
 	☐ Investigate
 		☐ redux-loop https://github.com/redux-loop/redux-loop
 		☐ reducer-reducer?

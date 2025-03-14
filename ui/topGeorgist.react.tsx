@@ -6,6 +6,7 @@ import ConnectionInfo from './ConnectionInfo.js';
 import PlayerContainer from './playerContainer.react.js';
 import View from './view.react.js';
 import { RootStateType } from '../reducers/index.js';
+import About from './About.js';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>
@@ -19,6 +20,7 @@ const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 		<PlayerContainer />
 		<AccountInfo />
 		<ConnectionInfo />
+		<About />
 	</div>
 );
 
