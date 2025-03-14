@@ -31,10 +31,14 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 		>
 			<form onSubmit={(e) => e.preventDefault()}>
 				<label>Goal type</label>
-				<select id="goalType" onChange={(e) => setGoalType(e.target.value as any)}>
-					<option value={'movement'} selected={goalType === 'movement'}>Movement</option>
-					<option value={'inventoryRequirement'} selected={goalType === 'inventoryRequirement'}>InventoryRequirement</option>
-					<option value={'InventoryKeepMinimumRequirement'} selected={goalType === 'InventoryKeepMinimumRequirement'}>InventoryKeepMinimumRequirement</option>
+				<select
+					id="goalType"
+					onChange={(e) => setGoalType(e.target.value as any)}
+					value={goalType}
+				>
+					<option value={'movement'}>Movement</option>
+					<option value={'inventoryRequirement'} defaultChecked>InventoryRequirement</option>
+					<option value={'InventoryKeepMinimumRequirement'}>InventoryKeepMinimumRequirement</option>
 				</select>
 				<br />
 				{goalType === 'movement' && <MapPosition x={0} y={0} __TYPE__={'MapPosition'} />}
@@ -42,9 +46,15 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 					<select
 						id="goalInvReqType"
 						onChange={(e) => setGoalInvReqType(e.target.value as any)}
+						value={goalInvReqType}
 					>
 						{possibleRecipes.map(r => (
-							<option value={r.output[0].typeId} selected={r.output[0].typeId === goalInvReqType}>{types[r.output[0].typeId]?.label} - {r.type}</option>
+							<option
+								value={r.output[0].typeId}
+								key={r.output[0].typeId}
+							>
+								{types[r.output[0].typeId]?.label} - {r.type}
+							</option>
 						))}
 					</select>
 					<input
@@ -58,10 +68,16 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 					<select
 						id="goalInvReqType"
 						onChange={(e) => setGoalInvReqType(e.target.value as any)}
+						value={goalInvReqType}
 					>
 						{possibleRecipes.map(r => (
-							<option value={r.output[0].typeId} selected={r.output[0].typeId === goalInvReqType}>{types[r.output[0].typeId]?.label} - {r.type}</option>
-						))}
+							<option
+								value={r.output[0].typeId}
+								key={r.output[0].typeId}
+							>
+								{types[r.output[0].typeId]?.label} - {r.type}
+							</option>
+				))}
 					</select>
 					<input
 						type="number"
