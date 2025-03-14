@@ -16,7 +16,7 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 	const dispatch = useDispatch();
 	const types = useSelector((store: RootStateType) => store.itemTypes);
 
-	const [goalType, setGoalType] = useState<'movement' | 'inventoryRequirement' | 'InventoryKeepMinimumRequirement'>('movement');
+	const [goalType, setGoalType] = useState<'movement' | 'inventoryRequirement' | 'InventoryKeepMinimumRequirement'>('inventoryRequirement');
 	const [goalInvReqType, setGoalInvReqType] = useState<TypeId | undefined>();
 	const [goalInvReqAmount, setGoalInvReqAmount] = useState<number>(1);
 	const [goalInvCompleteOnMinimumReached, setGoalInvCompleteOnMinimumReached] = useState<boolean>(false);
@@ -30,72 +30,93 @@ export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 			title={'Goal Creator'}
 		>
 			<form onSubmit={(e) => e.preventDefault()}>
-				<label>Goal type</label>
-				<select
-					id="goalType"
-					onChange={(e) => setGoalType(e.target.value as any)}
-					value={goalType}
-				>
-					<option value={'movement'}>Movement</option>
-					<option value={'inventoryRequirement'} defaultChecked>InventoryRequirement</option>
-					<option value={'InventoryKeepMinimumRequirement'}>InventoryKeepMinimumRequirement</option>
-				</select>
+				<label>
+					Goal type: 
+					<select
+						id="goalType"
+						onChange={(e) => setGoalType(e.target.value as any)}
+						value={goalType}
+					>
+						<option value={'movement'}>Movement</option>
+						<option value={'inventoryRequirement'} defaultChecked>InventoryRequirement</option>
+						<option value={'InventoryKeepMinimumRequirement'}>InventoryKeepMinimumRequirement</option>
+					</select>
+				</label>
 				<br />
 				{goalType === 'movement' && <MapPosition x={0} y={0} __TYPE__={'MapPosition'} />}
 				{goalType === 'inventoryRequirement' && <>
-					<select
-						id="goalInvReqType"
-						onChange={(e) => setGoalInvReqType(e.target.value as any)}
-						value={goalInvReqType}
-					>
-						{possibleRecipes.map(r => (
-							<option
-								value={r.output[0].typeId}
-								key={r.output[0].typeId}
-							>
-								{types[r.output[0].typeId]?.label} - {r.type}
-							</option>
-						))}
-					</select>
-					<input
-						type="number"
-						value={goalInvReqAmount}
-						onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
-						min={1}
-					/>
+					<label>
+						Item type:
+						<select
+							id="goalInvReqType"
+							onChange={(e) => setGoalInvReqType(e.target.value as any)}
+							value={goalInvReqType}
+						>
+							{possibleRecipes.map(r => (
+								<option
+									value={r.output[0].typeId}
+									key={r.output[0].typeId}
+								>
+									{types[r.output[0].typeId]?.label} - {r.type}
+								</option>
+							))}
+						</select>
+					</label>
+					<br />
+					<label>
+						Count:
+						<input
+							type="number"
+							name="goalInvReqAmount"
+							value={goalInvReqAmount}
+							onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
+							min={1}
+						/>
+					</label>
 				</>}
 				{goalType === 'InventoryKeepMinimumRequirement' && <>
-					<select
-						id="goalInvReqType"
-						onChange={(e) => setGoalInvReqType(e.target.value as any)}
-						value={goalInvReqType}
-					>
-						{possibleRecipes.map(r => (
-							<option
-								value={r.output[0].typeId}
-								key={r.output[0].typeId}
-							>
-								{types[r.output[0].typeId]?.label} - {r.type}
-							</option>
-				))}
-					</select>
-					<input
-						type="number"
-						value={goalInvReqAmount}
-						onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
-						min={1}
-					/>
+					<label>
+						Item type:
+						<select
+							id="goalInvReqType"
+							onChange={(e) => setGoalInvReqType(e.target.value as any)}
+							value={goalInvReqType}
+						>
+							{possibleRecipes.map(r => (
+								<option
+									value={r.output[0].typeId}
+									key={r.output[0].typeId}
+								>
+									{types[r.output[0].typeId]?.label} - {r.type}
+								</option>
+							))}
+						</select>
+					</label>
 					<br />
-					<label htmlFor="goalInvCompleteOnMinimumReached">goalInvCompleteOnMinimumReached</label>
-					<input
-						id="goalInvCompleteOnMinimumReached"
-						type="checkbox"
-						checked={goalInvCompleteOnMinimumReached}
-						onChange={(e) => setGoalInvCompleteOnMinimumReached(e.target.checked)}
-					/>
+					<label>
+						Count:
+						<input
+							type="number"
+							name="goalInvReqAmount"
+							value={goalInvReqAmount}
+							onChange={(e) => setGoalInvReqAmount(parseInt(e.target.value))}
+							min={1}
+						/>
+					</label>
+					<br />
+					<label>
+						goalInvCompleteOnMinimumReached
+						<input
+							name="goalInvCompleteOnMinimumReached"
+							type="checkbox"
+							checked={goalInvCompleteOnMinimumReached}
+							onChange={(e) => setGoalInvCompleteOnMinimumReached(e.target.checked)}
+						/>
+					</label>
 				</>}
 				<br />
 				<button
+					type="submit"
 					onClick={() => {
 						switch(goalType) {
 							case 'movement': {

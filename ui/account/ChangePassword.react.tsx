@@ -29,9 +29,9 @@ export default () => {
 			<form onSubmit={onChangeAccountPasswordSubmit}>
 				<input type={'hidden'} name={'username'} value={username} /><br />
 				<label htmlFor={'accountChangePasswordOldPassword'}>Old password: </label>
-				<input id={'accountChangePasswordOldPassword'} type={'password'} name={'oldPassword'} /><br />
+				<input id={'accountChangePasswordOldPassword'} type={'password'} name={'oldPassword'} autoComplete="current-password"/><br />
 				<label htmlFor={'accountChangePasswordNewPassword'}>New password: </label>
-				<input id={'accountChangePasswordNewPassword'} type={'password'} name={'password'} /><br />
+				<input id={'accountChangePasswordNewPassword'} type={'password'} name={'password'} autoComplete="new-password"/><br />
 				<button>Change password</button>
 				<button onClick={() => setChangeAccountPasswordVisible(false)}>Cancel</button>
 			</form>

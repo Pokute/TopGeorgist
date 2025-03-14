@@ -19,6 +19,7 @@ const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) =
 				ref={creationName}
 				type="text"
 				name="playerLabel"
+				autoComplete="nickname"
 			/>
 			<button
 				ref={submitButton}

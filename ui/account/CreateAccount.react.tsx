@@ -26,17 +26,17 @@ export default () => {
 		return (
 			<form onSubmit={onCreateAccountSubmit}>
 				<label htmlFor={'accountCreationUsername'}>Username: </label>
-				<input id={'accountCreationUsername'} name={'username'} /><br />
+				<input id={'accountCreationUsername'} name={'username'} autoComplete="username" /><br />
 				<label htmlFor={'accountCreationPassword'}>Password: </label>
-				<input id={'accountCreationPassword'} type={'password'} name={'password'} /><br />
+				<input id={'accountCreationPassword'} type={'password'} name={'password'} autoComplete="new-password" /><br />
 				<input type={'hidden'} name={'token'} value={token} />
-				<button>Create account</button>
-				<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
+				<button type="submit">Create account</button>
+				<button type="reset" onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
 			</form>
 		);
 	} else {
 		return (
-			<button onClick={() => setAccountFieldsVisible(true)}>Create an account</button>
+			<button type="button" onClick={() => setAccountFieldsVisible(true)}>Create an account</button>
 		);
 	}
 };

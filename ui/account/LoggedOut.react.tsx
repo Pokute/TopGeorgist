@@ -22,13 +22,13 @@ export default () => {
 			{accountFieldsVisible
 				? (<form onSubmit={onLoginSubmit}>
 					<label htmlFor={'accountLoginUsername'}>Username: </label>
-					<input id={'accountLoginUsername'} name={'username'} /><br />
+					<input id={'accountLoginUsername'} name={'username'} autoComplete='username' /><br />
 					<label htmlFor={'accountLoginPassword'}>Password: </label>
-					<input id={'accountLoginPassword'} type={'password'} name={'password'} /><br />
-					<button>Log in</button>
-					<button onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
+					<input id={'accountLoginPassword'} type={'password'} name={'password'} autoComplete='current-password' /><br />
+					<button type="submit">Log in</button>
+					<button type="reset" onClick={() => setAccountFieldsVisible(false)}>Cancel</button>
 				</form>)
-				: <button onClick={() => setAccountFieldsVisible(true)}>Sign in</button>
+				: <button type="button" onClick={() => setAccountFieldsVisible(true)}>Sign in</button>
 		}
 		</div>
 	);
