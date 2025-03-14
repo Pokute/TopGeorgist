@@ -191,29 +191,21 @@ const cleanupGoal = (tgosState: TgosState, goalTgo: ComponentGoal): TgosState =>
 	return removeGoal(afterWorkIssuerCleanup, goalTgo);
 };
 
-const goalDoerTickReducer = (
+const goalTickReducer = (
 	tgosState: TgosState,
 	itemTypesState: RootStateType['itemTypes'],
+	goalTgo: ComponentGoal,
 	goalDoer: ComponentGoalDoer & ComponentWorkDoer & ComponentInventory
 ): TgosState => {
-	// Create autorun works that don't exist.
-
-	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
-		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
-
-	const [currentGoalTgoId, ...restGoals] = goalDoer.activeGoals;
-	if (!currentGoalTgoId) return tgosState;
-
-	const currentGoalTgo = tgosState[currentGoalTgoId];
-	if (!isComponentGoal(currentGoalTgo)) {
+	if (!isComponentGoal(goalTgo)) {
 		throw new Error('currentGoalTgo is not a goal Tgo!');
 	}
-	const currentGoal = currentGoalTgo.goal;
+	const currentGoal = goalTgo.goal;
 	if (currentGoal.goalPaused)
 		return tgosState;
 
 	if (currentGoal.requirements.every(req => requirementIsCompleted(tgosState, goalDoer, req))) {
-		return cleanupGoal(tgosState, currentGoalTgo);
+		return cleanupGoal(tgosState, goalTgo);
 	}
 
 	const requiredItems = currentGoal.requirements
@@ -224,13 +216,31 @@ const goalDoerTickReducer = (
 		.map(req => getRequirementProducedItems(tgosState, req, goalDoer))
 		.flat(1);
 
-	const missingInput = inventory.zeroCountsRemoved(
+	const missingInput = inventory.zeroOrLessCountsRemoved(
 		inventory.combined([
 			...requiredItems,
 			...inventory.negated(committedItems)
 	]));
 
-	return requirementWorkIssuer(tgosState, currentGoal.requirements[0], missingInput, currentGoalTgo, currentGoalTgo, goalDoer);
+	return requirementWorkIssuer(tgosState, currentGoal.requirements[0], missingInput, goalTgo, goalTgo, goalDoer);
+}
+
+const goalDoerTickReducer = (
+	tgosState: TgosState,
+	itemTypesState: RootStateType['itemTypes'],
+	goalDoer: ComponentGoalDoer & ComponentWorkDoer & ComponentInventory
+): TgosState => {
+	const getInventoryTgoIds2 = (tgos: RootStateType['tgos'], tgo: ComponentInventory) =>
+		inventoryTgoIds(tgo).map(ii => tgos[ii.tgoId]);
+
+	return goalDoer.activeGoals
+		.slice(0, 1) // Remove this line when multiple goals are supported.
+		.reduce((tgos, goalTgoId) => {
+			const goalTgo = tgos[goalTgoId];
+			if (!isComponentGoal(goalTgo))
+				return tgos;
+			return goalTickReducer(tgos, itemTypesState, goalTgo, goalDoer);
+		}, tgosState);
 };
 
 export const goalDoersTickReducer = (
