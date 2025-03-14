@@ -9,7 +9,6 @@ import player from './player.js';
 import { tickerRootSaga } from '../concerns/ticker.js';
 import { tradeRootSaga } from '../concerns/trade.js';
 import view from './view.js';
-import { consumerRootSaga } from '../concerns/consumer.js';
 
 const rootSaga = function* () {
 	yield* accountRootSaga();
@@ -24,7 +23,6 @@ const rootSaga = function* () {
 	yield* buildingGovernment();
 	yield* rentOfficeRootSaga();
 	yield* tradeRootSaga();
-	yield* consumerRootSaga();
 };
 
 export default rootSaga;

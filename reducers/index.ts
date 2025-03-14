@@ -23,6 +23,7 @@ import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deplo
 import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.js';
 import { itemReqGoal, itemReqGoalReducer } from '../concerns/itemReqGoal.js';
 import { itemKeepMinGoal, itemKeepMinGoalReducer } from '../concerns/itemKeepMinGoal.js';
+import { consumerActions, consumeReducer } from '../concerns/consumer.js';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -132,7 +133,9 @@ function bigReducers(state: RootStateType, action: AllActions) {
 			return deployTgoReducer(state, action);
 		case getType(collect):
 			return collectReducer(state, action);
-			default: return state
+		case getType(consumerActions.consume):
+			return consumeReducer(state, action);
+		default: return state
 	}
 }
 

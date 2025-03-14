@@ -11,6 +11,7 @@ import { deployableActions } from './concerns/deployable.js'
 import { goalActionList } from './concerns/goal';
 import { itemReqGoal } from './concerns/itemReqGoal';
 import { itemKeepMinGoal } from './concerns/itemKeepMinGoal';
+import { consumerActions } from './concerns/consumer';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -25,6 +26,7 @@ const allActions = {
 	rentOffice: rentOfficeActions,
 	payRent,
 	deployableActions,
+	consumerActions,
 };
 
 export type AllActions = ActionType<typeof allActions>;

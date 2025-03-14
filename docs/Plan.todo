@@ -188,9 +188,9 @@ Milestone 5:
 	☐ Convert game logic from sagas into reducers.
 		! Sagas can't be saved/loaded so they can't be used for multi-tick events. Better just remove them completely from game logic. Still can be used for connection code.
 		✔ sagas/taskQueue.ts
-		☐ concerns/consumer.js
+		✔ concerns/consumer.js
 		✔ concerns/work.js
-		☐ concerns/transaction.js
+		☐ concerns/trade.js
 		☐ concerns/rentOffice.js
 		☐ sagas/buildings/government.ts
 		✔ sagas/goal.ts

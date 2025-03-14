@@ -1,11 +1,13 @@
 import { TgoType, TgoRoot, TgoId } from '../reducers/tgo.js';
 import { ItemType, TypeId } from '../reducers/itemType.js';
 import { ComponentInventory, InventoryItem } from './inventory.js';
-import { transaction } from './transaction.js';
+import { transaction, transactionReducer } from './transaction.js';
 import { ItemTypesState } from '../reducers/itemTypes.js';
 import { put, takeEvery } from 'typed-redux-saga';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 import { select } from '../redux-saga-helpers.js';
+import { TgosState } from './tgos.js';
+import { RootStateType } from '../reducers/index.js';
 
 export const consumerActions = {
 	consume: createAction('CONSUMER_CONSUME',
@@ -39,17 +41,15 @@ export const consumerFilterConsumables = (consumer: ComponentConsumer, itemTypes
 		}))
 		.filter(ii => consumerIsTypeConsumable(consumer, ii.type));
 
-export const consumeFromInventory = (consumer: ComponentConsumer, consumedInventoryItem: InventoryItem, itemTypes: ItemTypesState): ReturnType<typeof transaction> | undefined => {
-	if (!consumedInventoryItem.typeId) throw new Error(`Trying to consume item without a typeId. TgoId: ${consumedInventoryItem.tgoId}`);
-	const consumedType: ItemType = itemTypes[consumedInventoryItem.typeId];
-	const count: number = 1;
+export const createConsumeTransaction = (s: RootStateType, consumer: ComponentConsumer, consumedItem: InventoryItem): ReturnType<typeof transaction> | undefined => {
+	const consumedType: ItemType = s.itemTypes[consumedItem.typeId];
 	if (!consumedType.inventory || consumedType.inventory.length === 0) return undefined;
 
 	const countFound = consumer.inventory
 		.find((ii) => ii.typeId === consumedType.typeId)
 		?.count ?? 0;
 
-	const countConsumed = Math.min(countFound, count);
+	const countConsumed = Math.min(countFound, consumedItem.count);
 	if (countConsumed <= 0) return undefined;
 
 	if (!consumerIsTypeConsumable(consumer, consumedType)) return undefined;
@@ -69,19 +69,25 @@ export const consumeFromInventory = (consumer: ComponentConsumer, consumedInvent
 				count: gii.count * countConsumed,
 			})))
 		]
-	})
+	});
 };
 
-const consume = function*({ payload: { tgoId: actorTgoId, consumedItem }}: ActionType<typeof consumerActions.consume>) {
-	const s = yield* select();
+export const consumeReducer = (s: RootStateType, { payload: { tgoId: actorTgoId, consumedItem }}: ActionType<typeof consumerActions.consume>): RootStateType => {
+	const consumer = s.tgos[actorTgoId];
+	if (!consumer || !hasComponentConsumer(consumer))
+		return s;
 
-	const actorTgo = s.tgos[actorTgoId];
-	if (!actorTgo || !hasComponentConsumer(actorTgo)) return;
-	const consumeAction = consumeFromInventory(actorTgo, consumedItem, s.itemTypes);
-	if (!consumeAction) return;
-	yield* put(consumeAction);
-}
+	if (!consumedItem.typeId) throw new Error(`Trying to consume item without a typeId. TgoId: ${consumedItem.tgoId}`);
 
-export const consumerRootSaga = function*() {
-	yield* takeEvery(getType(consumerActions.consume), consume);
-}
+	const consumeTransaction = createConsumeTransaction(s, consumer, consumedItem);
+	if (!consumeTransaction) return s;
+
+	return {
+		...s,
+		tgos: transactionReducer(
+			s.tgos,
+			s.itemTypes,
+			consumeTransaction
+		),
+	};
+};
