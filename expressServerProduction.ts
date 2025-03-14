@@ -9,4 +9,8 @@ app.use(express.static('static'));
 
 console.log(`Started HTTPS server. Binding to ${config.httpServer.bind}:${config.httpServer.port}`)
 
-app.listen(config.httpServer);
+const conf = {
+	host: config.httpServer.bind,
+	port: config.httpServer.port,
+};
+app.listen(conf);

@@ -23,4 +23,8 @@ app.use(devMiddleware);
 
 app.use(express.static('static'));
 
-app.listen(config.httpServer);
+const conf = {
+	host: config.httpServer.bind,
+	port: config.httpServer.port,
+};
+app.listen(conf);
