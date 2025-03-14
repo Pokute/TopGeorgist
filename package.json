@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/dotenv-webpack": "^7.0.7",
     "@types/express": "^4.17.13",
-    "@types/node": "~18.11.0",
+    "@types/node": "^18.19.80",
     "@types/node-forge": "^1.0.0",
     "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
@@ -56,7 +56,7 @@
     "dotenv-webpack": "^8.1.0",
     "eslint": "^8.8.0",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
@@ -66,7 +66,7 @@
     "source-map-loader": "^0.2.3",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
-    "typescript": "npm:@typescript-deploys/pr-build@4.6.0-pr-43617-23",
+    "typescript": "^5.8.2",
     "webpack": "^5.92.1",
     "webpack-cli": "^5.0.1",
     "webpack-dev-middleware": "^5.3.1"
@@ -93,6 +93,12 @@
   "files": [
     "static/topGeorgist.bundle.js"
   ],
+  "imports": {
+    "#tg/*.js": "./*.js",
+    "#tg/*.jsx": "./*.jsx",
+    "#tg/*.mjs": "./*.mjs",
+    "#tg/*.mjsx": "./*.mjsx"
+  },
   "ava": {
     "extensions": {
       "ts": "module"
