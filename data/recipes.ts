@@ -1,5 +1,5 @@
-import { Recipe, RecipeId } from '../concerns/recipe.js';
-import { TypeId } from '../reducers/itemType.js';
+import { type Recipe, type RecipeId } from '../concerns/recipe.ts';
+import { type TypeId } from '../reducers/itemType.ts';
 
 export const move: Recipe = {
 	type: 'move' as RecipeId,

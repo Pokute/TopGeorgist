@@ -1,18 +1,18 @@
-import React, { SetStateAction, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { type Dispatch } from 'redux';
 
-import * as viewActions from '../actions/view.js';
-import { ViewType } from '../reducers/view.js';
-import { RootStateType } from '../reducers/index.js';
-import { TgosState } from '../concerns/tgos.js';
-import { TileType } from '../reducers/tile.js';
-import { TileSetType } from '../reducers/tileSet.js';
-import { MapType, MapPosition } from '../concerns/map.js';
-import { hasComponentPresentation } from '../data/components_new.js';
-import { hasComponentPosition } from '../components/position.js';
-import { hasComponentLabel } from '../components/label.js';
-import { TgoType } from '../reducers/tgo.js';
+import * as viewActions from '../actions/view.ts';
+import { type ViewType } from '../reducers/view.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type TgosState } from '../concerns/tgos.ts';
+import { type TileType } from '../reducers/tile.ts';
+import { type TileSetType } from '../reducers/tileSet.ts';
+import { type MapType, type MapPosition } from '../concerns/map.ts';
+import { hasComponentPresentation } from '../data/components_new.ts';
+import { hasComponentPosition } from '../components/position.ts';
+import { hasComponentLabel } from '../components/label.ts';
+import { type TgoType } from '../reducers/tgo.ts';
 
 const drawTile = (ctx: CanvasRenderingContext2D , pos: MapPosition, tile: TileType, tileSize: number) => {
 	ctx.fillStyle = tile ? tile.fillStyle : 'grey';

@@ -1,11 +1,11 @@
-import { getType, ActionType, createAction } from 'typesafe-actions';
+import { getType, type ActionType, createAction } from 'typesafe-actions';
 
-import { ComponentInventory, hasComponentInventory, inventory, InventoryItem } from './inventory.js';
-import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
-import { TgosState, createTupleFilter } from '../concerns/tgos.js';
-import { RootStateType } from '../reducers/index.js';
-import { cleanupWorkIssuerInside, ComponentWorkDoer, ComponentWorkIssuer, hasComponentWorkDoer } from './work.js';
-import { Requirement, cleanupRequirement, getRequirementProducedItems, getRequirementItems, requirementIsCompleted, requirementWorkIssuer } from './requirements.js';
+import { type ComponentInventory, hasComponentInventory, inventory, type InventoryItem } from './inventory.ts';
+import { type TgoId, type TgoRoot, type TgoType } from '../reducers/tgo.ts';
+import { type TgosState, createTupleFilter } from '../concerns/tgos.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { cleanupWorkIssuerInside, type ComponentWorkDoer, type ComponentWorkIssuer, hasComponentWorkDoer } from './work.ts';
+import { type Requirement, cleanupRequirement, getRequirementProducedItems, getRequirementItems, requirementIsCompleted, requirementWorkIssuer } from './requirements.ts';
 
 export type ComponentGoal = 
 	ComponentWorkIssuer & {

@@ -1,9 +1,9 @@
-import { getType, ActionType } from 'typesafe-actions';
+import { getType, type ActionType } from 'typesafe-actions';
 
-import { AccountId } from '../concerns/account.js';
-import * as defaultActions from '../actions/defaults.js';
-import { TgoId } from './tgo.js';
-import { ViewId } from './view.js';
+import { type AccountId } from '../concerns/account.ts';
+import * as defaultActions from '../actions/defaults.ts';
+import { type TgoId } from './tgo.ts';
+import { type ViewId } from './view.ts';
 
 export interface Type {
 	readonly accountId: AccountId,

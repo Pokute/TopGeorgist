@@ -1,14 +1,14 @@
 import React from 'react';
 
-import VisitableGovernmentBuilding from './visitable/governmentBuilding.js';
-import VisitableRentOffice from './visitable/rentOffice.js';
-import ActionUI from './action.js';
-import { hasComponentStatsBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, ComponentVisitable } from '../data/components_new.js';
-import { ComponentLabel } from '../components/label.js';
-import { ComponentPosition } from '../components/position.js';
-import StatsBoard from './visitable/StatsBoard.js';
-import { hasComponentInventory } from '../concerns/inventory.js';
-import InventoryReact from './inventory.react.js';
+import VisitableGovernmentBuilding from './visitable/governmentBuilding.tsx';
+import VisitableRentOffice from './visitable/rentOffice.tsx';
+import ActionUI from './action.tsx';
+import { hasComponentStatsBoard, hasComponentRentOffice, hasComponentGovernmentBuilding, type ComponentVisitable } from '../data/components_new.ts';
+import { type ComponentLabel } from '../components/label.ts';
+import { type ComponentPosition } from '../components/position.ts';
+import StatsBoard from './visitable/StatsBoard.tsx';
+import { hasComponentInventory } from '../concerns/inventory.ts';
+import InventoryReact from './inventory.react.tsx';
 
 export interface Type {
 	readonly visitable: ComponentLabel & ComponentVisitable,

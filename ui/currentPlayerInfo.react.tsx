@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProgressBar from './progressBar.js';
-import { RootStateType } from '../reducers/index.js';
-import { ComponentLabel, hasComponentLabel } from '../components/label.js';
-import { TgoType } from '../reducers/tgo.js';
-import Inventory from './inventory.react.js';
-import { hasComponentInventory } from '../concerns/inventory.js';
-import { GoalCreator } from './GoalCreator.js';
+import ProgressBar from './progressBar.tsx';
+
+import { type RootStateType } from '../reducers/index.ts';
+import { type ComponentLabel, hasComponentLabel } from '../components/label.ts';
+import { type TgoType } from '../reducers/tgo.ts';
+import Inventory from './inventory.react.tsx';
+import { hasComponentInventory } from '../concerns/inventory.ts';
+import { GoalCreator } from './GoalCreator.tsx';
 
 // const costMapper = (task: TaskType) => {
 // 	if (!task.cost) return () => 0;

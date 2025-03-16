@@ -1,19 +1,19 @@
-import { ActionType, getType } from 'typesafe-actions';
-import { Opaque } from '../typings/global.d.js';
+import { type ActionType, getType } from 'typesafe-actions';
+import type { Opaque } from '../typings/global.d.ts';
 
-import * as tgoActions from '../actions/tgo.js'; 
-import { goalDoerReducer, GoalDoerActionType, goalDoerActionList, ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.js';
-import { goalReducer } from '../concerns/goal.js';
-import { WorkActionType, ComponentWork, ComponentWorkDoer, ComponentWorkIssuer } from '../concerns/work.js';
-import { ComponentRentOffice, ComponentGovernmentBuilding, ComponentStatsBoard, ComponentMapGridOccipier, ComponentVisitable, ComponentPresentation } from '../data/components_new.js';
-import { reducer as inventoryReducer, ComponentInventory, InventoryActionList, InventoryActionType } from '../concerns/inventory.js';
-import { setPosition, ComponentPosition, PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.js';
-import { ComponentPlayer } from '../components/player.js';
-import { ComponentLabel } from '../components/label.js';
-import { ComponentUniqueLabel } from '../components/uniqueLabel.js';
-import { ComponentConsumer } from '../concerns/consumer.js'
-import { GoalActionType } from '../concerns/goal.js';
-import { ComponentDeployable } from '../concerns/deployable.js';
+import * as tgoActions from '../actions/tgo.ts'; 
+import { goalDoerReducer, type GoalDoerActionType, goalDoerActionList, type ComponentGoal, type ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from '../concerns/goal.ts';
+import { goalReducer } from '../concerns/goal.ts';
+import { type WorkActionType, type ComponentWork, type ComponentWorkDoer, type ComponentWorkIssuer } from '../concerns/work.ts';
+import { type ComponentRentOffice, type ComponentGovernmentBuilding, type ComponentStatsBoard, type ComponentMapGridOccipier, type ComponentVisitable, type ComponentPresentation } from '../data/components_new.ts';
+import { reducer as inventoryReducer, type ComponentInventory, InventoryActionList, type InventoryActionType } from '../concerns/inventory.ts';
+import { setPosition, type ComponentPosition, type PositionActionType, reducer as positionReducer, hasComponentPosition } from '../components/position.ts';
+import { type ComponentPlayer } from '../components/player.ts';
+import { type ComponentLabel } from '../components/label.ts';
+import { type ComponentUniqueLabel } from '../components/uniqueLabel.ts';
+import { type ComponentConsumer } from '../concerns/consumer.ts'
+import { type GoalActionType } from '../concerns/goal.ts';
+import { type ComponentDeployable } from '../concerns/deployable.ts';
 
 export type TgoActionType = ActionType<typeof tgoActions>
 const TgoOwnActionList = [

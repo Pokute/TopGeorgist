@@ -1,13 +1,10 @@
-import { TgoType, TgoRoot, TgoId } from '../reducers/tgo.js';
-import { ItemType, TypeId } from '../reducers/itemType.js';
-import { ComponentInventory, InventoryItem } from './inventory.js';
-import { transaction, transactionReducer } from './transaction.js';
-import { ItemTypesState } from '../reducers/itemTypes.js';
-import { put, takeEvery } from 'typed-redux-saga';
-import { ActionType, createAction, getType } from 'typesafe-actions';
-import { select } from '../redux-saga-helpers.js';
-import { TgosState } from './tgos.js';
-import { RootStateType } from '../reducers/index.js';
+import { type TgoType, type TgoRoot, type TgoId } from '../reducers/tgo.ts';
+import { type ItemType, type TypeId } from '../reducers/itemType.ts';
+import { type ComponentInventory, type InventoryItem } from './inventory.ts';
+import { transaction, transactionReducer } from './transaction.ts';
+import { type ItemTypesState } from '../reducers/itemTypes.ts';
+import { type ActionType, createAction } from 'typesafe-actions';
+import { type RootStateType } from '../reducers/index.ts';
 
 export const consumerActions = {
 	consume: createAction('CONSUMER_CONSUME',

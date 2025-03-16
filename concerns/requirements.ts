@@ -1,11 +1,11 @@
-import { hasComponentPosition } from '../components/position';
-import { TypeId } from '../reducers/itemType';
-import { TgoId } from '../reducers/tgo';
-import { add as addTgo, remove as removeTgo, tgosReducer, TgosState } from './tgos';
-import { ComponentGoal, ComponentGoalDoer } from './goal';
-import { ComponentInventory, hasComponentInventory, inventory, Inventory } from './inventory';
-import { mapPosition, MapPosition } from './map';
-import { autoCommittedItemsInventory, ComponentWorkDoer, ComponentWorkIssuer, workIssuerCreateWorksOnRequiredItems, WorkTargetInventory } from './work';
+import { hasComponentPosition } from '../components/position.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { add as addTgo, remove as removeTgo, tgosReducer, type TgosState } from './tgos.ts';
+import { type ComponentGoal, type ComponentGoalDoer } from './goal.ts';
+import { type ComponentInventory, hasComponentInventory, inventory, type Inventory } from './inventory.ts';
+import { mapPosition, type MapPosition } from './map.ts';
+import { autoCommittedItemsInventory, type ComponentWorkDoer, type ComponentWorkIssuer, workIssuerCreateWorksOnRequiredItems, type WorkTargetInventory } from './work.ts';
 
 export type RequirementDeliveryTargetTgoId = TgoId;
 export type RequirementDeliveryTargetPosition = MapPosition;

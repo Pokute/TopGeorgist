@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ActionType, createAction, getType, isActionOf } from 'typesafe-actions';
+import { type ActionType, createAction, getType, isActionOf } from 'typesafe-actions';
 
-import { RootStateType } from '../reducers/index.js';
-import * as tgoActions from '../actions/tgo.js'; 
-import tgoReducer, { TgoActionType, TgoId, TgoPartials, TgoType, initialState as tgoInitialState, } from '../reducers/tgo.js';
-import { hasComponentInventory, inventoryActions, InventoryActionType, reducer as inventoryReducer } from './inventory.js';
-import { hasComponentPosition, setPosition, reducer as positionReducer } from '../components/position.js';
-import { GoalActionType, GoalDoerActionType, goalDoerActionList, goalActionList } from './goal.js';
+import { type RootStateType } from '../reducers/index.ts';
+import * as tgoActions from '../actions/tgo.ts'; 
+import tgoReducer, { type TgoActionType, type TgoId, type TgoPartials, type TgoType, initialState as tgoInitialState, } from '../reducers/tgo.ts';
+import { hasComponentInventory, inventoryActions, type InventoryActionType, reducer as inventoryReducer } from './inventory.ts';
+import { hasComponentPosition, setPosition, reducer as positionReducer } from '../components/position.ts';
+import { type GoalActionType, type GoalDoerActionType, goalDoerActionList, goalActionList } from './goal.ts';
 
 export type TgosState = {
 	readonly [tgoId: string]: TgoType;

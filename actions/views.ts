@@ -1,8 +1,8 @@
 import { createAction } from 'typesafe-actions';
 
-import { TgoId } from '../reducers/tgo.js';
-import { initialState, ViewId } from '../reducers/view.js';
-import { MapPosition } from '../concerns/map.js';
+import { type TgoId } from '../reducers/tgo.ts';
+import { initialState, type ViewId } from '../reducers/view.ts';
+import { type MapPosition } from '../concerns/map.ts';
 
 export const create = createAction('VIEW_ADD',
 	(viewId: ViewId, followTgoId?: TgoId) => ({

@@ -1,7 +1,7 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { type ActionType, getType } from 'typesafe-actions';
 
-import { ClientId, ClientType, default as clientReducer} from './client.js';
-import * as clientActions from '../actions/client.js'; 
+import { type ClientId, type ClientType, default as clientReducer} from './client.ts';
+import * as clientActions from '../actions/client.ts'; 
 
 export type ClientsState = {
 	readonly [extraProps: string]: ClientType;

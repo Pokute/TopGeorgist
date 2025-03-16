@@ -1,9 +1,9 @@
 import express from 'express';
 import webpack from 'webpack';
-import webpackDevMiddleware, { Options } from 'webpack-dev-middleware';
-import webpackConfig from './webpack.config.js';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackConfig from './webpack.config.ts';
 
-import config from './config.js';
+import config from './config.ts';
 
 const app = express();
 

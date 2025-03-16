@@ -1,13 +1,13 @@
 import test from 'ava';
 
-import { add as addTgo, selectTgo } from '../concerns/tgos.js';
-import { TgoId } from '../reducers/tgo.js';
-import { add as addItemType } from '../actions/itemTypes.js';
-import { TypeId, ItemType } from '../reducers/itemType.js';
-import { Inventory } from '../concerns/inventory.js';
-import { TransactionParticipant, transaction } from '../concerns/transaction.js';
+import { add as addTgo, selectTgo } from '../concerns/tgos.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { add as addItemType } from '../actions/itemTypes.ts';
+import { type TypeId, type ItemType } from '../reducers/itemType.ts';
+import { type Inventory } from '../concerns/inventory.ts';
+import { type TransactionParticipant, transaction } from '../concerns/transaction.ts';
 import Sinon from 'sinon';
-import { setupStoreTester } from '../testUtils.js'
+import { setupStoreTester } from '../testUtils.ts'
 
 // Test transactions
 

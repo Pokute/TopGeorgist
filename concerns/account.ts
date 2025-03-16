@@ -1,18 +1,18 @@
-import { Opaque } from '../typings/global.d.js';
+import type { Opaque } from '../typings/global.d.ts';
 import forge from 'node-forge';
 import { v4 as uuidv4 } from 'uuid';
-import { createAction, ActionType, getType } from 'typesafe-actions';
+import { createAction, type ActionType, getType } from 'typesafe-actions';
 import { put, takeEvery }  from 'typed-redux-saga';
 
-import { TgoId } from '../reducers/tgo.js';
-import serverConfig from '../serverConfig.js';
-import isServer from '../isServer.js'
-import { set as allSet } from '../actions/allSet.js';
-import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayerTgoId } from '../actions/defaults.js';
-import { WithClient } from '../actions/withClient.js';
-import { select } from '../redux-saga-helpers.js';
-import { setConnected } from './clientToServerConnection.js';
-import * as netActions from './infra/net.js';
+import { type TgoId } from '../reducers/tgo.ts';
+import serverConfig from '../serverConfig.ts';
+import isServer from '../isServer.ts'
+import { set as allSet } from '../actions/allSet.ts';
+import { setAccountId as setDefaultAccountId, setPlayerTgoId as setDefaultPlayerTgoId } from '../actions/defaults.ts';
+import { type WithClient } from '../actions/withClient.ts';
+import { select } from '../redux-saga-helpers.ts';
+import { setConnected } from './clientToServerConnection.ts';
+import * as netActions from './infra/net.ts';
 
 // Actions:
 

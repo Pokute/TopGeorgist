@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
-import { TgoId } from '../reducers/tgo.js';
-import { ViewId } from '../reducers/view.js';
-import { AccountId, Token } from '../concerns/account.js';
+import { type TgoId } from '../reducers/tgo.ts';
+import { type ViewId } from '../reducers/view.ts';
+import { type AccountId, type Token } from '../concerns/account.ts';
 
 export const setAccountId = createAction('DEFAULTS_SET_ACCOUNT',
 	(accountId: AccountId, token: Token) => ({

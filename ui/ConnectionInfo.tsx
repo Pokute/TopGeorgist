@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Category from './Category.js';
-import { RootStateType } from '../reducers/index.js';
+import Category from './Category.tsx';
+import { type RootStateType } from '../reducers/index.ts';
 
 const ConnectionInfo = ({ serverConnection: connection }: ReturnType<typeof mapStoreToProps>) => (
 	<Category

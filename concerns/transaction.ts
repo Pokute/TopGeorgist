@@ -1,9 +1,9 @@
-import { ActionType, createAction } from 'typesafe-actions';
+import { type ActionType, createAction } from 'typesafe-actions';
 
-import { TgoId } from '../reducers/tgo.js';
-import { inventoryActions, InventoryItem, Inventory, ComponentInventory } from './inventory.js';
-import { tgosReducer, getTgoByIdFromRootState } from '../concerns/tgos.js';
-import { RootStateType } from '../reducers/index.js';
+import { type TgoId } from '../reducers/tgo.ts';
+import { inventoryActions, type InventoryItem, type Inventory, type ComponentInventory } from './inventory.ts';
+import { tgosReducer, getTgoByIdFromRootState } from '../concerns/tgos.ts';
+import { type RootStateType } from '../reducers/index.ts';
 
 // Actions:
 

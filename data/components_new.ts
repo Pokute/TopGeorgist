@@ -1,7 +1,7 @@
-import { TgoType, TgoRoot } from '../reducers/tgo.js';
-import { ComponentPosition } from '../components/position.js';
-import { TypeId } from '../reducers/itemType.js';
-import { Parameter } from '../ui/paramInput.js';
+import { type TgoType, type TgoRoot } from '../reducers/tgo.ts';
+import { type ComponentPosition } from '../components/position.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { type Parameter } from '../ui/ParamInputType.ts';
 
 export interface Action {
 	readonly label: string,

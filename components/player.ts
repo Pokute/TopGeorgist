@@ -1,6 +1,6 @@
-import { TgoType } from '../reducers/tgo.js';
-import { ComponentLabel } from './label.js';
-import { ComponentUniqueLabel } from './uniqueLabel.js';
+import { type TgoType } from '../reducers/tgo.ts';
+import { type ComponentLabel } from './label.ts';
+import { type ComponentUniqueLabel } from './uniqueLabel.ts';
 
 export type ComponentPlayer = ComponentLabel & ComponentUniqueLabel & {
 	readonly player: true,

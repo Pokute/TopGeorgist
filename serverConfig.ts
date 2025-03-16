@@ -1,4 +1,4 @@
-import isServer from './isServer.js'
+import isServer from './isServer.ts'
 const serverConfig = isServer
 	? {
 		serverSalt: process.env.SERVER_SALT

@@ -1,11 +1,11 @@
-import { createAction, ActionType, getType } from 'typesafe-actions';
-import { AnyAction } from 'redux';
+import { createAction, type ActionType, getType } from 'typesafe-actions';
+import { type AnyAction } from 'redux';
 import { call, delay, fork, put, takeEvery, all } from 'typed-redux-saga';
 
-import * as allSetActions from '../actions/allSet.js';
-import isServer from '../isServer.js'
-import { set as allSet } from '../actions/allSet.js';
-import { select, take } from '../redux-saga-helpers.js';
+import * as allSetActions from '../actions/allSet.ts';
+import isServer from '../isServer.ts'
+import { set as allSet } from '../actions/allSet.ts';
+import { select, take } from '../redux-saga-helpers.ts';
 
 // Actions:
 

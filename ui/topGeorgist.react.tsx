@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import AccountInfo from './account/AccountInfo.js';
-import ConnectionInfo from './ConnectionInfo.js';
-import PlayerContainer from './playerContainer.react.js';
-import View from './view.react.js';
-import { RootStateType } from '../reducers/index.js';
-import About from './About.js';
+import AccountInfo from './account/AccountInfo.tsx';
+import ConnectionInfo from './ConnectionInfo.tsx';
+import PlayerContainer from './playerContainer.react.tsx';
+import View from './view.react.tsx';
+import { type RootStateType } from '../reducers/index.ts';
+import About from './About.tsx';
 
 const TopGeorgist = (props: ReturnType<typeof mapStoreToProps>) => (
 	<div>

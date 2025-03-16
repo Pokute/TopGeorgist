@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import GameRenderer from './gameRenderer.react.js';
-import VisitableUI from './visitableUI.react.js';
-import RecipesUI from './RecipesUI.js';
-import { getMinMax } from '../utils/view.js';
-import { ViewType } from '../reducers/view.js';
-import { TgoId } from '../reducers/tgo.js';
-import { RootStateType } from '../reducers/index.js';
-import { MapType, MapSize, mapPosition, MapPosition } from '../concerns/map.js';
-import Category from './Category.js';
-import { ComponentVisitable, hasComponentVisitable } from '../data/components_new.js';
-import { hasComponentInventory } from '../concerns/inventory.js';
-import { ComponentPosition, hasComponentPosition } from '../components/position.js';
-import { ComponentLabel, hasComponentLabel } from '../components/label.js';
+import GameRenderer from './gameRenderer.react.tsx';
+import VisitableUI from './visitableUI.react.tsx';
+import { getMinMax } from '../utils/view.ts';
+import { type ViewType } from '../reducers/view.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type MapType, type MapSize, mapPosition, type MapPosition } from '../concerns/map.ts';
+import Category from './Category.tsx';
+import { type ComponentVisitable, hasComponentVisitable } from '../data/components_new.ts';
+import { hasComponentInventory } from '../concerns/inventory.ts';
+import { type ComponentPosition, hasComponentPosition } from '../components/position.ts';
+import { type ComponentLabel, hasComponentLabel } from '../components/label.ts';
 
 export interface Type {
 	readonly view: ViewType,

@@ -1,11 +1,11 @@
 import { createAction } from 'typesafe-actions';
 
-import { TgoId } from '../reducers/tgo.js';
-import { hasComponentInventory, Inventory } from './inventory.js';
-import rootReducer, { RootStateType } from '../reducers/index.js';
-import { TypeId } from '../reducers/itemType.js';
-import { hasComponentGoalDoer } from './goal.js';
-import { add as addTgo } from './tgos.js';
+import { type TgoId } from '../reducers/tgo.ts';
+import { hasComponentInventory, type Inventory } from './inventory.ts';
+import rootReducer, { type RootStateType } from '../reducers/index.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { hasComponentGoalDoer } from './goal.ts';
+import { add as addTgo } from './tgos.ts';
 
 export const itemReqGoal = createAction('TGO_GOAL_CREATE_ITEM_REQ',
 	(ownerTgoId: TgoId, inventory: Inventory) => ({

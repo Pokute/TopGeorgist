@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { RootStateType } from '../../reducers/index.js';
-import Category from '../Category.js';
-import LoggedIn from './LoggedIn.react.js';
-import LoggedOut from './LoggedOut.react.js';
+import { type RootStateType } from '../../reducers/index.ts';
+import Category from '../Category.tsx';
+import LoggedIn from './LoggedIn.react.tsx';
+import LoggedOut from './LoggedOut.react.tsx';
 
 export default () => {
 	const isLoggedIn = useSelector((s: RootStateType) => !!s.accounts[s.defaults.accountId]);

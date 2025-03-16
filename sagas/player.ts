@@ -1,19 +1,19 @@
 import { put, takeEvery }  from 'typed-redux-saga';
-import { getType, ActionType } from 'typesafe-actions';
+import { getType, type ActionType } from 'typesafe-actions';
 
-import { accountActions, accountsActions } from '../concerns/account.js';
-import isServer from '../isServer.js'
-import { set as allSet } from '../actions/allSet.js';
-import * as defaultsActions from '../actions/defaults.js';
-import * as netActions from '../concerns/infra/net.js';
-import * as playerActions from '../actions/player.js';
-import { createPlayerAction } from '../data/initialObjects.js';
-import { TgoType } from '../reducers/tgo.js';
-import { setPlayerTgoId } from '../actions/defaults.js';
-import { setPosition } from '../components/position.js';
-import { hasComponentPlayer } from '../components/player.js';
-import { hasComponentLabel } from '../components/label.js';
-import { select, take } from '../redux-saga-helpers.js';
+import { accountActions, accountsActions } from '../concerns/account.ts';
+import isServer from '../isServer.ts'
+import { set as allSet } from '../actions/allSet.ts';
+import * as defaultsActions from '../actions/defaults.ts';
+import * as netActions from '../concerns/infra/net.ts';
+import * as playerActions from '../actions/player.ts';
+import { createPlayerAction } from '../data/initialObjects.ts';
+import { type TgoType } from '../reducers/tgo.ts';
+import { setPlayerTgoId } from '../actions/defaults.ts';
+import { setPosition } from '../components/position.ts';
+import { hasComponentPlayer } from '../components/player.ts';
+import { hasComponentLabel } from '../components/label.ts';
+import { select, take } from '../redux-saga-helpers.ts';
 
 const handlePlayerCreateRequest = function* ({ payload: { accountId, clientId, label }}: ActionType<typeof playerActions.playerRequestServer>) {
 	if (!isServer) return;

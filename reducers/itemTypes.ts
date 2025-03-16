@@ -1,7 +1,7 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { type ActionType, getType } from 'typesafe-actions';
 
-import { ItemType } from './itemType.js';
-import * as itemsTypeActions from '../actions/itemTypes.js';
+import { type ItemType } from './itemType.ts';
+import * as itemsTypeActions from '../actions/itemTypes.ts';
 
 export type ItemTypesState = {
 	[extraProps: string]: ItemType;

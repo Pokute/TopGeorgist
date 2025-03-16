@@ -1,17 +1,17 @@
 import React from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 
-import * as netActions from '../concerns/infra/net.js';
-import { RootStateType } from '../reducers/index.js';
-import Category from './Category.js';
-import recipes from '../data/recipes.js';
-import { ItemTypesState } from '../reducers/itemTypes.js';
-import { TgosState } from '../concerns/tgos.js';
-import { createWork } from '../concerns/work.js';
-import { ComponentPosition, hasComponentPosition } from '../components/position.js';
-import { ComponentVisitable, hasComponentVisitable } from '../data/components_new.js';
-import { ComponentLabel, hasComponentLabel } from '../components/label.js';
-import { mapPosition } from '../concerns/map.js';
+import * as netActions from '../concerns/infra/net.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import Category from './Category.tsx';
+import recipes from '../data/recipes.ts';
+import { type ItemTypesState } from '../reducers/itemTypes.ts';
+import { type TgosState } from '../concerns/tgos.ts';
+import { createWork } from '../concerns/work.ts';
+import { type ComponentPosition, hasComponentPosition } from '../components/position.ts';
+import { type ComponentVisitable, hasComponentVisitable } from '../data/components_new.ts';
+import { type ComponentLabel, hasComponentLabel } from '../components/label.ts';
+import { mapPosition } from '../concerns/map.ts';
 
 interface Type {
 };

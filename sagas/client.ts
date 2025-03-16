@@ -1,13 +1,13 @@
 import { put, takeEvery }  from 'typed-redux-saga';
-import { ActionType, getType } from 'typesafe-actions';
+import { type ActionType, getType } from 'typesafe-actions';
 
-import isServer from '../isServer.js'
-import * as tgoActions from '../actions/tgo.js';
-import * as netActions from '../concerns/infra/net.js';
-// import { setGoals } from '../concerns/goal.js';
-import { moveGoal } from '../actions/moveGoal.js';
-import { itemReqGoal } from '../concerns/itemReqGoal.js';
-import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.js';
+import isServer from '../isServer.ts'
+import * as tgoActions from '../actions/tgo.ts';
+import * as netActions from '../concerns/infra/net.ts';
+// import { setGoals } from '../concerns/goal.ts';
+import { moveGoal } from '../actions/moveGoal.ts';
+import { itemReqGoal } from '../concerns/itemReqGoal.ts';
+import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.ts';
 
 const sentTypes = {
 	// setGoals,

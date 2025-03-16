@@ -1,6 +1,6 @@
-import { AnyAction } from 'redux';
-import { ClientsState } from './clients.js';
-import { TgoId } from './tgo.js';
+import { type AnyAction } from 'redux';
+
+import { type ClientsState } from './clients.ts';
 
 export type ClientId = keyof ClientsState;
 export interface extendedSocket extends WebSocket {

@@ -1,16 +1,16 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ComponentInventory } from '../concerns/inventory.js';
-import { RootStateType } from '../reducers/index.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
-import Category from './Category.js';
-import * as netActions from '../concerns/infra/net.js';
-import { ComponentGoal, goalActionList } from '../concerns/goal.js';
-import MapPosition from './MapPosition.js';
-import { isComponentWork } from '../concerns/work.js';
-import Work from './Work.js';
-import { InventoryReactItems } from './inventory.react.js';
+import { type ComponentInventory } from '../concerns/inventory.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type TgoId, type TgoType } from '../reducers/tgo.ts';
+import Category from './Category.tsx';
+import * as netActions from '../concerns/infra/net.ts';
+import { type ComponentGoal, goalActionList } from '../concerns/goal.ts';
+import MapPosition from './MapPosition.tsx';
+import { isComponentWork } from '../concerns/work.ts';
+import Work from './Work.tsx';
+import { InventoryReactItems } from './inventory.react.tsx';
 
 const Goal = ({ tgo, goalDoerTgoId, tgoData }: { tgo: ComponentGoal, goalDoerTgoId?: TgoId, tgoData?: string }) => {
 	const workTgos = useSelector((store: RootStateType) => tgo.worksIssued.map(({ workTgoId }) => store.tgos[workTgoId]))

@@ -1,10 +1,10 @@
-import { Action } from 'redux'
+import { type Action } from 'redux'
 import OrigSagaTester from 'redux-saga-tester';
 
-import { TgoType, TgoId } from './reducers/tgo.js';
-import { add as addTgo } from './concerns/tgos.js';
-import rootReducer from './reducers/index.js';
-import rootSaga from './sagas/root.js';
+import { type TgoType, type TgoId } from './reducers/tgo.ts';
+import { add as addTgo } from './concerns/tgos.ts';
+import rootReducer from './reducers/index.ts';
+import rootSaga from './sagas/root.ts';
 
 // We don't care about the meta and error fields actions.
 export const omitMetaAndError = <T extends Action & { meta?: any, error?: any }>(action: T) => {
@@ -36,8 +36,7 @@ export const overrideAddTgoActionWithId = (addAction: ReturnType<typeof addTgo>,
 	})
 	: addAction;
 
-	
-export const SagaTester = ((OrigSagaTester as any).default) as typeof OrigSagaTester;
+export const SagaTester = OrigSagaTester.default;
 
 export const setupStoreTester = () => {
 	const tester = new SagaTester({

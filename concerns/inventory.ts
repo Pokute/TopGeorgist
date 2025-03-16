@@ -1,7 +1,7 @@
-import { ActionType, getType, createAction } from 'typesafe-actions';
+import { type ActionType, getType, createAction } from 'typesafe-actions';
 
-import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
-import { TypeId } from '../reducers/itemType.js';
+import { type TgoId, type TgoType, type TgoRoot } from '../reducers/tgo.ts';
+import { type TypeId } from '../reducers/itemType.ts';
 
 // Actions:
 

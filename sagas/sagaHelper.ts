@@ -1,6 +1,6 @@
-import { ActionPattern } from 'redux-saga/effects';
+import { type ActionPattern } from 'redux-saga/effects';
 import { put, takeEvery, take, fork, call }  from 'typed-redux-saga'
-import { createAction, Action } from "typesafe-actions";
+import { createAction, type Action } from "typesafe-actions";
 
 export const wrapEveryErrorReportAction = createAction('SAGA_ERROR_REPORT',
 ({

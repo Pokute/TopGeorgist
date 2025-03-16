@@ -1,28 +1,7 @@
 import React from 'react';
-import ParamInputPosition, { paramInputPositionPack, ParamInputPositionReact } from './ParamInputPosition.js';
-import { connect } from 'react-redux';
 
-export interface Parameter {
-	readonly name: string,
-	readonly label: string,
-	readonly type: keyof TypeMap,
-	readonly required?: boolean,
-};
-
-export type ReactParam = ({ parameter }: { parameter: Parameter}) => JSX.Element;
-// Todo: ReturnType<typeof connect> is too permissive.
-export type ReactReduxParam = ReturnType<typeof connect>;
-
-export interface ParamType {
-	render: ReactParam | ReactReduxParam,
-	pack(parameter: Parameter, formData: FormData): {
-		readonly [name: string]: any,
-	},
-};
-
-export interface TypeMap {
-	readonly [typeName: string]: ParamType,
-};
+import ParamInputPosition, { paramInputPositionPack, ParamInputPositionReact } from './ParamInputPosition.tsx';
+import { type Parameter, type TypeMap } from './ParamInputType.ts';
 
 const typeMap: TypeMap = {
 	// positionOld: { render: ParamInputPositionReact, pack: paramInputPositionPack } ,

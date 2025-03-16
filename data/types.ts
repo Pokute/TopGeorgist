@@ -1,9 +1,10 @@
-import { Dispatch } from 'redux';
-import { add } from '../actions/itemTypes.js';
-import { InitialItemType, OptionalFields, RequiredFields, TypeId } from '../reducers/itemType.js';
-import { ComponentWorkDoer } from '../concerns/work.js';
-import { growPineapple, provideCanneryTool } from './recipes.js';
-import { ComponentGoalDoer } from '../concerns/goal.js';
+import { type Dispatch } from 'redux';
+import { add } from '../actions/itemTypes.ts';
+
+import { type InitialItemType, type OptionalFields, type RequiredFields, type TypeId } from '../reducers/itemType.ts';
+import { type ComponentWorkDoer } from '../concerns/work.ts';
+import { growPineapple, provideCanneryTool } from './recipes.ts';
+import { type ComponentGoalDoer } from '../concerns/goal.ts';
 
 const defaultType: Omit<RequiredFields & OptionalFields, 'typeId'> = {
 	stackable: true,

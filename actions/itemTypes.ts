@@ -1,6 +1,7 @@
 import { createAction } from 'typesafe-actions';
-import { ItemType, TypeId, defaultItemType } from '../reducers/itemType.js';
-import { ItemTypesState } from '../reducers/itemTypes.js';
+
+import { type ItemType, type TypeId, defaultItemType } from '../reducers/itemType.ts';
+import { type ItemTypesState } from '../reducers/itemTypes.ts';
 
 export const setAll = createAction('ITEMTYPES_SET',
 	(itemTypes: ItemTypesState) => ({

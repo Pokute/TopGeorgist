@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { loginClientSalted } from '../../concerns/account.js';
-import * as netActions from '../../concerns/infra/net.js';
+import { loginClientSalted } from '../../concerns/account.ts';
+import * as netActions from '../../concerns/infra/net.ts';
 
 export default () => {
 	const dispatch = useDispatch();

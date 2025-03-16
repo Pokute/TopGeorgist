@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { AccountType } from '../../concerns/account.js';
-import CreateAccount from './CreateAccount.react.js';
-import ChangePassword from './ChangePassword.react.js';
+import type { AccountType } from '../../concerns/account.ts';
+import CreateAccount from './CreateAccount.react.tsx';
+import ChangePassword from './ChangePassword.react.tsx';
 import { useSelector } from 'react-redux';
-import { RootStateType } from '../../reducers/index.js';
+import { type RootStateType } from '../../reducers/index.ts';
 
 export default () => {
 	const account = useSelector((s: RootStateType) => s.accounts[s.defaults.accountId]);

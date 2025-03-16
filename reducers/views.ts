@@ -1,11 +1,11 @@
 import { importToArray } from 'import-to-array';
-import { ActionType, getType, isActionOf } from 'typesafe-actions';
+import { type ActionType, getType, isActionOf } from 'typesafe-actions';
 
-import * as viewActions from '../actions/view.js';
-import * as viewsActions from '../actions/views.js';
-import viewReducer, { ViewType, viewActionList } from './view.js';
-import view from './view.js';
-import { AnyAction } from 'redux';
+import * as viewActions from '../actions/view.ts';
+import * as viewsActions from '../actions/views.ts';
+import viewReducer, { type ViewType, viewActionList } from './view.ts';
+import view from './view.ts';
+import { type AnyAction } from 'redux';
 
 export type ViewsState = {
 	readonly [viewId: string]: ViewType;

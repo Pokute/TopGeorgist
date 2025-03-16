@@ -1,11 +1,11 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { type ActionType, getType } from 'typesafe-actions';
 
-import * as allSetActions from '../actions/allSet.js';
-import { tick } from '../concerns/ticker.js';
-import * as governmentActions from '../actions/government.js';
-import { RentOfficeAction, rentOfficeActions, rentOfficeReducer } from '../concerns/rentOffice.js';
-import { TgoId } from './tgo.js';
-import { MapPosition } from '../concerns/map.js';
+import * as allSetActions from '../actions/allSet.ts';
+import { tick } from '../concerns/ticker.ts';
+import * as governmentActions from '../actions/government.ts';
+import { type RentOfficeAction, rentOfficeActions, rentOfficeReducer } from '../concerns/rentOffice.ts';
+import { type TgoId } from './tgo.ts';
+import { type MapPosition } from '../concerns/map.ts';
 
 export interface GovernmentStateType {
 	readonly citizens: CitizensStateType,

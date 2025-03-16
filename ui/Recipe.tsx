@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Category from './Category.js';
-import { Recipe as RecipeType, RecipeId as RecipeIdType } from '../concerns/recipe.js';
-import recipes from '../data/recipes.js';
+import Category from './Category.tsx';
+import { type Recipe as RecipeType, type RecipeId as RecipeIdType } from '../concerns/recipe.ts';
+import recipes from '../data/recipes.ts';
 
 const Recipe = ({ recipe }: { recipe: RecipeType }) => {
 	return (

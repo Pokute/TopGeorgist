@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { TgoType } from '../../reducers/tgo.js';
-import { RootStateType } from '../../reducers/index.js';
-import { hasComponentInventory } from '../../concerns/inventory.js';
-import { hasComponentPlayer } from '../../components/player.js';
-import { hasComponentLabel } from '../../components/label.js';
+
+import { type TgoType } from '../../reducers/tgo.ts';
+import { type RootStateType } from '../../reducers/index.ts';
+import { hasComponentInventory } from '../../concerns/inventory.ts';
+import { hasComponentPlayer } from '../../components/player.ts';
+import { hasComponentLabel } from '../../components/label.ts';
 
 const LeaderBoard = () => {
 	const s = useSelector<RootStateType, RootStateType>(s => s);

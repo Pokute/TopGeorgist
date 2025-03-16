@@ -8,12 +8,15 @@
 		"jsx": "react",
 		"target": "ES2024",
 		"strict": true,
-		"esModuleInterop": true,
         "lib": [
             "ES2021",
 			"DOM"
         ],
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+		"rootDir": "",
+		"verbatimModuleSyntax": true,
+		"rewriteRelativeImportExtensions": true,
+		"allowImportingTsExtensions": true
 	},
 	"compileOnSave": true,
 	"files": [

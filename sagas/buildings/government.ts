@@ -1,11 +1,11 @@
 import { put, takeEvery }  from 'typed-redux-saga';
-import * as governmentActions from '../../actions/government.js';
-import { inventoryActions } from '../../concerns/inventory.js';
-import { transaction } from '../../concerns/transaction.js';
-import { hasComponentPosition } from '../../components/position.js';
-import { TypeId } from '../../reducers/itemType.js';
-import { select } from '../../redux-saga-helpers.js';
-import { mapPosition } from '../../concerns/map.js';
+import * as governmentActions from '../../actions/government.ts';
+import { inventoryActions } from '../../concerns/inventory.ts';
+import { transaction } from '../../concerns/transaction.ts';
+import { hasComponentPosition } from '../../components/position.ts';
+import { type TypeId } from '../../reducers/itemType.ts';
+import { select } from '../../redux-saga-helpers.ts';
+import { mapPosition } from '../../concerns/map.ts';
 
 const claimCitizenship = function* ({ payload: { tgoId, visitableTgoId } }: any) {
 	const s = yield* select();

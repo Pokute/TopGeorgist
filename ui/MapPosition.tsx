@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { FC } from 'react';
-import { MapPosition as MapPositionData } from '../concerns/map';
+import React, { type FC } from 'react';
+
+import { type MapPosition as MapPositionData } from '../concerns/map.ts';
 
 // Can be used with <MapPosition {...o.position} />
 

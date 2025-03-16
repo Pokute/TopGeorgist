@@ -1,16 +1,16 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { type ActionType, createAction, getType } from 'typesafe-actions';
 
-import { Recipe } from '../concerns/recipe.js';
-import { TgoId, TgoType, TgoRoot } from '../reducers/tgo.js';
-import { Inventory, addTgoId as inventoryAddTgoId, ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, InventoryItem, inventory } from './inventory.js';
-import { transaction, transactionReducer } from '../concerns/transaction.js';
-import { RootStateType } from '../reducers/index.js';
-import { add as addTgo, remove as removeTgo, tgosReducer, TgosState } from './tgos.js';
-import { TypeId } from '../reducers/itemType.js';
-import { Opaque } from '../typings/global.d.js';
-import { hasComponentVisitable } from '../data/components_new.js';
-import { hasComponentPosition } from '../components/position.js';
-import { mapPosition } from './map.js';
+import { type Recipe } from '../concerns/recipe.ts';
+import { type TgoId, type TgoType, type TgoRoot } from '../reducers/tgo.ts';
+import { type Inventory, addTgoId as inventoryAddTgoId, type ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, type InventoryItem, inventory } from './inventory.ts';
+import { transaction, transactionReducer } from '../concerns/transaction.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { add as addTgo, remove as removeTgo, tgosReducer, type TgosState } from './tgos.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import type { Opaque } from '../typings/global.d.ts';
+import { hasComponentVisitable } from '../data/components_new.ts';
+import { hasComponentPosition } from '../components/position.ts';
+import { mapPosition } from './map.ts';
 
 // Actions:
 

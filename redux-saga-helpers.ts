@@ -1,7 +1,7 @@
-import { select as rawSelect, fork as rawFork, take as rawTake, SelectEffect, TakeEffect, ForkEffect } from 'redux-saga/effects';
+import { select as rawSelect, fork as rawFork, take as rawTake, type SelectEffect, type TakeEffect, type ForkEffect } from 'redux-saga/effects';
 
-import type { RootStateType } from './reducers/index.js';
-import type { AllActions } from './allActions.js';
+import type { RootStateType } from './reducers/index.ts';
+import type { AllActions } from './allActions.ts';
 
 type TypedGenSelect<TState> = {
 	<TSelected>(

@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { ClientId, ClientType } from '../reducers/client.js';
+import { type ClientId, type ClientType } from '../reducers/client.ts';
 
 export const add = createAction('CLIENT_ADD',
 	(client: ClientType) => ({

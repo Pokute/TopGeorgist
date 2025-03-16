@@ -1,6 +1,7 @@
-import { createAction } from 'typesafe-actions';
-import { TileType } from '../reducers/tile.js';
-import { TileSetId } from '../reducers/tileSet.js';
+import { type ActionType, createAction } from 'typesafe-actions';
+
+import { type TileType } from '../reducers/tile.ts';
+import { type TileSetId } from '../reducers/tileSet.ts';
 
 export const addTile = createAction('TILESET_ADD_TILE',
 	(tileSetId: TileSetId, tile: TileType) => ({
@@ -8,3 +9,8 @@ export const addTile = createAction('TILESET_ADD_TILE',
 		tile
 	})
 )();
+
+export const tileSetActions = {
+	addTile,
+} as const;
+export type TileSetActions = ActionType<typeof tileSetActions>;

@@ -1,17 +1,17 @@
-import { ActionType } from 'typesafe-actions'
+import { type ActionType } from 'typesafe-actions'
 
-import { tickerActions } from './concerns/ticker'
-import { serverConnectionActions } from './concerns/clientToServerConnection';
-import { transactionActions } from './concerns/transaction';
-import * as defaultsActions from './actions/defaults';
-import { workActions } from './concerns/work';
-import { moveGoal } from './actions/moveGoal';
-import { payRent, rentOfficeActions } from './concerns/rentOffice';
-import { deployableActions } from './concerns/deployable.js'
-import { goalActionList } from './concerns/goal';
-import { itemReqGoal } from './concerns/itemReqGoal';
-import { itemKeepMinGoal } from './concerns/itemKeepMinGoal';
-import { consumerActions } from './concerns/consumer';
+import { tickerActions } from './concerns/ticker.ts'
+import { serverConnectionActions } from './concerns/clientToServerConnection.ts';
+import { transactionActions } from './concerns/transaction.ts';
+import * as defaultsActions from './actions/defaults.ts';
+import { workActions } from './concerns/work.ts';
+import { moveGoal } from './actions/moveGoal.ts';
+import { payRent, rentOfficeActions } from './concerns/rentOffice.ts';
+import { deployableActions } from './concerns/deployable.ts'
+import { goalActionList } from './concerns/goal.ts';
+import { itemReqGoal } from './concerns/itemReqGoal.ts';
+import { itemKeepMinGoal } from './concerns/itemKeepMinGoal.ts';
+import { consumerActions } from './concerns/consumer.ts';
 
 const allActions = {
 	defaults: defaultsActions,

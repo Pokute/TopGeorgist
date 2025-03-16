@@ -1,5 +1,6 @@
-import { Inventory } from '../concerns/inventory.js';
-import { Opaque } from '../typings/global.d.js';
+import type { Opaque } from '../typings/global.d.ts';
+
+import { type Inventory } from '../concerns/inventory.ts';
 
 export type RecipeId = Opaque<string, 'RecipeId'>
 

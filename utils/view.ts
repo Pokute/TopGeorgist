@@ -1,4 +1,4 @@
-import { MapPosition, MapType } from '../concerns/map.js';
+import { type MapPosition, type MapType } from '../concerns/map.ts';
 
 const getMinMax = (canvasElement?: HTMLCanvasElement, center?: MapPosition, map?: MapType) => {
 	// if (!canvasElement) throw new TypeError('Undefined canvasElement');

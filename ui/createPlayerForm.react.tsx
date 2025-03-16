@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { connect } from 'react-redux';
-
-import * as playerActions from '../actions/player.js';
-import { Dispatch } from 'redux';
+import { type Dispatch } from 'redux';
 import { v4 as uuidV4 } from 'uuid';
+
+import * as playerActions from '../actions/player.ts';
 
 const CreatePlayerForm = ({ onSubmit }: ReturnType<typeof mapDispatchToProps>) => {
 	const creationName = useRef<HTMLInputElement>(null);

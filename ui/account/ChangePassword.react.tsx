@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import * as netActions from '../../concerns/infra/net.js';
-import { requestChangePasswordClientSalted } from "../../concerns/account.js";
-import { RootStateType } from "../../reducers/index.js";
+import * as netActions from '../../concerns/infra/net.ts';
+import { requestChangePasswordClientSalted } from '../../concerns/account.ts';
+import { type RootStateType } from '../../reducers/index.ts';
 
 export default () => {
 	const dispatch = useDispatch();

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RootStateType } from '../reducers/index.js';
-import { TgoId } from '../reducers/tgo.js';
-import Category from './Category.js';
-import MapPosition from './MapPosition.js';
-import { MapPosition as MapPositionType } from '../concerns/map.js';
-import recipes from '../data/recipes.js';
-import { TypeId } from '../reducers/itemType.js';
-import { itemReqGoal } from '../concerns/itemReqGoal.js';
-import { moveGoal } from '../actions/moveGoal.js';
-import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.js';
+import { type RootStateType } from '../reducers/index.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import Category from './Category.tsx';
+import MapPosition from './MapPosition.tsx';
+import { type MapPosition as MapPositionType } from '../concerns/map.ts';
+import recipes from '../data/recipes.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { itemReqGoal } from '../concerns/itemReqGoal.ts';
+import { moveGoal } from '../actions/moveGoal.ts';
+import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.ts';
 
 export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {
 	const dispatch = useDispatch();

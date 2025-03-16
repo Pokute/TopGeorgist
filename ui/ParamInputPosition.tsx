@@ -1,11 +1,12 @@
-import { Dispatch } from 'redux';
+import { type Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import React, { useState, useMemo } from 'react';
 
-import { Parameter, ReactReduxParam, TypeProps } from './paramInput.js';
-import * as viewActions from '../actions/view.js';
-import { MapPosition } from '../concerns/map.js';
-import { ViewId } from '../reducers/view.js';
+import { type TypeProps } from './paramInput.tsx';
+import * as viewActions from '../actions/view.ts';
+import { type MapPosition } from '../concerns/map.ts';
+import { type ViewId } from '../reducers/view.ts';
+import { type Parameter } from './ParamInputType.ts';
 
 export const paramInputPositionPack = (parameter: Parameter, formData: FormData) => ({
 	[parameter.name]: {

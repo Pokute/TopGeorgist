@@ -1,14 +1,15 @@
 import React from 'react';
-import { InventoryItem, ComponentInventory, Inventory } from '../concerns/inventory.js';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootStateType } from '../reducers/index.js';
-import { Recipe } from '../concerns/recipe.js';
+
+import { type InventoryItem as InventoryItemType, type ComponentInventory, type Inventory } from '../concerns/inventory.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type Recipe } from '../concerns/recipe.ts';
 
 const InventoryItem = ({
 	ii,
 	possibleRecipes
 }: {
-	ii: InventoryItem,
+	ii: InventoryItemType,
 	possibleRecipes: Array<Recipe>
 }) => {
 	const dispatch = useDispatch();

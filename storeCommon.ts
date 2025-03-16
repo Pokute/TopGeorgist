@@ -1,7 +1,7 @@
 import { applyMiddleware } from 'redux';
 import reduxSaga from 'redux-saga';
 
-import rootSaga from './sagas/root.js';
+import rootSaga from './sagas/root.ts';
 
 const sagaMiddleware = reduxSaga();
 const middleWares = applyMiddleware(sagaMiddleware);

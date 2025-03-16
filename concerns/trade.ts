@@ -1,10 +1,10 @@
 import { createAction, getType } from 'typesafe-actions';
-import { TypeId } from '../reducers/itemType.js';
-import { transactionActions } from './transaction.js';
-import { inventory, InventoryItem } from './inventory.js';
-import { TgoId } from '../reducers/tgo.js';
+import { type TypeId } from '../reducers/itemType.ts';
+import { transactionActions } from './transaction.ts';
+import { inventory, type InventoryItem } from './inventory.ts';
+import { type TgoId } from '../reducers/tgo.ts';
 import { put, takeEvery } from 'typed-redux-saga';
-import isServer from '../isServer.js';
+import isServer from '../isServer.ts';
 
 
 // Assumption: trading takes multiple ticks of time.

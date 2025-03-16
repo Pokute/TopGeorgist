@@ -1,13 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ComponentInventory } from '../concerns/inventory.js';
-import { ComponentWork, ComponentWorkDoer, workActions } from '../concerns/work.js';
-import { RootStateType } from '../reducers/index.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
-import Category from './Category.js';
-import { RecipeId } from './Recipe.js';
-import * as netActions from '../concerns/infra/net.js';
+import { type ComponentInventory } from '../concerns/inventory.ts';
+import { type ComponentWork, type ComponentWorkDoer, workActions } from '../concerns/work.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type TgoId, type TgoType } from '../reducers/tgo.ts';
+import Category from './Category.tsx';
+import { RecipeId } from './Recipe.tsx';
+import * as netActions from '../concerns/infra/net.ts';
 
 const Work = ({ tgo, workDoerTgoId, tgoData }: { tgo: ComponentWork, workDoerTgoId?: TgoId, tgoData?: string }) /*({ workTgoId }: { workTgoId: TgoId })*/ => {
 	const inputCommittedInventoryTgos = useSelector(

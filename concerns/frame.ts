@@ -1,7 +1,7 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { type ActionType, createAction, getType } from 'typesafe-actions';
 import { call, fork, put }  from 'typed-redux-saga';
 
-import isServer from '../isServer.js'
+import isServer from '../isServer.ts'
 
 // Actions:
 

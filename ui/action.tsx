@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { type Dispatch } from 'redux';
 
-import * as netActions from '../concerns/infra/net.js';
-import ParamInput, { packParam } from './paramInput.js';
-import { Action } from '../data/components_new.js';
+import * as netActions from '../concerns/infra/net.ts';
+import ParamInput, { packParam } from './paramInput.tsx';
+import { type Action } from '../data/components_new.ts';
 
 export interface Type {
 	readonly action: Action,

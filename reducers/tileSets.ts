@@ -1,8 +1,8 @@
-import { ActionType, getType } from 'typesafe-actions';
+import { type ActionType, getType } from 'typesafe-actions';
 
-import * as tileSetActions from '../actions/tileSet.js';
-import * as tileSetsActions from '../actions/tileSets.js';
-import tileSetReducer, { TileSetType } from './tileSet.js';
+import { tileSetActions, type TileSetActions } from '../actions/tileSet.ts';
+import tileSetReducer, { type TileSetType } from './tileSet.ts';
+import { tileSetsActions, type TileSetsActions } from '../actions/tileSets.ts';
 
 export type TileSetsState = {
 	readonly [extraProps: string]: TileSetType;
@@ -13,14 +13,14 @@ const initialState = {};
 const tileSetActions2 = [
 	tileSetActions.addTile,
 ].map(a => getType(a));
-
+/*
 const listActions = [
 	tileSetsActions.add,
 	tileSetsActions.set,
 ].map(a => getType(a));
-
-type TileSetAction = ActionType<typeof tileSetActions>;
-type TileSetsAction = ActionType<typeof tileSetsActions>;
+*/
+type TileSetAction = TileSetActions;
+type TileSetsAction = TileSetsActions;
 
 export default (state: TileSetsState = initialState, action: TileSetAction | TileSetsAction): TileSetsState => {
 	// Handle single view changes here.

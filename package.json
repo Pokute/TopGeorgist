@@ -68,20 +68,17 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.8.2",
     "webpack": "^5.92.1",
-    "webpack-cli": "^5.0.1",
+    "webpack-cli": "^6.0.1",
     "webpack-dev-middleware": "^5.3.1"
   },
   "browser": {
     "redux-persist-node-storage": "./node-modules/null-loader"
   },
   "scripts": {
-    "compile-local": "node ./node_modules/typescript/bin/tsc --esModuleInterop",
-    "build": "./node_modules/.bin/dotenvx run -f .env -- webpack --config compiled/webpack.config.js",
-    "build-prod": "./node_modules/.bin/dotenvx run -f .env -- webpack --config compiled/webpack.config.production.js",
-    "server-min": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-specifier-resolution=node --inspect=:9229 --loader ts-node/esm server.ts",
-    "webserver-min": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-specifier-resolution=node --inspect=:9230 --loader ts-node/esm expressServer.ts",
-    "server-compiled": "./node_modules/.bin/dotenvx run -f .env -- node compiled/server.js",
-    "webserver-compiled": "./node_modules/.bin/dotenvx run -f .env -- node compiled/expressServerProduction.js",
+    "build": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-strip-types node_modules/webpack-cli/bin/cli.js -- --config webpack.config.production.ts",
+    "server": "./node_modules/.bin/dotenvx run -f .env -- node --inspect=:9229 --experimental-strip-types server.ts",
+    "webserver": "./node_modules/.bin/dotenvx run -f .env -- node --inspect=:9230 --experimental-strip-types expressServer.ts",
+    "webserver-prod": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-strip-types expressServerProduction.ts",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
     "test-transaction": "ava -vs tests/transactions.test.ts",
@@ -102,9 +99,6 @@
   "ava": {
     "extensions": {
       "ts": "module"
-    },
-    "nonSemVerExperiments": {
-      "configurableModuleFormat": true
     },
     "nodeArguments": [
       "--loader=ts-node/esm",

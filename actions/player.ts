@@ -1,5 +1,6 @@
 import { createAction } from 'typesafe-actions';
-import { AccountId } from '../concerns/account.js';
+
+import { type AccountId } from '../concerns/account.ts';
 
 export const playerRequest = createAction('PLAYER_CREATE_REQUEST',
 	({ accountId, label }: { accountId: AccountId, label: string }) => ({

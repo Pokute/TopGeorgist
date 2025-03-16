@@ -1,17 +1,16 @@
-import { AnyAction } from 'redux';
-import { getType, ActionType, createAction } from 'typesafe-actions';
+import { type AnyAction } from 'redux';
+import { getType, type ActionType, createAction } from 'typesafe-actions';
 
-import { ComponentInventory, hasComponentInventory } from './inventory.js';
-import { TypeId } from '../reducers/itemType.js';
-import rootReducer, { RootStateType } from '../reducers/index.js';
-import { moveGoal } from '../actions/moveGoal.js';
-import { ComponentGoal, ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.js';
-import { add as addTgo } from './tgos.js';
-import { hasComponentPosition, ComponentPosition } from '../components/position.js';
-import { MapPosition, mapPosition } from './map.js';
-import { TgosState, createTupleFilter } from './tgos.js';
-import { TgoId, TgoType } from '../reducers/tgo.js';
-import { count } from 'console';
+import { type ComponentInventory, hasComponentInventory } from './inventory.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import rootReducer, { type RootStateType } from '../reducers/index.ts';
+import { moveGoal } from '../actions/moveGoal.ts';
+import { type ComponentGoal, type ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.ts';
+import { add as addTgo } from './tgos.ts';
+import { hasComponentPosition, type ComponentPosition } from '../components/position.ts';
+import { type MapPosition, mapPosition } from './map.ts';
+import { type TgosState, createTupleFilter } from './tgos.ts';
+import { type TgoId, type TgoType } from '../reducers/tgo.ts';
 
 export const applyMovementReducer = (tgosState: TgosState): TgosState => {
 	const goalDoersWithRequirementMoves = Object.entries(tgosState)

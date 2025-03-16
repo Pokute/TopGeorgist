@@ -1,7 +1,7 @@
-import { createAction, ActionType, getType } from 'typesafe-actions';
+import { createAction, type ActionType, getType } from 'typesafe-actions';
 import { MersenneTwister19937, nativeMath, integer as randomInteger } from 'random-js';
 
-import { Opaque } from '../typings/global.d.js';
+import type { Opaque } from '../typings/global.d.ts';
 
 // Actions:
 

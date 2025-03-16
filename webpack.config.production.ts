@@ -1,7 +1,7 @@
 import * as webpack from 'webpack';
 import path from 'path';
 
-import commonConfig from './webpack.common.config.js';
+import commonConfig from './webpack.common.config.ts';
 
 const config: webpack.Configuration = {
 	mode: 'production',
@@ -10,7 +10,7 @@ const config: webpack.Configuration = {
 	],
 	target: 'web',
 	output: {
-		path: path.resolve(new URL('.', import.meta.url).pathname, '..', 'dist', 'static'),
+		path: path.resolve(new URL('.', import.meta.url).pathname, 'dist', 'static'),
 		filename: 'topGeorgist.bundle.js',
 		publicPath: '/',
 	},

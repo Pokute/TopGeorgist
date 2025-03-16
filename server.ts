@@ -2,35 +2,35 @@
 /// <reference path="./typings/ws-wrapper.d.ts" />
 import { v4 as uuidv4 } from 'uuid';
 import { WebSocketServer as WSS } from 'ws';
-
-import config from './config.js';
-import { store } from './storeServer.js';
-import createItemTypes from './data/types.js';
-import initialObjectActions from './data/initialObjects.js';
-import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted, requestChangePasswordClientSalted } from './concerns/account.js';
-import { accountsActions } from './concerns/account.js';
-import * as tgoActions from './actions/tgo.js';
-import * as playerActions from './actions/player.js';
-import { mapActions, MapSize } from './concerns/map.js';
-import * as clientActions from './actions/client.js';
-import { set as allSet } from './actions/allSet.js';
 import { getType } from 'typesafe-actions';
-import { AnyAction } from 'redux';
-import { extendedSocket } from './reducers/client.js';
-import { withClient } from './actions/withClient.js';
-// import { setGoals } from './actions/goals.js';
-import { moveGoal } from './actions/moveGoal.js';
-import { RootStateType } from './reducers/index.js';
-import { transaction } from './concerns/transaction.js';
-import { setRunning as tickerSetRunning } from './concerns/ticker.js';
-import { claimLand, payRent } from './concerns/rentOffice.js';
-import { consumerActions } from './concerns/consumer.js';
-import { deployableActions } from './concerns/deployable.js';
-import { cancelWork, createWork, pauseWork, resumeWork } from './concerns/work.js';
-import { tradeStoreTransactionRequest } from './concerns/trade.js';
-import { cancelGoal, pauseGoal, resumeGoal } from './concerns/goal.js';
-import { itemReqGoal } from './concerns/itemReqGoal.js';
-import { itemKeepMinGoal } from './concerns/itemKeepMinGoal.js';
+
+import config from './config.ts';
+import { store } from './storeServer.ts';
+import createItemTypes from './data/types.ts';
+import initialObjectActions from './data/initialObjects.ts';
+import { loginClientSalted, loginWithToken, createAccountWithTokenClientSalted, requestChangePasswordClientSalted } from './concerns/account.ts';
+import { accountsActions } from './concerns/account.ts';
+import * as tgoActions from './actions/tgo.ts';
+import * as playerActions from './actions/player.ts';
+import { mapActions, type MapSize } from './concerns/map.ts';
+import * as clientActions from './actions/client.ts';
+import { set as allSet } from './actions/allSet.ts';
+import { type AnyAction } from 'redux';
+import { type extendedSocket } from './reducers/client.ts';
+import { withClient } from './actions/withClient.ts';
+// import { setGoals } from './actions/goals.ts';
+import { moveGoal } from './actions/moveGoal.ts';
+import { type RootStateType } from './reducers/index.ts';
+import { transaction } from './concerns/transaction.ts';
+import { setRunning as tickerSetRunning } from './concerns/ticker.ts';
+import { claimLand, payRent } from './concerns/rentOffice.ts';
+import { consumerActions } from './concerns/consumer.ts';
+import { deployableActions } from './concerns/deployable.ts';
+import { cancelWork, createWork, pauseWork, resumeWork } from './concerns/work.ts';
+import { tradeStoreTransactionRequest } from './concerns/trade.ts';
+import { cancelGoal, pauseGoal, resumeGoal } from './concerns/goal.ts';
+import { itemReqGoal } from './concerns/itemReqGoal.ts';
+import { itemKeepMinGoal } from './concerns/itemKeepMinGoal.ts';
 
 // Start the server
 const wss = new WSS({ port: config.gameServer.port });

@@ -1,14 +1,14 @@
-import { accountRootSaga } from '../concerns/account.js';
-import buildingGovernment from './buildings/government.js';
-import { rentOfficeRootSaga } from '../concerns/rentOffice.js';
-import client from './client.js';
-import { serverConnectionSaga } from '../concerns/clientToServerConnection.js';
-import { frameRootSaga } from '../concerns/frame.js';
-import { netRootSaga } from '../concerns/infra/net.js';
-import player from './player.js';
-import { tickerRootSaga } from '../concerns/ticker.js';
-import { tradeRootSaga } from '../concerns/trade.js';
-import view from './view.js';
+import { accountRootSaga } from '../concerns/account.ts';
+import buildingGovernment from './buildings/government.ts';
+import { rentOfficeRootSaga } from '../concerns/rentOffice.ts';
+import client from './client.ts';
+import { serverConnectionSaga } from '../concerns/clientToServerConnection.ts';
+import { frameRootSaga } from '../concerns/frame.ts';
+import { netRootSaga } from '../concerns/infra/net.ts';
+import player from './player.ts';
+import { tickerRootSaga } from '../concerns/ticker.ts';
+import { tradeRootSaga } from '../concerns/trade.ts';
+import view from './view.ts';
 
 const rootSaga = function* () {
 	yield* accountRootSaga();

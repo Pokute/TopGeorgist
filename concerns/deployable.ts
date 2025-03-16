@@ -1,14 +1,14 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
-import { TgoId, TgoRoot, TgoType } from '../reducers/tgo.js';
-import { TypeId } from '../reducers/itemType.js';
-import rootReducer, { RootStateType } from '../reducers/index.js';
-import { add, remove as tgoRemove } from './tgos.js';
-import { selectTgo } from './tgos.js';
-import { ComponentPosition, hasComponentPosition } from '../components/position.js';
-import { hasComponentMapGridOccipier, hasComponentVisitable } from '../data/components_new.js';
-import { mapPosition } from './map.js';
-import { transaction } from './transaction.js';
-import { ComponentInventory, hasComponentInventory } from './inventory.js';
+import { type ActionType, createAction, getType } from 'typesafe-actions';
+import { type TgoId, type TgoRoot, type TgoType } from '../reducers/tgo.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import rootReducer, { type RootStateType } from '../reducers/index.ts';
+import { add, remove as tgoRemove } from './tgos.ts';
+import { selectTgo } from './tgos.ts';
+import { type ComponentPosition, hasComponentPosition } from '../components/position.ts';
+import { hasComponentMapGridOccipier, hasComponentVisitable } from '../data/components_new.ts';
+import { mapPosition } from './map.ts';
+import { transaction } from './transaction.ts';
+import { type ComponentInventory, hasComponentInventory } from './inventory.ts';
 
 export type ComponentDeployable = TgoRoot & {
 	readonly deployable?: boolean,

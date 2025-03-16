@@ -2,8 +2,8 @@ import { createStore, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { AsyncNodeStorage } from 'redux-persist-node-storage';
 
-import topGeorgist from './reducers/index.js';
-import { middleWares, startSaga } from './storeCommon.js';
+import topGeorgist from './reducers/index.ts';
+import { middleWares, startSaga } from './storeCommon.ts';
 
 // Server
 const persistReducers = persistReducer(

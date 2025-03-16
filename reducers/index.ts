@@ -1,29 +1,29 @@
-import { combineReducers, AnyAction, Reducer } from 'redux'
-import { getType, ActionType } from 'typesafe-actions';
+import { combineReducers, type AnyAction, type Reducer } from 'redux'
+import { getType, type ActionType } from 'typesafe-actions';
 
-import { accountListReducer } from '../concerns/account.js';
-import { serverConnectionReducer, ServerConnectionStateType } from '../concerns/clientToServerConnection.js';
-import clients, { ClientsState } from './clients.js';
-import defaults, { Type as DefaultsType } from './defaults.js';
-import { frameReducer } from '../concerns/frame.js';
-import government, { GovernmentStateType } from './government.js';
-import itemTypes, { ItemTypesState } from './itemTypes.js';
-import { mapReducer } from '../concerns/map.js';
-import { tgosReducer, TgosState } from '../concerns/tgos.js';
-import { tick, tickerReducer } from '../concerns/ticker.js';
-import tileSets, { TileSetsState } from './tileSets.js';
-import views, { ViewsState } from './views.js';
-import { cancelGoal, goalCancelReducer, goalDoersTickReducer } from '../concerns/goal.js';
-import { transaction, transactionReducer } from '../concerns/transaction.js';
-import { AllActions } from '#tg/allActions.js';
-import { cancelWork, createWork, pauseWork, resumeWork, workCancelReducer, workCreatorReducer, workDoersTickReducer, workPauseReducer, workResumeReducer } from '../concerns/work.js';
-import { moveGoal } from '#tg/actions/moveGoal.js';
-import { payRent, payRentReducer } from '../concerns/rentOffice.js';
-import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.js';
-import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.js';
-import { itemReqGoal, itemReqGoalReducer } from '../concerns/itemReqGoal.js';
-import { itemKeepMinGoal, itemKeepMinGoalReducer } from '../concerns/itemKeepMinGoal.js';
-import { consumerActions, consumeReducer } from '../concerns/consumer.js';
+import { accountListReducer } from '../concerns/account.ts';
+import { serverConnectionReducer, type ServerConnectionStateType } from '../concerns/clientToServerConnection.ts';
+import clients, { type ClientsState } from './clients.ts';
+import defaults, { type Type as DefaultsType } from './defaults.ts';
+import { frameReducer } from '../concerns/frame.ts';
+import government, { type GovernmentStateType } from './government.ts';
+import itemTypes, { type ItemTypesState } from './itemTypes.ts';
+import { mapReducer } from '../concerns/map.ts';
+import { tgosReducer, type TgosState } from '../concerns/tgos.ts';
+import { tick, tickerReducer } from '../concerns/ticker.ts';
+import tileSets, { type TileSetsState } from './tileSets.ts';
+import views, { type ViewsState } from './views.ts';
+import { cancelGoal, goalCancelReducer, goalDoersTickReducer } from '../concerns/goal.ts';
+import { transaction, transactionReducer } from '../concerns/transaction.ts';
+import { type AllActions } from '../allActions.ts';
+import { cancelWork, createWork, pauseWork, resumeWork, workCancelReducer, workCreatorReducer, workDoersTickReducer, workPauseReducer, workResumeReducer } from '../concerns/work.ts';
+import { moveGoal } from '../actions/moveGoal.ts';
+import { payRent, payRentReducer } from '../concerns/rentOffice.ts';
+import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.ts';
+import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.ts';
+import { itemReqGoal, itemReqGoalReducer } from '../concerns/itemReqGoal.ts';
+import { itemKeepMinGoal, itemKeepMinGoalReducer } from '../concerns/itemKeepMinGoal.ts';
+import { consumerActions, consumeReducer } from '../concerns/consumer.ts';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,

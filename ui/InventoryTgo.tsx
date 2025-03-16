@@ -1,13 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { InventoryItem } from '../concerns/inventory.js';
-import { isComponentWork } from '../concerns/work.js';
-import { isComponentGoal } from '../concerns/goal.js';
-import { RootStateType } from '../reducers/index.js';
-import Goal from './Goal.js';
-import Work from './Work.js';
-import { TgoId } from '../reducers/tgo.js';
+import { type InventoryItem } from '../concerns/inventory.ts';
+import { isComponentWork } from '../concerns/work.ts';
+import { isComponentGoal } from '../concerns/goal.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import Goal from './Goal.tsx';
+import Work from './Work.tsx';
+import { type TgoId } from '../reducers/tgo.ts';
 
 const InventoryTgo = ({ i, parentTgoId }: { i: InventoryItem, parentTgoId?: TgoId }) => {
 	if (i.typeId !== 'tgoId' || !i.tgoId) {

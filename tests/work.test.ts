@@ -1,21 +1,22 @@
 import util from 'util';
-import { default as test, DeepEqualAssertion, ExecutionContext } from 'ava';
+import { default as test, type DeepEqualAssertion, type ExecutionContext } from 'ava';
 import Sinon from 'sinon';
-import { autoCommittedItemsInventory, createWork } from '../concerns/work.js';
-import { calculation } from '../data/recipes.js';
-import { TgoId } from '../reducers/tgo.js';
-import { getType, Action } from 'typesafe-actions';
-import { RootStateType } from '../reducers/index.js';
-import { TypeId } from '../reducers/itemType.js';
-import { add as addTgo, selectTgo } from '../concerns/tgos.js';
-import { addTgoId as inventoryAddTgoId, ComponentInventory } from '../concerns/inventory.js';
-import { addGoals, createGoal } from '../concerns/goal.js';
-import { ComponentWork, ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.js';
-import { Recipe, RecipeId } from '../concerns/recipe.js';
-import { tick } from '../concerns/ticker.js';
-import { add as itemTypeAdd } from '../actions/itemTypes.js';
-import { items, createItemTypeAction } from '../data/types.js';
-import { setupStoreTester } from '../testUtils.js';
+import { getType, type Action } from 'typesafe-actions';
+
+import { autoCommittedItemsInventory, createWork } from '../concerns/work.ts';
+import { calculation } from '../data/recipes.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { type RootStateType } from '../reducers/index.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { add as addTgo, selectTgo } from '../concerns/tgos.ts';
+import { addTgoId as inventoryAddTgoId, type ComponentInventory } from '../concerns/inventory.ts';
+import { addGoals, createGoal } from '../concerns/goal.ts';
+import { type ComponentWork, type ComponentWorkDoer, hasComponentWorkDoer } from '../concerns/work.ts';
+import { type Recipe, type RecipeId } from '../concerns/recipe.ts';
+import { tick } from '../concerns/ticker.ts';
+import { add as itemTypeAdd } from '../actions/itemTypes.ts';
+import { items, createItemTypeAction } from '../data/types.ts';
+import { setupStoreTester } from '../testUtils.ts';
 
 test.afterEach(() => {
 	Sinon.restore();

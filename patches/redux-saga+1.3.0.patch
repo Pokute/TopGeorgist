@@ -1,0 +1,8 @@
+diff --git a/node_modules/redux-saga/index.d.mts b/node_modules/redux-saga/index.d.mts
+new file mode 100644
+index 0000000..cd8c24a
+--- /dev/null
++++ b/node_modules/redux-saga/index.d.mts
+@@ -0,0 +1,2 @@
++export * from '@redux-saga/core'
++export { default } from '@redux-saga/core'

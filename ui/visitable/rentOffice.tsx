@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RootStateType } from '../../reducers/index.js';
-import MapPosition from '../MapPosition.js';
+
+import { type RootStateType } from '../../reducers/index.ts';
+import MapPosition from '../MapPosition.tsx';
 
 const VisitableRentOffice = (props: ReturnType<typeof mapStoreToProps>) => (
 	<ul>

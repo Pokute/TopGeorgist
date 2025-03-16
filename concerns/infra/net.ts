@@ -1,20 +1,20 @@
-import { createAction, ActionType, getType } from 'typesafe-actions';
-import { AnyAction } from 'redux';
+import { createAction, type ActionType, getType } from 'typesafe-actions';
+import { type AnyAction } from 'redux';
 import { takeEvery, put }  from 'typed-redux-saga';
 
-import * as netActions from '../../concerns/infra/net.js';
-import { accountsActions } from '../../concerns/account.js';
-import * as viewActions from '../../actions/view.js';
-import { mapActions } from '../../concerns/map.js';
-import * as tileSetsActions from '../../actions/tileSets.js';
-import * as tgoActions from '../../actions/tgo.js';
-import { tgosActions } from '../../concerns/tgos.js';
-import { moveGoal } from '../../actions/moveGoal.js';
-import { MapPosition } from '../../concerns/map.js';
-import { ViewId } from '../../reducers/view.js';
-import { select } from '../../redux-saga-helpers.js';
-import itemTypes from '../../reducers/itemTypes.js';
-import * as itemTypesActions from '../../actions/itemTypes.js';
+import * as netActions from '../../concerns/infra/net.ts';
+import { accountsActions } from '../../concerns/account.ts';
+import * as viewActions from '../../actions/view.ts';
+import { mapActions } from '../../concerns/map.ts';
+import * as tileSetsActions from '../../actions/tileSets.ts';
+import * as tgoActions from '../../actions/tgo.ts';
+import { tgosActions } from '../../concerns/tgos.ts';
+import { moveGoal } from '../../actions/moveGoal.ts';
+import { type MapPosition } from '../../concerns/map.ts';
+import { type ViewId } from '../../reducers/view.ts';
+import { select } from '../../redux-saga-helpers.ts';
+import itemTypes from '../../reducers/itemTypes.ts';
+import * as itemTypesActions from '../../actions/itemTypes.ts';
 
 // Actions:
 

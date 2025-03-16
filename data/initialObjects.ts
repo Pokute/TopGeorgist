@@ -1,14 +1,14 @@
-import { tgosActions } from '../concerns/tgos.js';
-import { add as tileSetAdd } from '../actions/tileSets.js';
-import { MapPosition } from '../concerns/map.js';
-import { TypeId } from '../reducers/itemType.js';
+import { tgosActions } from '../concerns/tgos.ts';
+import { add as tileSetAdd } from '../actions/tileSets.ts';
+import { type MapPosition } from '../concerns/map.ts';
+import { type TypeId } from '../reducers/itemType.ts';
 import { getType } from 'typesafe-actions';
-import { payRent, claimLand } from '../concerns/rentOffice.js';
-import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple, provideCanneryTool } from './recipes.js';
-import { tradeStoreTransactionRequest } from '../concerns/trade.js';
-import { TgoId } from '../reducers/tgo.js';
-import { ComponentGoal, ComponentGoalDoer } from '../concerns/goal.js';
-import { ComponentWorkDoer } from '../concerns/work.js';
+import { payRent, claimLand } from '../concerns/rentOffice.ts';
+import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple, provideCanneryTool } from './recipes.ts';
+import { tradeStoreTransactionRequest } from '../concerns/trade.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { type ComponentGoal, type ComponentGoalDoer } from '../concerns/goal.ts';
+import { type ComponentWorkDoer } from '../concerns/work.ts';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,

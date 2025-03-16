@@ -1,6 +1,6 @@
-import { ItemTypesState } from './itemTypes.js';
-import { Inventory } from '../concerns/inventory.js';
-import { Opaque } from '../typings/global.d.js';
+import { type ItemTypesState } from './itemTypes.ts';
+import { type Inventory } from '../concerns/inventory.ts';
+import type { Opaque } from '../typings/global.d.ts';
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = Opaque<string, 'TypeId'>;

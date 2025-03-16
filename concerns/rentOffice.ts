@@ -1,16 +1,15 @@
-import { createAction, ActionType, getType } from 'typesafe-actions';
+import { createAction, type ActionType, getType } from 'typesafe-actions';
 import { put, takeEvery } from 'typed-redux-saga';
 
-import * as governmentActions from '../actions/government.js';
-import { select } from '../redux-saga-helpers.js';
-import { TgoId } from '../reducers/tgo.js';
-import { MapPosition, mapPosition } from './map.js';
-import { hasComponentPosition } from '../components/position.js';
-import { TypeId } from '../reducers/itemType.js';
-import { hasComponentInventory, inventoryActions } from './inventory.js';
-import { GovernmentStateType } from '../reducers/government.js';
-import rootReducer, { RootStateType } from '../reducers/index.js';
-import { transaction } from './transaction.js';
+import * as governmentActions from '../actions/government.ts';
+import { select } from '../redux-saga-helpers.ts';
+import { type TgoId } from '../reducers/tgo.ts';
+import { type MapPosition, mapPosition } from './map.ts';
+import { hasComponentPosition } from '../components/position.ts';
+import { type TypeId } from '../reducers/itemType.ts';
+import { type GovernmentStateType } from '../reducers/government.ts';
+import rootReducer, { type RootStateType } from '../reducers/index.ts';
+import { transaction } from './transaction.ts';
 
 // Actions:
 
