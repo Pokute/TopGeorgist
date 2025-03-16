@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/dotenv-webpack": "^7.0.7",
     "@types/express": "^4.17.13",
-    "@types/node": "^18.19.80",
+    "@types/node": "^22.13.10",
     "@types/node-forge": "^1.0.0",
     "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
@@ -52,7 +52,7 @@
     "@types/sinon": "^7.0.13",
     "@types/uuid": "^3.4.9",
     "@types/ws": "^8.5.10",
-    "ava": "^4.3.3",
+    "ava": "^6.2.0",
     "dotenv-webpack": "^8.1.0",
     "eslint": "^8.8.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -65,7 +65,6 @@
     "sinon": "^7.3.2",
     "source-map-loader": "^0.2.3",
     "ts-loader": "^9.4.2",
-    "ts-node": "^10.9.1",
     "typescript": "^5.8.2",
     "webpack": "^5.92.1",
     "webpack-cli": "^6.0.1",
@@ -77,13 +76,13 @@
   "scripts": {
     "build": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-strip-types node_modules/webpack-cli/bin/cli.js -- --config webpack.config.production.ts",
     "server": "./node_modules/.bin/dotenvx run -f .env -- node --inspect=:9229 --experimental-strip-types server.ts",
+    "server-prod": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-strip-types server.ts",
     "webserver": "./node_modules/.bin/dotenvx run -f .env -- node --inspect=:9230 --experimental-strip-types expressServer.ts",
     "webserver-prod": "./node_modules/.bin/dotenvx run -f .env -- node --experimental-strip-types expressServerProduction.ts",
     "test": "ava -vs",
     "test-work": "ava -vs tests/work.test.ts",
     "test-transaction": "ava -vs tests/transactions.test.ts",
     "test-saga": "ava -vs tests/sagaThrow.test.ts",
-    "test-js": "ava -vs tests/testjs.test.js",
     "testnyc": "nyc ava -vs",
     "postinstall": "patch-package"
   },
@@ -97,12 +96,11 @@
     "#tg/*.mjsx": "./*.mjsx"
   },
   "ava": {
-    "extensions": {
-      "ts": "module"
-    },
+    "extensions": [
+      "ts"
+    ],
     "nodeArguments": [
-      "--loader=ts-node/esm",
-      "--experimental-specifier-resolution=node"
+      "--experimental-strip-types"
     ],
     "timeout": "60s"
   }
