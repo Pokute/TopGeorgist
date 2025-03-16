@@ -117,10 +117,6 @@ export const items: InitialItemTypesState = {
 				count: 400,
 			},
 			{
-				typeId: 'pineAppleShoot' as TypeId,
-				count: 1,
-			},
-			{
 				typeId: 'canUsed' as TypeId,
 				count: 1,
 			},

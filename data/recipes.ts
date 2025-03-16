@@ -104,6 +104,10 @@ export const canPineApple: Recipe = {
 			typeId: 'cannedPineApple' as TypeId,
 			count: 1,
 		},
+		{
+			typeId: 'pineAppleShoot' as TypeId,
+			count: 1,
+		},
 	],
 };
 
