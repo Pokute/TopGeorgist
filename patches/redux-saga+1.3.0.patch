@@ -6,3 +6,30 @@ index 0000000..cd8c24a
 @@ -0,0 +1,2 @@
 +export * from '@redux-saga/core'
 +export { default } from '@redux-saga/core'
+diff --git a/node_modules/redux-saga/package.json b/node_modules/redux-saga/package.json
+index 47a0f96..0177a4a 100644
+--- a/node_modules/redux-saga/package.json
++++ b/node_modules/redux-saga/package.json
+@@ -18,10 +18,18 @@
+       "default": "./dist/redux-saga-effects-npm-proxy.cjs.js"
+     },
+     ".": {
+-      "types": "./index.d.ts",
+-      "module": "./dist/redux-saga-core-npm-proxy.esm.js",
+-      "import": "./import-condition-proxy.mjs",
+-      "default": "./dist/redux-saga-core-npm-proxy.cjs.js"
++      "module": {
++        "types": "./index.d.mts",
++        "default": "./dist/redux-saga-core-npm-proxy.esm.js"
++      },
++      "import": {
++        "types": "./index.d.mts",
++        "default": "./import-condition-proxy.mjs"
++      },
++      "default": {
++        "types": "./index.d.ts",
++        "default": "./dist/redux-saga-core-npm-proxy.cjs.js"
++      }
+     },
+     "./package.json": "./package.json"
+   },

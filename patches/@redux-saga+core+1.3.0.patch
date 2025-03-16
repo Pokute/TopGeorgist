@@ -1,3 +1,30 @@
+diff --git a/node_modules/@redux-saga/core/package.json b/node_modules/@redux-saga/core/package.json
+index 121e3a6..760ea26 100644
+--- a/node_modules/@redux-saga/core/package.json
++++ b/node_modules/@redux-saga/core/package.json
+@@ -17,10 +17,18 @@
+       "default": "./dist/redux-saga-effects.cjs.js"
+     },
+     ".": {
+-      "types": "./types/ts4.2/index.d.ts",
+-      "module": "./dist/redux-saga-core.esm.js",
+-      "import": "./import-condition-proxy.mjs",
+-      "default": "./dist/redux-saga-core.cjs.js"
++      "module": {
++        "types": "./types/ts4.2/index.d.mts",
++        "default": "./dist/redux-saga-core.esm.js"
++      },
++      "import": {
++        "types": "./types/ts4.2/index.d.mts",
++        "default": "./import-condition-proxy.mjs"
++      },
++      "default": {
++        "types": "./types/ts4.2/index.d.ts",
++        "default": "./dist/redux-saga-core.cjs.js"
++      }
+     },
+     "./package.json": "./package.json"
+   },
 diff --git a/node_modules/@redux-saga/core/types/ts4.2/index.d.mts b/node_modules/@redux-saga/core/types/ts4.2/index.d.mts
 new file mode 100644
 index 0000000..a6680c6
