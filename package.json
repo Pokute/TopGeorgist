@@ -90,10 +90,8 @@
     "static/topGeorgist.bundle.js"
   ],
   "imports": {
-    "#tg/*.js": "./*.js",
-    "#tg/*.jsx": "./*.jsx",
-    "#tg/*.mjs": "./*.mjs",
-    "#tg/*.mjsx": "./*.mjsx"
+    "#tg/*.ts": "./*.ts",
+    "#tg/*.tsx": "./*.tsx"
   },
   "ava": {
     "extensions": [

@@ -228,6 +228,7 @@ Unseen future:
 	☐ Implement eating, planting, buying, selling automatically by goals.
 	☐ Sanity checks for items and types, check for typos etc.
 	☐ Client reconnect gracefully handles a server with different state (no accounts, etc)
+	☐ Implement (admin, moderator) roles with https://www.keycloak.org/
 
 Stories:
 

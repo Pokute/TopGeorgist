@@ -22,19 +22,6 @@
 	"files": [
 		"./typings/global.d.ts"
 	],
-	"include": [
-		"*",
-		"actions/**/*",
-		"reducers/**/*",
-		"sagas/**/*",
-		"stories/**/*",
-		"ui/**/*",
-		"utils/**/*",
-		"data/**/*",
-		"tests/**/*",
-		"typings/**/*",
-		"concerns/**/*"
-],
 	"exclude": [
 		"node_modules"
 	]

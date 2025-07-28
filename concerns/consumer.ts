@@ -1,10 +1,11 @@
-import { type TgoType, type TgoRoot, type TgoId } from '../reducers/tgo.ts';
-import { type ItemType, type TypeId } from '../reducers/itemType.ts';
-import { type ComponentInventory, type InventoryItem } from './inventory.ts';
-import { transaction, transactionReducer } from './transaction.ts';
-import { type ItemTypesState } from '../reducers/itemTypes.ts';
 import { type ActionType, createAction } from 'typesafe-actions';
-import { type RootStateType } from '../reducers/index.ts';
+
+import { type TgoType, type TgoRoot, type TgoId } from '#tg/reducers/tgo.ts';
+import { type ItemType, type TypeId } from '#tg/reducers/itemType.ts';
+import { type ComponentInventory, type InventoryItem } from '#tg/concerns/inventory.ts';
+import { transaction, transactionReducer } from '#tg/concerns/transaction.ts';
+import { type ItemTypesState } from '#tg/reducers/itemTypes.ts';
+import { type RootStateType } from '#tg/reducers/index.ts';
 
 export const consumerActions = {
 	consume: createAction('CONSUMER_CONSUME',
