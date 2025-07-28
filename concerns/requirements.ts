@@ -131,6 +131,41 @@ export const cleanupRequirement = (tgosState: TgosState, requirement: Requiremen
 	}
 };
 
+const ensureProducedItemsCountInventoryToRequirement = (tgosState: TgosState, goalTgo: ComponentGoal, requirement: Requirement): TgosState => {
+	if (requirement.type !== 'RequirementAcquireInventoryItems')
+		return tgosState;
+
+	if (requirement.producedItemsCountInventoryTgoId !== undefined)
+		return tgosState;
+
+	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
+		const addTgoAction = addTgo(...params);
+		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
+	};
+	const [CountInvTgo, CountInvTgoId] = addTgoWithId({
+		inventory: [],
+		inventoryIsPhysical: false,
+		inventoryIsStorableOnly: false,
+	} as Omit<ComponentInventory, 'tgoId'>);
+	const tgosStateWithItemsCount = tgosReducer(tgosState, CountInvTgo);
+	return {
+		...tgosStateWithItemsCount,
+		[goalTgo.tgoId]: {
+			...goalTgo,
+			goal: {
+				...goalTgo.goal,
+				requirements: goalTgo.goal.requirements.map(req => requirement
+					? {
+						...req,
+						producedItemsCountInventoryTgoId: CountInvTgoId,
+					}
+					: req
+				),
+			},
+		},
+	};
+};
+
 export const requirementWorkIssuer = (tgosState: TgosState, requirement: Requirement, missingInput: Inventory, currentGoalTgo: ComponentGoal, workIssuer: ComponentWorkIssuer, workDoerTgo: ComponentWorkDoer): TgosState => {
 	if (missingInput.length === 0)
 		return tgosState;
@@ -138,43 +173,15 @@ export const requirementWorkIssuer = (tgosState: TgosState, requirement: Require
 	let counterInventories: Array<TgoId> = [];
 	let tgosState2 = tgosState;
 	switch (requirement.type) {
-		case 'RequirementAcquireInventoryItems':
-			let requirement2: RequirementAcquireInventoryItems | undefined = requirement;
-			if (requirement.producedItemsCountInventoryTgoId === undefined) {
-				const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
-					const addTgoAction = addTgo(...params);
-					return [addTgoAction, addTgoAction.payload.tgo.tgoId];
-				};
-				const [CountInvTgo, CountInvTgoId] = addTgoWithId({
-					inventory: [],
-					inventoryIsPhysical: false,
-					inventoryIsStorableOnly: false,
-				} as Omit<ComponentInventory, 'tgoId'>);
-				tgosState2 = tgosReducer(tgosState2, CountInvTgo);
-				tgosState2 = {
-					...tgosState2,
-					[currentGoalTgo.tgoId]: {
-						...currentGoalTgo,
-						goal: {
-							...currentGoalTgo.goal,
-							requirements: currentGoalTgo.goal.requirements.map(req => requirement
-								? {
-									...req,
-									producedItemsCountInventoryTgoId: CountInvTgoId,
-								}
-								: req
-							),
-						},
-					},
-				};
-				const tempReq = tgosState2[currentGoalTgo.tgoId].goal?.requirements.find(req => req.type === 'RequirementAcquireInventoryItems'); 
-				if (!isRequirementInventoryItems(tempReq)) return tgosState;
-				requirement2 = tempReq;
-			}
+		case 'RequirementAcquireInventoryItems': {
+			tgosState2 = ensureProducedItemsCountInventoryToRequirement(tgosState2, currentGoalTgo, requirement);
+			const requirement2 = tgosState2[currentGoalTgo.tgoId].goal?.requirements.find(req => req.type === 'RequirementAcquireInventoryItems'); 
+			if (!isRequirementInventoryItems(requirement2)) return tgosState;
 
 			targetInventory = workDoerTgo.tgoId;
 			counterInventories = [requirement2.producedItemsCountInventoryTgoId!];
 			break;
+		}
 		case 'RequirementKeepMinimumInventoryItems':
 			targetInventory = workDoerTgo.tgoId;
 			break;
