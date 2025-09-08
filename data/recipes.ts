@@ -140,7 +140,7 @@ export const provideCanneryTool : Recipe = {
 	input: [
 		{
 			typeId: 'tick' as TypeId,
-			count: 1,
+			count: 3,
 		},
 	],
 	output: [

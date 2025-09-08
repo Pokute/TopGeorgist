@@ -282,9 +282,9 @@ const addTgoWithId = (...params: Parameters<typeof tgosActions.add>): [ReturnTyp
 };
 
 const publicCanneryActions = () => {
-	const addCanningToolGoal = addTgoWithId({
+	const [addCanningToolGoalAction, canningToolGoalTgoId] = addTgoWithId({
 		goal: {
-			title: 'AutoCanningTool',
+			title: 'AutoCanningToolGoal',
 			requirements: [
 				{
 					type: 'RequirementKeepMinimumInventoryItems',
@@ -300,7 +300,7 @@ const publicCanneryActions = () => {
 		worksIssued: [],
 	} as Omit<ComponentGoal, 'tgoId'>);
 	return [
-		addCanningToolGoal[0],
+		addCanningToolGoalAction,
 		tgosActions.add({
 			label: 'Public Cannery',
 			visitable: {
@@ -312,12 +312,12 @@ const publicCanneryActions = () => {
 			inventory: [
 				{
 					typeId: 'tgoId' as TypeId,
-					tgoId: addCanningToolGoal[1],
+					tgoId: canningToolGoalTgoId,
 					count: 1,
 				}
 			],
 			activeGoals: [
-				addCanningToolGoal[1],
+				canningToolGoalTgoId,
 			],
 			worksIssued: [],
 			recipeInfos: [

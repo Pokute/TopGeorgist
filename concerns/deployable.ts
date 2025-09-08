@@ -59,12 +59,12 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 	if (!hasComponentPosition(actor) || !targetType?.deployable)
 		return state;
 
-	const freePlot = Object.values(state.tgos)
+	const freeMapPlot = Object.values(state.tgos)
 		.filter(tgo => (
 			hasComponentPosition(tgo) && tgo.position && mapPosition.matching(tgo.position, actor.position)
 		))
 		.every(tgo => !hasComponentMapGridOccipier(tgo))
-	if (!freePlot)
+	if (!freeMapPlot)
 		return state;
 
 	const stateWithTransaction = rootReducer(state, transaction({
