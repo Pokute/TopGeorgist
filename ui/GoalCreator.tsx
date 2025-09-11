@@ -9,7 +9,7 @@ import { type MapPosition as MapPositionType } from '../concerns/map.ts';
 import recipes from '../data/recipes.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import { itemReqGoal } from '../concerns/itemReqGoal.ts';
-import { moveGoal } from '../actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.ts';
 
 export const GoalCreator = ({ goalDoerTgoId }: { goalDoerTgoId: TgoId }) => {

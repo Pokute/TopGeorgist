@@ -5,7 +5,7 @@ import isServer from '../isServer.ts'
 import * as tgoActions from '../actions/tgo.ts';
 import * as netActions from '../concerns/infra/net.ts';
 // import { setGoals } from '../concerns/goal.ts';
-import { moveGoal } from '../actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { itemReqGoal } from '../concerns/itemReqGoal.ts';
 import { itemKeepMinGoal } from '../concerns/itemKeepMinGoal.ts';
 

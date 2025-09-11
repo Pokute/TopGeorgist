@@ -19,7 +19,7 @@ import { type AnyAction } from 'redux';
 import { type extendedSocket } from './reducers/client.ts';
 import { withClient } from './actions/withClient.ts';
 // import { setGoals } from './actions/goals.ts';
-import { moveGoal } from './actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { type RootStateType } from './reducers/index.ts';
 import { transaction } from './concerns/transaction.ts';
 import { setRunning as tickerSetRunning } from './concerns/ticker.ts';

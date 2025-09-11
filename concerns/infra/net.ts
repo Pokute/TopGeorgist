@@ -9,7 +9,7 @@ import { mapActions } from '../../concerns/map.ts';
 import * as tileSetsActions from '../../actions/tileSets.ts';
 import * as tgoActions from '../../actions/tgo.ts';
 import { tgosActions } from '../../concerns/tgos.ts';
-import { moveGoal } from '../../actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { type MapPosition } from '../../concerns/map.ts';
 import { type ViewId } from '../../reducers/view.ts';
 import { select } from '../../redux-saga-helpers.ts';

@@ -4,13 +4,19 @@ import { getType, type ActionType, createAction } from 'typesafe-actions';
 import { type ComponentInventory, hasComponentInventory } from './inventory.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import rootReducer, { type RootStateType } from '../reducers/index.ts';
-import { moveGoal } from '../actions/moveGoal.ts';
 import { type ComponentGoal, type ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.ts';
 import { add as addTgo } from './tgos.ts';
 import { hasComponentPosition, type ComponentPosition } from '../components/position.ts';
 import { type MapPosition, mapPosition } from './map.ts';
 import { type TgosState, createTupleFilter } from './tgos.ts';
 import { type TgoId, type TgoType } from '../reducers/tgo.ts';
+
+export const moveGoal = createAction('TGO_GOAL_CREATE_MOVE',
+	(ownerTgoId: TgoId, position: MapPosition) => ({
+		tgoId: ownerTgoId,
+		position,
+	})
+)();
 
 export const applyMovementReducer = (tgosState: TgosState): TgosState => {
 	const goalDoersWithRequirementMoves = Object.entries(tgosState)

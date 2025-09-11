@@ -17,7 +17,7 @@ import { cancelGoal, goalCancelReducer, goalDoersTickReducer } from '../concerns
 import { transaction, transactionReducer } from '../concerns/transaction.ts';
 import { type AllActions } from '../allActions.ts';
 import { cancelWork, createWork, pauseWork, resumeWork, workCancelReducer, workCreatorReducer, workDoersTickReducer, workPauseReducer, workResumeReducer } from '../concerns/work.ts';
-import { moveGoal } from '../actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { payRent, payRentReducer } from '../concerns/rentOffice.ts';
 import { collect, collectReducer, deployTgo, deployTgoReducer, deployType, deployTypeReducer } from '../concerns/deployable.ts';
 import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.ts';

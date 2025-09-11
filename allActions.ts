@@ -5,7 +5,7 @@ import { serverConnectionActions } from './concerns/clientToServerConnection.ts'
 import { transactionActions } from './concerns/transaction.ts';
 import * as defaultsActions from './actions/defaults.ts';
 import { workActions } from './concerns/work.ts';
-import { moveGoal } from './actions/moveGoal.ts';
+import { moveGoal } from '#tg/concerns/movement.ts';
 import { payRent, rentOfficeActions } from './concerns/rentOffice.ts';
 import { deployableActions } from './concerns/deployable.ts'
 import { goalActionList } from './concerns/goal.ts';
