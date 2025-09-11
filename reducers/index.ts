@@ -24,6 +24,7 @@ import { applyMovementReducer, moveGoalReducer } from '../concerns/movement.ts';
 import { itemReqGoal, itemReqGoalReducer } from '../concerns/itemReqGoal.ts';
 import { itemKeepMinGoal, itemKeepMinGoalReducer } from '../concerns/itemKeepMinGoal.ts';
 import { consumerActions, consumeReducer } from '../concerns/consumer.ts';
+import { prefabsReducer } from '#tg/concerns/prefab.ts';
 
 export interface RootStateType {
 	readonly accounts: ReturnType<typeof accountListReducer>,
@@ -33,6 +34,7 @@ export interface RootStateType {
 	readonly government: GovernmentStateType,
 	readonly itemTypes: ItemTypesState,
 	readonly map: ReturnType<typeof mapReducer>,
+	readonly prefabs: ReturnType<typeof prefabsReducer>,
 	readonly serverConnection: ServerConnectionStateType,
 	readonly tgos: TgosState,
 	readonly ticker: ReturnType<typeof tickerReducer>,
@@ -49,6 +51,7 @@ const combinedReducers = combineReducers({
 	government,
 	itemTypes,
 	map: mapReducer,
+	prefabs: prefabsReducer,
 	tgos: tgosReducer,
 	ticker: tickerReducer,
 	tileSets,

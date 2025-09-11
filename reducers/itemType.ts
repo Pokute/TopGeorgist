@@ -1,24 +1,10 @@
 import { type ItemTypesState } from './itemTypes.ts';
 import { type Inventory } from '../concerns/inventory.ts';
 import type { Opaque } from '../typings/global.d.ts';
+import { type DeployableType } from '#tg/concerns/deployable.ts';
 
 // export type TypeId = keyof ItemTypesState;
 export type TypeId = Opaque<string, 'TypeId'>;
-
-export type OptionalFields = {
-	readonly label?: string,
-	readonly building?: boolean,
-	readonly deployable?: {
-		readonly deployInventory: Inventory,
-		readonly deployVerb?: string,
-		readonly collectVerb?: string,
-		readonly deployAdditionals?: any,
-	},
-	readonly isTgoId?: boolean,
-	readonly inventory?: Inventory,
-};
-
-export type InitialItemType = OptionalFields & Partial<Omit<RequiredFields, 'typeId'>>;
 
 export interface RequiredFields {
 	readonly typeId: TypeId,
@@ -30,12 +16,20 @@ export interface RequiredFields {
 	readonly collectable: boolean, // Whether when collecting a deployable, it's collected too.
 };
 
+export type OptionalFields = {
+	readonly label?: string,
+	readonly deployable?: DeployableType,
+	readonly isTgoId?: boolean,
+	readonly inventory?: Inventory,
+};
+
+export type InitialItemType = OptionalFields & Partial<Omit<RequiredFields, 'typeId'>>;
 export type ItemType = OptionalFields & RequiredFields;
 
 export const defaultItemType: Omit<RequiredFields, 'typeId'> = {
 	stackable: true,
 	positiveOnly: true,
-	isInteger: false,
+	isInteger: true,
 	isStorable: true,
 	redeemable: true,
 	collectable: true,
@@ -46,7 +40,8 @@ const initialState: ItemType = {
 	typeId: '' as TypeId,
 };
 
-// Itemtypes should not be modifiable during runtime.
+// Itemtypes should not be modifiable during runtime. At least at this point.
+// In the future, runtime modifiable item types could be a thing.
 export default (state = initialState) : ItemType => state;
 
 export { initialState };

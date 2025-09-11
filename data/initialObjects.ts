@@ -1,14 +1,14 @@
-import { tgosActions } from '../concerns/tgos.ts';
+import { remove, tgosActions } from '../concerns/tgos.ts';
 import { add as tileSetAdd } from '../actions/tileSets.ts';
 import { type MapPosition } from '../concerns/map.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import { getType } from 'typesafe-actions';
 import { payRent, claimLand } from '../concerns/rentOffice.ts';
-import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple, provideCanneryTool } from './recipes.ts';
+import { move, digestHydrocarbons, trade, calculation, doCanningWork, canPineApple, provideCanneryTool, growPineapple } from './recipes.ts';
 import { tradeStoreTransactionRequest } from '../concerns/trade.ts';
-import { type TgoId } from '../reducers/tgo.ts';
-import { type ComponentGoal, type ComponentGoalDoer } from '../concerns/goal.ts';
-import { type ComponentWorkDoer } from '../concerns/work.ts';
+import { type TgoType, type TgoId } from '../reducers/tgo.ts';
+import { prefabsActions, type PrefabId } from '#tg/concerns/prefab.ts';
+import { collect, deployType } from '#tg/concerns/deployable.ts';
 
 const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 	player: true,
@@ -27,6 +27,10 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 		{
 			typeId: 'pineApple' as TypeId,
 			count: 10,
+		},
+		{
+			typeId: 'treeSapling' as TypeId,
+			count: 2,
 		},
 	],
 	recipeInfos: [
@@ -276,54 +280,140 @@ export const tileSetBasicAction = () => tileSetAdd({
 	},
 });
 
+const prefabCreationActions = () => [
+	prefabsActions.add({
+		name: 'pineapplePlant' as PrefabId,
+		integrateTemplates: [
+			{
+				tgoId: '__customTgoId_pineapplePlant' as { __TYPE__: "TgoId"; } & '__customTgoId_pineapplePlant',
+				label: 'Pineapple plant',
+				mapGridOccupier: true,
+				position: '__customValue_position',
+				presentation: { color: 'yellow' },
+				inventory: [
+					{ typeId: 'pineApple' as TypeId, count: 1/8, },
+					{ typeId: 'growthPotential' as TypeId, count: 3-(1/8), },
+				],
+				recipeInfos: [{
+					recipe: growPineapple, autoRun: 'OnInputs',
+				},],
+				worksIssued: [],
+				visitable: {
+					label: 'A growing pineapple.',
+					actions: [{
+						label: 'Pick up',
+						onClick: {
+							type: getType(collect),
+						},
+					}],
+				}
+			},
+		],
+	}),
+	prefabsActions.add({
+		name: 'canneryTool' as PrefabId,
+		integrateTemplates: [
+			{
+				tgoId: '__customTgoId_canneryTool' as { __TYPE__: "TgoId"; } & '__customTgoId_canneryTool',
+				label: 'Cannery tool',
+				mapGridOccupier: true,
+				position: '__customValue_position',
+				presentation: { color: 'gray' },
+				recipeInfos: [
+					{ recipe: provideCanneryTool, autoRun: 'OnDemand' },
+				],
+				worksIssued: [],
+				activeGoals: [
+					'__customTgoId_canningToolGoal' as TgoId,
+				],
+				visitable: {
+					label: 'Manual cannery. You can can pineapples here.',
+					actions: [{
+						label: 'Pick up',
+						onClick: {
+							type: getType(collect),
+						},
+					}],
+				},
+				inventory: [
+					{
+						typeId: 'tgoId' as TypeId,
+						tgoId: '__customTgoId_canningToolGoal' as TgoId,
+						count: 1,
+					}
+				]
+			},
+			{
+				tgoId: '__customTgoId_canningToolGoal' as { __TYPE__: "TgoId"; } & '__customTgoId_canningToolGoal',
+				goal: {
+					title: 'AutoCanningToolGoal',
+					requirements: [
+						{
+							type: 'RequirementKeepMinimumInventoryItems',
+							inventoryItems: [
+								{
+									typeId: 'canneryTool' as TypeId,
+									count: 1,
+								}
+							],
+						},
+					],
+				},
+				worksIssued: [],
+			},
+		],
+	}),
+	prefabsActions.add({
+		name: 'basicTree' as PrefabId,
+		integrateTemplates: [
+			{
+				tgoId: '__customTgoId_basicTree' as { __TYPE__: "TgoId"; } & '__customTgoId_basicTree',
+				label: 'Basic Tree',
+				mapGridOccupier: true,
+				position: '__customValue_position',
+				presentation: { color: 'green' },
+				inventory: [
+					{
+						typeId: 'wood' as TypeId,
+						count: 5,
+					}
+				],
+				visitable: {
+					label: 'A basic tree. You can chop it down for wood.',
+					actions: [
+						{
+							label: 'Chop down for wood',
+							onClick: {
+								type: getType(collect),
+								// Could add axe requirement here later.
+							},
+						},
+					],
+				},
+			},
+		],
+	}),
+];
+
 const addTgoWithId = (...params: Parameters<typeof tgosActions.add>): [ReturnType<typeof tgosActions.add>, TgoId] => {
 	const addTgoAction = tgosActions.add(...params);
 	return [addTgoAction, addTgoAction.payload.tgo.tgoId];
 };
 
 const publicCanneryActions = () => {
-	const [addCanningToolGoalAction, canningToolGoalTgoId] = addTgoWithId({
-		goal: {
-			title: 'AutoCanningToolGoal',
-			requirements: [
-				{
-					type: 'RequirementKeepMinimumInventoryItems',
-					inventoryItems: [
-						{
-							typeId: 'canneryTool' as TypeId,
-							count: 1,
-						}
-					],
-				},
-			],
-		},
-		worksIssued: [],
-	} as Omit<ComponentGoal, 'tgoId'>);
+	const [addTempCanneryOwner, tempCanneryOwnerTgoId] = addTgoWithId({
+		inventory: [
+			{ typeId: 'cannery' as TypeId, count: 1, },
+		],
+		position: { x: 6, y: 8 } as MapPosition,
+	} as Omit<TgoType, 'tgoId'>);
 	return [
-		addCanningToolGoalAction,
-		tgosActions.add({
-			label: 'Public Cannery',
-			visitable: {
-				label: 'Public Cannery',
-			},
-			mapGridOccupier: true,
-			position: { x: 6, y: 8 } as MapPosition,
-			presentation: { color: 'black' },
-			inventory: [
-				{
-					typeId: 'tgoId' as TypeId,
-					tgoId: canningToolGoalTgoId,
-					count: 1,
-				}
-			],
-			activeGoals: [
-				canningToolGoalTgoId,
-			],
-			worksIssued: [],
-			recipeInfos: [
-				{ recipe: provideCanneryTool, autoRun: 'OnDemand' },
-			]
-		} as Omit<ComponentGoalDoer & ComponentWorkDoer, 'tgoId'>),
+		addTempCanneryOwner,
+		deployType({
+			tgoId: tempCanneryOwnerTgoId,
+			deployedTypeId: 'cannery' as TypeId,
+		}),
+		remove(tempCanneryOwnerTgoId)
 	];
 };
 
@@ -333,6 +423,7 @@ const initialObjectActions = () => [
 	GovernmentAction(),
 	statsBoardAction(),
 	tileSetBasicAction(),
+	...prefabCreationActions(),
 	...publicCanneryActions(),
 ];
 

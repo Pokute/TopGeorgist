@@ -11,7 +11,7 @@ import InventoryItem from './InventoryItem.react.tsx';
 import { consumerActions, consumerIsTypeConsumable } from '../concerns/consumer.ts';
 import { type ItemTypesState } from '../reducers/itemTypes.ts';
 import { hasComponentConsumer } from '../concerns/consumer.ts';
-import { deployableActions, hasComponentDeployable } from '../concerns/deployable.ts';
+import { deployableActions } from '../concerns/deployable.ts';
 import { type TgosState } from '../concerns/tgos.ts';
 
 interface Type {

@@ -1,7 +1,7 @@
 import { hasComponentPosition } from '../components/position.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import { type TgoId } from '../reducers/tgo.ts';
-import { add as addTgo, remove as removeTgo, tgosReducer, type TgosState } from './tgos.ts';
+import { integrateTgoTemplatesReplace, tgosReducer, type TgosState } from './tgos.ts';
 import { type ComponentGoal, type ComponentGoalDoer } from './goal.ts';
 import { type ComponentInventory, hasComponentInventory, inventory, type Inventory } from './inventory.ts';
 import { mapPosition, type MapPosition } from './map.ts';
@@ -138,32 +138,29 @@ const ensureProducedItemsCountInventoryToRequirement = (tgosState: TgosState, go
 	if (requirement.producedItemsCountInventoryTgoId !== undefined)
 		return tgosState;
 
-	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
-		const addTgoAction = addTgo(...params);
-		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
-	};
-	const [CountInvTgo, CountInvTgoId] = addTgoWithId({
-		inventory: [],
-		inventoryIsPhysical: false,
-		inventoryIsStorableOnly: false,
-	} as Omit<ComponentInventory, 'tgoId'>);
-	const tgosStateWithItemsCount = tgosReducer(tgosState, CountInvTgo);
-	return {
-		...tgosStateWithItemsCount,
-		[goalTgo.tgoId]: {
-			...goalTgo,
-			goal: {
-				...goalTgo.goal,
-				requirements: goalTgo.goal.requirements.map(req => requirement
-					? {
-						...req,
-						producedItemsCountInventoryTgoId: CountInvTgoId,
-					}
-					: req
-				),
+	return tgosReducer(tgosState,
+		integrateTgoTemplatesReplace([
+			{
+				tgoId: '__customTgoId_goalProducedItemsCountInventory',
+				inventory: [],
+				inventoryIsPhysical: false,
+				inventoryIsStorableOnly: false,
 			},
-		},
-	};
+			{
+				...goalTgo,
+				goal: {
+					...goalTgo.goal,
+					requirements: goalTgo.goal.requirements.map(req => requirement
+						? {
+							...req,
+							producedItemsCountInventoryTgoId: '__customTgoId_goalProducedItemsCountInventory',
+						}
+						: req
+					),
+				},
+			}
+		], {})
+	);
 };
 
 export const requirementWorkIssuer = (tgosState: TgosState, requirement: Requirement, missingInput: Inventory, currentGoalTgo: ComponentGoal, workIssuer: ComponentWorkIssuer, workDoerTgo: ComponentWorkDoer): TgosState => {

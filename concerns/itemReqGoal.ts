@@ -5,7 +5,7 @@ import { hasComponentInventory, type Inventory } from './inventory.ts';
 import rootReducer, { type RootStateType } from '../reducers/index.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import { hasComponentGoalDoer } from './goal.ts';
-import { add as addTgo } from './tgos.ts';
+import { integrateTgoTemplatesReplace } from './tgos.ts';
 
 export const itemReqGoal = createAction('TGO_GOAL_CREATE_ITEM_REQ',
 	(ownerTgoId: TgoId, inventory: Inventory) => ({
@@ -22,42 +22,38 @@ export const itemReqGoalReducer = (state: RootStateType, action: ReturnType<type
 		return state;
 	}
 
-	const goalTgo = addTgo({
-		goal: {
-			title: 'Get items',
-			requirements: [
-				{
-					type: 'RequirementAcquireInventoryItems',
-					inventoryItems: inventory,
+	return rootReducer(
+		state,
+		integrateTgoTemplatesReplace([
+			{
+				tgoId: '__customTgoId_goalItemReq',
+				goal: {
+					title: 'Get items',
+					requirements: [
+						{
+							type: 'RequirementAcquireInventoryItems',
+							inventoryItems: inventory,
+						},
+					],
 				},
-			],
-		},
-		worksIssued: [],
-		workInputCommittedItemsTgoId: {},
-	});
-	const goalTgoId = goalTgo.payload.tgo.tgoId;
-	const stateWithGoalTgo = rootReducer(state, goalTgo);
-	// Add the tgoId to player inventory
-	// Add the tgoId to active goals.
-	return {
-		...stateWithGoalTgo,
-		tgos: {
-			...stateWithGoalTgo.tgos,
-			[itemRequesterTgoId]: {
+				worksIssued: [],
+				workInputCommittedItemsTgoId: {},
+			},
+			{
 				...itemRequesterTgo,
 				inventory: [
 					...itemRequesterTgo.inventory,
 					{
 						typeId: 'tgoId' as TypeId,
-						tgoId: goalTgoId,
+						tgoId: '__customTgoId_goalItemReq',
 						count: 1,
 					}
 				],
 				activeGoals: [
 					...itemRequesterTgo.activeGoals,
-					goalTgoId,
+					'__customTgoId_goalItemReq',
 				],
 			},
-		},
-	};
+		], {})
+	);
 }

@@ -5,7 +5,7 @@ import { hasComponentInventory, type Inventory } from './inventory.ts';
 import rootReducer, { type RootStateType } from '../reducers/index.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import { hasComponentGoalDoer } from './goal.ts';
-import { add as addTgo } from './tgos.ts';
+import { integrateTgoTemplatesReplace } from './tgos.ts';
 
 export const itemKeepMinGoal = createAction('TGO_GOAL_CREATE_ITEM_KEEP_MIN_REQ',
 	(ownerTgoId: TgoId, inventory: Inventory, completeOnMinimumReached: boolean) => ({
@@ -23,43 +23,39 @@ export const itemKeepMinGoalReducer = (state: RootStateType, action: ReturnType<
 		return state;
 	}
 
-	const goalTgo = addTgo({
-		goal: {
-			title: 'Get minimum of items',
-			requirements: [
-				{
-					type: 'RequirementKeepMinimumInventoryItems',
-					inventoryItems: inventory,
-					completeOnMinimumReached
+	return rootReducer(
+		state,
+		integrateTgoTemplatesReplace([
+			{
+				tgoId: '__customTgoId_goalItemKeepMin',
+				goal: {
+					title: 'Get minimum of items',
+					requirements: [
+						{
+							type: 'RequirementKeepMinimumInventoryItems',
+							inventoryItems: inventory,
+							completeOnMinimumReached
+						},
+					],
 				},
-			],
-		},
-		worksIssued: [],
-		workInputCommittedItemsTgoId: {},
-	});
-	const goalTgoId = goalTgo.payload.tgo.tgoId;
-	const stateWithGoalTgo = rootReducer(state, goalTgo);
-	// Add the tgoId to player inventory
-	// Add the tgoId to active goals.
-	return {
-		...stateWithGoalTgo,
-		tgos: {
-			...stateWithGoalTgo.tgos,
-			[itemKeepMinRequesterTgoId]: {
+				worksIssued: [],
+				workInputCommittedItemsTgoId: {},
+			},
+			{
 				...itemKeepMinRequesterTgo,
 				inventory: [
 					...itemKeepMinRequesterTgo.inventory,
 					{
 						typeId: 'tgoId' as TypeId,
-						tgoId: goalTgoId,
+						tgoId: '__customTgoId_goalItemKeepMin',
 						count: 1,
 					}
 				],
 				activeGoals: [
 					...itemKeepMinRequesterTgo.activeGoals,
-					goalTgoId,
+					'__customTgoId_goalItemKeepMin',
 				],
 			},
-		},
-	};
+		], {})
+	);
 }

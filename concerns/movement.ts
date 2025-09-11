@@ -1,15 +1,14 @@
-import { type AnyAction } from 'redux';
-import { getType, type ActionType, createAction } from 'typesafe-actions';
+import { createAction } from 'typesafe-actions';
 
 import { type ComponentInventory, hasComponentInventory } from './inventory.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import rootReducer, { type RootStateType } from '../reducers/index.ts';
 import { type ComponentGoal, type ComponentGoalDoer, hasComponentGoalDoer, isComponentGoal } from './goal.ts';
-import { add as addTgo } from './tgos.ts';
+import { integrateTgoTemplatesReplace } from './tgos.ts';
 import { hasComponentPosition, type ComponentPosition } from '../components/position.ts';
 import { type MapPosition, mapPosition } from './map.ts';
 import { type TgosState, createTupleFilter } from './tgos.ts';
-import { type TgoId, type TgoType } from '../reducers/tgo.ts';
+import { type TgoId } from '../reducers/tgo.ts';
 
 export const moveGoal = createAction('TGO_GOAL_CREATE_MOVE',
 	(ownerTgoId: TgoId, position: MapPosition) => ({
@@ -93,42 +92,38 @@ export const moveGoalReducer = (state: RootStateType, action: ReturnType<typeof 
 		return state;
 	}
 
-	const goalTgo = addTgo({
-		goal: {
-			title: 'Move to position',
-			requirements: [
-				{
-					type: 'RequirementMove',
-					targetPosition,
+	return rootReducer(
+		state,
+		integrateTgoTemplatesReplace([
+			{
+				tgoId: '__customTgoId_goalMove',
+				goal: {
+					title: 'Move to position',
+					requirements: [
+						{
+							type: 'RequirementMove',
+							targetPosition,
+						},
+					],
 				},
-			],
-		},
-		worksIssued: [],
-		workInputCommittedItemsTgoId: {},
-	});
-	const goalTgoId = goalTgo.payload.tgo.tgoId;
-	const stateWithGoalTgo = rootReducer(state, goalTgo);
-	// Add the tgoId to player inventory
-	// Add the tgoId to active goals.
-	return {
-		...stateWithGoalTgo,
-		tgos: {
-			...stateWithGoalTgo.tgos,
-			[moverTgoId]: {
+				worksIssued: [],
+				workInputCommittedItemsTgoId: {},
+			},
+			{
 				...moverTgo,
 				inventory: [
 					...moverTgo.inventory,
 					{
 						typeId: 'tgoId' as TypeId,
-						tgoId: goalTgoId,
+						tgoId: '__customTgoId_goalMove',
 						count: 1,
 					}
 				],
 				activeGoals: [
 					...moverTgo.activeGoals,
-					goalTgoId,
+					'__customTgoId_goalMove',
 				],
 			},
-		},
-	};
+		], {})
+	);
 }

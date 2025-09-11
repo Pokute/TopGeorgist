@@ -121,7 +121,7 @@ Milestone 4:
 				? Having plants immediately harvestable is not good
 					? How to force minimum growth needed
 					? Different method of tilling/removing just planted items. Makes clear it won't produce and has a chance(?) of failing.
-		☐ Canning system
+		✔ Canning system
 			✔ Store sells cannery
 			✔ Store sells can blanks.
 			✔ Canning machine can be deployed.
@@ -129,12 +129,14 @@ Milestone 4:
 					✔ A deployed canning machine is required to create 'canningWork'
 						! This is done by having a goal that ensures a minimum amount of 'canningTool'
 						! That goal creates works on demand.
-					☐ Deployed visitables can't have a goal with requirements set currently.
+					✔ Deployed visitables can't have a goal with requirements set currently.
 						! Due to needing to create object that depends on another object
 						! Figure out a solution.
 							! Run-time addition of more complex objects is tricky.
+						✔ Solved by having a prefab -structures with id's being replaceable strings.
 			✔ Store buys canned pineapples
 		✔ Rename 'harvest' action -> generic 'collect' for deployables.
+	✔ Transition away from tgos.add() and use the prefab & integration system.
 	☐ Trade complexity:
 		✔ Trading requiring 'trade' item, which itself requires 'computation' items.
 		✔ Figure out a good way to autogenerate 'trade' items when trying to buy stuff.
@@ -169,7 +171,8 @@ Milestone 4:
 	☐ Hot reload?
 	✔ React-Redux -> 7.1
 		✔ Convert to redux hooks as we go.
-	☐ Investigate aliases for import to avoid relative paths.
+	✔ Investigate aliases for import to avoid relative paths.
+		! Done: import foo from '#tg/foo.ts'
 	✔ Publishing
 	✔ Server hosting.
 	✔ Github link.

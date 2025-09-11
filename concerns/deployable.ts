@@ -2,20 +2,21 @@ import { type ActionType, createAction, getType } from 'typesafe-actions';
 import { type TgoId, type TgoRoot, type TgoType } from '../reducers/tgo.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import rootReducer, { type RootStateType } from '../reducers/index.ts';
-import { add, remove as tgoRemove } from './tgos.ts';
+import { integrateTgoTemplatesReplace, remove as tgoRemove } from './tgos.ts';
 import { selectTgo } from './tgos.ts';
 import { type ComponentPosition, hasComponentPosition } from '../components/position.ts';
 import { hasComponentMapGridOccipier, hasComponentVisitable } from '../data/components_new.ts';
 import { mapPosition } from './map.ts';
 import { transaction } from './transaction.ts';
 import { type ComponentInventory, hasComponentInventory } from './inventory.ts';
+import { type PrefabId } from './prefab.ts';
 
-export type ComponentDeployable = TgoRoot & {
-	readonly deployable?: boolean,
+export type DeployableType = {
+	readonly deployPrefabId: PrefabId,
+	readonly deployVerb?: string,
+	readonly deployInventory?: never,
+	readonly deployAdditionals?: never,
 };
-
-export const hasComponentDeployable = <BaseT extends TgoType>(tgo?: BaseT) : tgo is (BaseT & Required<ComponentDeployable>) =>
-	tgo?.deployable !== undefined;
 
 // Actions:
 
@@ -79,29 +80,12 @@ export const deployTypeReducer = (state: RootStateType, { payload: { tgoId, depl
 	if (stateWithTransaction === state)
 		return state;
 
-	const addDeployedAction = add({
-		mapGridOccupier: true,
-		position: actor.position,
-		presentation: { color: 'orange' },
-		label: targetType.label,
-		visitable: {
-			label: `Here: ${targetType.label}`,
-			actions: [
-				{
-					label: targetType.deployable.collectVerb ?? 'Pick up',
-					onClick: {
-						type: getType(collect),
-					},
-				},
-			],
-		},
-		inventory: Array.from(targetType.deployable.deployInventory),
-		...targetType.deployable.deployAdditionals
-	});
-	const deployedTgoId = addDeployedAction.payload.tgo.tgoId;
-	const stateWithDeployedTgo = rootReducer(stateWithTransaction, addDeployedAction);
-
-	return stateWithDeployedTgo;
+	const instatiatable = stateWithTransaction.prefabs[targetType.deployable.deployPrefabId];
+	if (!instatiatable) return stateWithTransaction;
+	return rootReducer(
+		stateWithTransaction, 
+		integrateTgoTemplatesReplace(instatiatable, { __customValue_position: actor.position }, undefined)
+	);
 };
 
 export const deployTgoReducer = (state: RootStateType, { payload: { tgoId, deployedTgoId }}: ActionType<typeof deployTgo>): RootStateType => {

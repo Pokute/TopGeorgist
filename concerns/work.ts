@@ -2,10 +2,10 @@ import { type ActionType, createAction, getType } from 'typesafe-actions';
 
 import { type Recipe } from '../concerns/recipe.ts';
 import { type TgoId, type TgoType, type TgoRoot } from '../reducers/tgo.ts';
-import { type Inventory, addTgoId as inventoryAddTgoId, type ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, type InventoryItem, inventory } from './inventory.ts';
+import { type Inventory, type ComponentInventory, hasComponentInventory, removeTgoId as inventoryRemoveTgoId, type InventoryItem, inventory } from './inventory.ts';
 import { transaction, transactionReducer } from '../concerns/transaction.ts';
 import { type RootStateType } from '../reducers/index.ts';
-import { add as addTgo, remove as removeTgo, tgosReducer, type TgosState } from './tgos.ts';
+import { integrateCustomTgoIdReplacementPrefix, integrateTgoTemplatesReplace, type IntegrationTgoTypeWithTgoId, remove as removeTgo, tgosReducer, type TgosState } from './tgos.ts';
 import { type TypeId } from '../reducers/itemType.ts';
 import type { Opaque } from '../typings/global.d.ts';
 import { hasComponentVisitable } from '../data/components_new.ts';
@@ -181,16 +181,19 @@ export const workCreatorReducer = (
 		];
 	}
 
-	if (!hasComponentWorkIssuer(tgosState[workIssuerTgoId]))
+	const workDoer = tgosState[workerTgoId];
+	if (!hasComponentWorkDoer(workDoer))
 		return [
 			tgosState,
-			new Error('Tgos matching workIssuerTgoId in handleCreateWork not found or not a workIssuer!')
+			new Error('Tgos matching workerTgoId in handleCreateWork not found or not a workDoer!')
 		];
 
-	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
-		const addTgoAction = addTgo(...params);
-		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
-	};
+	const workIssuer = tgosState[workIssuerTgoId];
+	if (!hasComponentWorkIssuer(workIssuer))
+		return [
+			tgosState,
+			new Error('Tgos matching workIssuerTgoId in handleCreateWork not found or not a workIssuer! This should really not happen')
+		];
 
 	const workInputCommittedItemsTgoIds: ReadonlyArray<TgoId> = recipe.input.length > 0
 		? [
@@ -202,59 +205,59 @@ export const workCreatorReducer = (
 				: []
 		]
 		: [];
-
-	// Add a Work Tgo
-	const [addWorkAction, workTgoId] = addTgoWithId({
-		workRecipe: recipe,
-		workIssuerTgoId,
-		workOutputInventoryTgoId: recipe.output.length > 0 ? outputInventoryTgoId : undefined,
-		workInputCommittedItemsTgoId: workInputCommittedItemsTgoIds.length > 0
-			? Object.fromEntries(
-				workInputCommittedItemsTgoIds.map(tgoId => [tgoId, undefined])
-			)
-			: undefined,
-		worksIssued: [],
-		workOutputCountInventoryTgoIds: outputCountInventoryTgoIds,
-	});
-
-	const actions = [
-		addWorkAction,
-		...(
-			(workerTgoId &&
-				[inventoryAddTgoId(
-					workerTgoId,
-					workTgoId
-				)]
-			) ?? []
-		)
+	
+	const newWorksIssued = [
+		...workIssuer.worksIssued,
+		{
+			workDoerTgoId: workerTgoId,
+			workTgoId: '__customTgoId_work',
+		},
 	];
 
-	const tgosStateWithActions = actions.reduce(
-		(currentTgosState, action) => tgosReducer(currentTgosState, action),
-		tgosState
-	);
+	const newWorkerInventory = [
+		...workDoer.inventory ?? [],
+		{
+			typeId: 'tgoId' as TypeId,
+			tgoId: '__customTgoId_work',
+			count: 1,
+		}
+	];
 
-	const workIssuer = tgosStateWithActions[workIssuerTgoId];
-	if (!hasComponentWorkIssuer(workIssuer))
-		return [
-			tgosState,
-			new Error('Tgos matching workIssuerTgoId in handleCreateWork not found or not a workIssuer! This should really not happen')
-		];
-	const tgosStateWithIssuerModified: TgosState = {
-		...tgosStateWithActions,
-		[workIssuerTgoId]: {
-			...workIssuer,
-			worksIssued: [
-				...workIssuer.worksIssued,
-				{
-					workDoerTgoId: workerTgoId,
-					workTgoId: workTgoId,
-				},
-			],
-		},
-	};
-
-	return [tgosStateWithIssuerModified];
+	return [tgosReducer(
+		tgosState,
+		integrateTgoTemplatesReplace([
+			{
+				tgoId: '__customTgoId_work',
+				workRecipe: recipe,
+				workIssuerTgoId,
+				workOutputInventoryTgoId: recipe.output.length > 0 ? outputInventoryTgoId : undefined,
+				workInputCommittedItemsTgoId: workInputCommittedItemsTgoIds.length > 0
+					? Object.fromEntries(
+						workInputCommittedItemsTgoIds.map(tgoId => [tgoId, undefined])
+					)
+					: undefined,
+				worksIssued: [],
+				workOutputCountInventoryTgoIds: outputCountInventoryTgoIds,
+			},
+			...(workerTgoId === workIssuerTgoId
+				? [{
+					...workDoer,
+					inventory: newWorkerInventory,
+					worksIssued: newWorksIssued,
+				} as IntegrationTgoTypeWithTgoId]
+				: [
+					{
+						...workDoer,
+						inventory: newWorkerInventory,
+					} as IntegrationTgoTypeWithTgoId,
+					{
+						...workIssuer,
+						worksIssued: newWorksIssued,
+					} as IntegrationTgoTypeWithTgoId,
+				]
+			),
+		], {})
+	)];
 };
 
 export const cleanupWorkIssuerInside = (tgos: TgosState, workIssuerTgo: ComponentWorkIssuer) => {
@@ -331,44 +334,32 @@ export const cleanupWork = (tgos: TgosState, workTgo: ComponentWork, workDoerTgo
 const ensureItemsCommittedInventoriesForTgoIds = (tgosState: TgosState, workIssuer: ComponentWorkIssuer, tgoIds: ReadonlyArray<TgoId>): TgosState => {
 	const worksMissingCommittedInventories = tgoIds
 		.filter(tgoId => (workIssuer.workInputCommittedItemsTgoId ?? {})[tgoId] === undefined);
+	if (worksMissingCommittedInventories.length === 0)
+		return tgosState;
 
-	const addTgoWithId = (...params: Parameters<typeof addTgo>): [ReturnType<typeof addTgo>, TgoId] => {
-		const addTgoAction = addTgo(...params);
-		return [addTgoAction, addTgoAction.payload.tgo.tgoId];
-	};
-
-	const emptyVirtualInventoryTgo: Omit<ComponentInventory, 'tgoId'> = {
-		inventory: [],
-		inventoryIsPhysical: true,
-		inventoryIsStorableOnly: false,
-	};
-	
-	const committedItemsInventoriesCreateActions = worksMissingCommittedInventories.map(tgoId => ({
-		tgoId,
-		addInventoryTgoAction: addTgoWithId(emptyVirtualInventoryTgo),
-	}));
-	
-	const workIssuerWithNewWorkInputCommittedItems: typeof workIssuer = {
-		...workIssuer,
-		workInputCommittedItemsTgoId: {
-			...workIssuer.workInputCommittedItemsTgoId,
-			...Object.fromEntries(
-				committedItemsInventoriesCreateActions.map(({ tgoId, addInventoryTgoAction: inventoryAction }) => [ tgoId, inventoryAction[1] ])
-			)
-		}
-	}
-
-	const afterNewWorkTgo: TgosState = {
-		...tgosState,
-		[workIssuerWithNewWorkInputCommittedItems.tgoId]: workIssuerWithNewWorkInputCommittedItems,
-	};
-
-	const afterCommittedInventoryAdd: TgosState = committedItemsInventoriesCreateActions.reduce(
-		(currentTgosState, addTgoAction) => tgosReducer(currentTgosState, addTgoAction.addInventoryTgoAction[0]),
-		afterNewWorkTgo
-	);
-
-	return afterCommittedInventoryAdd;
+	return (tgosReducer(
+		tgosState,
+		integrateTgoTemplatesReplace(
+			[
+				{
+					...workIssuer,
+					workInputCommittedItemsTgoId: {
+						...workIssuer.workInputCommittedItemsTgoId,
+						...Object.fromEntries(
+							worksMissingCommittedInventories.map(tgoId => [tgoId, `${integrateCustomTgoIdReplacementPrefix}${tgoId}_committedItemsInventory`])
+						),
+					},
+				},
+				...worksMissingCommittedInventories.map(tgoId => ({
+					tgoId: `__customTgoId_${tgoId}_committedItemsInventory`,
+					inventory: [],
+					inventoryIsPhysical: true,
+					inventoryIsStorableOnly: false,
+				} as IntegrationTgoTypeWithTgoId))
+			],
+			{}
+		)
+	));
 };
 
 export const workWithCompletionsReducer = (

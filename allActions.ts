@@ -12,6 +12,7 @@ import { goalActionList } from './concerns/goal.ts';
 import { itemReqGoal } from './concerns/itemReqGoal.ts';
 import { itemKeepMinGoal } from './concerns/itemKeepMinGoal.ts';
 import { consumerActions } from './concerns/consumer.ts';
+import { prefabsActions } from '#tg/concerns/prefab.ts';
 
 const allActions = {
 	defaults: defaultsActions,
@@ -27,6 +28,7 @@ const allActions = {
 	payRent,
 	deployableActions,
 	consumerActions,
+	prefabsActions,
 };
 
 export type AllActions = ActionType<typeof allActions>;
