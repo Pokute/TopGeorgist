@@ -33,6 +33,7 @@ const defaultPlayerTgo: Parameters<typeof tgosActions.add>[0] = {
 			count: 2,
 		},
 	],
+	inventoryIsPhysical: true,
 	recipeInfos: [
 		{ recipe: move, autoRun: 'OnDemand', },
 		{ recipe: digestHydrocarbons, autoRun: 'OnInputs', },
@@ -74,6 +75,7 @@ export const storeGeneralAction = () => tgosActions.add({
 			count: 500,
 		},
 	],
+	inventoryIsPhysical: true,
 	visitable: {
 		label: 'First Store',
 		actions: [
@@ -205,6 +207,7 @@ export const rentOfficeAction = () => tgosActions.add({
 			count: 25000,
 		},
 	],
+	inventoryIsPhysical: true,
 	visitable: {
 		label: 'Rent office - visit here to claim and pay for land rent.',
 		actions: [
@@ -242,6 +245,7 @@ export const GovernmentAction = () => tgosActions.add({
 			count: 1000000,
 		},
 	],
+	inventoryIsPhysical: true,
 	visitable: {
 		label: 'Government building - Here you can claim your stipend.',
 		actions: [
@@ -294,6 +298,7 @@ const prefabCreationActions = () => [
 					{ typeId: 'pineApple' as TypeId, count: 1/8, },
 					{ typeId: 'growthPotential' as TypeId, count: 3-(1/8), },
 				],
+				inventoryIsPhysical: true,
 				recipeInfos: [{
 					recipe: growPineapple, autoRun: 'OnInputs',
 				},],
@@ -341,7 +346,8 @@ const prefabCreationActions = () => [
 						tgoId: '__customTgoId_canningToolGoal' as TgoId,
 						count: 1,
 					}
-				]
+				],
+				inventoryIsPhysical: true,
 			},
 			{
 				tgoId: '__customTgoId_canningToolGoal' as { __TYPE__: "TgoId"; } & '__customTgoId_canningToolGoal',
@@ -378,6 +384,7 @@ const prefabCreationActions = () => [
 						count: 5,
 					}
 				],
+				inventoryIsPhysical: true,
 				visitable: {
 					label: 'A basic tree. You can chop it down for wood.',
 					actions: [

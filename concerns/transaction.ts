@@ -119,7 +119,7 @@ export const transactionReducer = (
 		if (isIntegerFails.length > 0)
 			throw new Error(`Transaction requirements - isInteger not met for items: ${JSON.stringify(isIntegerFails)}`);
 
-		const participantWithPositiveOnlyInventoryFilter = (tgo: Partial<ComponentInventory>) => tgo.inventory && tgo.inventoryIsPhysical;
+		const participantWithPositiveOnlyInventoryFilter = ({ tgo }: { tgo: Partial<ComponentInventory> }) => tgo.inventory && tgo.inventoryIsPhysical;
 		const flattenedItemsWithPositiveOnlyInventories = participantsWithItemBalanceVerifiedTypes
 			.filter(participantWithPositiveOnlyInventoryFilter)
 			.map(({ itemsBalance }) => itemsBalance)
