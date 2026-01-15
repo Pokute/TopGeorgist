@@ -11,7 +11,7 @@
     "await": true
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.1.0",
+    "@dotenvx/dotenvx": "^1.51.4",
     "browser-or-node": "^1.1.0",
     "classnames": "^2.2.5",
     "css-loader": "^5.2.4",
